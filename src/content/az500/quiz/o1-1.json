@@ -1,0 +1,571 @@
+[
+  {
+    "id": "q-o1-1-01",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which three elements together define an Azure RBAC role assignment?",
+    "choices": [
+      "A security principal, a role definition, and a scope",
+      "A security principal, a Conditional Access policy, and a scope",
+      "A management group, a subscription, and a resource group",
+      "A role definition, a service tag, and a resource lock"
+    ],
+    "correctAnswers": ["A security principal, a role definition, and a scope"],
+    "explanation": "A role assignment = who (security principal) + what (role definition) + where (scope). Conditional Access, management-group hierarchy and locks are separate constructs.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-02",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "A user needs to create and manage all resources in a resource group but must NOT be able to grant other people access to those resources. Which built-in role is the least-privilege fit?",
+    "choices": ["Contributor", "Owner", "User Access Administrator", "Reader"],
+    "correctAnswers": ["Contributor"],
+    "explanation": "Contributor manages resources but cannot create role assignments. Owner could also do it but additionally grants access (more than required); User Access Administrator only manages access, not resources.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-03",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which built-in role can assign roles to other principals but grants no permission to create, modify, or delete the resources themselves?",
+    "choices": ["User Access Administrator", "Owner", "Contributor", "Managed Identity Operator"],
+    "correctAnswers": ["User Access Administrator"],
+    "explanation": "User Access Administrator manages access (role assignments) only. Owner can do both; Contributor manages resources but not access; Managed Identity Operator only manages managed-identity usage.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-04",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "An Azure role is assigned at the subscription scope. Which statement about its effect is correct?",
+    "choices": [
+      "It is inherited by every resource group and resource under that subscription",
+      "It applies only to resources that existed when the assignment was made",
+      "It must be re-created separately on each resource group to take effect",
+      "It only applies to the management group above the subscription"
+    ],
+    "correctAnswers": ["It is inherited by every resource group and resource under that subscription"],
+    "explanation": "RBAC permissions inherit downward, including to resources created later. Inheritance never flows upward to a management group.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-05",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "In a custom Azure role definition, control-plane operations that are granted are listed under which property?",
+    "choices": ["Actions", "DataActions", "AssignableScopes", "NotActions"],
+    "correctAnswers": ["Actions"],
+    "explanation": "Actions grants control-plane (management) operations; NotActions subtracts from them; DataActions/NotDataActions cover the data plane; AssignableScopes only defines where the role can be assigned.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-06",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "You are authoring a custom Azure role that must allow reading blob content but must NOT allow reconfiguring the storage account's network rules. In which property do the blob-read permissions belong?",
+    "choices": ["DataActions", "Actions", "NotActions", "AssignableScopes"],
+    "correctAnswers": ["DataActions"],
+    "explanation": "Reading blob content is a data-plane operation, expressed in DataActions. Changing network rules is a control-plane operation (Actions), which you would simply omit.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-07",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which property of a custom Azure role definition limits the scopes at which the role can be assigned?",
+    "choices": ["AssignableScopes", "NotActions", "Condition", "DataActions"],
+    "correctAnswers": ["AssignableScopes"],
+    "explanation": "AssignableScopes lists the management groups, subscriptions, or resource groups where the role may be assigned. It neither grants nor denies any permission.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-08",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which statement best separates Azure roles from Microsoft Entra roles?",
+    "choices": [
+      "Azure roles control access to Azure resources; Entra roles control directory/tenant tasks",
+      "Azure roles control the directory; Entra roles control Azure resources",
+      "They are the same permission system exposed under two names",
+      "Only Entra roles support custom definitions"
+    ],
+    "correctAnswers": ["Azure roles control access to Azure resources; Entra roles control directory/tenant tasks"],
+    "explanation": "The two are independent systems. Both support custom roles, and neither automatically grants the other's permissions.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-09",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "A Global Administrator reports they cannot see any subscription in the Azure portal. Which fact explains this best?",
+    "choices": [
+      "Microsoft Entra roles do not automatically grant access to Azure resources",
+      "Global Administrator is a read-only Azure role",
+      "Subscriptions are always hidden until a Conditional Access policy allows them",
+      "Global Administrators must first be added to the Contributor role on the tenant root by Microsoft support"
+    ],
+    "correctAnswers": ["Microsoft Entra roles do not automatically grant access to Azure resources"],
+    "explanation": "Entra and Azure RBAC are secured independently. A Global Administrator holds no Azure resource access by default until an Azure role is assigned (or access is elevated).",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-10",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "When a Global Administrator sets the 'Access management for Azure resources' toggle to Yes, what exactly happens?",
+    "choices": [
+      "That user is granted User Access Administrator at the tenant root scope (/), for themselves only",
+      "All Global Administrators are granted Owner on every subscription",
+      "The tenant permanently switches every vault and storage account to RBAC",
+      "The user is granted Contributor on the management group hierarchy for 24 hours"
+    ],
+    "correctAnswers": ["That user is granted User Access Administrator at the tenant root scope (/), for themselves only"],
+    "explanation": "The toggle is a per-user elevation assigning User Access Administrator at root scope (/). It is fully audited and should be turned back off once the emergency task is done.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o1-1-11",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "In Microsoft Entra Privileged Identity Management, what does an 'eligible' assignment mean?",
+    "choices": [
+      "The principal must activate the role (subject to any gates) before the permission is usable",
+      "The principal permanently holds the role with no activation needed",
+      "The principal is blocked from ever activating the role",
+      "The role is assigned but scoped to read-only actions"
+    ],
+    "correctAnswers": ["The principal must activate the role (subject to any gates) before the permission is usable"],
+    "explanation": "Eligible means the role can be activated on demand; the just-in-time, time-bound 'active' assignment is what actually grants the permission.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-12",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which requirement is NOT something a PIM role setting can enforce at activation time?",
+    "choices": [
+      "That the resource be located in a specific Azure region",
+      "Multifactor authentication",
+      "Approval by a designated approver",
+      "A written justification"
+    ],
+    "correctAnswers": ["That the resource be located in a specific Azure region"],
+    "explanation": "PIM activation settings cover MFA, approval, justification, ticket info, and maximum duration — not resource geography, which is a Policy/region concern.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-13",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which scenario is the primary use case for Privileged Identity Management?",
+    "choices": [
+      "Admins hold no standing privileged access and elevate just-in-time with approval and MFA",
+      "Applications authenticate to Key Vault without a stored secret",
+      "Traffic to a storage account is restricted to a specific subnet",
+      "Sensitive database columns are hidden from administrators"
+    ],
+    "correctAnswers": ["Admins hold no standing privileged access and elevate just-in-time with approval and MFA"],
+    "explanation": "PIM is about just-in-time, time-bound, gated elevation of privileged roles. The other options describe managed identities, service endpoints, and Always Encrypted respectively.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-14",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "To require MFA specifically for the Azure Resource Manager control plane (portal, Azure PowerShell, Azure CLI), which Conditional Access target resource do you select?",
+    "choices": [
+      "Windows Azure Service Management API",
+      "Microsoft Graph",
+      "Office 365 Exchange Online",
+      "Microsoft Intune Enrollment"
+    ],
+    "correctAnswers": ["Windows Azure Service Management API"],
+    "explanation": "The ARM control plane is grouped under the 'Windows Azure Service Management API' resource (formerly labelled 'Microsoft Azure Management'). The others target unrelated services.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-15",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "You created a Conditional Access policy requiring MFA for Azure management and want to see its impact before enforcing it. Which setting should you use?",
+    "choices": ["Report-only", "On", "Off", "Enabled for a named location only"],
+    "correctAnswers": ["Report-only"],
+    "explanation": "Report-only evaluates the policy and logs what would have happened without enforcing grant/block controls — the recommended piloting mode.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-16",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Why should emergency-access ('break-glass') accounts be excluded from a Conditional Access policy that requires MFA?",
+    "choices": [
+      "So a policy misconfiguration or MFA outage can never lock every administrator out",
+      "Because break-glass accounts are incapable of performing MFA",
+      "Because Conditional Access cannot evaluate cloud-only accounts",
+      "Because break-glass accounts must always use legacy authentication"
+    ],
+    "correctAnswers": ["So a policy misconfiguration or MFA outage can never lock every administrator out"],
+    "explanation": "Break-glass accounts are the recovery path of last resort; excluding them prevents a total lockout if a policy or the MFA service fails.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-17",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "A daemon service principal is not being blocked by your user-targeted Conditional Access MFA policy. Why, and what is the correct control?",
+    "choices": [
+      "Service principals aren't evaluated by user-targeted policies; use Conditional Access for workload identities",
+      "The service principal must be added to the break-glass exclusion list",
+      "Conditional Access never applies to the Azure management plane",
+      "You must convert the service principal into a system-assigned managed identity first"
+    ],
+    "correctAnswers": ["Service principals aren't evaluated by user-targeted policies; use Conditional Access for workload identities"],
+    "explanation": "Policies scoped to users/groups don't cover non-interactive service principals. Conditional Access for workload identities is the dedicated mechanism for them.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o1-1-18",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Where in the portal do you begin adding an Azure role assignment for a specific resource group?",
+    "choices": [
+      "The resource group's Access control (IAM) blade",
+      "Microsoft Entra ID ▸ Roles and administrators",
+      "Microsoft Entra ID ▸ Enterprise applications",
+      "Subscription ▸ Resource providers"
+    ],
+    "correctAnswers": ["The resource group's Access control (IAM) blade"],
+    "explanation": "Azure role assignments are managed on the resource's (or resource group's / subscription's) Access control (IAM) blade. 'Roles and administrators' is for Entra directory roles.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-19",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which tool on the Access control (IAM) blade lets you confirm the effective permissions a specific user has at a given scope?",
+    "choices": ["Check access", "Role assignments export", "Activity log", "Diagnostic settings"],
+    "correctAnswers": ["Check access"],
+    "explanation": "Check access reports the effective access a selected principal has at that scope, accounting for inherited assignments.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-20",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "A user was granted Reader at a subscription and Owner on one resource group inside it. What is their effective access on that resource group?",
+    "choices": [
+      "Owner — RBAC assignments are additive, and the most permissive applies",
+      "Reader — the higher-scope assignment always wins",
+      "No access — conflicting assignments cancel out",
+      "Contributor — Azure averages the two roles"
+    ],
+    "correctAnswers": ["Owner — RBAC assignments are additive, and the most permissive applies"],
+    "explanation": "Azure RBAC is additive: the user keeps Reader everywhere plus Owner on that resource group, so they are effectively Owner there. (Only explicit deny assignments subtract.)",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o1-1-21",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which of these role types is used to manage app registrations and other directory objects, rather than Azure resources?",
+    "choices": [
+      "A Microsoft Entra role (e.g. Application Administrator)",
+      "An Azure RBAC role (e.g. Contributor)",
+      "A Key Vault access policy",
+      "A resource-group lock"
+    ],
+    "correctAnswers": ["A Microsoft Entra role (e.g. Application Administrator)"],
+    "explanation": "Directory tasks such as managing app registrations are governed by Microsoft Entra roles. Azure RBAC roles govern Azure resources only.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-22",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Why is assigning roles to Microsoft Entra groups generally preferred over assigning them to individual users?",
+    "choices": [
+      "Access follows group membership, simplifying onboarding, offboarding, and review",
+      "Group assignments bypass the need for any role definition",
+      "Only group assignments can be time-bound in PIM",
+      "User assignments are not supported at subscription scope"
+    ],
+    "correctAnswers": ["Access follows group membership, simplifying onboarding, offboarding, and review"],
+    "explanation": "Group-based assignment centralizes access management: adding/removing a member grants/revokes access without touching role assignments. PIM supports both users and groups.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-23",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which capability lets you subtract specific permissions so that even an Owner cannot perform them at a scope?",
+    "choices": [
+      "A deny assignment",
+      "A NotActions entry in the Owner role",
+      "A Reader role assignment layered on top",
+      "A resource lock set to ReadOnly"
+    ],
+    "correctAnswers": ["A deny assignment"],
+    "explanation": "Deny assignments explicitly block actions and take precedence over allow assignments, even for Owner. NotActions only shapes a custom role's own grants; a ReadOnly lock blocks writes/deletes but is not an RBAC deny and behaves differently.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o1-1-24",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "You need to grant a principal permission to only start and restart a specific VM — nothing else. What is the correct least-privilege approach?",
+    "choices": [
+      "Create a custom Azure role with just those VM actions and assign it at the VM scope",
+      "Assign the built-in Contributor role at the VM scope",
+      "Assign Owner at the resource group and use a resource lock",
+      "Add the principal to the Global Administrator Entra role"
+    ],
+    "correctAnswers": ["Create a custom Azure role with just those VM actions and assign it at the VM scope"],
+    "explanation": "When no built-in role fits the least-privilege need, a custom role scoped narrowly (here, to the VM) is the correct approach. Contributor and Owner grant far more than required.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-25",
+    "objectiveId": "o1-1",
+    "type": "multiple",
+    "prompt": "Which two role systems can Microsoft Entra Privileged Identity Management govern with just-in-time elevation? (Choose two.)",
+    "choices": [
+      "Microsoft Entra directory roles",
+      "Azure resource roles",
+      "Network security group rules",
+      "Key Vault vault access policies"
+    ],
+    "correctAnswers": ["Microsoft Entra directory roles", "Azure resource roles"],
+    "explanation": "PIM manages Entra directory roles and Azure resource roles (plus PIM for Groups). NSG rules and Key Vault access policies are not PIM-governed.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-26",
+    "objectiveId": "o1-1",
+    "type": "multiple",
+    "prompt": "Which two are true about the four fundamental built-in Azure roles? (Choose two.)",
+    "choices": [
+      "Owner can grant access to other principals",
+      "User Access Administrator can manage role assignments but not the resources",
+      "Contributor can grant access to other principals",
+      "Reader can modify resource configuration"
+    ],
+    "correctAnswers": [
+      "Owner can grant access to other principals",
+      "User Access Administrator can manage role assignments but not the resources"
+    ],
+    "explanation": "Contributor manages resources but cannot grant access; Reader is view-only and cannot modify anything.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-27",
+    "objectiveId": "o1-1",
+    "type": "multiple",
+    "prompt": "Which two properties in a custom Azure role definition operate on the data plane? (Choose two.)",
+    "choices": ["DataActions", "NotDataActions", "Actions", "AssignableScopes"],
+    "correctAnswers": ["DataActions", "NotDataActions"],
+    "explanation": "DataActions/NotDataActions govern data-plane operations. Actions/NotActions govern the control plane, and AssignableScopes governs where the role can be assigned.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-28",
+    "objectiveId": "o1-1",
+    "type": "case-study",
+    "caseStudyId": "cs-contoso-identity",
+    "prompt": "Referring to requirement 1 (no standing Owner/Contributor rights; time-bound elevation gated by approval and MFA, max 4 hours), which configuration is correct?",
+    "choices": [
+      "PIM eligible assignments with MFA, approval, and a 4-hour maximum activation duration",
+      "A Conditional Access policy requiring MFA on the Azure management plane",
+      "A custom role whose AssignableScopes expires after 4 hours",
+      "Assign Owner and rely on an Azure Policy audit to flag misuse"
+    ],
+    "correctAnswers": ["PIM eligible assignments with MFA, approval, and a 4-hour maximum activation duration"],
+    "explanation": "Only PIM delivers just-in-time, approval-gated, time-bound elevation with a maximum activation duration. Conditional Access controls sign-in, not standing assignments; AssignableScopes has no expiry.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-29",
+    "objectiveId": "o1-1",
+    "type": "case-study",
+    "caseStudyId": "cs-contoso-identity",
+    "prompt": "Referring to requirement 2 (MFA on all Azure management sign-ins, but the break-glass account must never be locked out), which design is correct?",
+    "choices": [
+      "A Conditional Access policy targeting Windows Azure Service Management API, requiring MFA, excluding the break-glass account",
+      "Enable per-VM just-in-time access for every administrator",
+      "A policy targeting Office 365 that requires MFA for all users with no exclusions",
+      "Disable the break-glass account until an incident occurs"
+    ],
+    "correctAnswers": ["A Conditional Access policy targeting Windows Azure Service Management API, requiring MFA, excluding the break-glass account"],
+    "explanation": "Target the ARM control-plane resource, require MFA, and explicitly exclude the break-glass account so a policy fault can't lock everyone out.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-30",
+    "objectiveId": "o1-1",
+    "type": "case-study",
+    "caseStudyId": "cs-contoso-identity",
+    "prompt": "Contoso wants an auditable record of every time an administrator elevates to a privileged role, including who approved it. Which feature provides this natively?",
+    "choices": [
+      "PIM audit logs and access reviews",
+      "A Conditional Access report-only policy",
+      "A resource lock on the subscription",
+      "Storage account diagnostic logs"
+    ],
+    "correctAnswers": ["PIM audit logs and access reviews"],
+    "explanation": "PIM records every activation, approval, and assignment change in its audit logs and supports periodic access reviews — purpose-built for privileged-access accountability.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-31",
+    "objectiveId": "o1-1",
+    "type": "reorder",
+    "prompt": "Order the steps to activate a PIM-eligible Azure resource role, from the administrator's perspective.",
+    "reorderItems": [
+      "Sign in to the Entra admin center",
+      "Go to Privileged Identity Management ▸ Azure resources ▸ My roles",
+      "Select 'Activate' next to the eligible role",
+      "Complete the required MFA, justification, and/or approval prompts",
+      "Use the role during the active, time-bound window"
+    ],
+    "explanation": "PIM activation follows this order: reach My roles, trigger Activate, satisfy the configured gates (MFA/justification/approval), then use the resulting time-bound active assignment.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-32",
+    "objectiveId": "o1-1",
+    "type": "reorder",
+    "prompt": "Order the steps to configure and safely roll out a Conditional Access policy requiring MFA for the Azure management plane.",
+    "reorderItems": [
+      "Browse to Conditional Access ▸ Policies ▸ New policy",
+      "Assign the target users/groups, excluding break-glass accounts",
+      "Under Target resources, select Windows Azure Service Management API",
+      "Under Grant, select Require multifactor authentication",
+      "Enable the policy in Report-only mode and review sign-in logs",
+      "Switch the policy from Report-only to On"
+    ],
+    "explanation": "Configure the assignment and grant controls first, pilot with Report-only, then enforce — this order avoids locking anyone out.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-33",
+    "objectiveId": "o1-1",
+    "type": "active-screen",
+    "prompt": "Configure this simplified role-assignment screen so a contractor group can view resources in a resource group but cannot modify them or grant access to others.",
+    "screenTitle": "Add role assignment (simulated)",
+    "fields": [
+      { "id": "role", "label": "Role", "kind": "select", "options": ["Owner", "Contributor", "Reader", "User Access Administrator"], "correctValue": "Reader" },
+      { "id": "scope", "label": "Scope", "kind": "select", "options": ["Management group", "Subscription", "Resource group", "Resource"], "correctValue": "Resource group" },
+      { "id": "assignAccess", "label": "Can assign access to others", "kind": "toggle", "correctValue": "Off" }
+    ],
+    "explanation": "Reader satisfies view-only with no modification or access-granting rights, scoped narrowly to the resource group — least privilege for the stated need.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-34",
+    "objectiveId": "o1-1",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-1",
+    "prompt": "Proposed solution: Assign every administrator the Contributor role directly at the subscription, and require MFA at every sign-in. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "This leaves a standing, permanent Contributor assignment with no approval gate or 4-hour limit — it does not meet the just-in-time requirement.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-35",
+    "objectiveId": "o1-1",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-1",
+    "prompt": "Proposed solution: Make every administrator eligible for the required Azure roles via Privileged Identity Management, requiring MFA and approval at activation, with a 4-hour maximum activation duration. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["Yes"],
+    "explanation": "PIM eligibility with MFA, approval, and a 4-hour cap directly satisfies every part of the stated goal, including the audit trail PIM records automatically.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-36",
+    "objectiveId": "o1-1",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-1",
+    "prompt": "Proposed solution: Create a Conditional Access policy requiring MFA for the Azure management plane, and grant every administrator the Contributor role permanently. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "MFA on sign-in doesn't address the requirement for no standing privileged access, approval, or a 4-hour limit — the Contributor grant remains permanent.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-37",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which Azure CLI command assigns the Reader role to user@contoso.com on resource group RG1 only?",
+    "choices": [
+      "az role assignment create --assignee user@contoso.com --role Reader --scope /subscriptions/<subId>/resourceGroups/RG1",
+      "az role definition create --assignee user@contoso.com --role Reader --resource-group RG1",
+      "az ad user update --id user@contoso.com --role Reader --scope RG1",
+      "az role assignment add --user user@contoso.com --role Reader --rg RG1"
+    ],
+    "correctAnswers": ["az role assignment create --assignee user@contoso.com --role Reader --scope /subscriptions/<subId>/resourceGroups/RG1"],
+    "explanation": "Role assignments use `az role assignment create` with --assignee, --role and --scope. `az role definition create` creates custom role definitions, not assignments; the other two subcommands don't exist.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-38",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which PowerShell cmdlet assigns a built-in role to a user on a resource group?",
+    "choices": [
+      "New-AzRoleAssignment",
+      "New-AzRoleDefinition",
+      "Set-AzRoleAssignment",
+      "Add-AzADGroupMember"
+    ],
+    "correctAnswers": ["New-AzRoleAssignment"],
+    "explanation": "New-AzRoleAssignment creates the assignment. New-AzRoleDefinition creates a custom role definition; Set-AzRoleAssignment doesn't exist; Add-AzADGroupMember manages group membership.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-39",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "You authored customRole.json with Actions and AssignableScopes. Which command creates the custom role from it?",
+    "choices": [
+      "az role definition create --role-definition @customRole.json",
+      "az role assignment create --role-definition @customRole.json",
+      "az role definition add --file customRole.json",
+      "New-AzRoleAssignment -InputFile customRole.json"
+    ],
+    "correctAnswers": ["az role definition create --role-definition @customRole.json"],
+    "explanation": "Custom roles are created with `az role definition create` (PowerShell: New-AzRoleDefinition -InputFile). `az role assignment create` assigns existing roles; the other options don't exist.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-40",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which command lists all role assignments on resource group RG1, including those inherited from the subscription?",
+    "choices": [
+      "az role assignment list --scope /subscriptions/<subId>/resourceGroups/RG1 --include-inherited",
+      "az role definition list --resource-group RG1 --all",
+      "az role assignment show --resource-group RG1 --recursive",
+      "Get-AzRoleDefinition -ResourceGroupName RG1"
+    ],
+    "correctAnswers": ["az role assignment list --scope /subscriptions/<subId>/resourceGroups/RG1 --include-inherited"],
+    "explanation": "`az role assignment list` with --include-inherited shows direct and inherited assignments. `role definition` commands list role definitions (what roles exist), not who holds them.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-41",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "In a custom role's JSON, which snippet grants read on everything while denying nothing at the data plane?",
+    "choices": [
+      "\"Actions\": [\"*/read\"], \"DataActions\": []",
+      "\"NotActions\": [\"*/read\"], \"DataActions\": [\"*\"]",
+      "\"Actions\": [], \"NotDataActions\": [\"*/read\"]",
+      "\"AssignableScopes\": [\"*/read\"]"
+    ],
+    "correctAnswers": ["\"Actions\": [\"*/read\"], \"DataActions\": []"],
+    "explanation": "*/read under Actions grants control-plane read everywhere; an empty DataActions grants nothing at the data plane. NotActions/NotDataActions subtract, and AssignableScopes takes scopes, not operations.",
+    "difficulty": "hard"
+  }
+]

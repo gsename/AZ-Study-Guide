@@ -1,0 +1,149 @@
+[
+  {
+    "objectiveId": "o3-1",
+    "diagrams": ["bastion-jit", "disk-encryption"],
+    "summary": "**Azure Bastion** et le **just-in-time (JIT)** suppriment l'exposition permanente des ports de gestion ; **AKS**, **ACI**, **ACA** et **ACR** ont chacun leur configuration d'isolation, d'authentification et de supervision ; le **chiffrement de disque** empile trois couches optionnelles par-dessus le chiffrement plateforme ; et **Azure API Management** a son propre plan de sécurité client/backend/réseau.",
+    "keyPoints": [
+      "**Azure Bastion** : RDP/SSH aux VMs via le portail Azure sur **TLS** — la VM n'a **pas besoin d'IP publique** et on n'ouvre jamais 3389/22 sur internet.",
+      "**Just-in-time (JIT) VM access** (fonctionnalité de **Microsoft Defender for Cloud**) : garde les ports de gestion **fermés** par défaut, ne les ouvre **qu'à la demande**, pour une IP source et une durée limitées, puis les referme. Configurer : `Defender for Cloud ▸ Workload protections ▸ Just-in-time VM access`.",
+      "**Isolation réseau AKS** : **clusters privés** (l'API server n'a pas d'endpoint public) et **network policies** Kubernetes (Azure Network Policy ou Calico) pour contrôler le trafic pod-à-pod.",
+      "**Authentification AKS** : l'**intégration Microsoft Entra avec Azure RBAC for Kubernetes** est la méthode recommandée pour authentifier/autoriser les utilisateurs du cluster, en remplacement des credentials kubeconfig statiques ou comptes admin locaux.",
+      "**Sécuriser et superviser AKS** : **Microsoft Defender for Containers** scanne les images et le comportement à l'exécution ; combiner avec les mises à jour régulières d'AKS/images de nœuds et **Azure Policy for Kubernetes** (contrôle d'admission).",
+      "**Supervision ACI/ACA** : pas de cluster à durcir, mais superviser avec **Defender for Cloud** et **Azure Monitor**.",
+      "**Azure Container Registry (ACR)** : contrôler l'accès avec **Azure RBAC** et des **tokens** à portée de dépôt (pas le compte admin partagé, à **désactiver**), ajouter un **private endpoint**, et activer le **scan de vulnérabilités** des images.",
+      "Le chiffrement de disque s'empile sur le chiffrement plateforme au repos (toujours actif) : **Azure Disk Encryption (ADE)** chiffre **dans le guest** (BitLocker/DM-Crypt, clés dans Key Vault) ; **encryption at host** chiffre au **niveau hôte** (couvre disques temp/cache, **sans agent**) ; **confidential disk encryption** lie la clé du disque OS au **TEE matériel** de la VM (VM confidentielles).",
+      "La sécurité d'**Azure API Management** couvre trois plans : client → APIM (**subscription keys** requises sur chaque produit, OAuth2/OIDC, certificats client/**mTLS**), APIM → backend (identité managée ou certificat client), et **isolation réseau** (mode **VNet interne** sans endpoint public, typiquement derrière App Gateway/Front Door + WAF, ou private endpoint)."
+    ],
+    "commonPitfalls": [
+      "**JIT et Bastion se combinent**, ils ne se choisissent pas l'un à la place de l'autre : Bastion supprime le besoin d'IP publique/RDP-SSH exposés ; JIT garde les ports de gestion fermés jusqu'à une demande explicite.",
+      "**Désactiver le compte admin d'ACR** est une bonne pratique que l'examen attend qu'on signale comme risque s'il est laissé actif — c'est un credential partagé et non attribuable.",
+      "Choisir la couche de chiffrement de disque **selon le besoin**, pas « plus = mieux » : **ADE** pour du BitLocker/DM-Crypt in-guest, **encryption at host** quand disques temp/cache doivent être couverts sans agent, **confidential disk** quand la clé du disque OS doit être liée matériellement au TEE d'une VM confidentielle.",
+      "Le mode **« interne »** d'APIM signifie **AUCUN endpoint public** — si un scénario exige à la fois accès public ET isolation réseau, la réponse est APIM en mode interne **derrière** App Gateway/Front Door, pas le mode externe seul."
+    ],
+    "commands": [
+      {
+        "task": "Activer Azure Disk Encryption (ADE) sur une VM, clés dans Key Vault",
+        "cli": "az vm encryption enable --name VM1 --resource-group RG1 --disk-encryption-keyvault KV1",
+        "powershell": "Set-AzVMDiskEncryptionExtension -ResourceGroupName RG1 -VMName VM1 -DiskEncryptionKeyVaultUrl $kvUrl -DiskEncryptionKeyVaultId $kvId"
+      },
+      {
+        "task": "Créer une VM avec encryption at host (couvre disques temp/cache, sans agent)",
+        "cli": "az vm create --name VM1 --resource-group RG1 --image Ubuntu2204 --encryption-at-host true",
+        "powershell": "New-AzVm ... -EncryptionAtHost:$true"
+      },
+      {
+        "task": "Créer un cluster AKS privé avec Entra ID + Azure RBAC for Kubernetes",
+        "cli": "az aks create --name AKS1 --resource-group RG1 --enable-aad --enable-azure-rbac --enable-private-cluster",
+        "powershell": "New-AzAksCluster -Name AKS1 -ResourceGroupName RG1 -EnableAzureRbac -EnableAadProfile ..."
+      },
+      {
+        "task": "Désactiver le compte admin partagé d'ACR",
+        "cli": "az acr update --name acr1 --admin-enabled false",
+        "powershell": "Update-AzContainerRegistry -Name acr1 -ResourceGroupName RG1 -DisableAdminUser"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/azure/bastion/bastion-overview",
+      "https://learn.microsoft.com/en-us/azure/aks/operator-best-practices-identity",
+      "https://learn.microsoft.com/en-us/azure/virtual-machines/disk-encryption-overview",
+      "https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-mutual-certificates-for-clients"
+    ]
+  },
+  {
+    "objectiveId": "o3-2",
+    "diagrams": ["storage-auth"],
+    "summary": "L'accès à un compte de stockage peut être autorisé par **Entra RBAC**, **clés partagées** ou **jetons SAS** — par ordre de sécurité décroissant — tandis qu'**Azure Files** ajoute une couche d'authentification **Kerberos** basée sur l'identité que Blob n'a pas. Les fonctions de protection des données (**soft delete**, **versioning**, **immutabilité**) et les options de chiffrement (**BYOK**, **double chiffrement**) complètent le tableau.",
+    "keyPoints": [
+      "Trois façons d'autoriser l'accès : **Microsoft Entra ID + rôles RBAC data** (basé identité, aucune clé — le **plus sûr**) ; **shared key** (les deux clés de compte — puissantes, à traiter comme root, à faire tourner) ; **shared access signature (SAS)** — jeton restreint, limité dans le temps, révocable. Classement : **Entra ID + RBAC > user-delegation SAS** (signé avec des creds Entra) **> account-key SAS > shared account key**.",
+      "**Gérer les clés d'accès** : les faire tourner régulièrement, les stocker dans **Key Vault** si utilisées, et préférer **désactiver l'accès par clé partagée** pour forcer l'auth Entra là où c'est possible.",
+      "**Accès Blob Storage** : rôles RBAC data Entra, jetons SAS, ou (moins recommandé) clés de compte — pas de couche ACL au niveau annuaire au-delà du RBAC container/blob.",
+      "**Accès Azure Files** : ajoute une **authentification par identité via SMB (Kerberos)**, avec **une seule source d'identité par compte de stockage** — **AD DS** on-prem, **Microsoft Entra Domain Services**, ou **Microsoft Entra Kerberos** (cloud-only, sans contrôleur de domaine). Une fois l'accès au partage accordé, les **ACL NTFS** sur fichiers/dossiers donnent le contrôle fin, comme un partage SMB Windows.",
+      "**Protections contre les menaces sur les données** : **soft delete** (récupérer blobs/containers/partages supprimés dans une fenêtre de rétention), **versioning** (conserver les versions antérieures de blobs), backups, et **immutable storage** (politiques WORM — time-based ou legal-hold — empêchant modification/suppression pendant la rétention).",
+      "Configurer l'accès sécurisé : `Storage account ▸ Configuration` ▸ **Secure transfer required = Enabled** + version TLS minimale ; `Networking` ▸ restreindre le **Public network access** ou ajouter des private endpoints ; `Data protection` ▸ activer soft delete, versioning, immutabilité.",
+      "**Bring Your Own Key (BYOK)** : fournir une **clé gérée par le client** stockée dans Key Vault pour le chiffrement du stockage, au lieu de la clé gérée par Microsoft.",
+      "**Chiffrement d'infrastructure (double)** : ajoute une **seconde couche de chiffrement indépendante** au niveau plateforme, par-dessus le chiffrement au niveau service — pour les besoins de confidentialité les plus élevés."
+    ],
+    "commonPitfalls": [
+      "La limite **« une seule source d'identité par compte de stockage »** d'Azure Files est un piège fréquent — impossible de mixer AD DS et Entra Kerberos sur des partages différents du même compte.",
+      "Les fonctions de récupération ne sont pas interchangeables : le **soft delete** annule une suppression accidentelle ; le **versioning** préserve l'historique des écrasements ; l'**immutable storage (WORM)** **empêche activement** modification/suppression, même par un admin autorisé, pendant la rétention — à choisir spécifiquement pour la conformité/legal-hold.",
+      "**BYOK/clés gérées par le client** et **chiffrement d'infrastructure (double)** sont deux protections différentes et empilables — BYOK concerne **qui contrôle la clé**, le double chiffrement **combien de couches** indépendantes s'appliquent."
+    ],
+    "commands": [
+      {
+        "task": "Forcer HTTPS et une version TLS minimale sur un compte de stockage",
+        "cli": "az storage account update --name stg1 --resource-group RG1 --https-only true --min-tls-version TLS1_2",
+        "powershell": "Set-AzStorageAccount -Name stg1 -ResourceGroupName RG1 -EnableHttpsTrafficOnly $true -MinimumTlsVersion TLS1_2"
+      },
+      {
+        "task": "Désactiver l'accès par clé partagée (forcer l'auth Entra)",
+        "cli": "az storage account update --name stg1 --resource-group RG1 --allow-shared-key-access false",
+        "powershell": "Set-AzStorageAccount -Name stg1 -ResourceGroupName RG1 -AllowSharedKeyAccess $false"
+      },
+      {
+        "task": "Restreindre le firewall du compte : refuser par défaut, autoriser un subnet",
+        "cli": "az storage account update --name stg1 --resource-group RG1 --default-action Deny\naz storage account network-rule add --account-name stg1 --resource-group RG1 --vnet-name VNet1 --subnet Subnet1",
+        "powershell": "Update-AzStorageAccountNetworkRuleSet -Name stg1 -ResourceGroupName RG1 -DefaultAction Deny\nAdd-AzStorageAccountNetworkRule -Name stg1 -ResourceGroupName RG1 -VirtualNetworkResourceId $subnetId"
+      },
+      {
+        "task": "Générer un user-delegation SAS (signé avec des credentials Entra, pas la clé de compte)",
+        "cli": "az storage blob generate-sas --account-name stg1 --container-name docs --name file.pdf --permissions r --expiry 2026-08-01 --auth-mode login --as-user",
+        "powershell": "New-AzStorageBlobSASToken -Container docs -Blob file.pdf -Permission r -ExpiryTime (Get-Date).AddHours(2) -Context $ctx  # $ctx créé avec -UseConnectedAccount"
+      },
+      {
+        "task": "Activer le soft delete des blobs (rétention 14 jours)",
+        "cli": "az storage account blob-service-properties update --account-name stg1 --resource-group RG1 --enable-delete-retention true --delete-retention-days 14",
+        "powershell": "Enable-AzStorageBlobDeleteRetentionPolicy -ResourceGroupName RG1 -StorageAccountName stg1 -RetentionDays 14"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/azure/storage/common/authorize-data-access",
+      "https://learn.microsoft.com/en-us/azure/storage/files/storage-files-active-directory-overview",
+      "https://learn.microsoft.com/en-us/azure/storage/blobs/immutable-storage-overview"
+    ]
+  },
+  {
+    "objectiveId": "o3-3",
+    "diagrams": ["sql-protection"],
+    "summary": "Azure SQL empile l'**identité** (authentification Entra), la **visibilité** (auditing) et **trois mécanismes distincts** de protection des données souvent confondus : **TDE** (chiffre tout au repos, de façon transparente), **Always Encrypted** (masque des colonnes précises même aux admins/au moteur) et **dynamic data masking** (masque seulement les valeurs dans les résultats).",
+    "keyPoints": [
+      "**Microsoft Entra database authentication** : utiliser des identités Entra au lieu de logins SQL, avec un **admin Entra** défini pour le serveur et, en option, l'authentification **Entra-only** pour désactiver totalement les logins SQL.",
+      "Configurer : `SQL server ▸ Microsoft Entra ID (Microsoft Entra admin) ▸ Set admin` ▸ choisir un utilisateur/groupe Entra ▸ Save ; option **« Support only Microsoft Entra authentication »**.",
+      "**Database auditing** : enregistre les événements de base (connexions, requêtes, changements de schéma) vers un **Log Analytics workspace**, un **storage account** ou **Event Hubs**, pour investigation et conformité.",
+      "**Dynamic data masking** : masque les colonnes sensibles pour les utilisateurs non privilégiés **au moment de la requête** — les données stockées sont **inchangées**, seul le résultat retourné est obscurci. **Ce n'est pas du chiffrement**, ni une frontière de sécurité solide face à un administrateur.",
+      "**Transparent Data Encryption (TDE)** : chiffre les **fichiers et backups au repos**, de façon transparente pour l'application ; **activé par défaut**.",
+      "**Always Encrypted** : chiffre des **colonnes sensibles de bout en bout** pour que même le **moteur** et les **DBA** ne voient jamais le clair — la clé reste **côté client**. Recommandé pour les champs très sensibles (n° d'identité national, cartes de paiement) où l'accès interne/admin est précisément le risque à couvrir."
+    ],
+    "commonPitfalls": [
+      "**TDE** (au repos, transparent, base entière) vs **Always Encrypted** (colonnes précises, bout en bout, caché des admins) vs **dynamic data masking** (résultats uniquement, aucune protection cryptographique réelle) — LA distinction la plus testée de cet objectif ; savoir exactement quelle menace chacun couvre.",
+      "Le **dynamic data masking** n'arrête **PAS** un compte privilégié/admin et ne protège ni en transit ni au repos par lui-même — c'est un contrôle d'affichage pour les utilisateurs non privilégiés.",
+      "Activer **« Support only Microsoft Entra authentication »** est un durcissement **à sens unique** qui désactive totalement les logins SQL — vérifier qu'aucune application n'en dépend avant de l'activer."
+    ],
+    "commands": [
+      {
+        "task": "Définir l'admin Microsoft Entra du serveur SQL",
+        "cli": "az sql server ad-admin create --server sql1 --resource-group RG1 --display-name \"SecAdmins\" --object-id <groupObjectId>",
+        "powershell": "Set-AzSqlServerActiveDirectoryAdministrator -ServerName sql1 -ResourceGroupName RG1 -DisplayName \"SecAdmins\""
+      },
+      {
+        "task": "Imposer l'authentification Entra uniquement (désactive les logins SQL)",
+        "cli": "az sql server ad-only-auth enable --name sql1 --resource-group RG1",
+        "powershell": "Enable-AzSqlServerActiveDirectoryOnlyAuthentication -ServerName sql1 -ResourceGroupName RG1"
+      },
+      {
+        "task": "Activer l'auditing de la base vers un workspace Log Analytics",
+        "cli": "az sql db audit-policy update --server sql1 --name db1 --resource-group RG1 --state Enabled --log-analytics-target-state Enabled --log-analytics-workspace-resource-id <workspaceId>",
+        "powershell": "Set-AzSqlDatabaseAudit -ServerName sql1 -DatabaseName db1 -ResourceGroupName RG1 -LogAnalyticsTargetState Enabled -WorkspaceResourceId <workspaceId>"
+      },
+      {
+        "task": "Vérifier / activer TDE sur une base",
+        "cli": "az sql db tde show --server sql1 --database db1 --resource-group RG1\naz sql db tde set --server sql1 --database db1 --resource-group RG1 --status Enabled",
+        "powershell": "Get-AzSqlDatabaseTransparentDataEncryption -ServerName sql1 -DatabaseName db1 -ResourceGroupName RG1\nSet-AzSqlDatabaseTransparentDataEncryption -ServerName sql1 -DatabaseName db1 -ResourceGroupName RG1 -State Enabled"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/azure/azure-sql/database/authentication-aad-overview",
+      "https://learn.microsoft.com/en-us/azure/azure-sql/database/always-encrypted-azure-key-vault-configure",
+      "https://learn.microsoft.com/en-us/azure/azure-sql/database/transparent-data-encryption-tde-overview"
+    ]
+  }
+]

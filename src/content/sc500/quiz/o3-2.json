@@ -1,0 +1,606 @@
+[
+  {
+    "id": "q-o3-2-01",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "What does 'encryption at host' encrypt on an Azure VM?",
+    "choices": [
+      "Temporary and cache disks at the host level, without any in-guest agent",
+      "Only network traffic leaving the VM's NIC",
+      "Only the contents of Key Vault secrets referenced by the VM",
+      "Only backup snapshots stored in a Recovery Services vault"
+    ],
+    "correctAnswers": ["Temporary and cache disks at the host level, without any in-guest agent"],
+    "explanation": "Encryption at host covers temp/cache disks at the hypervisor/host level with no in-guest agent required. Network traffic, Key Vault content, and backup snapshots are protected by different mechanisms entirely.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-2-02",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "What does Azure Disk Encryption (ADE) use to encrypt a VM's OS and data disks?",
+    "choices": [
+      "In-guest BitLocker (Windows) or dm-crypt (Linux), with keys stored in Key Vault",
+      "A hardware security module embedded in the physical host",
+      "Client-side encryption performed entirely by the storage client SDK",
+      "Transparent Data Encryption applied at the SQL engine level"
+    ],
+    "correctAnswers": ["In-guest BitLocker (Windows) or dm-crypt (Linux), with keys stored in Key Vault"],
+    "explanation": "ADE relies on the guest OS's native volume encryption (BitLocker/dm-crypt) with the keys held in Key Vault. It is not a host-level HSM feature, a storage SDK feature, or a database-engine feature.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-2-03",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "How does server-side encryption with a customer-managed key (CMK) differ from Azure Disk Encryption (ADE)?",
+    "choices": [
+      "CMK is platform-managed encryption using a key you supply via a disk encryption set, with no in-guest component",
+      "CMK requires BitLocker to be manually configured inside the guest OS",
+      "CMK only works for temporary and cache disks, never OS disks",
+      "CMK and ADE are two names for the exact same feature"
+    ],
+    "correctAnswers": ["CMK is platform-managed encryption using a key you supply via a disk encryption set, with no in-guest component"],
+    "explanation": "Server-side CMK encryption is applied by the platform using a disk encryption set — there's no in-guest agent, unlike ADE which relies on BitLocker/dm-crypt inside the guest. It applies to OS and data disks, not only temp/cache disks.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-04",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "What does Azure Bastion provide?",
+    "choices": [
+      "Browser/portal-based RDP/SSH to VMs over TLS, with no public IP required on the VM",
+      "An encrypted site-to-site VPN tunnel to on-premises",
+      "A managed Kubernetes control plane",
+      "A private DNS resolver for VM host names"
+    ],
+    "correctAnswers": ["Browser/portal-based RDP/SSH to VMs over TLS, with no public IP required on the VM"],
+    "explanation": "Bastion offers portal-based RDP/SSH over TLS, removing the need for a public IP or exposed 3389/22 on the VM. VPN tunnels, Kubernetes control planes, and DNS resolution are unrelated Azure services.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-2-05",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "How does Just-In-Time (JIT) VM access work?",
+    "choices": [
+      "Management ports stay closed by default and open only on an approved, time- and IP-scoped request",
+      "It permanently opens all management ports for administrator convenience",
+      "It removes the need for any NSG on the VM",
+      "It encrypts the VM's OS disk using a customer-managed key"
+    ],
+    "correctAnswers": ["Management ports stay closed by default and open only on an approved, time- and IP-scoped request"],
+    "explanation": "JIT keeps management ports closed until an explicit, time-bound, source-restricted request is approved, then auto-closes them again. It still relies on NSG/Firewall rules and has nothing to do with disk encryption.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-2-06",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "In which product is Just-In-Time VM access configured?",
+    "choices": [
+      "Microsoft Defender for Cloud",
+      "Azure Bastion",
+      "Azure Firewall Manager",
+      "Microsoft Entra PIM"
+    ],
+    "correctAnswers": ["Microsoft Defender for Cloud"],
+    "explanation": "JIT VM access is a Defender for Cloud workload-protection feature (Workload protections ▸ Just-in-time VM access). Bastion, Firewall Manager, and PIM are different products addressing different scopes.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-07",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "Bastion and JIT VM access are best described as which of the following?",
+    "choices": [
+      "Complementary controls to combine, eliminating standing exposure of management ports",
+      "Mutually exclusive alternatives where you must pick exactly one",
+      "Two different names for the same underlying feature",
+      "Controls that conflict with each other and cannot be enabled together"
+    ],
+    "correctAnswers": ["Complementary controls to combine, eliminating standing exposure of management ports"],
+    "explanation": "Bastion removes the need for a public IP/exposed RDP-SSH; JIT keeps any management ports closed until requested. Combined, there's no standing open management-port exposure at all.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-08",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "What does the 'Trusted launch' security type add to a VM?",
+    "choices": [
+      "Secure Boot, a virtual TPM, and boot integrity monitoring",
+      "Hardware-based memory encryption for the entire VM",
+      "Automatic OS disk snapshotting every hour",
+      "A dedicated public IP address reserved for the VM"
+    ],
+    "correctAnswers": ["Secure Boot, a virtual TPM, and boot integrity monitoring"],
+    "explanation": "Trusted launch adds Secure Boot + vTPM + boot integrity monitoring, defending against rootkits/boot-kits. Hardware-based memory encryption is a confidential VM feature, and snapshotting/public IP assignment are unrelated.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-09",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "What additional protection do confidential VMs add beyond Trusted launch?",
+    "choices": [
+      "Hardware-based memory encryption using a trusted execution environment",
+      "A vTPM, which standard Trusted launch VMs lack entirely",
+      "Automatic Just-In-Time access configuration",
+      "Free inclusion of Defender for Servers Plan 2"
+    ],
+    "correctAnswers": ["Hardware-based memory encryption using a trusted execution environment"],
+    "explanation": "Confidential VMs add hardware-based memory encryption (TEE) on top of Trusted launch's Secure Boot and vTPM, which Trusted launch VMs already include. JIT configuration and Defender licensing are unrelated to this VM security type.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-2-10",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "What does Azure Machine Configuration (formerly Guest Configuration) do?",
+    "choices": [
+      "Audits or enforces in-guest settings, such as password policy, via Azure Policy",
+      "Encrypts VM disks using a customer-managed key",
+      "Opens management ports on a time-bound basis",
+      "Scans VM disks for vulnerabilities without an agent"
+    ],
+    "correctAnswers": ["Audits or enforces in-guest settings, such as password policy, via Azure Policy"],
+    "explanation": "Machine Configuration audits/enforces settings inside the guest OS (like password policy or installed apps) through Azure Policy. Disk encryption, JIT, and agentless scanning are separate, unrelated capabilities.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-11",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "What does Defender for Servers Plan 1 include?",
+    "choices": [
+      "Microsoft Defender for Endpoint (EDR) integration only",
+      "EDR plus vulnerability scanning, agentless scanning, and file integrity monitoring",
+      "Only agentless disk scanning, with no EDR sensor",
+      "Only Just-in-time VM access, with no threat detection"
+    ],
+    "correctAnswers": ["Microsoft Defender for Endpoint (EDR) integration only"],
+    "explanation": "Plan 1 provides MDE/EDR integration only. The fuller feature set (vulnerability scanning/MDVM, agentless scanning, file integrity monitoring, JIT) is exclusive to Plan 2.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-12",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "What does Defender for Servers Plan 2 add on top of Plan 1?",
+    "choices": [
+      "Vulnerability scanning (MDVM), agentless malware/secret scanning, file integrity monitoring, JIT access, and adaptive controls",
+      "Only a lower-cost EDR sensor with reduced telemetry",
+      "Automatic Azure Bastion deployment for every managed VM",
+      "Native support for Azure SQL Transparent Data Encryption"
+    ],
+    "correctAnswers": ["Vulnerability scanning (MDVM), agentless malware/secret scanning, file integrity monitoring, JIT access, and adaptive controls"],
+    "explanation": "Plan 2 is the full set: EDR plus MDVM vulnerability scanning, agentless scanning, file integrity monitoring, JIT, and adaptive application controls, along with 500 GB/day of free ingestion. It doesn't deploy Bastion or touch SQL TDE.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-13",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "How much free daily data ingestion does Defender for Servers Plan 2 include?",
+    "choices": [
+      "500 GB/day",
+      "10 GB/day",
+      "Unlimited, with no cap at all",
+      "None — all ingestion is billed separately"
+    ],
+    "correctAnswers": ["500 GB/day"],
+    "explanation": "Plan 2 includes 500 GB/day of free data ingestion into the connected Log Analytics workspace. The other figures don't reflect the documented allowance.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-2-14",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "What is Azure Arc used for in a server security context?",
+    "choices": [
+      "Projecting on-premises and other-cloud servers into Azure as Arc-enabled resources for Policy, RBAC, and Defender for Cloud",
+      "Providing a dedicated ExpressRoute circuit for hybrid connectivity",
+      "Replacing Azure Bastion for RDP/SSH access to on-premises servers",
+      "Encrypting on-premises server disks with a customer-managed key"
+    ],
+    "correctAnswers": ["Projecting on-premises and other-cloud servers into Azure as Arc-enabled resources for Policy, RBAC, and Defender for Cloud"],
+    "explanation": "Arc bridges hybrid/multicloud servers into Azure's governance and Defender for Cloud protection as if they were native Azure resources. It isn't a networking circuit, a Bastion replacement, or a disk-encryption mechanism.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-2-15",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "A company wants Defender for Cloud protection and Azure Policy enforcement on its on-premises Hyper-V servers. What must be done first?",
+    "choices": [
+      "Onboard the servers to Azure Arc",
+      "Move the servers physically into an Azure region",
+      "Enable Azure Bastion on the on-premises network",
+      "Purchase Defender for Servers Plan 1 only, with no other setup"
+    ],
+    "correctAnswers": ["Onboard the servers to Azure Arc"],
+    "explanation": "Non-Azure servers must be Arc-onboarded before Azure Policy or Defender for Cloud can manage or protect them. Physical migration and Bastion are unrelated to enabling this governance, and simply purchasing a Defender plan doesn't onboard the machines.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-16",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "What does agentless scanning in Defender for Servers Plan 2 do?",
+    "choices": [
+      "Takes a safe snapshot of the VM disk and analyzes it out-of-band for vulnerabilities, malware, and secrets",
+      "Installs the MDE sensor silently in the background without administrator awareness",
+      "Continuously streams live memory contents to Defender for Cloud",
+      "Replaces the need for any vulnerability assessment entirely"
+    ],
+    "correctAnswers": ["Takes a safe snapshot of the VM disk and analyzes it out-of-band for vulnerabilities, malware, and secrets"],
+    "explanation": "Agentless scanning snapshots the disk and analyzes it out-of-band, without touching the running VM or installing anything. It does not silently install MDE, stream live memory, or fully replace agent-based coverage.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-17",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "What is a key advantage of agentless scanning compared to agent-based scanning?",
+    "choices": [
+      "It finds vulnerabilities, malware, and secrets without installing any agent or affecting VM performance",
+      "It provides real-time endpoint detection and response (EDR) telemetry",
+      "It automatically remediates every finding without administrator review",
+      "It is the only method that supports Windows Server workloads"
+    ],
+    "correctAnswers": ["It finds vulnerabilities, malware, and secrets without installing any agent or affecting VM performance"],
+    "explanation": "Agentless scanning's advantage is zero-footprint analysis with no performance impact. It does not provide real-time EDR (that's MDE's role), doesn't auto-remediate, and works across both Windows and Linux, not exclusively Windows.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-18",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "Does agentless scanning fully replace the need for agent-based MDE deployment?",
+    "choices": [
+      "No — it complements agent-based MDE rather than fully replacing it",
+      "Yes — agentless scanning is a complete substitute for real-time EDR",
+      "Yes, but only for Linux servers, never for Windows",
+      "No — agentless scanning is only available with Defender for Servers Plan 1"
+    ],
+    "correctAnswers": ["No — it complements agent-based MDE rather than fully replacing it"],
+    "explanation": "Agentless scanning provides point-in-time analysis and complements, but does not replace, real-time EDR from agent-based MDE. It's a Plan 2 feature, not Plan 1, and applies across both OS families.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-19",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "Which encryption option should be chosen when the requirement is specifically in-guest BitLocker or dm-crypt volume encryption?",
+    "choices": [
+      "Azure Disk Encryption (ADE)",
+      "Encryption at host",
+      "Server-side encryption with a platform-managed key",
+      "Confidential VM memory encryption"
+    ],
+    "correctAnswers": ["Azure Disk Encryption (ADE)"],
+    "explanation": "ADE is specifically the option that applies in-guest BitLocker/dm-crypt. Encryption at host, platform-managed server-side encryption, and confidential VM memory encryption operate at different layers and don't use in-guest volume encryption.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-20",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "Which encryption option is the right fit when temp and cache disks must be covered without deploying any in-guest agent?",
+    "choices": [
+      "Encryption at host",
+      "Azure Disk Encryption (ADE)",
+      "SQL Transparent Data Encryption",
+      "Dynamic data masking"
+    ],
+    "correctAnswers": ["Encryption at host"],
+    "explanation": "Encryption at host is the agentless, host-level option that specifically covers temp/cache disks. ADE requires an in-guest agent, and TDE/dynamic data masking are database features unrelated to VM disks.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-21",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "An administrator needs to RDP into a management VM using only the Azure portal, with the VM having no public IP at all. Which control provides this?",
+    "choices": [
+      "Azure Bastion",
+      "Just-in-time VM access alone",
+      "A network security group with an allow rule for RDP",
+      "Azure Disk Encryption"
+    ],
+    "correctAnswers": ["Azure Bastion"],
+    "explanation": "Bastion is specifically the portal-based RDP/SSH path that requires no public IP on the target VM. JIT alone still assumes some network path to the VM's port, an NSG allow rule keeps the port reachable rather than removing exposure, and disk encryption is unrelated to connectivity.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-22",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "What happens to a VM's management ports by default when Just-in-time access is enabled, before any request is made?",
+    "choices": [
+      "They remain closed",
+      "They remain open to any source IP",
+      "They are open only to Azure Bastion's subnet",
+      "They are permanently disabled at the OS level"
+    ],
+    "correctAnswers": ["They remain closed"],
+    "explanation": "JIT's default state is closed management ports — access opens only after an approved, scoped request. They are not open by default to any source, and JIT does not disable ports at the OS level (it manages NSG/Firewall rules).",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-2-23",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "Which threat does Trusted launch specifically defend against?",
+    "choices": [
+      "Rootkits and boot-kits that tamper with the boot process",
+      "Distributed denial-of-service floods against the VM's public IP",
+      "SQL injection against an application running on the VM",
+      "Oversharing of files via SharePoint permissions"
+    ],
+    "correctAnswers": ["Rootkits and boot-kits that tamper with the boot process"],
+    "explanation": "Secure Boot + vTPM + integrity monitoring specifically target boot-process tampering like rootkits/boot-kits. DDoS floods, SQL injection, and SharePoint oversharing are handled by entirely different controls.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-24",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "A regulated workload requires the VM's memory contents to be protected even from the cloud operator. Which VM feature is designed for this?",
+    "choices": [
+      "Confidential VM (hardware-based memory encryption)",
+      "Trusted launch alone",
+      "Encryption at host",
+      "Azure Disk Encryption"
+    ],
+    "correctAnswers": ["Confidential VM (hardware-based memory encryption)"],
+    "explanation": "Confidential VMs use a hardware trusted execution environment to protect memory even from the underlying platform operator. Trusted launch alone only covers boot integrity, and encryption at host/ADE protect disks, not in-use memory.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-2-25",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "Which Defender for Servers plan is required to get vulnerability scanning (MDVM)?",
+    "choices": [
+      "Plan 2",
+      "Plan 1",
+      "Either plan, since both include MDVM",
+      "Neither — MDVM requires a separate standalone product"
+    ],
+    "correctAnswers": ["Plan 2"],
+    "explanation": "Vulnerability scanning via Microsoft Defender Vulnerability Management is exclusive to Plan 2. Plan 1 does not include it, and MDVM is delivered through the Defender for Servers plan, not a separate unrelated product.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-26",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "Which of these correctly matches an encryption layer to its primary use case: 'need a customer-managed key at the platform level, no in-guest component'?",
+    "choices": [
+      "Server-side encryption with CMK via a disk encryption set",
+      "Azure Disk Encryption (ADE)",
+      "Encryption at host only",
+      "SQL Always Encrypted"
+    ],
+    "correctAnswers": ["Server-side encryption with CMK via a disk encryption set"],
+    "explanation": "Server-side CMK encryption via a disk encryption set is the platform-level option with a customer-supplied key and no in-guest agent. ADE has an in-guest component, encryption at host covers only temp/cache disks, and Always Encrypted is a SQL column-level feature.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-27",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "Which statement about Just-in-time VM access requests is accurate?",
+    "choices": [
+      "A request is scoped to a specific source IP and time window before the port opens",
+      "Once approved, the port remains open permanently until manually closed",
+      "Requests can only be approved by a Global Administrator",
+      "JIT requests bypass NSGs entirely and use a separate firewall appliance"
+    ],
+    "correctAnswers": ["A request is scoped to a specific source IP and time window before the port opens"],
+    "explanation": "JIT requests are explicitly scoped to a time window and source, and the port auto-closes afterward — it doesn't stay open indefinitely. Approval doesn't require Global Administrator specifically, and JIT works by managing NSG/Firewall rules rather than bypassing them.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-28",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "Which statement correctly distinguishes Defender for Servers Plan 1 from Plan 2 regarding file integrity monitoring (FIM)?",
+    "choices": [
+      "FIM is included in Plan 2 but not in Plan 1",
+      "FIM is included in both plans equally",
+      "FIM is included in Plan 1 but not in Plan 2",
+      "FIM requires a separate, unrelated Azure Monitor add-on regardless of plan"
+    ],
+    "correctAnswers": ["FIM is included in Plan 2 but not in Plan 1"],
+    "explanation": "File integrity monitoring is one of the Plan 2-only capabilities alongside vulnerability scanning, agentless scanning, and JIT. Plan 1 is EDR only, so this is not shared between the plans nor delivered by an unrelated add-on.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-29",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "A subsidiary has a small on-premises server fleet and no Azure footprint yet. What is the correct first step to bring these servers under Defender for Cloud and Azure Policy governance?",
+    "choices": [
+      "Onboard the servers with the Azure Arc connected machine agent",
+      "Migrate the physical servers into Azure as IaaS VMs immediately",
+      "Enable Azure Bastion on the on-premises network",
+      "Wait until Defender for Servers Plan 2 is purchased before doing anything else"
+    ],
+    "correctAnswers": ["Onboard the servers with the Azure Arc connected machine agent"],
+    "explanation": "Arc onboarding is the prerequisite bridge that lets non-Azure servers receive Azure Policy, RBAC, and Defender for Cloud coverage without migration. Migrating the physical hardware isn't necessary, and Bastion or plan purchase don't achieve governance onboarding by themselves.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-30",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "Which combination correctly eliminates standing exposure of a management port on an Azure VM while still allowing occasional administrator RDP access?",
+    "choices": [
+      "Azure Bastion for the connection path, combined with Just-in-time access to keep the port closed until requested",
+      "A public IP on the VM with an NSG rule permanently allowing RDP from any source",
+      "Encryption at host alone, with the RDP port left open",
+      "Trusted launch alone, with the RDP port left open to the internet"
+    ],
+    "correctAnswers": ["Azure Bastion for the connection path, combined with Just-in-time access to keep the port closed until requested"],
+    "explanation": "Bastion plus JIT is the combination that removes both the need for a public IP/exposed port and any standing-open window. A public IP with an always-allow rule is the exact exposure being eliminated, and encryption/Trusted launch don't affect network exposure at all.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-31",
+    "objectiveId": "o3-2",
+    "type": "multiple",
+    "prompt": "Which two statements about Azure disk encryption options are correct? (Choose two.)",
+    "choices": [
+      "Platform-managed encryption at rest is always enabled on managed disks by default",
+      "Encryption at host covers temporary disks and caches",
+      "Azure Disk Encryption requires no in-guest component",
+      "Confidential disk encryption is identical to ADE"
+    ],
+    "correctAnswers": ["Platform-managed encryption at rest is always enabled on managed disks by default", "Encryption at host covers temporary disks and caches"],
+    "explanation": "Managed disks always have platform encryption at rest by default, and encryption at host specifically extends coverage to temp/cache disks. ADE actually relies on an in-guest agent (BitLocker/dm-crypt), and confidential disk encryption is a distinct, hardware-bound mechanism from ADE.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-32",
+    "objectiveId": "o3-2",
+    "type": "multiple",
+    "prompt": "Which two are true about Defender for Servers Plan 2? (Choose two.)",
+    "choices": [
+      "It includes agentless vulnerability, malware, and secret scanning",
+      "It includes 500 GB/day of free data ingestion",
+      "It is limited to Windows Server workloads only",
+      "It excludes Microsoft Defender for Endpoint entirely"
+    ],
+    "correctAnswers": ["It includes agentless vulnerability, malware, and secret scanning", "It includes 500 GB/day of free data ingestion"],
+    "explanation": "Plan 2 provides agentless scanning and 500 GB/day of free ingestion, on top of everything in Plan 1. It supports both Windows and Linux, and it still includes MDE/EDR — Plan 2 is a superset of Plan 1, not a replacement that drops EDR.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-33",
+    "objectiveId": "o3-2",
+    "type": "multiple",
+    "prompt": "Which two statements about Azure Bastion and Just-in-time access are correct? (Choose two.)",
+    "choices": [
+      "Bastion removes the need for a public IP on the target VM",
+      "JIT keeps management ports closed until an approved, scoped request",
+      "Bastion and JIT cannot both be used on the same VM",
+      "JIT permanently disables the VM's NSG"
+    ],
+    "correctAnswers": ["Bastion removes the need for a public IP on the target VM", "JIT keeps management ports closed until an approved, scoped request"],
+    "explanation": "These are the two core, correct behaviors of Bastion and JIT respectively. They are complementary and can be combined on the same VM, and JIT manages NSG rules dynamically rather than disabling the NSG.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-34",
+    "objectiveId": "o3-2",
+    "type": "case-study",
+    "caseStudyId": "cs-litware-ai",
+    "prompt": "Referring to requirement 5 (administrators must RDP into management VMs, none of which may ever have a public IP, and only after an explicit, time-scoped request), which combination of controls meets this requirement?",
+    "choices": [
+      "Azure Bastion for the connection path, combined with Just-in-time VM access for the time-scoped request",
+      "A public IP on each VM protected by a strong NSG rule",
+      "Azure Disk Encryption on each VM's OS disk",
+      "Trusted launch enabled on each VM, with RDP left open to the internet"
+    ],
+    "correctAnswers": ["Azure Bastion for the connection path, combined with Just-in-time VM access for the time-scoped request"],
+    "explanation": "Bastion removes the need for any public IP on the VMs, and JIT enforces the explicit, time-scoped request requirement — together they satisfy both parts of requirement 5. A public IP directly violates the requirement, and disk encryption/Trusted launch don't address network exposure or request-gating at all.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-35",
+    "objectiveId": "o3-2",
+    "type": "case-study",
+    "caseStudyId": "cs-litware-ai",
+    "prompt": "Referring to requirement 5 (zero standing exposure for VM management, gated by an explicit time-scoped request), which statement about the chosen controls is correct?",
+    "choices": [
+      "Just-in-time access alone would still require the VM to have a reachable network path, so it should be paired with Bastion to remove the public IP entirely",
+      "Just-in-time access alone fully satisfies the requirement with no other control needed",
+      "Azure Bastion alone provides the time-scoped, request-gated access, making JIT unnecessary",
+      "Encryption at host is required in addition to Bastion and JIT to satisfy this requirement"
+    ],
+    "correctAnswers": ["Just-in-time access alone would still require the VM to have a reachable network path, so it should be paired with Bastion to remove the public IP entirely"],
+    "explanation": "JIT only governs when a port is open, not whether the VM needs a public IP or exposed endpoint at all — Bastion is what removes that exposure, so the two are combined. Bastion by itself doesn't add time-scoped request gating, and encryption at host is unrelated to network exposure.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-2-36",
+    "objectiveId": "o3-2",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o3-2",
+    "prompt": "Proposed solution: Assign each management VM a public IP address and restrict RDP with an NSG rule allowing only the admins' known office IP range. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "The goal explicitly requires the VMs to never have a public IP; an NSG-restricted public IP still violates that constraint even though it limits the source range.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-37",
+    "objectiveId": "o3-2",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o3-2",
+    "prompt": "Proposed solution: Deploy Azure Bastion for RDP connectivity and enable Just-in-time VM access so the RDP port only opens after an approved, time-scoped request. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["Yes"],
+    "explanation": "Bastion removes the need for a public IP, and JIT enforces the explicit time-scoped request gate — together this satisfies both constraints in the goal exactly.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-2-38",
+    "objectiveId": "o3-2",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o3-2",
+    "prompt": "Proposed solution: Enable Azure Disk Encryption on every management VM's OS disk and leave RDP permanently open on port 3389. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "Disk encryption protects data at rest, but it does nothing about network exposure — leaving RDP permanently open directly contradicts the requirement for zero standing exposure and a time-scoped request gate.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-39",
+    "objectiveId": "o3-2",
+    "type": "reorder",
+    "prompt": "Order the steps to give administrators RDP access to a management VM with zero standing exposure, from initial state to an approved connection.",
+    "reorderItems": [
+      "Deploy Azure Bastion in the VNet so the VM needs no public IP",
+      "Enable Just-in-time VM access on the VM in Defender for Cloud",
+      "An administrator submits a JIT request scoped to their IP and a limited time window",
+      "The request is approved and the management port opens only for that scope",
+      "The administrator connects via Bastion, and the port auto-closes when the window expires"
+    ],
+    "explanation": "Bastion and JIT must be set up first, then a scoped request is submitted and approved before the port opens temporarily, with Bastion providing the actual connection path and JIT auto-closing the port afterward.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-40",
+    "objectiveId": "o3-2",
+    "type": "reorder",
+    "prompt": "Order the steps to bring an on-premises server under Azure governance and Defender for Cloud protection.",
+    "reorderItems": [
+      "Install the Azure Arc connected machine agent (azcmagent) on the server",
+      "Connect the server to Azure Arc, registering it as an Arc-enabled server resource",
+      "Apply Azure Policy and RBAC assignments to the Arc-enabled resource",
+      "Enable the Defender for Servers plan to extend Defender for Cloud protection to the server"
+    ],
+    "explanation": "The agent must be installed and the server registered with Arc before it exists as a governable Azure resource, after which Policy/RBAC and Defender plans can be applied to it like any native Azure resource.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-41",
+    "objectiveId": "o3-2",
+    "type": "active-screen",
+    "prompt": "Configure this simplified VM security screen for a management VM that must never have a public IP and must only allow RDP after an approved, time-scoped request.",
+    "screenTitle": "VM network & access security (simulated)",
+    "fields": [
+      { "id": "publicIp", "label": "Public IP address assigned", "kind": "toggle", "correctValue": "Off" },
+      { "id": "connectivity", "label": "RDP/SSH connectivity method", "kind": "select", "options": ["Direct public RDP", "Azure Bastion", "VPN gateway only", "No remote access configured"], "correctValue": "Azure Bastion" },
+      { "id": "jit", "label": "Just-in-time VM access", "kind": "toggle", "correctValue": "On" },
+      { "id": "securityType", "label": "VM security type", "kind": "select", "options": ["Standard", "Trusted launch", "Confidential VM", "Not configured"], "correctValue": "Trusted launch" }
+    ],
+    "explanation": "No public IP plus Bastion satisfies the 'no public IP' requirement while still allowing RDP; enabling JIT enforces the time-scoped request gate. Trusted launch is a reasonable baseline hardening choice for a management VM, though the scenario's core requirements are met by the first three fields.",
+    "difficulty": "medium"
+  }
+]

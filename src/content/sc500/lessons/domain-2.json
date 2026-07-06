@@ -1,0 +1,166 @@
+[
+  {
+    "objectiveId": "o2-1",
+    "diagrams": ["storage-auth", "endpoints"],
+    "summary": "Storage accounts host Blobs/Files/Queues/Tables behind account-level toggles that either close off most of the exposure surface (Secure transfer required, minimum TLS, disabling Blob public access, disabling Shared Key authorization) or leave the whole account one leaked key away from full compromise. SAS tokens layer scoped, time-limited access on top of that baseline, with a user delegation SAS — signed by Microsoft Entra credentials rather than the account key — the strongest option. Network exposure narrows across a spectrum from fully open to Selected networks (service endpoints) to Disabled with a private endpoint, and Microsoft Defender for Storage adds threat detection on top of whichever posture is chosen.",
+    "keyPoints": [
+      "**Secure transfer required = Enabled** forces every REST call onto HTTPS; **Minimum TLS version** should be raised to **1.2+** to retire legacy, weaker protocol versions — these are two separate settings, not the same control.",
+      "**Allow Blob public access = Disabled** prevents any container from ever being configured for anonymous read access, even if someone later tries to flip an individual container's access level to Container/Blob.",
+      "**Allow Shared Key authorization = Disabled** forces every client onto **Microsoft Entra ID + Azure RBAC** instead of the storage account key — the account key is a master credential with full, unscoped access and no built-in expiry, so a leak exposes everything.",
+      "**Storage Service Encryption (SSE)** at rest is **always on** and cannot be disabled; **infrastructure encryption** adds a second encryption layer with a separate key for defense-in-depth, and a **customer-managed key (CMK)** in Key Vault gives control over the key's lifecycle (rotation, revocation) on top of the Microsoft-managed key.",
+      "SAS hierarchy: **account SAS** (broadest scope, can span multiple services, signed with the account key), **service SAS** (scoped to one service such as Blob, signed with the account key), **user delegation SAS** (scoped to Blob/Data Lake, signed with Microsoft Entra credentials instead of the account key — revocable via Entra permission changes without rotating the account key).",
+      "A **stored access policy** attaches server-side constraints (permissions, start/expiry) to a container-scoped SAS, so access can be revoked or its expiry changed centrally by editing the policy instead of reissuing every token.",
+      "Rotating the storage account key immediately invalidates **every** account/service SAS signed with that key — a blast radius that a stored access policy or a user delegation SAS avoids.",
+      "Network posture spectrum: **Enabled from all networks** (open, least secure) → **Selected networks** (a service endpoint keeps traffic on the Azure backbone and lets the storage firewall trust specific VNets/subnets/IPs, but the account still has a **public IP**) → **Disabled + Private Endpoint** (the account gets a **private IP inside the VNet**, zero public exposure — required whenever a requirement says \"no internet exposure\").",
+      "**Microsoft Defender for Storage** detects anomalous access patterns, scans uploaded blobs for malware via Microsoft Defender Antivirus at ingestion time, and flags sensitive-data exfiltration threats; it can be enabled per subscription or per individual storage account.",
+      "**Resource instance rules** let a specific Azure AI service resource instance (e.g. one named Azure OpenAI or Microsoft Foundry resource, identified by resource ID) bypass the storage firewall — narrower than the blanket **\"Allow trusted Microsoft services\"** exception, which opens the door to an entire class of first-party services rather than one named resource."
+    ],
+    "commonPitfalls": [
+      "Treating Shared Key authorization as \"just another option\" rather than a liability — a leaked account key grants full, unscoped, non-expiring access to the entire account. Whenever a scenario says \"must never use the master key,\" the fix is disabling Shared Key authorization and requiring Entra ID/RBAC.",
+      "Assuming disabling **Allow Blob public access** retroactively fixes containers already set to anonymous access — it blocks new anonymous configuration and anonymous requests going forward, but existing container access levels should still be reviewed.",
+      "Confusing a **service endpoint** with a **private endpoint**: a service endpoint keeps the storage account's IP public and only restricts who can reach it; only a private endpoint gives the account a private IP and removes public exposure entirely.",
+      "Rotating the account key to revoke one leaked SAS also invalidates every other SAS and integration relying on that same key — a stored access policy (to revoke centrally) or a user delegation SAS (to avoid the account key altogether) sidesteps this.",
+      "Treating Defender for Storage as a blocking control by default — it primarily alerts (malware scanning can trigger automated response via Event Grid, but detection and prevention are distinct); pair it with the network/identity hardening above, not as a substitute for it.",
+      "Reaching for the broad \"Allow trusted Microsoft services\" exception when only a single named Azure AI resource needs access — a resource instance rule scoped to that specific resource ID is narrower and the preferred choice whenever it's available."
+    ],
+    "commands": [
+      {
+        "task": "Create a storage account hardened against key leakage and legacy TLS/HTTP",
+        "cli": "az storage account create --name stgwoodgrove --resource-group RG1 --sku Standard_GRS --https-only true --min-tls-version TLS1_2 --allow-blob-public-access false --allow-shared-key-access false",
+        "powershell": "New-AzStorageAccount -ResourceGroupName RG1 -Name stgwoodgrove -SkuName Standard_GRS -MinimumTlsVersion TLS1_2 -AllowBlobPublicAccess $false -AllowSharedKeyAccess $false"
+      },
+      {
+        "task": "Generate a user delegation SAS (signed with Entra credentials, not the account key)",
+        "cli": "az storage container generate-sas --account-name stgwoodgrove --name documents --auth-mode login --as-user --permissions rl --expiry 2026-08-01T00:00Z",
+        "powershell": "New-AzStorageContainerSASToken -Context $ctx -Name documents -Permission rl -ExpiryTime (Get-Date).AddDays(7) # $ctx must be built with -UseConnectedAccount for Entra-signed delegation"
+      },
+      {
+        "task": "Create a stored access policy so a SAS can be revoked or re-scoped centrally",
+        "cli": "az storage container policy create --account-name stgwoodgrove --container-name documents --name readonly30d --permissions rl --expiry 2026-08-04T00:00Z",
+        "powershell": "New-AzStorageContainerStoredAccessPolicy -Container documents -Policy readonly30d -Permission rl -ExpiryTime (Get-Date).AddDays(30) -Context $ctx"
+      },
+      {
+        "task": "Enable Microsoft Defender for Storage on the subscription",
+        "cli": "az security pricing create --name StorageAccounts --tier Standard",
+        "powershell": "Set-AzSecurityPricing -Name StorageAccounts -PricingTier Standard"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/training/modules/implement-storage-account-security/",
+      "https://learn.microsoft.com/en-us/training/modules/configure-network-security-azure-storage/",
+      "https://learn.microsoft.com/en-us/training/modules/implement-defender-storage/",
+      "https://learn.microsoft.com/en-us/training/paths/implement-azure-storage-security/"
+    ]
+  },
+  {
+    "objectiveId": "o2-2",
+    "diagrams": ["sql-protection"],
+    "summary": "Azure SQL Database (fully managed PaaS) and Azure SQL Managed Instance (near-100% SQL Server compatibility, deployed inside your VNet) share the same layered security model: authenticate with Microsoft Entra ID (optionally Entra-only), restrict network reach with firewall rules or — stronger — a private endpoint, encrypt at rest with TDE, protect the most sensitive columns in use with Always Encrypted, mask output cosmetically with Dynamic Data Masking, and filter rows with Row-Level Security. Auditing and Microsoft Defender for Databases are complementary, not overlapping: auditing is a durable record of what happened, Defender is threat detection and vulnerability scanning.",
+    "keyPoints": [
+      "Configure a **Microsoft Entra admin** on the logical server to enable Entra authentication alongside SQL logins; enabling **Microsoft Entra-only authentication** disables SQL/Windows logins entirely and forces every connection through Entra identities — plan a break-glass Entra account first.",
+      "Network restriction ranges from **firewall rules** (allow specific client IPs, or \"Allow Azure services and resources to access this server\") up to a **private endpoint** with **Public network access = Disabled** — the private endpoint removes the database's public endpoint from the internet entirely; a firewall rule only narrows who can reach a still-public endpoint.",
+      "**Transparent Data Encryption (TDE)** encrypts data and log files **at rest** and is **on by default**; it can use a Microsoft-managed key or a **customer-managed key (CMK/BYOK)** from Key Vault, but the SQL engine transparently decrypts data in memory — anyone with query access, including a DBA, sees plaintext.",
+      "**Always Encrypted** encrypts and decrypts inside the **client driver**, using keys the database engine itself never has access to — even a DBA or a Microsoft support engineer running a query sees ciphertext for protected columns. **Secure enclaves** allow limited in-place computation (pattern matching, range comparisons) without exposing plaintext to the engine.",
+      "**Dynamic Data Masking (DDM)** is a presentation-layer mask (e.g. `***-**-1234`) applied to query results for non-privileged users — it does **not** encrypt the underlying data, so a privileged role or a clever query can still see or infer the true value.",
+      "**Row-Level Security (RLS)** uses inline table-valued functions as **security predicates**, bound via a security policy, to filter which rows a given execution context can see or modify — enforced **inside the database engine**, regardless of which application queries it.",
+      "**Vulnerability Assessment (VA)** scans a database against a Microsoft-curated rule baseline (misconfigurations, excessive permissions, unencrypted sensitive columns) and reports configuration drift over time.",
+      "**SQL Auditing** (Security ▸ Auditing) writes an immutable trail of database events to a **Log Analytics workspace** (best for querying/Sentinel), a **storage account** (cheap long-term retention), or an **Event Hub** (streaming to a SIEM); enabling it at the **server** level applies to every database on that server.",
+      "**Audit action groups** scope exactly which categories of activity an audit captures (e.g. failed logins, schema changes, data access) instead of logging everything indiscriminately — this narrows log volume and cost while still satisfying compliance requirements that only need specific event categories.",
+      "For tamper-resistant, audit-grade evidence, route audit logs to a storage account configured with **immutability** (a time-based retention policy that blocks deletion or modification of blobs) — a materially stronger guarantee than a standard, mutable storage account target.",
+      "**Azure SQL Managed Instance** auditing has its **own instance-specific configuration**, distinct from single-database auditing — a server-level audit policy on Azure SQL Database doesn't automatically extend the same way to a Managed Instance, so MI auditing must be explicitly verified/configured.",
+      "**Microsoft Defender for Databases** (a Defender for Cloud plan covering Azure SQL, SQL on VM/Arc, MySQL/PostgreSQL, and Cosmos DB) adds Advanced Threat Protection — alerts for SQL injection, anomalous access, brute force, and data exfiltration — plus an integrated Vulnerability Assessment."
+    ],
+    "commonPitfalls": [
+      "Treating **TDE** as sufficient for \"even DBAs can't read it\" requirements — TDE only protects data at rest; anyone querying the live database sees plaintext. **Always Encrypted** is the control that keeps data unreadable even in use.",
+      "Treating **Dynamic Data Masking** as encryption — DDM only changes what's displayed to certain roles; the raw data is unchanged and remains readable by privileged roles or a query that bypasses the mask.",
+      "Assuming **SQL Auditing** and **Microsoft Defender for Databases** are the same feature, or that enabling one enables the other — auditing is a passive log of what happened; Defender is active threat detection/alerting plus vulnerability scanning. \"Receive an alert on a possible SQL injection\" needs Defender; \"keep an immutable record of every query\" needs Auditing.",
+      "Forgetting that enabling **Microsoft Entra-only authentication** removes **all** SQL logins, including the classic server admin login — plan a break-glass Entra account/group before flipping it.",
+      "Confusing **firewall rules** (still expose a public endpoint, just restrict source IPs) with a **private endpoint** (removes the public endpoint altogether) — \"zero internet exposure\" always means a private endpoint with public network access disabled.",
+      "Assuming Row-Level Security is enforced by the application — RLS predicates run **inside the database engine**, so protection holds even if a new or compromised application bypasses expected app-layer filtering.",
+      "Auditing every action indiscriminately instead of scoping **audit action groups** to what compliance actually requires, driving up log volume and cost unnecessarily.",
+      "Routing audit logs to a standard, mutable storage account when the requirement calls for tamper-resistant evidence — only an **immutable** storage configuration blocks deletion/modification during the retention window.",
+      "Assuming a server-level audit policy configured for Azure SQL Database automatically covers an Azure SQL **Managed Instance** the same way — MI auditing needs its own explicit, instance-specific configuration."
+    ],
+    "commands": [
+      {
+        "task": "Set a Microsoft Entra admin and enable Entra-only authentication on the logical server",
+        "cli": "az sql server ad-admin create --resource-group RG1 --server sqlsrv1 --display-name SecAdmins --object-id <entraGroupObjectId>\naz sql server ad-only-auth enable --resource-group RG1 --name sqlsrv1",
+        "powershell": "Set-AzSqlServerActiveDirectoryAdministrator -ResourceGroupName RG1 -ServerName sqlsrv1 -DisplayName SecAdmins -ObjectId <entraGroupObjectId>\nEnable-AzSqlServerActiveDirectoryOnlyAuthentication -ResourceGroupName RG1 -ServerName sqlsrv1"
+      },
+      {
+        "task": "Disable public network access and add a private endpoint for the SQL server",
+        "cli": "az sql server update --resource-group RG1 --name sqlsrv1 --enable-public-network false\naz network private-endpoint create --name PE-sql1 --resource-group RG1 --vnet-name VNet1 --subnet Subnet1 --private-connection-resource-id <sqlServerId> --group-id sqlServer --connection-name conn-sql1",
+        "powershell": "Set-AzSqlServer -ResourceGroupName RG1 -ServerName sqlsrv1 -PublicNetworkAccess Disabled\nNew-AzPrivateEndpoint -Name PE-sql1 -ResourceGroupName RG1 -Location westeurope -Subnet $subnet -PrivateLinkServiceConnection $conn"
+      },
+      {
+        "task": "Set TDE to use a customer-managed key from Key Vault",
+        "cli": "az sql server tde-key set --resource-group RG1 --server sqlsrv1 --server-key-type AzureKeyVault --kid https://kv1.vault.azure.net/keys/tdekey/<version>",
+        "powershell": "Set-AzSqlServerTransparentDataEncryptionProtector -ResourceGroupName RG1 -ServerName sqlsrv1 -Type AzureKeyVault -KeyId https://kv1.vault.azure.net/keys/tdekey/<version>"
+      },
+      {
+        "task": "Enable SQL Auditing to a Log Analytics workspace and turn on Microsoft Defender for Databases",
+        "cli": "az sql server audit-policy update --resource-group RG1 --name sqlsrv1 --state Enabled --log-analytics-target-state Enabled --log-analytics-workspace-resource-id <workspaceId>\naz security pricing create --name SqlServers --tier Standard",
+        "powershell": "Set-AzSqlServerAudit -ResourceGroupName RG1 -ServerName sqlsrv1 -LogAnalyticsTargetState Enabled -WorkspaceResourceId <workspaceId>\nSet-AzSecurityPricing -Name SqlServers -PricingTier Standard"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/training/modules/configure-azure-sql-platform-security/",
+      "https://learn.microsoft.com/en-us/training/modules/configure-azure-sql-auditing/",
+      "https://learn.microsoft.com/en-us/training/modules/implement-defender-databases/",
+      "https://learn.microsoft.com/en-us/training/paths/implement-azure-sql-database-security/"
+    ]
+  },
+  {
+    "objectiveId": "o2-3",
+    "diagrams": ["nsg-layers", "firewall-vs-waf", "endpoints"],
+    "summary": "NSGs and ASGs provide stateful L3-L4 microsegmentation inside a VNet; Azure Firewall, WAF, and DDoS Protection each defend a different layer and threat shape — general network egress/ingress, HTTP(S) web attacks, and volumetric floods, respectively — and are complementary, not substitutes. Private Link/private endpoints remove PaaS resources from the public internet, but only work once private DNS resolution is wired up correctly, which is the single most common reason a \"working\" private endpoint still fails. At tenant scale, Azure Virtual Network Manager's security admin rules override every NSG centrally, while VPNs and Microsoft Entra Private Access (part of Global Secure Access) provide two very different models for remote access.",
+    "keyPoints": [
+      "**NSGs** filter stateful L3/L4 traffic by priority (100–4096, lowest number evaluated first, first match wins) on a **subnet and/or a NIC**; both rule sets are evaluated for a flow. Default rules allow intra-VNet and outbound-to-internet traffic while denying inbound from the internet.",
+      "**Application Security Groups (ASGs)** group VMs by role (e.g. `web`, `db`) so an NSG rule can say \"allow web → db on 1433\" **once**, instead of maintaining hard-coded IP lists that must be edited every time membership changes.",
+      "**NSG vs Azure Firewall vs WAF vs DDoS Protection** are layered, complementary controls, not alternatives: NSG = free, basic L3-L4 allow/deny at the VNet edge; **Azure Firewall** = managed, stateful **L3-L7** central firewall (FQDN filtering, threat-intelligence-based deny, DNAT, app/network rules; **Premium** adds TLS inspection, IDPS, URL filtering); **WAF** = **L7 HTTP(S)**-specific protection against OWASP attacks (SQLi, XSS, bots), attached to Application Gateway or Front Door; **DDoS Protection** = **L3-L4 volumetric** flood mitigation for public IPs.",
+      "**Azure Firewall Policy** evaluates three rule collection types in order: **DNAT** (translates inbound public traffic to internal IPs), **Network** (allow/deny by IP/port/protocol), **Application** (allow by FQDN/URL) — plus **threat-intelligence filtering** that can alert or block traffic to/from known-malicious IPs/domains. **Azure Firewall Manager** centrally manages policies across firewalls and secured virtual hubs.",
+      "Typical layered design: route a subnet's traffic to Azure Firewall via a **User-Defined Route (UDR, next hop = the firewall's private IP)** for central inspection, while keeping NSGs on subnets for finer-grained, delegated micro-segmentation. A UDR only changes routing — inspection happens at whatever the next hop is.",
+      "A **private endpoint (PE)** is a NIC with a private VNet IP that connects to a specific PaaS resource (Storage, SQL, Key Vault, etc.) or to a **Private Link service** (your own service behind a Standard Load Balancer, published to consumers via their own PE) — it removes the resource's exposure to the public internet.",
+      "Private endpoints require **private DNS**: a private DNS zone (e.g. `privatelink.blob.core.windows.net`) linked to the VNet must resolve the resource's FQDN to the PE's private IP, or clients will keep resolving the public IP and bypass the PE entirely.",
+      "**Azure Virtual WAN (vWAN)** provides a managed, global hub-and-spoke backbone; a **secured virtual hub** embeds Azure Firewall (or a partner NVA) directly in the hub so spoke traffic is inspected centrally.",
+      "**Azure Virtual Network Manager (AVNM)** groups VNets into **network groups** and pushes connectivity configurations (hub-and-spoke/mesh) and **security admin rules** — high-priority rules evaluated **before** NSGs and which resource owners cannot override, ideal for tenant-wide, non-negotiable blocks.",
+      "**VPN** (site-to-site for whole networks, point-to-site for individual devices) should be hardened with strong IPsec/IKE policies and certificate- or Entra-based P2S authentication; **Microsoft Entra Private Access** (part of Global Secure Access, Microsoft's Security Service Edge) publishes private apps to remote users with per-app Conditional Access, replacing legacy VPN for Zero Trust application access."
+    ],
+    "commonPitfalls": [
+      "Treating **Azure Firewall** and a **WAF** as interchangeable — Azure Firewall inspects general L3-L7 network/application traffic; a WAF specifically inspects HTTP(S) requests for OWASP web attacks and is attached to Application Gateway/Front Door, not deployed on its own.",
+      "Deploying a **private endpoint** and assuming it \"just works\" — without a linked private DNS zone (or equivalent custom DNS forwarding), clients still resolve the public FQDN to a public IP and the traffic never reaches the PE; this is the #1 cause of \"the private endpoint isn't working.\"",
+      "Assuming a resource owner's NSG can override a central security requirement — **AVNM security admin rules** are evaluated first and cannot be overridden by a subnet/NIC NSG, which is exactly why they're used for estate-wide, non-negotiable rules.",
+      "Confusing **site-to-site** (whole networks) with **point-to-site** (individual devices) VPN connections — a frequent exchange in exam scenarios.",
+      "Assuming a **UDR** forcing traffic to a firewall also inspects/filters that traffic — a UDR only changes the routing path; the actual inspection happens at the next hop (the firewall itself)."
+    ],
+    "commands": [
+      {
+        "task": "Create an NSG rule that allows the 'web' ASG to reach the 'db' ASG on SQL port 1433 only",
+        "cli": "az network nsg rule create --nsg-name NSG1 --resource-group RG1 --name AllowWebToDb --priority 100 --direction Inbound --access Allow --protocol Tcp --destination-port-ranges 1433 --source-asgs webASG --destination-asgs dbASG",
+        "powershell": "Add-AzNetworkSecurityRuleConfig -NetworkSecurityGroup $nsg -Name AllowWebToDb -Priority 100 -Direction Inbound -Access Allow -Protocol Tcp -DestinationPortRange 1433 -SourceApplicationSecurityGroupId $webAsg.Id -DestinationApplicationSecurityGroupId $dbAsg.Id | Set-AzNetworkSecurityGroup"
+      },
+      {
+        "task": "Create an AVNM security admin configuration with a rule blocking a malicious IP range across a network group",
+        "cli": "az network manager security-admin-config create --network-manager-name AVNM1 --resource-group RG1 --name SecConfig1\naz network manager security-admin-config rule-collection create --network-manager-name AVNM1 --resource-group RG1 --config-name SecConfig1 --name BlockRuleColl --network-groups <networkGroupId>\naz network manager security-admin-config rule-collection rule create --network-manager-name AVNM1 --resource-group RG1 --config-name SecConfig1 --rule-collection-name BlockRuleColl --name BlockMalicious --priority 1 --direction Inbound --access Deny --protocol Any --sources address-prefix-type=IPPrefix address-prefix=203.0.113.0/24",
+        "powershell": "# Security admin rules follow the same group -> configure -> deploy flow via New-AzNetworkManagerSecurityAdminConfiguration and related cmdlets"
+      },
+      {
+        "task": "Create a private endpoint for a SQL server and lock DNS resolution to it",
+        "cli": "az network private-endpoint create --name PE-sql1 --resource-group RG1 --vnet-name VNet1 --subnet Subnet1 --private-connection-resource-id <sqlServerId> --group-id sqlServer --connection-name conn-sql1\naz network private-dns zone create --resource-group RG1 --name privatelink.database.windows.net\naz network private-dns link vnet create --resource-group RG1 --zone-name privatelink.database.windows.net --name link1 --virtual-network VNet1 --registration-enabled false",
+        "powershell": "New-AzPrivateEndpoint -Name PE-sql1 -ResourceGroupName RG1 -Location westeurope -Subnet $subnet -PrivateLinkServiceConnection $conn\nNew-AzPrivateDnsZone -ResourceGroupName RG1 -Name privatelink.database.windows.net\nNew-AzPrivateDnsVirtualNetworkLink -ResourceGroupName RG1 -ZoneName privatelink.database.windows.net -Name link1 -VirtualNetworkId $vnetId"
+      },
+      {
+        "task": "Force a subnet's egress through Azure Firewall in a secured hub via UDR",
+        "cli": "az network route-table create --name RT1 --resource-group RG1\naz network route-table route create --route-table-name RT1 --resource-group RG1 --name ToFirewall --address-prefix 0.0.0.0/0 --next-hop-type VirtualAppliance --next-hop-ip-address 10.0.0.4\naz network vnet subnet update --vnet-name VNet1 --name CoreBankingSubnet --resource-group RG1 --route-table RT1",
+        "powershell": "New-AzRouteTable -Name RT1 -ResourceGroupName RG1 -Location westeurope\nAdd-AzRouteConfig -Name ToFirewall -AddressPrefix 0.0.0.0/0 -NextHopType VirtualAppliance -NextHopIpAddress 10.0.0.4 -RouteTable $rt | Set-AzRouteTable\nSet-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet -Name CoreBankingSubnet -AddressPrefix 10.0.2.0/24 -RouteTable $rt ; $vnet | Set-AzVirtualNetwork"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/training/modules/segment-isolate-workloads-network-security-controls/",
+      "https://learn.microsoft.com/en-us/training/modules/centralize-traffic-inspection-azure-firewall/",
+      "https://learn.microsoft.com/en-us/training/modules/secure-hybrid-connectivity-azure/",
+      "https://learn.microsoft.com/en-us/training/modules/eliminate-public-exposure-paas-private-link/",
+      "https://learn.microsoft.com/en-us/training/paths/implement-network-security-controls-azure/"
+    ]
+  }
+]

@@ -1,0 +1,154 @@
+[
+  {
+    "objectiveId": "o3-1",
+    "diagrams": ["ai-layered-defense", "agent-identity"],
+    "summary": "Generative AI apps and autonomous agents introduce risks classic security controls don't see: a model can be tricked into leaking data (prompt injection/jailbreak), it can surface data a user is technically allowed to open but shouldn't see (oversharing/overexposure), and agents act with their own identity to take real actions. SC-500 splits AI security into three layers — **data** (Microsoft Purview DSPM for AI), **identity** (Microsoft Entra Agent ID), and **threat/posture** (Microsoft Defender for AI Services plus Microsoft Foundry guardrails and an AI gateway in front of model endpoints). Each layer answers a different question: what sensitive data can the AI touch, who is the agent and can Conditional Access govern it, and what threats/misconfigurations put the deployment itself at risk.",
+    "keyPoints": [
+      "**Purview DSPM for AI** discovers **oversharing before Copilot amplifies it**: run a data risk assessment against high-risk SharePoint sites to find overly broad sharing (e.g. \"everyone except external\", anonymous links) — because Copilot can expose any content a user is technically permitted to open.",
+      "DSPM for AI **one-click policies** cover three jobs: capture Copilot prompts/responses, detect sensitive information pasted into AI sites, and detect risky AI usage; results surface in **Reports** and **Activity explorer ▸ AI activities**. Requires Audit enabled, the Purview browser extension, device onboarding, and a **Purview/Microsoft 365 E5** license.",
+      "**Microsoft Entra Agent ID** extends Entra identity to AI agents (the identity foundation of **Microsoft Agent 365**): every agent built in Foundry or Copilot Studio gets a governed **agent identity** so Conditional Access, Identity Protection risk, and governance apply to it like a human user.",
+      "Key agent-identity concepts: **agent identity** (the non-human identity the agent authenticates and acts as), **agent's user account** (a linked account with its own mailbox/groups, for \"digital colleague\" scenarios), **agent identity blueprint** (a template that creates agent identities consistently — the blueprint itself cannot access resources), and **custom security attributes** (business labels, e.g. `AgentApprovalStatus=IT_Approved`, that Conditional Access policies can target).",
+      "**Conditional Access for agents**: create a policy targeting the **Agents (Preview)** assignment (all agent identities, or scoped by custom security attribute), condition **Agent risk (Preview) = High**, grant control **Block access** — roll out in **Report-only** first, then enforce.",
+      "**Scope trap**: CA on an agent identity protects the agent's **token**, not its linked user account — these are separate scopes to configure independently. CA also only governs resources secured by Entra ID; an agent calling an API with a **raw API key bypasses Entra entirely**, so CA never applies — use Entra-based auth instead of API keys.",
+      "Once Entra flags an agent as high-risk, use **Defender XDR** to assess its **blast radius** (which resources/data/identities it could reach), contain it (block/revoke access), and right-size its permissions; manage the ongoing access lifecycle (review/approve/remove) via **Entra ID Governance** and **Agent 365**.",
+      "**Microsoft Defender for AI Services** (a Defender for Cloud plan) watches Microsoft Foundry/Azure OpenAI and alerts on jailbreak/prompt injection (via **Azure AI Content Safety Prompt Shields**), data leakage, **ASCII-smuggling** indirect injection, credential theft, and **wallet attacks** (cost abuse) — alerts surface in Defender XDR. Enable it in **Defender for Cloud ▸ Environment settings ▸ Defender plans**, then turn on **user prompt evidence** and, if Purview-licensed, data security for AI interactions.",
+      "**Microsoft Foundry guardrails** apply to model input and output: **content filters** (severity thresholds for hate/violence/sexual/self-harm), **Prompt Shields** (blocks direct jailbreaks and indirect/document injection), **blocklists** (custom banned terms), and protected-material/groundedness checks. For agents, also enable a jailbreak control, an indirect prompt injection control, and an **MCP allowed-tools list** so the agent can only invoke approved tools.",
+      "**AI gateway via Azure API Management**: placing APIM in front of model endpoints enforces **Entra ID authentication instead of API keys**, applies **token-based rate-limiting/quotas** (defends against wallet attacks), load-balances across deployments, and centralizes logging to Azure Monitor — without changing the app.",
+      "**Microsoft Defender for Cloud Apps** provides **real-time runtime protection specifically for Copilot Studio agents** — distinct from Defender for AI Services (which watches Foundry/Azure OpenAI). Enable it under the Defender portal's **Settings ▸ AI**, then coordinate with **Power Platform admins** to configure the correct **App ID** so the agent is recognized; only then does agent inventory, alerts, and Advanced Hunting data appear correctly in Microsoft Defender XDR.",
+      "**Microsoft Agent 365** is the **management and governance plane** for AI agents deployed across the Microsoft 365 environment — distinct from Entra Agent ID, which is the underlying **identity layer** an agent authenticates with. Through Agent 365 you enable the management interface, **register agents**, apply access controls, and **monitor agent activity/usage** to enforce organizational AI governance policies over the agent's full lifecycle.",
+      "**Defender for Cloud's AI workloads plan** bundles **CSPM** (posture: misconfigurations, oversharing risk signals) and **CWP** (Defender for AI Services runtime alerts) for AI resources specifically, behind a single enablement toggle; results and combined insights surface in the **Data and AI security dashboard**, which correlates posture and threat findings for AI workloads in one place."
+    ],
+    "commonPitfalls": [
+      "Confusing **Purview DSPM for AI** (data-centric: which sensitive data agents/Copilot touch, oversharing, DLP for AI sites, needs a Purview/M365 E5 license) with **Defender for AI Services** (threat detection on Foundry/Azure OpenAI, configured as a Defender for Cloud plan) — different products, different licenses, different questions answered.",
+      "Assuming a Conditional Access policy scoped to \"agents\" also covers the **agent's linked user account** — they are separate assignment scopes; both must be configured if both paths need protection.",
+      "Believing Conditional Access protects every agent action — it only governs resources secured by **Entra ID**. An agent invoking an API with a **raw API key** bypasses Entra and CA entirely, which is exactly why Entra-based auth is recommended over API keys.",
+      "Enabling Microsoft 365 Copilot tenant-wide **before** running a DSPM for AI data risk assessment — by the time oversharing is found, Copilot may already have surfaced it to the wrong users.",
+      "Treating **content filters** and **Prompt Shields** as the same Foundry control — content filters catch harmful content categories, while Prompt Shields specifically target jailbreak and (in)direct prompt injection attempts.",
+      "Leaving an agent without an **MCP allowed-tools list** — an unrestricted agent can invoke arbitrary tools/data sources, which massively widens the blast radius if the agent is later compromised.",
+      "Confusing **Microsoft Agent 365** (the governance/lifecycle plane — register, approve, monitor usage of deployed agents) with **Microsoft Entra Agent ID** (the underlying non-human identity an agent authenticates with) — Agent 365 governs agents *using* the identity Entra Agent ID provides; it doesn't replace it.",
+      "Assuming Copilot Studio agent protection in Defender for Cloud Apps is automatic once toggled on — without also configuring the agent's **App ID** with Power Platform admins, agent inventory and alerts stay incomplete in Defender XDR even though the setting shows as enabled."
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/training/modules/identify-ai-data-risks-purview/",
+      "https://learn.microsoft.com/en-us/training/modules/secure-access-entra-agent-identity/",
+      "https://learn.microsoft.com/en-us/training/modules/analyze-ai-identity-risks-defender-xdr/",
+      "https://learn.microsoft.com/en-us/training/modules/enable-protection-copilot-studio-agents/",
+      "https://learn.microsoft.com/en-us/training/modules/configure-ai-gateway-security-foundry/",
+      "https://learn.microsoft.com/en-us/training/modules/azure-ai-foundry-configure-manage-guardrails/",
+      "https://learn.microsoft.com/en-us/training/modules/implement-defender-cloud-ai-services/",
+      "https://learn.microsoft.com/en-us/training/modules/defender-for-cloud-ai-protect-workloads/",
+      "https://learn.microsoft.com/en-us/training/modules/manage-agents-microsoft-agent-365/",
+      "https://learn.microsoft.com/en-us/training/paths/implement-ai-security/"
+    ]
+  },
+  {
+    "objectiveId": "o3-2",
+    "diagrams": ["bastion-jit", "disk-encryption", "defender-servers-plans"],
+    "summary": "VM disk encryption stacks three optional layers on top of always-on platform encryption, chosen by requirement rather than by \"more is better\": **encryption at host**, **Azure Disk Encryption (ADE)**, and **server-side encryption with a customer-managed key (CMK)**. **Azure Bastion** and **Just-In-Time (JIT) VM access** are complementary controls that together eliminate standing exposure of management ports. **Defender for Servers Plan 2** adds vulnerability scanning, file integrity monitoring, and **agentless scanning** on top of Plan 1's EDR, and **Azure Arc** is the bridge that lets non-Azure servers receive the same governance and protection.",
+    "keyPoints": [
+      "**Encryption at host** encrypts a VM's temp and cache disks **at the host level**, with **no in-guest agent** — the modern recommended default for coverage that ADE alone doesn't provide.",
+      "**Azure Disk Encryption (ADE)** encrypts **inside the guest OS** using BitLocker (Windows) or dm-crypt (Linux), with keys stored in **Key Vault** — use it when OS-level volume encryption is a specific requirement.",
+      "**Server-side encryption with a customer-managed key (CMK)** is platform-managed disk encryption where you supply the key via a **disk encryption set** — no in-guest component at all.",
+      "**Azure Bastion**: browser/portal-based RDP/SSH over **TLS** — the VM needs **no public IP** and never has 3389/22 exposed to the internet.",
+      "**Just-In-Time (JIT) VM access** (a Defender for Cloud workload-protection feature): management ports stay **closed by default**; an approved, time- and source-IP-scoped request opens them temporarily via NSG/Firewall rules, then closes them again.",
+      "**Trusted launch** adds **Secure Boot + vTPM + boot integrity monitoring** to a VM's security type, defending against rootkits/boot-kits; **confidential VMs** go further and add hardware-based **memory encryption (TEE)**.",
+      "**Azure Machine Configuration** (formerly Guest Configuration) audits or enforces in-guest settings — e.g. password policy, installed applications — via **Azure Policy**.",
+      "**Defender for Servers Plan 1** = Microsoft Defender for Endpoint (**MDE/EDR**) only. **Plan 2** = everything: EDR, vulnerability scanning (**MDVM**), agentless malware/secret scanning, file integrity monitoring, JIT, adaptive application controls, plus 500 GB/day of free data ingestion.",
+      "**Azure Arc** projects on-premises and other-cloud servers (and Kubernetes, SQL, etc.) into Azure as Arc-enabled resources, so Azure Policy, RBAC, Defender for Cloud, and Machine Configuration apply as if they were native Azure resources — the bridge for hybrid and multicloud security.",
+      "**Agentless scanning** (Defender for Servers Plan 2) safely snapshots a VM's disk and analyzes it out-of-band to find vulnerabilities, malware, and exposed secrets **without installing an agent** or affecting VM performance — it complements, but doesn't fully replace, agent-based MDE."
+    ],
+    "commonPitfalls": [
+      "**Bastion and JIT combine — they are not alternatives**: Bastion removes the need for a public IP/exposed RDP-SSH; JIT keeps management ports closed until an explicit approved request. Use both together for the strongest posture.",
+      "Choosing a disk-encryption layer by \"more is better\" instead of by requirement: **ADE** for in-guest BitLocker/dm-crypt, **encryption at host** for temp/cache coverage without an agent, **CMK** when platform-level customer key control is the ask.",
+      "Assuming **Defender for Servers Plan 1** includes vulnerability scanning, agentless scanning, or JIT — those are **Plan 2 only**; Plan 1 is EDR (MDE) alone.",
+      "Forgetting that non-Azure servers must be **Azure Arc-onboarded** before Azure Policy, RBAC, or Defender for Cloud can manage or protect them.",
+      "Treating **agentless scanning** as a replacement for MDE — it's a complementary, point-in-time snapshot analysis, not real-time endpoint detection and response.",
+      "Confusing **Trusted launch** (Secure Boot + vTPM + integrity monitoring) with **confidential VMs** (adds hardware-based memory encryption) — they are different, stackable security tiers."
+    ],
+    "commands": [
+      {
+        "task": "Create a VM with encryption at host enabled (covers temp/cache disks, no in-guest agent)",
+        "cli": "az vm create --name VM1 --resource-group RG1 --image Ubuntu2204 --encryption-at-host true",
+        "powershell": "New-AzVm -ResourceGroupName RG1 -Name VM1 -Image Ubuntu2204 -EncryptionAtHost"
+      },
+      {
+        "task": "Enable Azure Disk Encryption on a VM, keys stored in Key Vault",
+        "cli": "az vm encryption enable --name VM1 --resource-group RG1 --disk-encryption-keyvault KV1",
+        "powershell": "Set-AzVMDiskEncryptionExtension -ResourceGroupName RG1 -VMName VM1 -DiskEncryptionKeyVaultUrl $kvUrl -DiskEncryptionKeyVaultId $kvId"
+      },
+      {
+        "task": "Create a Trusted launch VM (Secure Boot + vTPM)",
+        "cli": "az vm create --name VM1 --resource-group RG1 --image Ubuntu2204 --security-type TrustedLaunch --enable-secure-boot true --enable-vtpm true",
+        "powershell": "New-AzVm -ResourceGroupName RG1 -Name VM1 -Image Ubuntu2204 -SecurityType TrustedLaunch -EnableSecureBoot -EnableVtpm"
+      },
+      {
+        "task": "Connect an on-premises server to Azure Arc",
+        "cli": "azcmagent connect --resource-group RG1 --tenant-id <tenantId> --subscription-id <subId> --location eastus",
+        "powershell": "& \"$env:ProgramW6432\\AzureConnectedMachineAgent\\azcmagent.exe\" connect --resource-group RG1 --tenant-id <tenantId> --subscription-id <subId> --location eastus"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/training/modules/implement-disk-encryption-azure-virtual-machines/",
+      "https://learn.microsoft.com/en-us/training/modules/configure-trusted-launch-azure-virtual-machines/",
+      "https://learn.microsoft.com/en-us/training/modules/plan-implement-azure-bastion/",
+      "https://learn.microsoft.com/en-us/training/modules/implement-microsoft-defender-servers/",
+      "https://learn.microsoft.com/en-us/training/modules/enable-enforce-just-in-time-vm-access/",
+      "https://learn.microsoft.com/en-us/training/paths/server-vm-security/"
+    ]
+  },
+  {
+    "objectiveId": "o3-3",
+    "diagrams": ["firewall-vs-waf", "appgw-vs-frontdoor"],
+    "summary": "**Microsoft Defender for Containers** covers image scanning and runtime threat detection across AKS, Arc-enabled clusters, and other clouds, while **AKS** and **ACR** each need their own identity, network, and admission hardening. **App Service**, **Functions**, and **Logic Apps** share a common security pattern — built-in auth, network restriction, and managed identity — while a **Web Application Firewall** and **API Management** protect the web and API layers respectively, each at the right scope: regional versus global, exploit-blocking versus auth/throttling.",
+    "keyPoints": [
+      "**Microsoft Defender for Containers** finds misconfigurations and runtime risk across Kubernetes: **image vulnerability scanning** (in ACR and at runtime), runtime threat detection, and hardening recommendations — covers AKS, **Arc-enabled clusters**, and other clouds (EKS/GKE).",
+      "**AKS hardening**: Microsoft Entra integration with **Kubernetes RBAC**, **private clusters** (no public API server endpoint), Kubernetes **network policies** (pod-to-pod traffic control), **Azure Policy for AKS** (Gatekeeper admission control), **workload identity**, and pulling secrets from Key Vault via the **CSI driver**.",
+      "**ACR hardening**: **disable the admin user** (shared, non-attributable credential), use **Entra/RBAC and repository-scoped tokens** instead, add a **private endpoint**, enable **content trust** (image signing), and use **quarantine + vulnerability scanning** for pushed images.",
+      "**ACI/Container Apps**: deploy into a **VNet**, use **managed identity** for registry pulls instead of credentials, and restrict ingress.",
+      "**App Service**: built-in authentication (**Easy Auth**) with Entra, **HTTPS-only + minimum TLS version**, access restrictions/IP rules, VNet integration & private endpoints, and **managed identity** to reach Key Vault/SQL without stored secrets.",
+      "**Azure Functions**: Entra authentication, function/host **keys** for HTTP triggers, network restrictions, private endpoints, and managed identity — the same pattern as App Service, adapted to triggers.",
+      "**Logic Apps**: managed identity, IP access control, secure parameters stored in **Key Vault**, and private connectivity via **ISE or Standard plan inside a VNet**.",
+      "**Web Application Firewall (WAF)**: applies the **OWASP Core Rule Set** on **Application Gateway** (regional) or **Front Door** (global) — blocks SQLi/XSS, supports custom rules and bot/rate-limit rules; **Prevention mode blocks**, **Detection mode only logs**.",
+      "**Azure API Management (APIM)** protects back-end APIs: **subscription keys**, Entra/OAuth (JWT) validation, IP filtering, and **rate-limit/quota policies**, and can expose APIs **privately** rather than the raw backend.",
+      "**WAF placement rule**: use **Application Gateway WAF** for a regional app that needs path-based routing inside a VNet; use **Front Door WAF** for a global, internet-facing app that needs CDN/edge presence and anycast. WAF blocks web exploits; APIM protects the API layer (auth, throttling) — commonly used together."
+    ],
+    "commonPitfalls": [
+      "Underestimating **Defender for Containers**' scope — it covers image scanning **and** runtime detection across AKS, Arc-enabled clusters, and other clouds, not just AKS-native workloads.",
+      "Forgetting to **disable the ACR admin account** — it's a shared, non-attributable credential and one of the most tested hardening steps for registries.",
+      "Choosing **Application Gateway** when the scenario needs a **global**, internet-facing app with CDN/edge and anycast — that calls for **Front Door**; App Gateway is regional, VNet-scoped, path-based routing.",
+      "Treating **WAF** and **APIM** as interchangeable — WAF blocks web exploits (SQLi/XSS); APIM protects the API layer (authentication, throttling). They complement each other, they don't replace one another.",
+      "Leaving a WAF policy in **Detection mode** and assuming attacks are blocked — Detection only **logs** matches; **Prevention** is required to actually stop them.",
+      "Assuming Kubernetes **network policies** alone secure an AKS cluster — they only govern pod-to-pod traffic; private cluster, Entra/RBAC, and workload identity cover the other layers."
+    ],
+    "commands": [
+      {
+        "task": "Create an AKS cluster with Entra integration, Azure RBAC for Kubernetes, and a private API server",
+        "cli": "az aks create --name AKS1 --resource-group RG1 --enable-aad --enable-azure-rbac --enable-private-cluster",
+        "powershell": "New-AzAksCluster -Name AKS1 -ResourceGroupName RG1 -EnableAzureRbac -EnableAadProfile -EnablePrivateCluster"
+      },
+      {
+        "task": "Disable the shared admin account on Azure Container Registry",
+        "cli": "az acr update --name acr1 --admin-enabled false",
+        "powershell": "Update-AzContainerRegistry -Name acr1 -ResourceGroupName RG1 -DisableAdminUser"
+      },
+      {
+        "task": "Enable the Defender for Containers plan on a subscription",
+        "cli": "az security pricing create --name Containers --tier Standard",
+        "powershell": "Set-AzSecurityPricing -Name Containers -PricingTier Standard"
+      },
+      {
+        "task": "Create a WAF policy on Application Gateway in Prevention mode with the OWASP rule set",
+        "cli": "az network application-gateway waf-policy create --name waf1 --resource-group RG1\naz network application-gateway waf-policy policy-setting update --policy-name waf1 --resource-group RG1 --mode Prevention",
+        "powershell": "New-AzApplicationGatewayFirewallPolicy -Name waf1 -ResourceGroupName RG1\nSet-AzApplicationGatewayFirewallPolicySetting -Name waf1 -ResourceGroupName RG1 -Mode Prevention"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/training/modules/detect-container-risks-defender-containers/",
+      "https://learn.microsoft.com/en-us/training/modules/implement-security-controls-kubernetes/",
+      "https://learn.microsoft.com/en-us/training/modules/implement-security-controls-containers/",
+      "https://learn.microsoft.com/en-us/training/modules/implement-security-web-application-firewall/",
+      "https://learn.microsoft.com/en-us/training/modules/implement-application-interface-security-management/",
+      "https://learn.microsoft.com/en-us/training/paths/secure-application-platform-services/"
+    ]
+  }
+]

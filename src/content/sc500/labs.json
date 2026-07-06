@@ -1,0 +1,184 @@
+[
+  {
+    "id": "lab-o1-1",
+    "objectiveId": "o1-1",
+    "title": "Rendre un rôle Entra éligible via PIM et le tester",
+    "description": "Configure une attribution éligible pour un rôle privilégié et active-la pour vérifier le flux MFA + justification.",
+    "azurePortalSteps": [
+      "Microsoft Entra admin center ▸ ID Governance ▸ Privileged Identity Management ▸ Microsoft Entra roles ▸ Roles",
+      "Choisis un rôle peu sensible (ex. Reports Reader), Add assignments, mets un utilisateur de test en Eligible",
+      "Ouvre Settings sur ce rôle : configure la durée d'activation max, l'exigence de justification et de MFA",
+      "Connecte-toi avec l'utilisateur de test ▸ PIM ▸ My roles ▸ Eligible assignments ▸ Activate",
+      "Vérifie dans Assignments que le rôle est maintenant Active avec une heure d'expiration"
+    ],
+    "portalUrl": "https://portal.azure.com"
+  },
+  {
+    "id": "lab-o1-2",
+    "objectiveId": "o1-2",
+    "title": "Configurer une identité managée user-assigned vers Microsoft Graph",
+    "description": "Crée une identité managée user-assigned, attribue-la à une VM, et compare les deux objets Entra créés par une inscription d'application.",
+    "azurePortalSteps": [
+      "Portal ▸ Create a resource ▸ User Assigned Managed Identity ▸ crée-la dans un resource group de test",
+      "Attache-la à une VM existante : VM ▸ Identity ▸ User assigned ▸ Add",
+      "Entra admin center ▸ App registrations ▸ New registration : crée une app de test et observe qu'elle génère un objet séparé sous Enterprise applications",
+      "Compare les deux : l'identité managée n'a ni secret ni certificat ; l'inscription d'application en gère explicitement sous Certificates & secrets",
+      "Supprime les deux ressources de test"
+    ],
+    "portalUrl": "https://portal.azure.com"
+  },
+  {
+    "id": "lab-o1-3",
+    "objectiveId": "o1-3",
+    "title": "Déployer un Key Vault verrouillé en RBAC",
+    "description": "Crée un Key Vault avec autorisation RBAC, purge protection, et un rôle Key Vault Secrets User attribué à une identité managée.",
+    "azurePortalSteps": [
+      "Portal ▸ Create a resource ▸ Key Vault ▸ choisis Azure role-based access control sur l'onglet Access configuration",
+      "Active Purge protection (soft-delete est actif par défaut)",
+      "Networking : passe Public network access sur Disabled ou restreint-le à ton IP pour ce lab",
+      "Access control (IAM) ▸ Add role assignment ▸ Key Vault Secrets User ▸ attribue-le à l'identité managée du lab précédent",
+      "Ajoute un secret de test ▸ vérifie que l'identité managée peut le lire mais pas le supprimer (rôle Reader-like)"
+    ],
+    "portalUrl": "https://portal.azure.com"
+  },
+  {
+    "id": "lab-o1-4",
+    "objectiveId": "o1-4",
+    "title": "Assigner une policy Deny et une remédiation DeployIfNotExists",
+    "description": "Bloque la création de comptes de stockage avec accès public, puis observe une policy DeployIfNotExists en action.",
+    "azurePortalSteps": [
+      "Azure Policy ▸ Definitions ▸ cherche 'Storage accounts should restrict network access' ▸ Assign, effet Deny, scope = ton resource group de test",
+      "Essaie de créer un compte de stockage non conforme et observe le blocage au déploiement",
+      "Cherche une policy DeployIfNotExists (ex. activer le diagnostic logging) ▸ Assign, laisse Azure créer l'identité managée de remédiation",
+      "Lance une Remediation task sur une ressource existante non conforme",
+      "Vérifie dans Compliance que la ressource passe à l'état conforme"
+    ],
+    "portalUrl": "https://portal.azure.com"
+  },
+  {
+    "id": "lab-o2-1",
+    "objectiveId": "o2-1",
+    "title": "Durcir un compte de stockage et générer un SAS scoping",
+    "description": "Désactive l'accès public et la clé partagée, puis génère un SAS limité dans le temps via une stored access policy.",
+    "azurePortalSteps": [
+      "Storage account ▸ Configuration ▸ Allow Blob public access = Disabled, Allow storage account key access = Disabled",
+      "Configuration ▸ Minimum TLS version = 1.2",
+      "Containers ▸ crée un conteneur de test ▸ Access policy ▸ Add policy avec une expiration courte",
+      "Container ▸ Generate SAS ▸ associe-le à la stored access policy créée",
+      "Révoque l'accès en supprimant la stored access policy et vérifie que le SAS existant devient invalide"
+    ],
+    "portalUrl": "https://portal.azure.com"
+  },
+  {
+    "id": "lab-o2-2",
+    "objectiveId": "o2-2",
+    "title": "Activer Microsoft Entra auth et Dynamic Data Masking sur Azure SQL",
+    "description": "Configure l'authentification Entra sur un serveur SQL et applique un masque dynamique sur une colonne sensible.",
+    "azurePortalSteps": [
+      "Azure SQL server ▸ Settings ▸ Microsoft Entra ID ▸ Set admin ▸ choisis un groupe Entra comme administrateur",
+      "(Optionnel) active 'Support only Microsoft Entra authentication' pour désactiver les logins SQL",
+      "Base de données ▸ Security ▸ Dynamic Data Masking ▸ Add mask sur une colonne (ex. numéro de carte) ▸ format par défaut",
+      "Security ▸ Auditing ▸ Enable Azure SQL Auditing ▸ cible un Log Analytics workspace",
+      "Teste une requête avec un compte non-admin et vérifie que la colonne apparaît masquée"
+    ],
+    "portalUrl": "https://portal.azure.com"
+  },
+  {
+    "id": "lab-o2-3",
+    "objectiveId": "o2-3",
+    "title": "Créer des ASG et une règle NSG basée sur les rôles",
+    "description": "Regroupe des VM par rôle avec des Application Security Groups et écris une règle NSG qui les référence.",
+    "azurePortalSteps": [
+      "Portal ▸ Create a resource ▸ Application Security Group ▸ crée 'asg-web' et 'asg-db'",
+      "Sur chaque VM de test ▸ Networking ▸ Configure the application security groups ▸ associe-les au bon ASG",
+      "NSG du subnet ▸ Inbound security rules ▸ Add : Source = asg-web, Destination = asg-db, port 1433, Allow",
+      "Network Watcher ▸ Effective security rules ▸ vérifie que la règle apparaît bien sur la NIC de la VM db",
+      "Teste la connectivité entre les deux rôles et confirme qu'elle est bloquée pour toute autre source"
+    ],
+    "portalUrl": "https://portal.azure.com"
+  },
+  {
+    "id": "lab-o3-1",
+    "objectiveId": "o3-1",
+    "title": "Lancer une évaluation de risque données avec Purview DSPM for AI",
+    "description": "Explore les tâches de démarrage de DSPM for AI et lance une évaluation de risque sur un site SharePoint.",
+    "azurePortalSteps": [
+      "Microsoft Purview portal ▸ Solutions ▸ DSPM for AI",
+      "Complète les tâches Get started : active Audit, installe l'extension navigateur Purview",
+      "Data risk assessment ▸ sélectionne un site SharePoint à haut risque ▸ lance l'évaluation",
+      "Active une policy one-click : détecter les données sensibles collées dans un site d'IA",
+      "Reports ▸ Activity explorer ▸ AI activities : observe les prompts/réponses journalisés"
+    ],
+    "portalUrl": "https://purview.microsoft.com"
+  },
+  {
+    "id": "lab-o3-2",
+    "objectiveId": "o3-2",
+    "title": "Combiner Azure Bastion et l'accès JIT sur une VM",
+    "description": "Supprime l'exposition RDP d'une VM en déployant Bastion et en activant l'accès Just-In-Time.",
+    "azurePortalSteps": [
+      "Portal ▸ Create a resource ▸ Bastion ▸ déploie-le dans le VNet de la VM de test",
+      "VM ▸ Connect ▸ Bastion : vérifie que tu peux te connecter sans IP publique sur la VM",
+      "Microsoft Defender for Cloud ▸ Workload protections ▸ Just-in-time VM access ▸ Enable JIT sur la VM",
+      "Demande un accès JIT scopé à ton IP pour 3 heures avant de te connecter via RDP direct",
+      "Vérifie dans le NSG que la règle d'autorisation temporaire disparaît après expiration"
+    ],
+    "portalUrl": "https://portal.azure.com"
+  },
+  {
+    "id": "lab-o3-3",
+    "objectiveId": "o3-3",
+    "title": "Durcir un Azure Container Registry et activer Defender for Containers",
+    "description": "Désactive l'utilisateur admin d'un ACR, ajoute un accès RBAC scoped, et active Defender for Containers.",
+    "azurePortalSteps": [
+      "Azure Container Registry ▸ Access keys ▸ Admin user = Disabled",
+      "Access control (IAM) ▸ Add role assignment ▸ AcrPull ▸ attribue-le à l'identité managée d'un AKS ou App Service de test",
+      "Networking ▸ configure un private endpoint (ou restreins l'accès public si le tier ne le permet pas)",
+      "Microsoft Defender for Cloud ▸ Environment settings ▸ active le plan Defender for Containers",
+      "Pousse une image de test et observe les résultats de vulnerability scanning dans Defender for Cloud"
+    ],
+    "portalUrl": "https://portal.azure.com"
+  },
+  {
+    "id": "lab-o4-1",
+    "objectiveId": "o4-1",
+    "title": "Ajouter un standard de conformité et connecter un compte AWS",
+    "description": "Ajoute PCI-DSS au tableau de bord de conformité réglementaire et connecte un compte AWS à Defender for Cloud.",
+    "azurePortalSteps": [
+      "Defender for Cloud ▸ Regulatory compliance ▸ Manage compliance policies ▸ Security policies ▸ Add more standards",
+      "Sélectionne PCI-DSS v4, assigne-le au scope de ton abonnement, attends l'évaluation",
+      "Defender for Cloud ▸ Environment settings ▸ Add environment ▸ Amazon Web Services",
+      "Nomme le connecteur, fournis l'ID de compte AWS, sélectionne les plans (CSPM au minimum)",
+      "Télécharge et exécute le template CloudFormation dans AWS pour créer le rôle IAM fédéré, puis Create"
+    ],
+    "portalUrl": "https://portal.azure.com"
+  },
+  {
+    "id": "lab-o4-2",
+    "objectiveId": "o4-2",
+    "title": "Onboarder Sentinel et collecter les événements Windows Security",
+    "description": "Active Sentinel sur un workspace, installe la solution Windows Security Events, et vérifie l'ingestion via KQL.",
+    "azurePortalSteps": [
+      "Microsoft Sentinel ▸ Create ▸ sélectionne ou crée un Log Analytics workspace",
+      "Content hub ▸ installe la solution 'Windows Security Events'",
+      "Configuration ▸ Data connectors ▸ Windows Security Events via AMA ▸ Open connector page ▸ Create data collection rule",
+      "Sélectionne les VM cibles, choisis l'event set 'Common', valide",
+      "Logs ▸ exécute SecurityEvent | take 10 pour confirmer l'ingestion"
+    ],
+    "portalUrl": "https://portal.azure.com"
+  },
+  {
+    "id": "lab-o4-3",
+    "objectiveId": "o4-3",
+    "title": "Provisionner Security Copilot et activer le plugin Sentinel",
+    "description": "Provisionne une capacité SCU, attribue les rôles, et active le plugin Sentinel pour interroger un incident en langage naturel.",
+    "azurePortalSteps": [
+      "Portal ▸ Create a resource ▸ Microsoft Security Copilot ▸ configure la capacité (SCU)",
+      "Ouvre le portail Security Copilot ▸ configure l'environnement par défaut (géo, abonnement)",
+      "Settings ▸ Role assignments ▸ attribue le rôle owner à toi-même et contributor à un analyste de test",
+      "Settings ▸ Plugins ▸ active le plugin Microsoft Sentinel",
+      "Dans la barre de prompt, demande un résumé d'un incident Sentinel existant et vérifie la réponse"
+    ],
+    "portalUrl": "https://securitycopilot.microsoft.com"
+  }
+]

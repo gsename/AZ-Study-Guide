@@ -1,0 +1,637 @@
+[
+  {
+    "id": "q-o1-4-01",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "Which statement best distinguishes Azure Policy from Azure RBAC?",
+    "choices": [
+      "Policy governs the properties a resource may have; RBAC governs the actions a principal may perform",
+      "Policy and RBAC both govern the same thing and can be used interchangeably",
+      "RBAC governs resource properties; Policy governs principal actions",
+      "Policy applies only to virtual machines; RBAC applies to all resource types"
+    ],
+    "correctAnswers": ["Policy governs the properties a resource may have; RBAC governs the actions a principal may perform"],
+    "explanation": "Policy and RBAC are complementary but distinct: Policy shapes what a resource looks like, RBAC controls what a principal can do. They are not interchangeable, and neither is limited to VMs alone.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-4-02",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "A policy assignment uses the Audit effect. What happens to a non-compliant resource?",
+    "choices": [
+      "The resource is created/updated and marked non-compliant in reporting, with no block",
+      "The resource creation is blocked entirely",
+      "The resource is automatically remediated with a deployment",
+      "A tag is silently added to the resource"
+    ],
+    "correctAnswers": ["The resource is created/updated and marked non-compliant in reporting, with no block"],
+    "explanation": "Audit only logs non-compliance; it doesn't block, remediate, or modify the resource. Those behaviors belong to Deny, DeployIfNotExists, and Modify respectively.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-4-03",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "A policy assignment uses the Deny effect. What happens when a user attempts to create a non-compliant resource?",
+    "choices": [
+      "The create or update request is blocked",
+      "The request succeeds but is logged as non-compliant",
+      "The resource is created and then automatically deleted after 24 hours",
+      "The request succeeds and a remediation task is queued"
+    ],
+    "correctAnswers": ["The create or update request is blocked"],
+    "explanation": "Deny actively blocks the operation. Logging without blocking describes Audit; automatic remediation after the fact describes DeployIfNotExists.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-4-04",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "Which policy effect can automatically deploy a remediation, such as enabling diagnostic settings on non-compliant resources?",
+    "choices": [
+      "DeployIfNotExists (DINE)",
+      "Audit",
+      "Deny",
+      "AuditIfNotExists"
+    ],
+    "correctAnswers": ["DeployIfNotExists (DINE)"],
+    "explanation": "DINE deploys a remediation resource when a required configuration is missing. Audit and AuditIfNotExists only report; Deny blocks rather than remediates.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-05",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "What does a DeployIfNotExists policy assignment require in order to remediate resources?",
+    "choices": [
+      "A managed identity assigned to the policy assignment with permission to perform the remediation deployment",
+      "A Conditional Access policy targeting the resource provider",
+      "A vault access policy on every affected Key Vault",
+      "Nothing extra — it remediates automatically with no identity"
+    ],
+    "correctAnswers": ["A managed identity assigned to the policy assignment with permission to perform the remediation deployment"],
+    "explanation": "DINE (and Modify) assignments need a managed identity with sufficient rights to perform the remediation deployment. Conditional Access and Key Vault access policies are unrelated to policy remediation.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-06",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "Which policy effect adds or changes properties (such as tags) on a resource rather than blocking or just auditing it?",
+    "choices": [
+      "Modify",
+      "Deny",
+      "Audit",
+      "AuditIfNotExists"
+    ],
+    "correctAnswers": ["Modify"],
+    "explanation": "Modify actively adds/changes properties or tags. Deny blocks, and Audit/AuditIfNotExists only report on compliance.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-07",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "Which policy effect flags non-compliance when a related resource is missing, such as a VM lacking an associated monitoring agent extension?",
+    "choices": [
+      "AuditIfNotExists",
+      "Deny",
+      "Modify",
+      "DeployIfNotExists"
+    ],
+    "correctAnswers": ["AuditIfNotExists"],
+    "explanation": "AuditIfNotExists reports (without remediating) when a related resource is absent. DeployIfNotExists would remediate the same gap instead of only flagging it.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-08",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "What is an Azure Policy initiative?",
+    "choices": [
+      "A grouped set of related policy definitions assigned together as a single unit",
+      "A single policy definition with the Deny effect",
+      "A resource lock applied at the management group level",
+      "A custom RBAC role definition"
+    ],
+    "correctAnswers": ["A grouped set of related policy definitions assigned together as a single unit"],
+    "explanation": "An initiative bundles multiple policy definitions for assignment as one unit. It isn't tied to a single effect, and it has nothing to do with locks or RBAC role definitions.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-4-09",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "Which built-in initiative is commonly assigned to baseline an environment against a broad security benchmark?",
+    "choices": [
+      "Microsoft cloud security benchmark",
+      "Key Vault Secrets User",
+      "CanNotDelete",
+      "Reader"
+    ],
+    "correctAnswers": ["Microsoft cloud security benchmark"],
+    "explanation": "The Microsoft cloud security benchmark is a built-in initiative bundling many baseline security policies. The other options are an RBAC role, a lock type, and another RBAC role, not initiatives.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-10",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "A custom Azure Policy definition is authored in JSON. Which block contains the conditional logic that determines compliance and the resulting effect?",
+    "choices": [
+      "The policyRule if/then block",
+      "The AssignableScopes array",
+      "The DataActions array",
+      "The NotActions array"
+    ],
+    "correctAnswers": ["The policyRule if/then block"],
+    "explanation": "policyRule's if/then structure is where the compliance condition and resulting effect are defined. AssignableScopes, DataActions, and NotActions belong to custom RBAC role definitions, not policy definitions.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-11",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "You assigned a DeployIfNotExists policy to enforce diagnostic settings, but existing (pre-existing) resources remain non-compliant. What is needed to bring them into compliance?",
+    "choices": [
+      "A remediation task, run using the identity created for the policy assignment",
+      "Nothing — DINE policies always remediate existing resources automatically with no further action",
+      "A new Conditional Access policy targeting those resources",
+      "Deleting and recreating every non-compliant resource manually"
+    ],
+    "correctAnswers": ["A remediation task, run using the identity created for the policy assignment"],
+    "explanation": "DINE policies only apply going forward automatically; a remediation task is required to fix already-existing non-compliant resources, using the assignment's managed identity.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-12",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "At which scopes can an Azure Policy assignment be created?",
+    "choices": [
+      "Management group, subscription, or resource group",
+      "Only at the tenant root management group",
+      "Only directly on individual resources, never at a group scope",
+      "Only within a Key Vault"
+    ],
+    "correctAnswers": ["Management group, subscription, or resource group"],
+    "explanation": "Policy assignments can target any of these three scopes, not just the tenant root, individual resources, or a specific service like Key Vault.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-13",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "Which three elements together define an Azure RBAC role assignment?",
+    "choices": [
+      "A security principal, a role definition, and a scope",
+      "A policy definition, an initiative, and an effect",
+      "A managed identity, a remediation task, and a resource lock",
+      "A service principal, a Conditional Access policy, and a session control"
+    ],
+    "correctAnswers": ["A security principal, a role definition, and a scope"],
+    "explanation": "A role assignment = who (principal) + what (role definition) + where (scope). The other combinations mix in unrelated Policy, remediation, lock, and Conditional Access concepts.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-4-14",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "An Azure role is assigned at a resource group. Does a newly created resource inside that group automatically inherit the assignment?",
+    "choices": [
+      "Yes — RBAC permissions inherit downward to resources created later in scope",
+      "No — the assignment must be recreated on every new resource",
+      "Only if the resource is a virtual machine",
+      "Only if a resource lock is also applied"
+    ],
+    "correctAnswers": ["Yes — RBAC permissions inherit downward to resources created later in scope"],
+    "explanation": "Inheritance is automatic and downward, covering resources created after the assignment, and it isn't limited to VMs or dependent on locks.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-4-15",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "Which built-in Azure role can manage access (create role assignments) but cannot create, modify, or delete the underlying resources?",
+    "choices": [
+      "User Access Administrator",
+      "Contributor",
+      "Owner",
+      "Reader"
+    ],
+    "correctAnswers": ["User Access Administrator"],
+    "explanation": "User Access Administrator manages access only. Contributor manages resources but not access; Owner does both; Reader can do neither.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-16",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "Why can a Global Administrator sign in to the Azure portal and see zero subscriptions?",
+    "choices": [
+      "Microsoft Entra directory roles and Azure RBAC are two separate systems, and Entra roles grant no Azure resource access by default",
+      "Global Administrator is itself an Azure RBAC role restricted to Reader",
+      "Subscriptions are hidden from all Entra roles by Conditional Access",
+      "Global Administrator can only see resources tagged 'admin-visible'"
+    ],
+    "correctAnswers": ["Microsoft Entra directory roles and Azure RBAC are two separate systems, and Entra roles grant no Azure resource access by default"],
+    "explanation": "The two systems are independent; Global Administrator is an Entra role, not an Azure RBAC role, and grants no subscription-level access by default.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-17",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "In a custom Azure role definition's JSON, which property lists control-plane (management) operations that are explicitly denied even if granted elsewhere in the same role?",
+    "choices": [
+      "NotActions",
+      "Actions",
+      "DataActions",
+      "AssignableScopes"
+    ],
+    "correctAnswers": ["NotActions"],
+    "explanation": "NotActions subtracts from Actions. DataActions covers the data plane, and AssignableScopes only defines where the role can be assigned, granting or denying nothing.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-18",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "Which property in a custom Azure role definition restricts the management groups, subscriptions, or resource groups where the role can be assigned?",
+    "choices": [
+      "AssignableScopes",
+      "NotDataActions",
+      "Actions",
+      "DataActions"
+    ],
+    "correctAnswers": ["AssignableScopes"],
+    "explanation": "AssignableScopes lists where the role may be assigned. Actions/DataActions/NotDataActions grant or subtract permissions rather than constrain assignment scope.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-19",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "An organization needs a custom role for directory tasks like managing app registrations, distinct from any Azure resource role. Which role system applies?",
+    "choices": [
+      "Microsoft Entra custom roles, a separate system from Azure custom roles",
+      "Azure custom roles using the DataActions property",
+      "A vault access policy scoped to the tenant root",
+      "A resource lock with a custom JSON definition"
+    ],
+    "correctAnswers": ["Microsoft Entra custom roles, a separate system from Azure custom roles"],
+    "explanation": "Directory tasks require an Entra custom role, a distinct system from Azure custom roles (which use Actions/DataActions). Vault access policies and resource locks are unrelated constructs.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-20",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "What is the effect of a CanNotDelete resource lock?",
+    "choices": [
+      "Reading and modifying the resource remains allowed, but deletion is blocked",
+      "Both modification and deletion are blocked",
+      "Only deletion of child resources is blocked, not the resource itself",
+      "The lock only applies to resources created after the lock, not existing ones"
+    ],
+    "correctAnswers": ["Reading and modifying the resource remains allowed, but deletion is blocked"],
+    "explanation": "CanNotDelete permits read and modify but blocks delete. Blocking both read/modify and delete describes ReadOnly instead.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-21",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "What is the effect of a ReadOnly resource lock?",
+    "choices": [
+      "No modification or deletion is allowed, effectively freezing the resource's configuration",
+      "Only deletion is blocked; modification remains allowed",
+      "The resource becomes invisible to all principals except Owners",
+      "It automatically converts all RBAC role assignments to Reader"
+    ],
+    "correctAnswers": ["No modification or deletion is allowed, effectively freezing the resource's configuration"],
+    "explanation": "ReadOnly blocks both modification and deletion. Blocking only deletion describes CanNotDelete; ReadOnly doesn't hide the resource or alter RBAC assignments.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-22",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "A user holds the Owner role on a resource group that also has a ReadOnly lock applied. Can they modify a resource in that group?",
+    "choices": [
+      "No — the lock blocks modification regardless of the user's RBAC role",
+      "Yes — Owner always overrides any resource lock",
+      "Yes, but only if they also hold User Access Administrator",
+      "No, but only because Owner cannot apply locks"
+    ],
+    "correctAnswers": ["No — the lock blocks modification regardless of the user's RBAC role"],
+    "explanation": "Locks operate independently of RBAC; Owner does not override an active ReadOnly lock, regardless of any additional role held.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o1-4-23",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "A ReadOnly lock is applied at a resource group. What happens to resources created inside that group afterward?",
+    "choices": [
+      "They inherit the lock, since locks propagate to child resources",
+      "They are unaffected, since locks apply only to resources present at the time the lock was created",
+      "They are automatically deleted",
+      "They must be manually re-locked one by one"
+    ],
+    "correctAnswers": ["They inherit the lock, since locks propagate to child resources"],
+    "explanation": "Locks, like RBAC assignments, inherit downward to child resources, including ones created later — no manual re-application or deletion occurs.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-24",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "What does Azure Backup soft-delete protect against?",
+    "choices": [
+      "Permanent loss of backup data for a recovery window (around 14 days) after a delete operation",
+      "Unauthorized read access to backup data while it is stored",
+      "Network-layer attacks against the Recovery Services vault",
+      "Misconfigured RBAC role assignments on the vault"
+    ],
+    "correctAnswers": ["Permanent loss of backup data for a recovery window (around 14 days) after a delete operation"],
+    "explanation": "Soft-delete keeps deleted backup data recoverable for a window. It doesn't address read authorization, network attacks, or RBAC misconfiguration directly.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-25",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "What does an immutable Recovery Services/Backup vault guarantee?",
+    "choices": [
+      "Backup data cannot have its retention shortened or be deleted before the retention period elapses",
+      "Backup data is automatically encrypted with a customer-managed key",
+      "Backups complete in half the normal time",
+      "Backup data is replicated to a second Azure region automatically"
+    ],
+    "correctAnswers": ["Backup data cannot have its retention shortened or be deleted before the retention period elapses"],
+    "explanation": "Immutability locks in the retention guarantee. It has nothing to do with CMK encryption, backup speed, or cross-region replication.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-26",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "What does Multi-User Authorization (MUA) via a Resource Guard add to Azure Backup security?",
+    "choices": [
+      "A second, separately-permissioned administrator must approve destructive operations such as disabling soft-delete or deleting backup data",
+      "Automatic encryption of backups with Managed HSM keys",
+      "A resource lock automatically applied to every new vault",
+      "Immediate alerting to Defender for Key Vault on every backup job"
+    ],
+    "correctAnswers": ["A second, separately-permissioned administrator must approve destructive operations such as disabling soft-delete or deleting backup data"],
+    "explanation": "MUA requires a second approver, held outside the first admin's control, for destructive operations. It doesn't automatically add encryption, locks, or Defender for Key Vault alerting.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-27",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "MUA/Resource Guard is primarily designed to defend against which threat scenario?",
+    "choices": [
+      "A single compromised or rogue administrator account attempting to delete or shorten the retention of backup data",
+      "A denial-of-service attack against the backup network endpoint",
+      "An expired TLS certificate on the backup storage account",
+      "A misconfigured Conditional Access policy blocking legitimate backup jobs"
+    ],
+    "correctAnswers": ["A single compromised or rogue administrator account attempting to delete or shorten the retention of backup data"],
+    "explanation": "MUA specifically closes the gap where one compromised admin could otherwise destroy backup data. It has no bearing on DoS, certificates, or CA misconfiguration.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-28",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "Where in Defender for Cloud do you review pass/fail status of controls against a regulatory framework like PCI-DSS?",
+    "choices": [
+      "The Regulatory compliance dashboard",
+      "Azure Policy ▸ Definitions",
+      "Privileged Identity Management ▸ Alerts",
+      "Key Vault ▸ Access configuration"
+    ],
+    "correctAnswers": ["The Regulatory compliance dashboard"],
+    "explanation": "The Regulatory compliance dashboard maps the environment to frameworks and tracks control status. The other locations manage unrelated policy, PIM, or Key Vault settings.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-4-29",
+    "objectiveId": "o1-4",
+    "type": "multiple",
+    "prompt": "Which two Azure Policy effects can actively remediate or alter a resource, rather than only auditing or blocking it? (Choose two.)",
+    "choices": [
+      "DeployIfNotExists",
+      "Modify",
+      "Audit",
+      "Deny"
+    ],
+    "correctAnswers": ["DeployIfNotExists", "Modify"],
+    "explanation": "DINE deploys a remediation and Modify changes properties directly. Audit and Deny only report or block, without altering the resource.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-30",
+    "objectiveId": "o1-4",
+    "type": "multiple",
+    "prompt": "Which two statements about resource locks are correct? (Choose two.)",
+    "choices": [
+      "Locks apply independently of a principal's RBAC role",
+      "Locks are inherited by child resources",
+      "A CanNotDelete lock also blocks configuration changes",
+      "Locks automatically expire after 30 days"
+    ],
+    "correctAnswers": ["Locks apply independently of a principal's RBAC role", "Locks are inherited by child resources"],
+    "explanation": "CanNotDelete permits configuration changes (only ReadOnly blocks those), and locks have no automatic expiry — they persist until explicitly removed.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-31",
+    "objectiveId": "o1-4",
+    "type": "multiple",
+    "prompt": "Which two features harden Azure Backup against a compromised administrator account? (Choose two.)",
+    "choices": [
+      "Immutable vaults",
+      "Multi-User Authorization via Resource Guard",
+      "Azure Policy Audit effect",
+      "Vault access policies"
+    ],
+    "correctAnswers": ["Immutable vaults", "Multi-User Authorization via Resource Guard"],
+    "explanation": "Immutability and MUA directly prevent a single compromised admin from destroying backup data. Policy Audit only reports, and vault access policies are a Key Vault authorization concept, unrelated to Backup.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-32",
+    "objectiveId": "o1-4",
+    "type": "case-study",
+    "caseStudyId": "cs-tailspin-identity",
+    "prompt": "Referring to requirement 5 (every newly created resource must carry a mandatory 'DataClassification' tag before it can be provisioned, applied automatically), which policy configuration is correct?",
+    "choices": [
+      "A policy assignment with the Deny effect blocking resource creation when the 'DataClassification' tag is missing",
+      "A policy assignment with the Audit effect that logs missing tags for a monthly report",
+      "A resource lock set to ReadOnly on the subscription",
+      "A Conditional Access policy requiring MFA before resource creation"
+    ],
+    "correctAnswers": ["A policy assignment with the Deny effect blocking resource creation when the 'DataClassification' tag is missing"],
+    "explanation": "Deny is the only listed effect that blocks non-compliant creation outright, satisfying 'before it can be provisioned.' Audit only logs after the fact, and locks/Conditional Access don't enforce tagging.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-33",
+    "objectiveId": "o1-4",
+    "type": "case-study",
+    "caseStudyId": "cs-tailspin-identity",
+    "prompt": "Referring to requirement 6 (backups of the finance database must be protected so a compromised admin account cannot delete or shorten their retention), which configuration best satisfies this?",
+    "choices": [
+      "An immutable Recovery Services vault combined with Multi-User Authorization via a Resource Guard",
+      "A CanNotDelete resource lock on the finance database resource group only",
+      "Azure Policy Audit effect on the Recovery Services vault",
+      "Standard soft-delete with no further configuration"
+    ],
+    "correctAnswers": ["An immutable Recovery Services vault combined with Multi-User Authorization via a Resource Guard"],
+    "explanation": "Immutability plus MUA together prevent both shortening retention and require a second admin's approval for destructive backup actions — beyond what a resource lock or plain soft-delete alone provides against a single compromised admin.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-34",
+    "objectiveId": "o1-4",
+    "type": "case-study",
+    "caseStudyId": "cs-tailspin-identity",
+    "prompt": "Referring to requirement 6, why is a resource lock alone (without MUA) insufficient to fully satisfy the requirement?",
+    "choices": [
+      "A resource lock only blocks delete/modify operations at the resource level; it doesn't independently gate destructive backup-specific operations like disabling soft-delete, which MUA governs via Resource Guard",
+      "Resource locks cannot be applied to Recovery Services vaults at all",
+      "A resource lock automatically approves any admin request without review",
+      "Resource locks are only supported for storage accounts"
+    ],
+    "correctAnswers": ["A resource lock only blocks delete/modify operations at the resource level; it doesn't independently gate destructive backup-specific operations like disabling soft-delete, which MUA governs via Resource Guard"],
+    "explanation": "Resource locks are a general-purpose control, not a substitute for the backup-specific, second-approver gate that MUA provides for operations like disabling soft-delete.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o1-4-35",
+    "objectiveId": "o1-4",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-4",
+    "prompt": "Proposed solution: Publish an internal wiki page instructing engineers to always add a 'DataClassification' tag when creating resources, and audit compliance quarterly. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "Documentation relies on manual discipline and only detects gaps quarterly — it doesn't enforce tagging at creation time as required.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-36",
+    "objectiveId": "o1-4",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-4",
+    "prompt": "Proposed solution: Assign a built-in Azure Policy with the Deny effect at the subscription scope, blocking creation of any resource missing the 'DataClassification' tag. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["Yes"],
+    "explanation": "A Deny-effect policy at the subscription scope blocks provisioning at the moment of creation whenever the required tag is missing, with zero reliance on manual discipline.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-37",
+    "objectiveId": "o1-4",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-4",
+    "prompt": "Proposed solution: Assign an Azure Policy with the Audit effect that flags resources missing the 'DataClassification' tag in the compliance dashboard. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "Audit only reports non-compliance after the resource is already created; it doesn't stop provisioning, so tagging isn't guaranteed at creation time.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-38",
+    "objectiveId": "o1-4",
+    "type": "reorder",
+    "prompt": "Order the steps to assign a built-in Azure Policy initiative and remediate existing non-compliant resources.",
+    "reorderItems": [
+      "Browse to Azure Policy ▸ Definitions and locate the built-in initiative",
+      "Select Assign and choose the scope (management group, subscription, or resource group)",
+      "Configure the effect and any exclusions, then create the assignment",
+      "Wait for or trigger a compliance evaluation scan",
+      "Run a remediation task to fix existing non-compliant resources using the assignment's managed identity"
+    ],
+    "explanation": "The definition must be located and assigned before compliance can be evaluated, and remediation of existing resources is the final step, using the identity created for the assignment.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-39",
+    "objectiveId": "o1-4",
+    "type": "reorder",
+    "prompt": "Order the steps to protect a finance database's backups against a compromised administrator account.",
+    "reorderItems": [
+      "Create a Resource Guard in a separate, protected subscription or tenant",
+      "Enable Multi-User Authorization on the Recovery Services vault and link it to the Resource Guard",
+      "Configure the vault as an immutable vault",
+      "Attempt to disable soft-delete and confirm a second administrator's approval is required",
+      "Document the approval workflow for the compliance team"
+    ],
+    "explanation": "The Resource Guard must exist before the vault can be linked to it, and the protection is verified by testing a destructive operation before documenting the workflow.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-40",
+    "objectiveId": "o1-4",
+    "type": "active-screen",
+    "prompt": "Configure this simplified policy assignment screen so that any resource missing the required 'DataClassification' tag is blocked from being created.",
+    "screenTitle": "Assign policy (simulated)",
+    "fields": [
+      { "id": "effect", "label": "Effect", "kind": "select", "options": ["Audit", "Deny", "DeployIfNotExists", "AuditIfNotExists"], "correctValue": "Deny" },
+      { "id": "scope", "label": "Scope", "kind": "select", "options": ["Resource", "Resource group", "Subscription", "Management group"], "correctValue": "Subscription" },
+      { "id": "enforcement", "label": "Policy enforcement", "kind": "toggle", "correctValue": "On" }
+    ],
+    "explanation": "Deny actively blocks non-compliant creation, assigned broadly enough (subscription) to cover all new resources, with enforcement enabled so it actually takes effect rather than only auditing.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-41",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "Security recommendations in Defender for Cloud keep going unresolved because no one is accountable for fixing them. Which feature assigns ownership with a due date and email notifications?",
+    "choices": [
+      "Governance rules",
+      "Resource locks",
+      "Regulatory compliance standards",
+      "Vulnerability Assessment"
+    ],
+    "correctAnswers": ["Governance rules"],
+    "explanation": "Governance rules assign recommendation ownership to a person or team with a due date and notifications, driving accountability. The other options don't address ownership/accountability for recommendations.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-42",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "A specific recommendation legitimately doesn't apply to one resource due to a compensating control elsewhere. What should you configure, rather than ignoring the recommendation silently?",
+    "choices": [
+      "A documented, time-bound exemption on that recommendation for the resource",
+      "The one-click Fix action",
+      "A CanNotDelete resource lock",
+      "Disable Defender for Cloud on the subscription"
+    ],
+    "correctAnswers": ["A documented, time-bound exemption on that recommendation for the resource"],
+    "explanation": "An exemption is the structured, auditable way to waive a recommendation that legitimately doesn't apply. Fix actually remediates — it doesn't apply here since there's nothing to fix; disabling Defender for Cloud is far too broad.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-4-43",
+    "objectiveId": "o1-4",
+    "type": "single",
+    "prompt": "Which Azure DevOps/GitHub Actions extension runs IaC and secret scanning as part of a pipeline, feeding results into Defender for Cloud's DevOps security?",
+    "choices": [
+      "The Microsoft DevOps (MSDO) extension",
+      "Azure Machine Configuration",
+      "The Key Vault CSI driver",
+      "Azure Monitor Agent"
+    ],
+    "correctAnswers": ["The Microsoft DevOps (MSDO) extension"],
+    "explanation": "The MSDO extension is the specific pipeline extension that runs IaC/secret scanning and surfaces findings in Defender for Cloud's DevOps security, supporting a policy-as-code workflow.",
+    "difficulty": "medium"
+  }
+]

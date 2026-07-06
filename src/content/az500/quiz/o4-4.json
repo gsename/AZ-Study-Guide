@@ -1,0 +1,605 @@
+[
+  {
+    "id": "q-o4-4-01",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "What does Defender for Cloud's workflow automation do?",
+    "choices": [
+      "Triggers a Logic App in response to an alert or recommendation",
+      "Automatically deletes non-compliant resources",
+      "Replaces Microsoft Sentinel",
+      "Rotates Key Vault keys on a schedule"
+    ],
+    "correctAnswers": ["Triggers a Logic App in response to an alert or recommendation"],
+    "explanation": "Workflow automation runs a Logic App in response to Defender for Cloud alerts/recommendations (notify, ticket, isolate).",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-4-02",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "What does a Data Collection Rule (DCR) in Azure Monitor define?",
+    "choices": [
+      "What telemetry is collected from machines and where it is sent",
+      "Which users can sign in to a VM",
+      "Which NSG rules apply to a subnet",
+      "Which Defender plan is enabled"
+    ],
+    "correctAnswers": ["What telemetry is collected from machines and where it is sent"],
+    "explanation": "DCRs specify the telemetry scope and destination (typically a Log Analytics workspace).",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-4-03",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Which agent do Data Collection Rules rely on in 2026?",
+    "choices": [
+      "The Azure Monitor Agent (AMA)",
+      "The Log Analytics Agent (MMA)",
+      "The Operations Management Suite (OMS) agent",
+      "No agent is ever required"
+    ],
+    "correctAnswers": ["The Azure Monitor Agent (AMA)"],
+    "explanation": "AMA is the current supported collection agent used with DCRs; the legacy MMA is retired.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-04",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "What is the status of the Log Analytics Agent (Microsoft Monitoring Agent / MMA) as of 2026?",
+    "choices": [
+      "Fully retired — its backend was shut down in March 2026; do not use it for new collection",
+      "It is the recommended agent for all new deployments",
+      "It was merged into Microsoft Sentinel",
+      "It is deprecated only for Linux machines"
+    ],
+    "correctAnswers": ["Fully retired — its backend was shut down in March 2026; do not use it for new collection"],
+    "explanation": "The MMA backend was fully shut down in March 2026; DCRs with AMA are the only supported path.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-4-05",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Which two capability categories does Microsoft Sentinel combine?",
+    "choices": ["SIEM and SOAR", "WAF and CDN", "CSPM and CWP", "IAM and PKI"],
+    "correctAnswers": ["SIEM and SOAR"],
+    "explanation": "Sentinel is a cloud-native SIEM (collect/detect) and SOAR (automate response) platform.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-4-06",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "What is the purpose of data connectors in Microsoft Sentinel?",
+    "choices": [
+      "To ingest logs and alerts from various sources into Sentinel",
+      "To automatically remediate incidents",
+      "To define NSG rules",
+      "To enforce Key Vault access policies"
+    ],
+    "correctAnswers": ["To ingest logs and alerts from various sources into Sentinel"],
+    "explanation": "Data connectors are the ingestion layer (Azure activity, Entra ID, Defender, etc.).",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-4-07",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "What do Microsoft Sentinel analytics rules produce?",
+    "choices": [
+      "Alerts, which group into incidents",
+      "Data connectors",
+      "Playbooks",
+      "Data Collection Rules"
+    ],
+    "correctAnswers": ["Alerts, which group into incidents"],
+    "explanation": "Analytics rules detect threats from ingested data and raise alerts that group into incidents.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-4-08",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "What do Microsoft Sentinel automation rules and playbooks provide?",
+    "choices": [
+      "Automated response actions (via Logic Apps) triggered by incidents",
+      "The initial data ingestion",
+      "The Secure Score calculation",
+      "Network-layer filtering"
+    ],
+    "correctAnswers": ["Automated response actions (via Logic Apps) triggered by incidents"],
+    "explanation": "This is Sentinel's SOAR half — automating the response once an incident is raised.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-4-09",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "What underlying Azure resource does Microsoft Sentinel build on?",
+    "choices": [
+      "A Log Analytics workspace",
+      "A Key Vault",
+      "An Azure Firewall policy",
+      "An App Service Environment"
+    ],
+    "correctAnswers": ["A Log Analytics workspace"],
+    "explanation": "Sentinel is built on and requires a Log Analytics workspace as its data store.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-10",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "As of July 2026, where does Microsoft Sentinel operate?",
+    "choices": [
+      "Exclusively in the unified Microsoft Defender portal",
+      "Only in the classic Azure portal, unchanged since launch",
+      "Only via a standalone desktop app",
+      "It has been retired and replaced by Defender for Cloud"
+    ],
+    "correctAnswers": ["Exclusively in the unified Microsoft Defender portal"],
+    "explanation": "Sentinel's operating experience moved into the unified Defender portal, completed by July 2026.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-4-11",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Did Sentinel's SIEM/SOAR functionality change when it moved to the Microsoft Defender portal?",
+    "choices": [
+      "No — the same connectors, analytics rules, and automation still apply; only the portal changed",
+      "Yes — it lost SOAR automation",
+      "Yes — the Log Analytics workspace requirement was removed",
+      "Yes — it became a paid add-on to Defender for Cloud"
+    ],
+    "correctAnswers": ["No — the same connectors, analytics rules, and automation still apply; only the portal changed"],
+    "explanation": "The product is functionally unchanged; only the operating surface (Defender portal) moved.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-12",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "How do Defender for Cloud workflow automation and Sentinel automation rules differ in trigger source?",
+    "choices": [
+      "Workflow automation triggers on Defender for Cloud alerts/recommendations; Sentinel automation rules trigger on incidents",
+      "They are the same feature",
+      "Workflow automation is part of Sentinel",
+      "Only one can be used per subscription"
+    ],
+    "correctAnswers": ["Workflow automation triggers on Defender for Cloud alerts/recommendations; Sentinel automation rules trigger on incidents"],
+    "explanation": "Both can fire Logic Apps but from different trigger sources — Defender for Cloud alerts vs Sentinel incidents.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-13",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Which mechanism configures exactly what security telemetry is collected from a fleet of Azure VMs and where it is sent?",
+    "choices": [
+      "Data Collection Rules (DCRs) in Azure Monitor",
+      "An Azure Policy Deny effect",
+      "Sentinel playbooks",
+      "Key Vault access policies"
+    ],
+    "correctAnswers": ["Data Collection Rules (DCRs) in Azure Monitor"],
+    "explanation": "DCRs are the current, purpose-built mechanism for defining collected telemetry and its destination.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-4-14",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "An exam scenario proposes installing the Log Analytics agent (MMA) on new VMs to collect security events. Why is this wrong in 2026?",
+    "choices": [
+      "The MMA backend was shut down in March 2026; use DCRs with the Azure Monitor Agent instead",
+      "MMA only collects performance counters, never security events",
+      "MMA requires a Sentinel license per VM",
+      "MMA is only available on Linux"
+    ],
+    "correctAnswers": ["The MMA backend was shut down in March 2026; use DCRs with the Azure Monitor Agent instead"],
+    "explanation": "Any answer proposing the retired MMA for new collection is incorrect; DCRs + AMA is the only current path.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-4-15",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "To bring Microsoft Entra ID sign-in logs into Microsoft Sentinel, what do you configure?",
+    "choices": [
+      "A data connector",
+      "A resource lock",
+      "A user-defined route",
+      "A dynamic data mask"
+    ],
+    "correctAnswers": ["A data connector"],
+    "explanation": "Data connectors ingest a source's logs (here, Entra ID sign-ins) into Sentinel.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-4-16",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "What is the fastest way to start detecting known threat patterns in Sentinel without writing queries from scratch?",
+    "choices": [
+      "Enable Microsoft-provided analytics rule templates",
+      "Write a custom Logic App for each pattern",
+      "Configure a Data Collection Rule per pattern",
+      "Add a Conditional Access policy"
+    ],
+    "correctAnswers": ["Enable Microsoft-provided analytics rule templates"],
+    "explanation": "Rule templates provide ready-made scheduled analytics rules you can enable and tune.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-17",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "A SOC wants incidents created automatically when suspicious Entra sign-in patterns are correlated across multiple sources. Which Sentinel components deliver this?",
+    "choices": [
+      "Data connectors (ingest) plus analytics rules (detect → incidents)",
+      "Workflow automation in Defender for Cloud",
+      "A Key Vault access policy",
+      "An Azure Firewall threat-intel rule"
+    ],
+    "correctAnswers": ["Data connectors (ingest) plus analytics rules (detect → incidents)"],
+    "explanation": "Connectors ingest the logs; analytics rules correlate and raise incidents.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-18",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "In Sentinel, what is the relationship between alerts and incidents?",
+    "choices": [
+      "Analytics-rule alerts are grouped into incidents for investigation",
+      "Incidents are ingested by data connectors, then split into alerts",
+      "Alerts and incidents are the same object",
+      "Incidents are created by DCRs"
+    ],
+    "correctAnswers": ["Analytics-rule alerts are grouped into incidents for investigation"],
+    "explanation": "Analytics rules raise alerts, which Sentinel groups into incidents for triage and response.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-19",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Which action is a SOAR (not SIEM) capability of Sentinel?",
+    "choices": [
+      "Running a playbook to isolate a resource when an incident is created",
+      "Ingesting Azure activity logs",
+      "Detecting a brute-force pattern with an analytics rule",
+      "Storing logs in the Log Analytics workspace"
+    ],
+    "correctAnswers": ["Running a playbook to isolate a resource when an incident is created"],
+    "explanation": "Automated response (playbooks) is the SOAR half; ingestion/detection/storage are SIEM functions.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-20",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "A team wants a Logic App to open a ticket whenever Defender for Cloud raises a high-severity alert (not a Sentinel incident). Which feature should they use?",
+    "choices": [
+      "Defender for Cloud workflow automation",
+      "A Sentinel automation rule",
+      "An Azure Policy DeployIfNotExists",
+      "A Data Collection Rule"
+    ],
+    "correctAnswers": ["Defender for Cloud workflow automation"],
+    "explanation": "Workflow automation is triggered directly by Defender for Cloud alerts/recommendations; Sentinel automation rules trigger on Sentinel incidents instead.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-21",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "What is the first step to start using Microsoft Sentinel?",
+    "choices": [
+      "Onboard Sentinel onto a Log Analytics workspace",
+      "Create an analytics rule",
+      "Attach a playbook",
+      "Enable a Defender for Servers plan"
+    ],
+    "correctAnswers": ["Onboard Sentinel onto a Log Analytics workspace"],
+    "explanation": "Sentinel requires a Log Analytics workspace; onboarding it there is the first step before connectors/rules/automation.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-22",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Which tool both Defender for Cloud workflow automation and Sentinel automation ultimately invoke to perform response actions?",
+    "choices": [
+      "Azure Logic Apps (playbooks)",
+      "Azure Functions only",
+      "Azure Automation runbooks only",
+      "Data Collection Rules"
+    ],
+    "correctAnswers": ["Azure Logic Apps (playbooks)"],
+    "explanation": "Both systems drive Logic Apps for the actual response, differing only in what triggers them.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-23",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Which statement about Sentinel after its move to the Defender portal is TRUE?",
+    "choices": [
+      "It still uses the same Log Analytics workspace and analytics rules",
+      "It no longer needs a Log Analytics workspace",
+      "It replaced Defender for Cloud",
+      "Its analytics rules were removed in favor of Azure Policy"
+    ],
+    "correctAnswers": ["It still uses the same Log Analytics workspace and analytics rules"],
+    "explanation": "Only the portal experience moved; the workspace, connectors, and analytics rules are unchanged.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-24",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Which of these is the modern, supported way to collect Windows security events from Azure VMs into a workspace?",
+    "choices": [
+      "A Data Collection Rule using the Azure Monitor Agent",
+      "The Log Analytics agent (MMA)",
+      "The OMS agent",
+      "A Sentinel playbook"
+    ],
+    "correctAnswers": ["A Data Collection Rule using the Azure Monitor Agent"],
+    "explanation": "DCRs with AMA are the current supported method; MMA/OMS are retired, and playbooks are for response, not collection.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-25",
+    "objectiveId": "o4-4",
+    "type": "multiple",
+    "prompt": "Which two statements are correct? (Choose two.)",
+    "choices": [
+      "Data Collection Rules replace the retired Log Analytics (MMA) agent collection method",
+      "The Azure Monitor Agent is the current supported collection agent",
+      "The Log Analytics agent is recommended for new collection in 2026",
+      "DCRs are unrelated to Log Analytics workspaces"
+    ],
+    "correctAnswers": [
+      "Data Collection Rules replace the retired Log Analytics (MMA) agent collection method",
+      "The Azure Monitor Agent is the current supported collection agent"
+    ],
+    "explanation": "MMA is retired and DCRs/AMA typically send data into a Log Analytics workspace — those are the correct statements.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-26",
+    "objectiveId": "o4-4",
+    "type": "multiple",
+    "prompt": "Which two statements about Microsoft Sentinel are correct? (Choose two.)",
+    "choices": [
+      "It remains the same SIEM/SOAR product after moving into the Defender portal",
+      "Analytics rules raise alerts that group into incidents",
+      "Moving to the Defender portal removed its Log Analytics workspace requirement",
+      "It was retired and replaced by Defender for Cloud"
+    ],
+    "correctAnswers": [
+      "It remains the same SIEM/SOAR product after moving into the Defender portal",
+      "Analytics rules raise alerts that group into incidents"
+    ],
+    "explanation": "Sentinel's architecture (workspace, analytics rules, incidents) is unchanged and it was never retired.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-27",
+    "objectiveId": "o4-4",
+    "type": "multiple",
+    "prompt": "Which two are Sentinel SOAR (response automation) components? (Choose two.)",
+    "choices": [
+      "Automation rules",
+      "Playbooks (Logic Apps)",
+      "Data connectors",
+      "Analytics rules"
+    ],
+    "correctAnswers": ["Automation rules", "Playbooks (Logic Apps)"],
+    "explanation": "Automation rules and playbooks drive response (SOAR); connectors ingest and analytics rules detect (SIEM).",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-28",
+    "objectiveId": "o4-4",
+    "type": "case-study",
+    "caseStudyId": "cs-adatum-governance",
+    "prompt": "Referring to requirement 7 (a Logic App must open a ticket whenever Defender for Cloud raises a high-severity alert), what should Adatum configure?",
+    "choices": [
+      "Workflow automation in Defender for Cloud, triggered by the alert",
+      "A Sentinel automation rule triggered by an incident",
+      "An Azure Policy DeployIfNotExists",
+      "A Data Collection Rule"
+    ],
+    "correctAnswers": ["Workflow automation in Defender for Cloud, triggered by the alert"],
+    "explanation": "Workflow automation fires a Logic App directly from a Defender for Cloud alert.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-4-29",
+    "objectiveId": "o4-4",
+    "type": "case-study",
+    "caseStudyId": "cs-adatum-governance",
+    "prompt": "Referring to requirement 8 (incidents auto-created from suspicious Entra sign-in patterns correlated across multiple log sources), what should Adatum configure?",
+    "choices": [
+      "Sentinel data connectors to ingest the logs, plus analytics rules to detect and raise incidents",
+      "Defender for Cloud workflow automation alone",
+      "A Key Vault access policy",
+      "An Azure Firewall threat-intelligence rule"
+    ],
+    "correctAnswers": ["Sentinel data connectors to ingest the logs, plus analytics rules to detect and raise incidents"],
+    "explanation": "Correlating multiple sources into incidents is exactly what Sentinel connectors plus analytics rules do.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-4-30",
+    "objectiveId": "o4-4",
+    "type": "case-study",
+    "caseStudyId": "cs-adatum-governance",
+    "prompt": "Adatum must standardize how security telemetry is collected from its Azure VMs into the Sentinel workspace. A proposal reuses the old Log Analytics agent. What should the correct design be?",
+    "choices": [
+      "Use Data Collection Rules with the Azure Monitor Agent, since the Log Analytics agent is retired",
+      "Deploy the Log Analytics agent (MMA) fleet-wide",
+      "Use per-VM Sentinel playbooks to push logs",
+      "Enable dynamic data masking on the VMs"
+    ],
+    "correctAnswers": ["Use Data Collection Rules with the Azure Monitor Agent, since the Log Analytics agent is retired"],
+    "explanation": "The MMA is retired; DCRs with AMA are the standard, supported collection path into the workspace.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-31",
+    "objectiveId": "o4-4",
+    "type": "reorder",
+    "prompt": "Order the steps to start detecting threats with Microsoft Sentinel from scratch.",
+    "reorderItems": [
+      "Onboard Sentinel onto a Log Analytics workspace",
+      "Enable data connectors for the relevant sources (e.g. Entra ID, Azure activity)",
+      "Enable analytics rule templates to detect known patterns",
+      "Create automation rules with playbooks to respond to incidents"
+    ],
+    "explanation": "The workspace and connectors must be in place before analytics rules have data to detect on, with automated response configured last.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-32",
+    "objectiveId": "o4-4",
+    "type": "reorder",
+    "prompt": "Order the steps to migrate VM telemetry collection off the retired Log Analytics agent.",
+    "reorderItems": [
+      "Identify VMs still reporting via the legacy Log Analytics agent (MMA)",
+      "Create a Data Collection Rule targeting the required telemetry",
+      "Ensure the Azure Monitor Agent is installed and associated on the VMs",
+      "Uninstall the legacy Log Analytics agent once AMA collection is confirmed"
+    ],
+    "explanation": "Identify the affected VMs, stand up the new DCR/AMA collection path, confirm it works, then retire the legacy agent.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-33",
+    "objectiveId": "o4-4",
+    "type": "active-screen",
+    "prompt": "Configure this simplified Sentinel automation screen so a Logic App runs automatically whenever a new Sentinel incident is created.",
+    "screenTitle": "Automation rule (simulated)",
+    "fields": [
+      { "id": "trigger", "label": "Automation rule trigger", "kind": "select", "options": ["When alert is created (Defender for Cloud)", "When incident is created (Sentinel)"], "correctValue": "When incident is created (Sentinel)" },
+      { "id": "action", "label": "Action", "kind": "select", "options": ["Run playbook", "Send email only"], "correctValue": "Run playbook" }
+    ],
+    "explanation": "Sentinel automation rules trigger on Sentinel incidents (not Defender for Cloud alerts directly), and the automated action is running a playbook (Logic App).",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-34",
+    "objectiveId": "o4-4",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o4-4",
+    "prompt": "Proposed solution: Create a Sentinel automation rule triggered by incident creation. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "Sentinel automation rules trigger on Sentinel incidents, not directly on Defender for Cloud alerts — the goal specifically excludes Sentinel incidents.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-35",
+    "objectiveId": "o4-4",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o4-4",
+    "prompt": "Proposed solution: Configure Defender for Cloud workflow automation, triggered by the alert, running a Logic App that opens the ticket. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["Yes"],
+    "explanation": "Workflow automation is triggered directly by Defender for Cloud alerts and runs a Logic App — exactly what the goal asks for.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-4-36",
+    "objectiveId": "o4-4",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o4-4",
+    "prompt": "Proposed solution: Create a Data Collection Rule that forwards alerts to a ticketing system. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "DCRs configure telemetry collection into a workspace — they do not trigger actions in response to alerts.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-37",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Which command creates the Log Analytics workspace that Sentinel will be onboarded onto?",
+    "choices": [
+      "az monitor log-analytics workspace create --workspace-name LAW1 --resource-group RG1",
+      "az sentinel workspace create --name LAW1 --resource-group RG1",
+      "az monitor workspace create --name LAW1 --type log-analytics",
+      "az log-analytics create --name LAW1"
+    ],
+    "correctAnswers": ["az monitor log-analytics workspace create --workspace-name LAW1 --resource-group RG1"],
+    "explanation": "The workspace lives under `az monitor log-analytics workspace`. `az monitor workspace` creates an Azure Monitor (Prometheus) workspace — a different resource; the other two don't exist.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-38",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "After creating a Data Collection Rule, which command makes VM1 actually send telemetry according to that rule?",
+    "choices": [
+      "az monitor data-collection rule association create --name assoc1 --rule-id <dcrId> --resource <vmId>",
+      "az monitor data-collection rule update --name DCR1 --add-vm VM1",
+      "az vm extension set --name LogAnalyticsAgent --vm-name VM1",
+      "az monitor diagnostic-settings create --resource VM1 --rule DCR1"
+    ],
+    "correctAnswers": ["az monitor data-collection rule association create --name assoc1 --rule-id <dcrId> --resource <vmId>"],
+    "explanation": "A DCR takes effect through an ASSOCIATION between the rule and the resource. Installing the retired Log Analytics agent is wrong, and DCRs aren't referenced from diagnostic settings.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-4-39",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Which command onboards Microsoft Sentinel onto workspace LAW1?",
+    "choices": [
+      "az sentinel onboarding-state create --name default --resource-group RG1 --workspace-name LAW1",
+      "az sentinel create --workspace LAW1",
+      "az monitor log-analytics workspace update --name LAW1 --enable-sentinel",
+      "az security sentinel enable --workspace LAW1"
+    ],
+    "correctAnswers": ["az sentinel onboarding-state create --name default --resource-group RG1 --workspace-name LAW1"],
+    "explanation": "Sentinel onboarding is expressed as an onboarding-state on the workspace (`az sentinel onboarding-state create -n default`). The other subcommands don't exist.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-4-40",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Which PowerShell cmdlet creates a Data Collection Rule from a JSON definition?",
+    "choices": [
+      "New-AzDataCollectionRule -Name DCR1 -ResourceGroupName RG1 -JsonFilePath dcr.json",
+      "New-AzMonitorRule -Name DCR1 -File dcr.json",
+      "Set-AzDiagnosticSetting -Name DCR1 -Json dcr.json",
+      "New-AzSentinelDataConnector -Name DCR1 -Rule dcr.json"
+    ],
+    "correctAnswers": ["New-AzDataCollectionRule -Name DCR1 -ResourceGroupName RG1 -JsonFilePath dcr.json"],
+    "explanation": "New-AzDataCollectionRule creates the DCR. Diagnostic settings and Sentinel data connectors are different mechanisms; New-AzMonitorRule doesn't exist.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-41",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "A proposal uses `az vm extension set` to install the Log Analytics (OMS) agent on new VMs for security-event collection. What is the correct 2026 approach instead?",
+    "choices": [
+      "Create a Data Collection Rule and associate it with the VMs (Azure Monitor Agent)",
+      "Keep the OMS agent but upgrade it to the latest version",
+      "Replace it with a Sentinel playbook that pulls the events",
+      "Use diagnostic settings on each VM's NIC"
+    ],
+    "correctAnswers": ["Create a Data Collection Rule and associate it with the VMs (Azure Monitor Agent)"],
+    "explanation": "The Log Analytics/OMS agent is retired (backend shut down in March 2026); DCR + AMA is the only supported collection path. Playbooks are for response, and NIC diagnostic settings don't collect guest security events.",
+    "difficulty": "medium"
+  }
+]

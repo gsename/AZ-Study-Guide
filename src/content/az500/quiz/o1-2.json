@@ -1,0 +1,590 @@
+[
+  {
+    "id": "q-o1-2-01",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Registering a new application in Microsoft Entra ID creates which two linked objects?",
+    "choices": [
+      "A global application object and a service principal",
+      "A service principal and a managed identity",
+      "An enterprise application and a Conditional Access policy",
+      "An application object and a security group"
+    ],
+    "correctAnswers": ["A global application object and a service principal"],
+    "explanation": "Registration produces the global application object (the blueprint) plus a service principal (the local identity) in the home tenant.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-02",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Where do you configure an app's redirect URIs, client secrets/certificates, and the API permissions it requests?",
+    "choices": ["App registrations", "Enterprise applications", "Managed identities", "Conditional Access"],
+    "correctAnswers": ["App registrations"],
+    "explanation": "App registrations defines the application blueprint. Enterprise applications is where you then govern the resulting service principal in your tenant.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-03",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "In which blade do you assign users/groups to an app, enable single sign-on, and review the OAuth permission grants that have actually been consented?",
+    "choices": ["Enterprise applications", "App registrations", "Roles and administrators", "Identity Governance"],
+    "correctAnswers": ["Enterprise applications"],
+    "explanation": "Enterprise applications governs the app's service principal within your tenant. App registrations is where permissions are declared/requested, not where consent state is governed.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-04",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "A single multi-tenant app registration is used by 40 customer tenants. How many service principals exist for it across those tenants?",
+    "choices": [
+      "One service principal per consuming tenant — up to 40",
+      "Exactly one, shared across all tenants",
+      "One per user who signs in",
+      "None until an admin creates them manually in each tenant"
+    ],
+    "correctAnswers": ["One service principal per consuming tenant — up to 40"],
+    "explanation": "The application object is global, but each consuming tenant gets its own service principal (created on consent) that it governs locally.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-05",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which permission type lets an app act on behalf of the signed-in user, bounded by what that user can do?",
+    "choices": ["Delegated permissions", "Application permissions", "Directory role permissions", "Data-plane RBAC permissions"],
+    "correctAnswers": ["Delegated permissions"],
+    "explanation": "Delegated permissions require a signed-in user and are limited to that user's own access. Application permissions act as the app itself with no user present.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-06",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "A background daemon with no signed-in user needs to read all mailboxes via Microsoft Graph. Which permission type and consent apply?",
+    "choices": [
+      "Application permissions, which always require admin consent",
+      "Delegated permissions, self-consented by the daemon",
+      "Delegated permissions requiring no consent",
+      "Application permissions that any user can consent to"
+    ],
+    "correctAnswers": ["Application permissions, which always require admin consent"],
+    "explanation": "No user is present, so the app must use application permissions acting as itself — and application permissions always require an administrator to consent.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-07",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Why do application permissions always require admin consent, regardless of how narrow the permission is?",
+    "choices": [
+      "There is no signed-in user to consent on their own behalf",
+      "They are always classified as high-impact by Microsoft",
+      "They can only be granted at the tenant root management group",
+      "They require a verified publisher, and only admins can verify publishers"
+    ],
+    "correctAnswers": ["There is no signed-in user to consent on their own behalf"],
+    "explanation": "Because the app acts as itself with no user in the flow, only an administrator can approve the permission for the whole tenant.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-08",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "To stop users from consenting to risky third-party apps while still allowing low-risk cases, you restrict user consent to verified publishers and low-impact permissions. What handles the rest?",
+    "choices": [
+      "The admin consent workflow, which routes requests to administrators for approval",
+      "A Conditional Access policy requiring MFA",
+      "A resource lock on the enterprise application",
+      "Automatic denial of all remaining requests"
+    ],
+    "correctAnswers": ["The admin consent workflow, which routes requests to administrators for approval"],
+    "explanation": "The admin consent workflow lets users request access and routes it to reviewers/admins, rather than silently blocking legitimate needs.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-09",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Where is the tenant-wide user consent policy (verified publishers, low-impact permissions) configured?",
+    "choices": [
+      "Enterprise applications ▸ Consent and permissions",
+      "App registrations ▸ Certificates & secrets",
+      "Privileged Identity Management ▸ Settings",
+      "Microsoft Entra ID ▸ Roles and administrators"
+    ],
+    "correctAnswers": ["Enterprise applications ▸ Consent and permissions"],
+    "explanation": "Consent and permissions under Enterprise applications controls the tenant-wide user consent policy and the admin consent workflow.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-10",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which statement best describes a service principal?",
+    "choices": [
+      "The local, governable identity of an application within a specific tenant",
+      "The global, tenant-independent blueprint of an application",
+      "A group used to assign Azure RBAC roles in bulk",
+      "A Conditional Access construct for workload identities"
+    ],
+    "correctAnswers": ["The local, governable identity of an application within a specific tenant"],
+    "explanation": "The service principal is the app's local identity in a tenant; the application object is the separate global blueprint.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-11",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which type of managed identity is bound to a single resource's lifecycle and deleted automatically when that resource is deleted?",
+    "choices": ["System-assigned", "User-assigned", "Multi-tenant", "Federated"],
+    "correctAnswers": ["System-assigned"],
+    "explanation": "A system-assigned managed identity is created on and tied to one resource and removed with it — ideal for a 1:1 identity.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-12",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which type of managed identity exists as its own standalone Azure resource and can be attached to several resources at once?",
+    "choices": ["User-assigned", "System-assigned", "Workload-federated", "Delegated"],
+    "correctAnswers": ["User-assigned"],
+    "explanation": "A user-assigned managed identity is a standalone resource shareable across multiple resources and managed independently.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-13",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Five VMs must share exactly the same identity to reach a Key Vault, and that identity must persist even if individual VMs are rebuilt. Which identity fits best?",
+    "choices": [
+      "A user-assigned managed identity attached to all five VMs",
+      "A system-assigned managed identity on each VM",
+      "A single service principal whose client secret is copied to each VM",
+      "A shared access signature distributed to each VM"
+    ],
+    "correctAnswers": ["A user-assigned managed identity attached to all five VMs"],
+    "explanation": "Only a user-assigned managed identity is a shareable, independently-lifecycled identity. System-assigned identities are per-resource; a shared secret reintroduces credential-handling risk.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-14",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Why is a managed identity preferred over a service principal with a client secret for a workload running on an Azure resource?",
+    "choices": [
+      "There is no secret to store, leak, or rotate — Azure manages the credential",
+      "It automatically grants the workload Owner on the subscription",
+      "It removes the need to assign any RBAC role",
+      "It is the only identity type that can call Microsoft Graph"
+    ],
+    "correctAnswers": ["There is no secret to store, leak, or rotate — Azure manages the credential"],
+    "explanation": "The benefit is credential handling only. A managed identity still needs RBAC role assignments like any other principal.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-15",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "'All managed identities are service principals.' Which statement about the reverse is correct?",
+    "choices": [
+      "Not all service principals are managed identities — a normal app registration's SP has credentials you manage",
+      "All service principals are managed identities",
+      "Service principals and managed identities are unrelated objects",
+      "A service principal exists only while a user is signed in"
+    ],
+    "correctAnswers": ["Not all service principals are managed identities — a normal app registration's SP has credentials you manage"],
+    "explanation": "Every managed identity is implemented as a service principal, but ordinary app registrations also have service principals whose secrets/certs are your responsibility.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-16",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "An app registration's client secret is about to expire and outages occur when it lapses. Which change most durably eliminates this class of problem for an Azure-hosted workload?",
+    "choices": [
+      "Replace the secret-based service principal with a managed identity",
+      "Set the client secret to never expire",
+      "Store the client secret in Key Vault and read it at startup",
+      "Add a second client secret as a backup"
+    ],
+    "correctAnswers": ["Replace the secret-based service principal with a managed identity"],
+    "explanation": "A managed identity has no secret to expire at all. Non-expiring or backup secrets, or vaulting the secret, still leave a credential to manage and rotate.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-17",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "What is an OAuth permission grant, as seen under an enterprise application?",
+    "choices": [
+      "A record that a delegated or application permission has actually been consented",
+      "A Conditional Access rule applied to the app",
+      "An Azure RBAC role assignment on a resource group",
+      "A certificate uploaded to the app registration"
+    ],
+    "correctAnswers": ["A record that a delegated or application permission has actually been consented"],
+    "explanation": "OAuth permission grants track the permissions that have been consented for the app's service principal — distinct from the permissions merely requested in the registration.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-18",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "You want to prevent a specific enterprise application from being usable except by an approved pilot group. What should you configure?",
+    "choices": [
+      "Require user assignment and assign only the pilot group to the app",
+      "Delete the app's client secret",
+      "Add a NotActions entry to the app's service principal",
+      "Set a ReadOnly resource lock on the application object"
+    ],
+    "correctAnswers": ["Require user assignment and assign only the pilot group to the app"],
+    "explanation": "Enterprise applications support 'Assignment required?' plus user/group assignment, restricting who can use the app. Locks and NotActions do not apply to enterprise-app usage.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-19",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "An Azure Function must read a secret from Key Vault with no stored credentials. What should it use, and what else is required?",
+    "choices": [
+      "A managed identity, plus a Key Vault data-plane role (or access policy) granting it read on secrets",
+      "A managed identity alone — role assignment is unnecessary",
+      "The Key Vault admin account credentials embedded in app settings",
+      "A shared access signature for the Key Vault"
+    ],
+    "correctAnswers": ["A managed identity, plus a Key Vault data-plane role (or access policy) granting it read on secrets"],
+    "explanation": "The managed identity provides credential-free authentication, but it still needs authorization — an RBAC data role like Key Vault Secrets User (or a vault access policy).",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-20",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which statement about credential management is correct for the two managed-identity types?",
+    "choices": [
+      "Azure creates and rotates credentials automatically for both system- and user-assigned identities",
+      "Only system-assigned identities are credential-free; user-assigned ones need a secret",
+      "Both require you to upload a certificate annually",
+      "User-assigned identities store their secret in the attached resource's app settings"
+    ],
+    "correctAnswers": ["Azure creates and rotates credentials automatically for both system- and user-assigned identities"],
+    "explanation": "Neither type has a credential you handle; the difference is lifecycle and shareability, not credential management.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-21",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "A developer added an API permission in App registrations, but the app still can't call the API. What is the most likely missing step?",
+    "choices": [
+      "Consent has not been granted for the requested permission",
+      "The app registration must be converted to an enterprise application",
+      "A managed identity must be enabled on the app",
+      "The permission must be added again under Certificates & secrets"
+    ],
+    "correctAnswers": ["Consent has not been granted for the requested permission"],
+    "explanation": "Requesting a permission is not the same as being granted it — a user or admin must consent before the app can exercise it.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-22",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which is the correct place to rotate or remove a compromised client secret for a registered application?",
+    "choices": [
+      "App registrations ▸ Certificates & secrets",
+      "Enterprise applications ▸ Users and groups",
+      "Managed identities ▸ Federated credentials",
+      "Key Vault ▸ Access configuration"
+    ],
+    "correctAnswers": ["App registrations ▸ Certificates & secrets"],
+    "explanation": "Client secrets and certificates for a registered app live under App registrations ▸ Certificates & secrets.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-23",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which approach lets an external workload (e.g. a GitHub Actions pipeline) authenticate as an Entra app WITHOUT a stored client secret?",
+    "choices": [
+      "Workload identity federation (federated credentials on the app registration)",
+      "A user-assigned managed identity attached to GitHub",
+      "A shared access signature scoped to the app",
+      "Embedding a long-lived client secret as a repository secret"
+    ],
+    "correctAnswers": ["Workload identity federation (federated credentials on the app registration)"],
+    "explanation": "Workload identity federation lets an external IdP's token be exchanged for an Entra token, removing the stored secret. Managed identities apply to Azure-hosted resources, not GitHub.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o1-2-24",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "A user-assigned managed identity is attached to a VM, then the VM is deleted. What happens to the identity?",
+    "choices": [
+      "It continues to exist as a standalone resource and can be attached elsewhere",
+      "It is deleted along with the VM",
+      "It is converted into a system-assigned identity",
+      "It is disabled until re-attached within 24 hours"
+    ],
+    "correctAnswers": ["It continues to exist as a standalone resource and can be attached elsewhere"],
+    "explanation": "User-assigned identities are independent of any single resource, so deleting the VM leaves the identity intact.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-25",
+    "objectiveId": "o1-2",
+    "type": "multiple",
+    "prompt": "Which two statements about a system-assigned managed identity are correct? (Choose two.)",
+    "choices": [
+      "Its lifecycle is tied to a single resource",
+      "It is deleted automatically when that resource is deleted",
+      "It can be attached to multiple resources at once",
+      "It requires a client secret that you rotate"
+    ],
+    "correctAnswers": [
+      "Its lifecycle is tied to a single resource",
+      "It is deleted automatically when that resource is deleted"
+    ],
+    "explanation": "System-assigned identities are 1:1 with their resource and credential-free; sharing across resources is a user-assigned capability.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-26",
+    "objectiveId": "o1-2",
+    "type": "multiple",
+    "prompt": "Which two are true about consent in Microsoft Entra ID? (Choose two.)",
+    "choices": [
+      "Application permissions always require admin consent",
+      "User consent can be restricted to verified publishers and low-impact permissions",
+      "A standard user can grant admin consent for application permissions",
+      "Delegated permissions can never be consented by a user"
+    ],
+    "correctAnswers": [
+      "Application permissions always require admin consent",
+      "User consent can be restricted to verified publishers and low-impact permissions"
+    ],
+    "explanation": "Only admins grant application-permission consent; low-risk delegated permissions can be user-consented, subject to the tenant policy.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-27",
+    "objectiveId": "o1-2",
+    "type": "multiple",
+    "prompt": "Which two objects govern the SAME application but at different scopes? (Choose two.)",
+    "choices": [
+      "The application object (global blueprint)",
+      "The service principal (local tenant identity)",
+      "A network security group",
+      "A Key Vault secret"
+    ],
+    "correctAnswers": [
+      "The application object (global blueprint)",
+      "The service principal (local tenant identity)"
+    ],
+    "explanation": "The application object is the global definition; the service principal is its local instance per tenant. NSGs and secrets are unrelated.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-28",
+    "objectiveId": "o1-2",
+    "type": "case-study",
+    "caseStudyId": "cs-contoso-identity",
+    "prompt": "Referring to requirement 3 (a background invoicing daemon with no signed-in user must read data from Microsoft Graph), which permission and consent are required?",
+    "choices": [
+      "Application permissions with admin consent",
+      "Delegated permissions with user consent",
+      "Delegated permissions with no consent",
+      "No permissions — daemons bypass Graph authorization"
+    ],
+    "correctAnswers": ["Application permissions with admin consent"],
+    "explanation": "No user is present, so the daemon needs application permissions, which always require admin consent.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-29",
+    "objectiveId": "o1-2",
+    "type": "case-study",
+    "caseStudyId": "cs-contoso-identity",
+    "prompt": "Referring to requirement 4 (a deployment pipeline running on an Azure VM must reach Key Vault with no stored client secret), which is the correct design?",
+    "choices": [
+      "Assign a managed identity to the VM and grant it a Key Vault secrets-read data role",
+      "Store a service principal client secret in the pipeline's environment variables",
+      "Generate a Key Vault SAS token and hard-code it in the pipeline",
+      "Use the Key Vault admin account credentials"
+    ],
+    "correctAnswers": ["Assign a managed identity to the VM and grant it a Key Vault secrets-read data role"],
+    "explanation": "A managed identity gives credential-free authentication for the Azure-hosted workload, combined with a least-privilege Key Vault data role for authorization.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-30",
+    "objectiveId": "o1-2",
+    "type": "case-study",
+    "caseStudyId": "cs-contoso-identity",
+    "prompt": "Contoso's security team wants to ensure employees can no longer consent to arbitrary third-party apps on their own, while still letting legitimate requests reach IT. What should they configure?",
+    "choices": [
+      "Restrict user consent and enable the admin consent workflow",
+      "Delete all existing enterprise applications",
+      "Require MFA for the Microsoft Graph cloud app",
+      "Assign every employee the Cloud Application Administrator role"
+    ],
+    "correctAnswers": ["Restrict user consent and enable the admin consent workflow"],
+    "explanation": "Restricting user consent stops arbitrary approvals; the admin consent workflow routes genuine needs to administrators instead of blocking them outright.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-31",
+    "objectiveId": "o1-2",
+    "type": "reorder",
+    "prompt": "Order the steps to give an Azure Function a credential-free way to read a Key Vault secret.",
+    "reorderItems": [
+      "Enable a system-assigned managed identity on the Function app",
+      "Note the managed identity's object ID",
+      "Assign it the Key Vault Secrets User role scoped to the Key Vault",
+      "Reference the secret from application code via the Key Vault SDK/reference, with no credential in code"
+    ],
+    "explanation": "The identity must exist before it can be granted a role, and the role must be assigned before code can successfully read the secret.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-32",
+    "objectiveId": "o1-2",
+    "type": "reorder",
+    "prompt": "Order the steps to register an application and let it call Microsoft Graph as a daemon with admin-consented application permissions.",
+    "reorderItems": [
+      "Create a new app registration",
+      "Add the required application permission under API permissions",
+      "Have an administrator grant admin consent for the tenant",
+      "Generate a client secret or certificate for the app",
+      "Use the client credentials flow to obtain a token"
+    ],
+    "explanation": "Permissions must be requested and consented before the app can successfully use its credential to obtain a token via client credentials.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-33",
+    "objectiveId": "o1-2",
+    "type": "active-screen",
+    "prompt": "Configure this simplified API permissions screen for a daemon service (no signed-in user) that must read all users' profiles via Microsoft Graph.",
+    "screenTitle": "API permissions (simulated)",
+    "fields": [
+      { "id": "permType", "label": "Permission type", "kind": "select", "options": ["Delegated permissions", "Application permissions"], "correctValue": "Application permissions" },
+      { "id": "scope", "label": "Permission", "kind": "select", "options": ["User.Read", "User.Read.All", "Mail.Send"], "correctValue": "User.Read.All" },
+      { "id": "consent", "label": "Admin consent granted", "kind": "toggle", "correctValue": "On" }
+    ],
+    "explanation": "No user is signed in, so application permissions are required, reading all users needs User.Read.All, and application permissions always need admin consent.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-34",
+    "objectiveId": "o1-2",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-2",
+    "prompt": "Proposed solution: Create a service principal with a client secret and store the secret in an environment variable on the VM. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "A secret is still stored on the VM (in an environment variable), which the goal explicitly forbids.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-35",
+    "objectiveId": "o1-2",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-2",
+    "prompt": "Proposed solution: Enable a system-assigned managed identity on the VM and grant it a Key Vault Secrets User role. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["Yes"],
+    "explanation": "The managed identity requires no stored credential on the VM or in code, and the data role authorizes exactly the needed access.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-36",
+    "objectiveId": "o1-2",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-2",
+    "prompt": "Proposed solution: Generate a long-lived SAS-style token for the Key Vault and embed it in the job's configuration file. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "This is still a stored, long-lived credential in configuration — Key Vault authorization doesn't work this way, and it fails the 'no stored credential' requirement either way.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-37",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which Azure CLI command enables a system-assigned managed identity on an existing VM?",
+    "choices": [
+      "az vm identity assign --name VM1 --resource-group RG1",
+      "az identity create --name VM1 --resource-group RG1",
+      "az vm update --name VM1 --resource-group RG1 --managed-identity system",
+      "az ad sp create-for-rbac --vm VM1"
+    ],
+    "correctAnswers": ["az vm identity assign --name VM1 --resource-group RG1"],
+    "explanation": "`az vm identity assign` enables the system-assigned identity on the VM. `az identity create` creates a standalone user-assigned identity; the other two are invented syntax.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-38",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which command creates a USER-assigned managed identity as a standalone resource?",
+    "choices": [
+      "az identity create --name MyIdentity --resource-group RG1",
+      "az vm identity assign --name MyIdentity --resource-group RG1",
+      "az ad app create --display-name MyIdentity --managed",
+      "New-AzADServicePrincipal -Name MyIdentity -UserAssigned"
+    ],
+    "correctAnswers": ["az identity create --name MyIdentity --resource-group RG1"],
+    "explanation": "User-assigned identities are their own resource, created with `az identity create` (PowerShell: New-AzUserAssignedIdentity). `az vm identity assign` attaches identities to a VM; the others don't create managed identities.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-39",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which PowerShell cmdlet creates a user-assigned managed identity?",
+    "choices": [
+      "New-AzUserAssignedIdentity",
+      "New-AzADServicePrincipal",
+      "New-AzManagedIdentity",
+      "Set-AzVMIdentity"
+    ],
+    "correctAnswers": ["New-AzUserAssignedIdentity"],
+    "explanation": "New-AzUserAssignedIdentity is the dedicated cmdlet. New-AzADServicePrincipal creates a classic service principal (credentials to manage); the other two don't exist.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-40",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which command creates a service principal for automation AND assigns it Reader on the subscription in one step?",
+    "choices": [
+      "az ad sp create-for-rbac --name MyApp --role Reader --scopes /subscriptions/<subId>",
+      "az ad app create --name MyApp --role Reader --subscription <subId>",
+      "az identity create --name MyApp --role Reader",
+      "az role assignment create --sp MyApp --role Reader"
+    ],
+    "correctAnswers": ["az ad sp create-for-rbac --name MyApp --role Reader --scopes /subscriptions/<subId>"],
+    "explanation": "`az ad sp create-for-rbac` creates the app + SP + credential and can assign a role in one step. `az ad app create` only registers the app; `az identity create` makes a managed identity without role parameters like this.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-41",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "A VM's system-assigned managed identity must read secrets from Key Vault KV1 (RBAC model). Which command completes the setup?",
+    "choices": [
+      "az role assignment create --assignee <identityPrincipalId> --role \"Key Vault Secrets User\" --scope <kv1ResourceId>",
+      "az keyvault set-policy --name KV1 --spn <identityPrincipalId> --secret-permissions get  # vault en modèle RBAC",
+      "az keyvault update --name KV1 --default-action Allow",
+      "az vm identity assign --name VM1 --keyvault KV1"
+    ],
+    "correctAnswers": ["az role assignment create --assignee <identityPrincipalId> --role \"Key Vault Secrets User\" --scope <kv1ResourceId>"],
+    "explanation": "With the RBAC access model, authorization is a data-plane role assignment (Key Vault Secrets User). `set-policy` belongs to the legacy access-policy model and is ignored/invalid on an RBAC vault.",
+    "difficulty": "hard"
+  }
+]

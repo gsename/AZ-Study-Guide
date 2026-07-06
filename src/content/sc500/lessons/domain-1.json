@@ -1,0 +1,200 @@
+[
+  {
+    "objectiveId": "o1-1",
+    "diagrams": ["pim", "ca-decision"],
+    "summary": "Microsoft Entra ID is Microsoft's cloud identity provider: it stores users, groups, devices, and application identities, and issues the tokens every sign-in depends on. Privileged Identity Management (PIM) converts standing (always-on) privileged access into eligible, just-in-time access, while Conditional Access (CA) evaluates risk and context signals after the first authentication factor to decide whether to grant, block, or add friction to a sign-in. Authentication methods policy and Authentication strength push the tenant toward phishing-resistant, passwordless sign-in.",
+    "keyPoints": [
+      "PIM distinguishes **eligible** (allowed to activate, not yet usable) from **active** (currently usable, either standing or a time-bound post-activation window). Without PIM, an admin holds their role as permanent standing access. PIM requires Microsoft Entra ID P2.",
+      "PIM governs Microsoft Entra directory roles (Global Administrator, Security Administrator), Azure resource roles (Owner, Contributor), and privileged access groups — not just one system.",
+      "Configure eligibility: Entra admin center ▸ Identity Governance ▸ Privileged Identity Management ▸ Microsoft Entra roles ▸ Roles ▸ select the role ▸ Add assignments ▸ Eligible, with an optional end date. Role settings control maximum activation duration, require MFA, require justification, and require approval (naming approvers).",
+      "Activation: PIM ▸ My roles ▸ Eligible assignments ▸ Activate, subject to whatever gates the role's settings define, producing a time-bound active assignment. PIM access reviews recertify eligible/active assignments periodically, and built-in alerts flag risks like 'too many Global Administrators' or 'administrators not using PIM'.",
+      "Conditional Access is a policy engine evaluated **after** the first factor (e.g., password) succeeds — it is not a perimeter or anti-DoS control. Assignments define the 'if': users/groups/roles, workload identities, target resources (cloud apps / all resources, user actions), and conditions (sign-in risk, user risk, platform, location/IP, client app, device filters).",
+      "Access controls define the 'then': Grant controls (block, or allow with MFA / compliant device / hybrid-joined device / approved client app / password change / terms of use) and Session controls (sign-in frequency, persistent browser session, app-enforced restrictions, Conditional Access App Control). Authentication strength lets a policy require a specific method set, such as phishing-resistant MFA only.",
+      "Licensing: **P1** is the minimum for Conditional Access. **P2** adds Microsoft Entra ID Protection (risk-based CA using sign-in risk and user risk) and PIM. **SSPR** lets users reset their own password. **TAP** (Temporary Access Pass) is a time-limited passcode used to bootstrap registration of passwordless methods.",
+      "Roll-out pattern for a new CA policy: build it in **Report-only**, validate the intended effect in sign-in logs, then switch it **On**. Always exclude break-glass accounts from both CA and PIM so a misconfiguration or outage can never lock out every administrator.",
+      "Conditional Access does not evaluate service principals authenticating with client credentials under user-targeted policies — Conditional Access for workload identities is the dedicated mechanism for daemons and automation. Legacy authentication (which cannot satisfy MFA prompts) must be blocked with its own policy.",
+      "Passwordless methods — Windows Hello for Business (biometric/PIN bound to a TPM), FIDO2 security keys/passkeys, and Microsoft Authenticator phone sign-in — are managed in the Authentication methods policy. Microsoft's preferred order is phishing-resistant methods, then Authenticator push with number matching, then OATH/TOTP, then SMS/voice (weakest, vulnerable to SIM-swap)."
+    ],
+    "commonPitfalls": [
+      "Treating 'eligible' as if it already grants access — the principal must still activate the role, subject to any configured MFA/justification/approval gates.",
+      "Confusing Report-only with Off — Report-only evaluates and logs the policy's would-be effect without enforcing grant or block controls.",
+      "Forgetting to exclude break-glass accounts from Conditional Access and PIM, risking a full administrative lockout if a policy misfires or MFA is unavailable.",
+      "Assuming a user-targeted Conditional Access policy also protects daemons and service principals authenticating with client credentials — it does not; use Conditional Access for workload identities instead.",
+      "Treating SMS or voice-call verification as strong MFA — they are the weakest factors and are vulnerable to SIM-swap attacks; phishing-resistant methods (FIDO2, Windows Hello) are the recommended target.",
+      "Skipping periodic PIM access reviews, letting stale eligible assignments and unused standing access accumulate unnoticed."
+    ],
+    "commands": [
+      {
+        "task": "List a user's PIM-eligible Microsoft Entra role assignments",
+        "powershell": "Get-MgRoleManagementDirectoryRoleEligibilitySchedule -Filter \"principalId eq '<objectId>'\""
+      },
+      {
+        "task": "Assign an Azure resource role directly with Azure CLI, for contrast with a PIM eligible assignment",
+        "cli": "az role assignment create --assignee user@contoso.com --role Contributor --scope /subscriptions/<subId>"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/training/modules/manage-implement-authentication-methods/",
+      "https://learn.microsoft.com/en-us/training/modules/implement-configure-privileged-identity-management/",
+      "https://learn.microsoft.com/en-us/training/paths/secure-access-resources-entra/",
+      "https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview",
+      "https://learn.microsoft.com/en-us/entra/id-protection/overview-identity-protection"
+    ]
+  },
+  {
+    "objectiveId": "o1-2",
+    "diagrams": ["app-identity", "managed-identity", "consent-types"],
+    "summary": "Registering an application in Microsoft Entra ID creates two linked objects: an app registration (the global blueprint, defining redirect URIs, secrets/certificates, and requested API permissions) and, in every tenant that uses the app, a service principal managed under Enterprise applications (the local, governable instance that actually receives permissions, sign-in policy, and consent). Managed identities are a special category of service principal whose credentials Azure creates and rotates automatically, eliminating stored secrets entirely.",
+    "keyPoints": [
+      "**App registration** defines what the app is and can request — redirect URIs, certificates & secrets, and requested API permissions. One app registration produces one **service principal per tenant** that consumes it (a multi-tenant app gets a distinct service principal in every consuming tenant).",
+      "**Enterprise application** is where you govern that service principal locally — assign users/groups, enable SSO, apply Conditional Access, and review the OAuth permission **grants** actually consented to (as opposed to only requested on the app registration).",
+      "**Delegated permissions** act on behalf of a signed-in user and are bounded by what that user could do themselves; depending on policy, consent can come from the user or an administrator.",
+      "**Application permissions** act as the app itself with no signed-in user present (daemons, background jobs), are often high-privilege, and **always** require admin consent — granted tenant-wide, not per user.",
+      "Manage tenant-wide consent under Enterprise applications ▸ Consent and permissions: restrict **user consent** to verified publishers and low-impact permissions (or disable it), and enable the **admin consent workflow** so requests route to named reviewers — this closes the door on illicit consent grant attacks.",
+      "**Managed identities** give an Azure resource (VM, Function App, Logic App, AKS, etc.) its own Entra identity with Azure-rotated credentials — there is no client secret or certificate to store, leak, or rotate manually.",
+      "**System-assigned** managed identity: created with, and deleted alongside, a single host resource — a strict 1:1 relationship, ideal for one workload. **User-assigned** managed identity: a standalone Azure resource that can be attached to multiple resources and survives independently — ideal for a shared identity across a fleet.",
+      "To let a VM read a Key Vault secret without any stored credential: enable a managed identity on the VM, then grant that identity the **Key Vault Secrets User** role (or an equivalent access policy) on the vault.",
+      "Preference order for workload authentication: **managed identity** > service principal with **certificate** > service principal with **client secret** — always prefer the option furthest left that the workload supports.",
+      "Periodically review Enterprise applications ▸ Permissions to find and remove unused high-privilege application-permission grants (e.g., an unused Mail.ReadWrite application permission), since application permissions carry outsized risk with no user context to limit blast radius."
+    ],
+    "commonPitfalls": [
+      "Swapping app registration (blueprint / what's requested) and enterprise application (local governed instance / what's actually granted) — a frequent source of exam distractors.",
+      "Assuming a narrowly-named application permission is automatically low-risk — application permissions always require admin consent and always act without user context.",
+      "Forgetting that admin consent is granted **tenant-wide**, not per user — approving a request opens the permission for every user in the tenant.",
+      "Reaching for a service principal with a client secret when the workload already runs on an Azure resource capable of hosting a managed identity.",
+      "Believing a system-assigned managed identity can be shared across resources — only user-assigned identities can be attached to more than one resource."
+    ],
+    "commands": [
+      {
+        "task": "Enable a system-assigned managed identity on an existing VM",
+        "cli": "az vm identity assign --name VM1 --resource-group RG1",
+        "powershell": "Update-AzVM -ResourceGroupName RG1 -VM $vm -IdentityType SystemAssigned"
+      },
+      {
+        "task": "Create a standalone user-assigned managed identity",
+        "cli": "az identity create --name shared-mi --resource-group RG1",
+        "powershell": "New-AzUserAssignedIdentity -Name shared-mi -ResourceGroupName RG1"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agent-api-plugin-auth/",
+      "https://learn.microsoft.com/en-us/entra/identity-platform/app-objects-and-service-principals",
+      "https://learn.microsoft.com/en-us/entra/identity-platform/v2-permissions-and-consent",
+      "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent",
+      "https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview"
+    ]
+  },
+  {
+    "objectiveId": "o1-3",
+    "diagrams": ["rbac", "managed-identity"],
+    "summary": "Azure Key Vault centralizes three object types — keys, secrets, and certificates — behind two possible authorization models and an independent network layer. Azure RBAC is the recommended, centrally governed model; vault access policies are a legacy, vault-scoped alternative. Defender for Key Vault and Defender CSPM secret scanning are complementary but distinct: one watches the vault at runtime, the other hunts for secrets exposed elsewhere.",
+    "keyPoints": [
+      "Key Vault stores **keys** (cryptographic keys for encrypt/sign operations, optionally HSM-backed), **secrets** (passwords, connection strings, tokens), and **certificates** (X.509, with auto-renewal via integrated certificate authorities).",
+      "**Managed HSM** is a separate, single-tenant, FIPS 140-2 Level 3 validated offering for organizations needing dedicated HSM isolation — distinct from **Premium-tier** HSM-protected keys inside a normal, shared vault.",
+      "**Azure RBAC (recommended)**: built-in roles (Key Vault Secrets User, Key Vault Administrator, etc.) assigned at any scope — management group, subscription, resource group, or vault — centrally consistent with the rest of Azure RBAC and compatible with PIM.",
+      "**Vault access policy (legacy)**: per-principal, per-object-type operation lists (get/list/set/...) configurable only at the vault level — simpler to reason about locally, but not centrally governed and not PIM-eligible.",
+      "Network restriction (Public network access **Disabled** + private endpoint, or a firewall scoped to specific VNets/IPs) governs reachability, but authorization (RBAC or access policy) is enforced **independently and in addition** — both gates must pass for a request to succeed.",
+      "**Allow trusted Microsoft services to bypass this firewall** lets first-party integrations like Azure Backup or Azure Disk Encryption reach a network-restricted vault; omitting it breaks those integrations.",
+      "**Defender for Key Vault** (a paid Defender for Cloud plan) is runtime, data-plane threat detection on the vault: alerts on anomalous access such as unusual identities, unusually high volume, or connections from Tor exit nodes.",
+      "**Defender CSPM secret scanning** is a separate, agentless posture capability that discovers plaintext secrets sitting outside the vault — on disks, in source code, or in environment variables — and maps the attack path to sensitive resources; it does not watch the vault's runtime traffic.",
+      "**Customer-managed keys (CMK)** stored in Key Vault let you control encryption for services like storage accounts, managed disks, and SQL TDE. **Bring Your Own Key (BYOK)** imports a key generated or held outside Azure into Key Vault (or Managed HSM) to use as that CMK.",
+      "**Soft-delete** (on by default, 7-90 day retention) and **purge protection** together prevent accidental or malicious permanent deletion of vaults or their objects before the retention window elapses.",
+      "**Automated key rotation**: a rotation policy on a key (time-based, or before a configured expiry threshold) creates new key versions automatically with no manual intervention — apps that reference the key by name (latest version) pick up the rotated version transparently, shrinking the window a compromised key stays usable.",
+      "**Zero-downtime secret rotation** uses a **dual-credential pattern**: create the new secret version while the old version is still valid, update consumers to the new version, then retire the old one — rotating a secret **in place** (overwriting the only version) creates an outage window for any consumer that hasn't yet picked up the new value.",
+      "Key Vault integrates with **Azure Event Grid** to react to lifecycle events (e.g. a certificate nearing expiry, a new secret version created) in near real time — commonly used to trigger a Logic App that renews a certificate or notifies an owner automatically.",
+      "**Diagnostic logging** sends Key Vault operation logs (the `AuditEvent` category) to a Log Analytics workspace, storage account, or Event Hub; **log-based alert rules** can then fire on suspicious patterns such as high-volume secret retrieval — this is separate from, and complements, Defender for Key Vault's built-in runtime alerts."
+    ],
+    "commonPitfalls": [
+      "Assuming a locked-down vault firewall is enough on its own — RBAC or access-policy authorization is still enforced on top, and both checks must pass.",
+      "Forgetting 'Allow trusted Microsoft services' when restricting the firewall, silently breaking Azure Backup or Azure Disk Encryption integrations.",
+      "Confusing Defender for Key Vault (runtime threat detection **on** the vault) with Defender CSPM secret scanning (finding secrets exposed **elsewhere**) — they answer different questions.",
+      "Defaulting new vaults to legacy vault access policies instead of the centrally governed, PIM-compatible RBAC model.",
+      "Leaving purge protection disabled, which allows a soft-deleted vault or object to be purged permanently before the recovery window would otherwise protect it.",
+      "Relying on a manual, calendar-reminder rotation instead of configuring an automated rotation policy — a missed manual rotation silently extends how long a potentially compromised key or secret stays valid.",
+      "Rotating a secret in place (a single version, overwritten) instead of using the dual-credential pattern, causing an outage for any consumer that hasn't yet picked up the new value before the old one disappears."
+    ],
+    "commands": [
+      {
+        "task": "Create a Key Vault with RBAC authorization, soft-delete, and purge protection",
+        "cli": "az keyvault create --name kv-tailspin --resource-group RG1 --location eastus --enable-rbac-authorization true --enable-purge-protection true",
+        "powershell": "New-AzKeyVault -Name kv-tailspin -ResourceGroupName RG1 -Location eastus -EnableRbacAuthorization -EnablePurgeProtection"
+      },
+      {
+        "task": "Grant a managed identity read access to secrets via an RBAC role",
+        "cli": "az role assignment create --assignee <principalId> --role \"Key Vault Secrets User\" --scope /subscriptions/<subId>/resourceGroups/RG1/providers/Microsoft.KeyVault/vaults/kv-tailspin",
+        "powershell": "New-AzRoleAssignment -ObjectId <principalId> -RoleDefinitionName \"Key Vault Secrets User\" -Scope /subscriptions/<subId>/resourceGroups/RG1/providers/Microsoft.KeyVault/vaults/kv-tailspin"
+      },
+      {
+        "task": "Disable public network access while allowing trusted Microsoft services",
+        "cli": "az keyvault update --name kv-tailspin --resource-group RG1 --public-network-access Disabled --bypass AzureServices"
+      },
+      {
+        "task": "Create a private endpoint for the vault",
+        "cli": "az network private-endpoint create --name kv-pe --resource-group RG1 --vnet-name VNet1 --subnet snet-pe --private-connection-resource-id /subscriptions/<subId>/resourceGroups/RG1/providers/Microsoft.KeyVault/vaults/kv-tailspin --group-id vault --connection-name kv-connection"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/training/modules/configure-secure-key-vault/",
+      "https://learn.microsoft.com/en-us/training/modules/manage-keys-secrets-key-vault/",
+      "https://learn.microsoft.com/en-us/training/modules/manage-certificates-monitor-key-vault/",
+      "https://learn.microsoft.com/en-us/training/modules/defend-key-vault-defender-cloud/",
+      "https://learn.microsoft.com/en-us/training/paths/configure-key-vault-security/"
+    ]
+  },
+  {
+    "objectiveId": "o1-4",
+    "diagrams": ["policy-effects", "rbac"],
+    "summary": "Azure Policy governs the properties a resource is allowed to have, while Azure RBAC governs the actions a principal may perform — two complementary but distinct control planes. On top of that, resource locks, Azure Backup hardening, regulatory compliance mapping, and pre-deployment Infrastructure as Code scanning round out the governance layer that keeps an environment compliant and resilient against both misconfiguration and compromised administrators.",
+    "keyPoints": [
+      "Azure Policy evaluates resources against rule definitions and reports or enforces compliance. Unlike RBAC (what a principal **can do**), Policy governs what properties a resource **can have**.",
+      "Effects: **Audit** (logs non-compliance, still allows it), **Deny** (blocks non-compliant create/update), **DeployIfNotExists/DINE** (auto-remediates via a deployment, e.g. enabling diagnostics — requires a managed identity on the assignment), **Modify** (adds/changes properties or tags), **AuditIfNotExists** (flags when a related resource is missing).",
+      "Related definitions are bundled into **initiatives** (e.g. the built-in Microsoft cloud security benchmark) and assigned as a set at management group, subscription, or resource group scope. Custom definitions are JSON with a `policyRule` if/then block and parameters.",
+      "DINE and Modify assignments only affect resources going forward; bringing existing non-compliant resources into line requires running a **remediation task**, which uses the managed identity created for the policy assignment.",
+      "Azure RBAC and Microsoft Entra roles are **two separate systems**: Azure RBAC governs resources (subscriptions, VMs, storage) via principal + role definition + scope, with permissions inheriting downward; Microsoft Entra roles govern the directory (users, groups, app registrations). Global Administrator is an Entra role; Owner is an Azure role — neither grants the other.",
+      "Built-in Azure roles: **Owner** (full access, including granting access to others), **Contributor** (manages resources but cannot grant access), **Reader** (read-only), **User Access Administrator** (manages role assignments but not the resources themselves). Custom roles in either system use their own JSON shape — Azure custom roles use `Actions`/`NotActions`/`DataActions`/`NotDataActions`/`AssignableScopes`.",
+      "**Resource locks**: `CanNotDelete` (read/modify allowed, delete blocked) and `ReadOnly` (no modify, no delete). Locks apply **independently of RBAC** — even an Owner is blocked by an active lock — and are inherited by child resources.",
+      "**Azure Backup hardening**: soft-delete (recover deleted backup data for a window, roughly 14 days, and can be made always-on), **immutable vaults** (backup data's retention cannot be shortened or the data deleted during the retention period), and **Multi-User Authorization (MUA)** via a **Resource Guard** — a second, separately-permissioned administrator must approve destructive operations (disabling soft-delete, deleting backup data), defending against both ransomware and a rogue or compromised administrator.",
+      "Defender for Cloud's **Regulatory compliance** dashboard maps the environment against frameworks (Microsoft cloud security benchmark by default, plus PCI-DSS, ISO 27001, NIST, CIS) and tracks pass/fail controls; standards are added or removed under Environment settings ▸ Security policy.",
+      "**Infrastructure as Code security** means scanning Bicep/ARM/Terraform templates **before** deployment for misconfigurations (public storage, missing encryption) — 'shift left'. Defender for Cloud's **DevOps security** connects to GitHub/Azure DevOps to surface IaC scan findings and secrets exposed in repositories. The **Microsoft DevOps (MSDO) extension** is the specific Azure DevOps/GitHub Actions extension that runs this IaC and secret scanning as part of a pipeline, feeding results back into Defender for Cloud's DevOps security and a policy-as-code workflow.",
+      "**Governance rules** in Defender for Cloud assign **ownership** of a security recommendation to a specific person or team, with a due date and email notifications — driving accountability so recommendations don't sit unassigned indefinitely.",
+      "For a control that legitimately doesn't apply to a given resource, Defender for Cloud supports a structured, documented, time-bound **exemption** at the recommendation or policy level — distinct from the one-click **Fix** action, which applies an available automated remediation directly to a non-compliant resource."
+    ],
+    "commonPitfalls": [
+      "Treating Policy and RBAC as interchangeable — Policy governs resource properties/compliance, RBAC governs what a principal can do.",
+      "Assigning a DINE or Modify policy and assuming existing resources are automatically fixed — they require a remediation task using the assignment's managed identity; only new/updated resources are covered immediately.",
+      "Assuming a Global Administrator automatically has Owner on Azure resources (or vice versa) — the two role systems never cross-grant.",
+      "Believing a resource lock is a substitute for RBAC — locks block delete/modify regardless of RBAC permissions, but say nothing about who can read or grant access.",
+      "Relying on soft-delete alone for backup protection when Multi-User Authorization (Resource Guard) isn't configured, leaving a single compromised admin able to disable soft-delete or shorten retention.",
+      "Scanning Infrastructure as Code only after deployment instead of pre-deployment, missing the opportunity to block a misconfiguration before it is ever provisioned.",
+      "Leaving security recommendations unassigned instead of using governance rules to name an owner and due date — unassigned recommendations tend to stay unresolved indefinitely.",
+      "Confusing an **exemption** (a documented, time-bound waiver for a control that legitimately doesn't apply) with **Fix** (a one-click action that actually remediates a non-compliant resource) — they solve opposite problems."
+    ],
+    "commands": [
+      {
+        "task": "Assign a built-in tag-enforcement policy with the Deny effect at subscription scope",
+        "cli": "az policy assignment create --name require-tag --policy \"1e30110a-5ceb-460c-a204-c1c3969c6d62\" --scope /subscriptions/<subId> --params \"{\\\"tagName\\\":{\\\"value\\\":\\\"DataClassification\\\"}}\""
+      },
+      {
+        "task": "Create a CanNotDelete lock on a resource group",
+        "cli": "az lock create --name lock-finance --resource-group RG-Finance --lock-type CanNotDelete",
+        "powershell": "New-AzResourceLock -LockName lock-finance -LockLevel CanNotDelete -ResourceGroupName RG-Finance"
+      },
+      {
+        "task": "Enable always-on soft delete for a Recovery Services vault",
+        "cli": "az backup vault backup-properties set --name rsv-finance --resource-group RG-Finance --soft-delete-feature-state Enable"
+      },
+      {
+        "task": "Assign a role at management group scope",
+        "cli": "az role assignment create --assignee <principalId> --role Reader --scope /providers/Microsoft.Management/managementGroups/<mgId>"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/training/modules/enforce-governance-azure-policy-resource-locks/",
+      "https://learn.microsoft.com/en-us/training/modules/configure-defender-cloud-security-controls/",
+      "https://learn.microsoft.com/en-us/training/modules/evaluate-regulatory-compliance/",
+      "https://learn.microsoft.com/en-us/training/modules/manage-right-size-rbac-role-assignments/",
+      "https://learn.microsoft.com/en-us/training/modules/protect-backup-data-azure-backup-security/",
+      "https://learn.microsoft.com/en-us/training/modules/implement-security-controls-infrastructure-as-code/"
+    ]
+  }
+]

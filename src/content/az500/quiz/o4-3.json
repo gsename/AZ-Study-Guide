@@ -1,0 +1,614 @@
+[
+  {
+    "id": "q-o4-3-01",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Where do you enable a cloud workload protection (CWP) Defender plan for a subscription?",
+    "choices": [
+      "Defender for Cloud ▸ Environment settings ▸ (subscription) ▸ Defender plans",
+      "Azure Policy ▸ Assignments",
+      "Regulatory compliance ▸ Manage compliance policies",
+      "Microsoft Sentinel ▸ Data connectors"
+    ],
+    "correctAnswers": ["Defender for Cloud ▸ Environment settings ▸ (subscription) ▸ Defender plans"],
+    "explanation": "Defender plans are toggled per subscription/resource type under Environment settings.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-02",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What does Microsoft Defender for Servers add beyond the free posture management?",
+    "choices": [
+      "EDR via Microsoft Defender for Endpoint integration, plus vulnerability management for VMs",
+      "A Web Application Firewall for VM-hosted sites",
+      "Automatic disk encryption",
+      "A Conditional Access policy for VMs"
+    ],
+    "correctAnswers": ["EDR via Microsoft Defender for Endpoint integration, plus vulnerability management for VMs"],
+    "explanation": "Defender for Servers is the paid plan providing EDR (via Defender for Endpoint) and vulnerability management.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-03",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What does Microsoft Defender for Storage detect?",
+    "choices": [
+      "Malware uploads and suspicious/anomalous access on storage accounts",
+      "SQL injection in a web app",
+      "Non-compliant Azure Policy assignments",
+      "Expired TLS certificates"
+    ],
+    "correctAnswers": ["Malware uploads and suspicious/anomalous access on storage accounts"],
+    "explanation": "Defender for Storage focuses on storage-account threat detection (malware, anomalous access).",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-04",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which resource types does Microsoft Defender for Databases protect?",
+    "choices": [
+      "Azure SQL and other supported database engines",
+      "Only Azure Blob Storage",
+      "Only Azure Kubernetes Service",
+      "Only Azure Key Vault"
+    ],
+    "correctAnswers": ["Azure SQL and other supported database engines"],
+    "explanation": "Defender for Databases covers Azure SQL and other supported database platforms.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-05",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "How does agentless scanning assess VMs for vulnerabilities and malware?",
+    "choices": [
+      "By scanning disk snapshots, with no agent installed on the VM",
+      "By installing a lightweight agent on each VM",
+      "By inspecting live network traffic",
+      "By requiring the VM to reboot into a scan mode"
+    ],
+    "correctAnswers": ["By scanning disk snapshots, with no agent installed on the VM"],
+    "explanation": "Agentless scanning works from disk snapshots, requiring nothing installed in the guest.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-06",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What does Microsoft Defender Vulnerability Management add on top of agentless scanning?",
+    "choices": [
+      "Discovery and risk-based prioritization of CVEs on VMs",
+      "The disk-snapshot collection mechanism itself",
+      "Network traffic filtering",
+      "Automatic patching of every CVE with no review"
+    ],
+    "correctAnswers": ["Discovery and risk-based prioritization of CVEs on VMs"],
+    "explanation": "Vulnerability Management is the analysis/prioritization layer built on the collected data.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-07",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which platforms can be connected to Defender for Cloud DevOps Security?",
+    "choices": [
+      "GitHub, Azure DevOps, and GitLab",
+      "Only GitHub",
+      "Only Azure DevOps",
+      "Jenkins and Bitbucket only"
+    ],
+    "correctAnswers": ["GitHub, Azure DevOps, and GitLab"],
+    "explanation": "DevOps Security supports GitHub, Azure DevOps, and GitLab connectors.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-08",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which stage of the lifecycle does Defender for Cloud DevOps Security primarily address?",
+    "choices": [
+      "Pre-deployment/supply-chain — code, secrets, and IaC misconfigurations in pipelines",
+      "Runtime protection of deployed VMs",
+      "Network-layer filtering of production traffic",
+      "Post-incident forensic storage only"
+    ],
+    "correctAnswers": ["Pre-deployment/supply-chain — code, secrets, and IaC misconfigurations in pipelines"],
+    "explanation": "DevOps Security shifts security left into development, before deployment.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-09",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "If Defender for Servers is enabled on a subscription, what is true about Defender for Storage there?",
+    "choices": [
+      "It must be enabled separately — each CWP plan is a distinct toggle",
+      "It is automatically enabled too",
+      "It becomes permanently disabled",
+      "It is enabled only for Premium storage"
+    ],
+    "correctAnswers": ["It must be enabled separately — each CWP plan is a distinct toggle"],
+    "explanation": "CWP plans are enabled and billed per resource type; enabling one does not enable another.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-10",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which Defender plan most directly detects an anomalous, suspicious access pattern on a storage account?",
+    "choices": [
+      "Microsoft Defender for Storage",
+      "Microsoft Defender for Servers",
+      "Microsoft Defender for Databases",
+      "Microsoft Defender EASM"
+    ],
+    "correctAnswers": ["Microsoft Defender for Storage"],
+    "explanation": "Storage-specific anomaly and malware detection is exactly this plan's purpose.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-11",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which combination most directly identifies and prioritizes a vulnerable, unpatched VM?",
+    "choices": [
+      "Agentless scanning combined with Microsoft Defender Vulnerability Management",
+      "Microsoft Defender for Storage alone",
+      "Microsoft Sentinel analytics rules alone",
+      "An Azure Policy Deny effect alone"
+    ],
+    "correctAnswers": ["Agentless scanning combined with Microsoft Defender Vulnerability Management"],
+    "explanation": "Agentless scanning collects the data; Vulnerability Management analyzes and prioritizes the CVEs.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-12",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Does DevOps Security replace runtime plans like Defender for Servers or Defender for Containers?",
+    "choices": [
+      "No — it covers the pipeline/code stage; runtime plans protect the deployed workload",
+      "Yes, it fully replaces all runtime plans",
+      "Yes, but only for containerized workloads",
+      "They cannot be used together"
+    ],
+    "correctAnswers": ["No — it covers the pipeline/code stage; runtime plans protect the deployed workload"],
+    "explanation": "DevOps Security and runtime CWP plans are complementary, addressing different lifecycle stages.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-13",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What must be present on a VM's guest OS for agentless scanning to work?",
+    "choices": [
+      "Nothing — it works from disk snapshots with no in-guest requirement",
+      "A pre-installed Log Analytics agent",
+      "A pre-installed Azure Monitor Agent",
+      "Administrative RDP access during the scan"
+    ],
+    "correctAnswers": ["Nothing — it works from disk snapshots with no in-guest requirement"],
+    "explanation": "Agentless scanning's defining trait is requiring nothing in the guest OS.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-14",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which capability provides EDR for Azure VMs through Defender for Cloud?",
+    "choices": [
+      "Defender for Servers integrating Microsoft Defender for Endpoint",
+      "Defender for Storage",
+      "Defender External Attack Surface Management",
+      "Azure Policy DeployIfNotExists"
+    ],
+    "correctAnswers": ["Defender for Servers integrating Microsoft Defender for Endpoint"],
+    "explanation": "Defender for Servers brings Defender for Endpoint's EDR to VMs.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-15",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "A pull request must be scanned for hardcoded secrets before it is merged. Which capability handles this?",
+    "choices": [
+      "Defender for Cloud DevOps Security connected to the repository",
+      "Defender for Containers",
+      "An Azure Policy Audit effect",
+      "A Sentinel data connector for repo logs"
+    ],
+    "correctAnswers": ["Defender for Cloud DevOps Security connected to the repository"],
+    "explanation": "DevOps Security scans code/pipelines for secret leakage and misconfigurations pre-merge.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-16",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which statement correctly separates agentless scanning from Defender Vulnerability Management?",
+    "choices": [
+      "Agentless scanning is the collection mechanism; Vulnerability Management is the analysis/prioritization layer",
+      "They are the same feature",
+      "Agentless scanning prioritizes CVEs; Vulnerability Management collects snapshots",
+      "Both require an in-guest agent"
+    ],
+    "correctAnswers": ["Agentless scanning is the collection mechanism; Vulnerability Management is the analysis/prioritization layer"],
+    "explanation": "Collection (snapshots, no agent) vs analysis/prioritization — complementary, not identical.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-17",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which best describes the difference between CSPM recommendations and CWP alerts?",
+    "choices": [
+      "Recommendations flag configuration weaknesses; alerts flag active/suspected attacks",
+      "Both flag active attacks",
+      "Recommendations are paid; alerts are free",
+      "Alerts flag misconfigurations; recommendations flag attacks"
+    ],
+    "correctAnswers": ["Recommendations flag configuration weaknesses; alerts flag active/suspected attacks"],
+    "explanation": "CSPM recommendations are about posture; CWP alerts are about detected threats.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-18",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "An organization wants threat detection for its Azure SQL databases. Which plan should they enable?",
+    "choices": [
+      "Microsoft Defender for Databases",
+      "Microsoft Defender for Storage",
+      "Microsoft Defender for Servers",
+      "Microsoft Defender for Containers"
+    ],
+    "correctAnswers": ["Microsoft Defender for Databases"],
+    "explanation": "Defender for Databases provides threat detection for Azure SQL and other supported engines.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-19",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which is a benefit of agentless scanning over agent-based vulnerability assessment?",
+    "choices": [
+      "No agent to deploy, maintain, or that could impact VM performance",
+      "It provides real-time in-memory threat blocking",
+      "It removes the need for any Defender plan",
+      "It encrypts the VM disks it scans"
+    ],
+    "correctAnswers": ["No agent to deploy, maintain, or that could impact VM performance"],
+    "explanation": "Agentless scanning avoids the operational burden and footprint of an in-guest agent.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-20",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which of these is a runtime protection concern rather than a DevOps Security (pre-deployment) concern?",
+    "choices": [
+      "A live process on a VM exhibiting malicious behavior",
+      "A hardcoded secret committed to a repository",
+      "An insecure IaC template in a pipeline",
+      "A misconfigured build variable"
+    ],
+    "correctAnswers": ["A live process on a VM exhibiting malicious behavior"],
+    "explanation": "Runtime behavior on a deployed VM is a CWP runtime concern (Defender for Servers); the others are pre-deployment DevOps issues.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-21",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Where do you enable agentless scanning?",
+    "choices": [
+      "In the Defender for Servers plan settings",
+      "In Azure Policy definitions",
+      "In the Key Vault networking blade",
+      "In a Sentinel automation rule"
+    ],
+    "correctAnswers": ["In the Defender for Servers plan settings"],
+    "explanation": "Agentless scanning is configured within the Defender for Servers plan settings.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-22",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "A team enabled Defender for Servers but is surprised that storage-account malware uploads aren't being detected. Why?",
+    "choices": [
+      "Defender for Storage is a separate plan and must be enabled too",
+      "Defender for Servers only works on Linux",
+      "Malware detection requires an EASM scan first",
+      "Storage detection needs the Log Analytics agent"
+    ],
+    "correctAnswers": ["Defender for Storage is a separate plan and must be enabled too"],
+    "explanation": "Each CWP plan is separate; storage threat detection requires Defender for Storage, not Defender for Servers.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-23",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which Defender for Cloud capability would surface an IaC misconfiguration (e.g. a storage account defined with public access) before it is deployed?",
+    "choices": [
+      "DevOps Security scanning the pipeline/repository",
+      "Defender for Storage",
+      "Agentless VM scanning",
+      "The regulatory compliance dashboard"
+    ],
+    "correctAnswers": ["DevOps Security scanning the pipeline/repository"],
+    "explanation": "DevOps Security inspects IaC and code in pipelines, catching misconfigurations pre-deployment.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-24",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which statement about CWP plan billing is correct?",
+    "choices": [
+      "Plans are enabled and billed per resource type/subscription",
+      "One flat fee enables all plans everywhere",
+      "Plans are free and only posture is paid",
+      "Billing is per user, like Microsoft 365"
+    ],
+    "correctAnswers": ["Plans are enabled and billed per resource type/subscription"],
+    "explanation": "Each Defender plan (Servers, Storage, Databases, etc.) is a separate, per-resource-type/subscription toggle and charge.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-25",
+    "objectiveId": "o4-3",
+    "type": "multiple",
+    "prompt": "Which two statements are correct? (Choose two.)",
+    "choices": [
+      "Agentless scanning collects data from disk snapshots",
+      "Microsoft Defender Vulnerability Management prioritizes discovered CVEs",
+      "Agentless scanning requires an in-guest agent",
+      "Defender for Servers cannot integrate with Defender for Endpoint"
+    ],
+    "correctAnswers": [
+      "Agentless scanning collects data from disk snapshots",
+      "Microsoft Defender Vulnerability Management prioritizes discovered CVEs"
+    ],
+    "explanation": "Agentless scanning needs no agent, and Defender for Servers does integrate with Defender for Endpoint — those two options are false.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-26",
+    "objectiveId": "o4-3",
+    "type": "multiple",
+    "prompt": "Which two statements about Defender for Cloud DevOps Security are correct? (Choose two.)",
+    "choices": [
+      "It scans for code, secrets, and IaC misconfigurations in pipelines",
+      "It supports GitHub, Azure DevOps, and GitLab",
+      "It replaces runtime plans like Defender for Servers",
+      "It only works with self-hosted, on-premises repositories"
+    ],
+    "correctAnswers": [
+      "It scans for code, secrets, and IaC misconfigurations in pipelines",
+      "It supports GitHub, Azure DevOps, and GitLab"
+    ],
+    "explanation": "DevOps Security complements (not replaces) runtime plans and supports the three named cloud platforms.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-27",
+    "objectiveId": "o4-3",
+    "type": "multiple",
+    "prompt": "Which two are paid CWP capabilities (not free CSPM)? (Choose two.)",
+    "choices": [
+      "Defender for Storage malware detection",
+      "Agentless vulnerability scanning under Defender for Servers",
+      "Secure Score",
+      "Asset inventory"
+    ],
+    "correctAnswers": [
+      "Defender for Storage malware detection",
+      "Agentless vulnerability scanning under Defender for Servers"
+    ],
+    "explanation": "Malware detection and agentless scanning are paid CWP; Secure Score and inventory are free CSPM.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-28",
+    "objectiveId": "o4-3",
+    "type": "case-study",
+    "caseStudyId": "cs-adatum-governance",
+    "prompt": "Referring to requirement 5 (scan VMs across the estate for vulnerabilities without installing any agent), which feature should Adatum enable?",
+    "choices": [
+      "Agentless scanning under the Defender for Servers plan",
+      "Defender for Storage",
+      "An Azure Policy DeployIfNotExists",
+      "A Sentinel automation rule"
+    ],
+    "correctAnswers": ["Agentless scanning under the Defender for Servers plan"],
+    "explanation": "Agentless scanning is the no-install, disk-snapshot-based vulnerability assessment.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-29",
+    "objectiveId": "o4-3",
+    "type": "case-study",
+    "caseStudyId": "cs-adatum-governance",
+    "prompt": "Referring to requirement 6 (scan GitHub pull requests for hardcoded secrets before merge), which feature should Adatum configure?",
+    "choices": [
+      "Defender for Cloud DevOps Security connected to the GitHub repository",
+      "Defender for Containers",
+      "An Azure Policy Audit effect",
+      "A Sentinel data connector for GitHub logs only"
+    ],
+    "correctAnswers": ["Defender for Cloud DevOps Security connected to the GitHub repository"],
+    "explanation": "DevOps Security's GitHub connector surfaces secret leakage and misconfigurations in pull requests.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-30",
+    "objectiveId": "o4-3",
+    "type": "case-study",
+    "caseStudyId": "cs-adatum-governance",
+    "prompt": "Adatum wants active threat-detection alerts for its Azure SQL databases and storage accounts. What must they do?",
+    "choices": [
+      "Enable Defender for Databases and Defender for Storage separately",
+      "Enable Defender for Servers, which covers all resource types",
+      "Rely on the free CSPM foundation",
+      "Enable EASM for the databases and storage"
+    ],
+    "correctAnswers": ["Enable Defender for Databases and Defender for Storage separately"],
+    "explanation": "Each CWP plan is a separate toggle; databases and storage each need their own Defender plan enabled.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-31",
+    "objectiveId": "o4-3",
+    "type": "reorder",
+    "prompt": "Order the steps to enable agentless vulnerability scanning for a fleet of Azure VMs.",
+    "reorderItems": [
+      "Enable the Microsoft Defender for Servers plan on the subscription",
+      "Turn on agentless scanning in the plan's settings",
+      "Wait for (or trigger) a scan cycle",
+      "Review vulnerability findings in Defender Vulnerability Management"
+    ],
+    "explanation": "The plan must be enabled and scanning turned on before a scan can run and findings can be reviewed.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-32",
+    "objectiveId": "o4-3",
+    "type": "reorder",
+    "prompt": "Order the steps to catch a hardcoded secret before it reaches production.",
+    "reorderItems": [
+      "Connect the GitHub repository to Defender for Cloud DevOps Security",
+      "A developer opens a pull request containing a hardcoded secret",
+      "DevOps Security flags the secret in the pull request",
+      "The developer removes the secret before merge"
+    ],
+    "explanation": "The connector must exist before it can scan a pull request, flagging the issue before the fix and merge.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-33",
+    "objectiveId": "o4-3",
+    "type": "active-screen",
+    "prompt": "Configure this simplified Defender plans screen to get EDR and vulnerability management on VMs, and malware detection on storage accounts.",
+    "screenTitle": "Defender plans (simulated)",
+    "fields": [
+      { "id": "serversPlan", "label": "Microsoft Defender for Servers", "kind": "toggle", "correctValue": "On" },
+      { "id": "storagePlan", "label": "Microsoft Defender for Storage", "kind": "toggle", "correctValue": "On" },
+      { "id": "agentless", "label": "Agentless scanning", "kind": "toggle", "correctValue": "On" }
+    ],
+    "explanation": "Defender for Servers brings EDR and vulnerability management to VMs (with agentless scanning as the collection mechanism), while Defender for Storage is the separate plan needed for storage-account threat detection.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-34",
+    "objectiveId": "o4-3",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o4-3",
+    "prompt": "Proposed solution: Enable Microsoft Defender for Storage on the subscription. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["Yes"],
+    "explanation": "Defender for Storage detects malware uploads and suspicious access on storage accounts, with no agent required.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-35",
+    "objectiveId": "o4-3",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o4-3",
+    "prompt": "Proposed solution: Enable Microsoft Defender for Servers to protect the storage account's underlying infrastructure. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "Defender for Servers targets VMs, not storage accounts — it is the wrong plan for this resource type.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-36",
+    "objectiveId": "o4-3",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o4-3",
+    "prompt": "Proposed solution: Install an antivirus agent inside every application that writes to the storage account. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "This requires deploying agents (violating the 'no additional agent' requirement) and would miss upload paths that don't go through those applications.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-37",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which command enables Microsoft Defender for Servers (CWP) on the current subscription?",
+    "choices": [
+      "az security pricing create --name VirtualMachines --tier Standard",
+      "az security pricing create --name Servers --tier Premium",
+      "az defender enable --plan servers",
+      "az security plan enable --name VirtualMachines"
+    ],
+    "correctAnswers": ["az security pricing create --name VirtualMachines --tier Standard"],
+    "explanation": "Defender plans are 'pricings'; the Servers plan is named **VirtualMachines** and the paid tier is **Standard**. 'Servers'/'Premium' are wrong names, and the other subcommands don't exist.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-3-38",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which PowerShell cmdlet enables Defender for Storage on the subscription?",
+    "choices": [
+      "Set-AzSecurityPricing -Name StorageAccounts -PricingTier Standard",
+      "Set-AzDefenderPlan -Name Storage -Enabled",
+      "Enable-AzSecurityStorage -Tier Standard",
+      "New-AzSecurityPricing -Name Storage -Tier Paid"
+    ],
+    "correctAnswers": ["Set-AzSecurityPricing -Name StorageAccounts -PricingTier Standard"],
+    "explanation": "Set-AzSecurityPricing with the plan name StorageAccounts and PricingTier Standard. The other cmdlets don't exist.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-39",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which command shows whether the Defender for Databases plan is active for SQL servers?",
+    "choices": [
+      "az security pricing show --name SqlServers",
+      "az sql server defender-status show --name sql1",
+      "az security assessment show --type databases",
+      "az defender status --plan sql"
+    ],
+    "correctAnswers": ["az security pricing show --name SqlServers"],
+    "explanation": "`az security pricing show --name SqlServers` returns the tier for the SQL plan. The other subcommands don't exist.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-40",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "In `az security pricing create --name VirtualMachines --tier Standard`, what does 'Standard' represent?",
+    "choices": [
+      "The paid CWP tier (threat detection), versus Free which is CSPM-only",
+      "The mid-range VM size family covered by the plan",
+      "The standard (non-premium) SKU of Log Analytics",
+      "A legacy alias for the agentless-only mode"
+    ],
+    "correctAnswers": ["The paid CWP tier (threat detection), versus Free which is CSPM-only"],
+    "explanation": "Tier Standard = paid Defender plan (CWP); tier Free = posture management only. It has nothing to do with VM sizes or Log Analytics SKUs.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-41",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "A script must enable Defender CWP plans for VMs, storage, and SQL. Which set of plan names is correct for `az security pricing create`?",
+    "choices": [
+      "VirtualMachines, StorageAccounts, SqlServers",
+      "Servers, Storage, Databases",
+      "VMs, Blobs, SQL",
+      "Compute, StorageV2, AzureSQL"
+    ],
+    "correctAnswers": ["VirtualMachines, StorageAccounts, SqlServers"],
+    "explanation": "The API plan names are VirtualMachines, StorageAccounts and SqlServers — they don't match the marketing names (Servers/Storage/Databases), a classic exam trap.",
+    "difficulty": "hard"
+  }
+]

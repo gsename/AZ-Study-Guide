@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-single
+dist-ssr
+*.local
+screenshots/
+/test-results/
+/playwright-report/
+*.tsbuildinfo

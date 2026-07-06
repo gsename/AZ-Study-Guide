@@ -1,0 +1,154 @@
+[
+  {
+    "objectiveId": "o2-1",
+    "diagrams": ["nsg-layers", "forced-tunnel"],
+    "summary": "Les **NSG/ASG** filtrent le trafic subnet/NIC par rôle, sous les configurations de connectivité et de sécurité globales d'**Azure Virtual Network Manager**. Les **UDR**, le **VNet peering**, le **VPN Gateway** et le **Virtual WAN** contrôlent comment le trafic atteint et circule entre les VNets, avec **Network Watcher** comme couche de diagnostic — désormais centrée sur les **VNet flow logs** plutôt que les NSG flow logs en cours de retrait.",
+    "keyPoints": [
+      "**NSG** : règles allow/deny (priorité, source/destination, port, protocole) au niveau **subnet** ou **NIC** ; le **numéro de priorité le plus bas est évalué en premier**, la première correspondance gagne. Le trafic doit être autorisé par **le NSG du subnet ET celui de la NIC** pour atteindre une VM. Les **ASG** regroupent les VMs par rôle applicatif (ex. `web`, `db`) pour cibler le groupe au lieu d'IP codées en dur.",
+      "**Azure Virtual Network Manager (AVNM)** centralise la gestion réseau à grande échelle, à travers abonnements et même tenants, via des **network groups**, selon un flux **group → configure → deploy**. Une **connectivity configuration** construit des topologies **mesh** (régional ou global) ou **hub-and-spoke** ; une **security admin configuration** applique des **security admin rules** globalement.",
+      "Les **security admin rules** d'AVNM sont évaluées **AVANT** les règles NSG et sont **prioritaires** — elles peuvent bloquer un trafic même si le NSG l'autorise.",
+      "**User-defined route (UDR)** : surcharge les routes système par défaut, typiquement pour forcer l'egress via une appliance réseau ou **Azure Firewall** (destination `0.0.0.0/0`, next hop = IP privée du pare-feu) — un **forced tunnel**. Associer la route table au subnet de la charge de travail.",
+      "Le **VNet peering** connecte deux VNets en privé via le backbone Azure. Le **VPN Gateway** connecte des réseaux via des tunnels IPsec chiffrés — **site-to-site (S2S)** pour des réseaux on-prem entiers, **point-to-site (P2S)** pour des postes clients individuels.",
+      "**Azure Virtual WAN** fournit un backbone hub-and-spoke global managé ; un **secured virtual hub** ajoute Azure Firewall/sécurité directement dans le hub. **ExpressRoute** est une connexion privée (hors internet) à Azure, à laquelle on peut ajouter du chiffrement **IPsec/MACsec** pour la confidentialité.",
+      "Les **pare-feux au niveau ressource** (Storage, SQL, Key Vault, App Service) sont un contrôle **distinct** des NSG et d'Azure Firewall — chaque service PaaS a son propre onglet Networking pour restreindre l'accès par plage IP ou subnet VNet, indépendamment de tout NSG ou appliance.",
+      "**Network Watcher** est la boîte à outils de diagnostic réseau : flow logs (voir piège), **IP flow verify**, **connection troubleshoot**, **next hop**.",
+      "Le **chiffrement de réseau virtuel Azure (VNet encryption)** chiffre le trafic **entre VMs à l'intérieur d'un VNet** (et via peering), au niveau de l'hôte — complémentaire du chiffrement IPsec/MACsec d'ExpressRoute (liaison privée) et du TLS (application). Il s'active sur le VNet et nécessite des tailles de VM compatibles."
+    ],
+    "commonPitfalls": [
+      "Les **NSG flow logs** ne peuvent plus être créés depuis le 30 juin 2025 et seront **totalement retirés le 30 septembre 2027** — Microsoft Learn redirige vers les **Virtual Network (VNet) flow logs**, qui capturent au niveau VNet/subnet et couvrent aussi les NICs sans NSG. Attendre des questions sur les VNet flow logs, plus les NSG flow logs. Source : https://learn.microsoft.com/en-us/azure/network-watcher/nsg-flow-logs-migrate",
+      "Ne pas confondre les **security admin rules** d'AVNM (échelle tenant/abonnement, évaluées en premier) et les **règles NSG** (subnet/NIC, évaluées ensuite) — des couches complémentaires, pas des alternatives.",
+      "Un **UDR force le routage** ; il n'inspecte/filtre rien par lui-même — l'inspection a lieu au **next hop** (ex. Azure Firewall).",
+      "**Site-to-site** connecte des réseaux entiers ; **point-to-site** connecte des appareils individuels — un échange fréquent en QCM."
+    ],
+    "commands": [
+      {
+        "task": "Créer un NSG",
+        "cli": "az network nsg create --name NSG1 --resource-group RG1",
+        "powershell": "New-AzNetworkSecurityGroup -Name NSG1 -ResourceGroupName RG1 -Location westeurope"
+      },
+      {
+        "task": "Ajouter une règle à un NSG (ex. autoriser HTTPS entrant)",
+        "cli": "az network nsg rule create --nsg-name NSG1 --resource-group RG1 --name AllowHttps --priority 100 --direction Inbound --access Allow --protocol Tcp --destination-port-ranges 443",
+        "powershell": "$nsg | Add-AzNetworkSecurityRuleConfig -Name AllowHttps -Priority 100 -Direction Inbound -Access Allow -Protocol Tcp -DestinationPortRange 443 ... | Set-AzNetworkSecurityGroup"
+      },
+      {
+        "task": "**Associer le NSG à UN subnet précis** (et pas aux autres) — la commande porte sur le subnet, pas sur le NSG",
+        "cli": "az network vnet subnet update --vnet-name VNet1 --name Subnet1 --resource-group RG1 --network-security-group NSG1",
+        "powershell": "Set-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet -Name Subnet1 -AddressPrefix 10.0.1.0/24 -NetworkSecurityGroup $nsg ; $vnet | Set-AzVirtualNetwork"
+      },
+      {
+        "task": "Créer une route table et une route par défaut vers un pare-feu (forced tunnel)",
+        "cli": "az network route-table create --name RT1 --resource-group RG1\naz network route-table route create --route-table-name RT1 --resource-group RG1 --name ToFirewall --address-prefix 0.0.0.0/0 --next-hop-type VirtualAppliance --next-hop-ip-address 10.0.0.4",
+        "powershell": "New-AzRouteTable -Name RT1 -ResourceGroupName RG1 -Location westeurope\nAdd-AzRouteConfig -Name ToFirewall -AddressPrefix 0.0.0.0/0 -NextHopType VirtualAppliance -NextHopIpAddress 10.0.0.4 -RouteTable $rt | Set-AzRouteTable"
+      },
+      {
+        "task": "Associer la route table au subnet (même logique : on modifie le subnet)",
+        "cli": "az network vnet subnet update --vnet-name VNet1 --name Subnet1 --resource-group RG1 --route-table RT1",
+        "powershell": "Set-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet -Name Subnet1 -AddressPrefix 10.0.1.0/24 -RouteTable $rt ; $vnet | Set-AzVirtualNetwork"
+      },
+      {
+        "task": "Vérifier si un paquet serait autorisé (IP flow verify)",
+        "cli": "az network watcher test-ip-flow --vm VM1 --direction Inbound --protocol TCP --local 10.0.1.4:443 --remote 203.0.113.5:60000",
+        "powershell": "Test-AzNetworkWatcherIPFlow -NetworkWatcher $nw -TargetVirtualMachineId $vmId -Direction Inbound -Protocol TCP -LocalIPAddress 10.0.1.4 -LocalPort 443 -RemoteIPAddress 203.0.113.5 -RemotePort 60000"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/azure/virtual-network-manager/overview",
+      "https://learn.microsoft.com/en-us/azure/network-watcher/vnet-flow-logs-overview",
+      "https://learn.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways",
+      "https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-encryption-overview"
+    ]
+  },
+  {
+    "objectiveId": "o2-2",
+    "diagrams": ["endpoints"],
+    "summary": "Les **service endpoints**, **private endpoints** et **Private Link** gardent tous le trafic PaaS hors de l'internet public, mais à des profondeurs différentes — de « restreindre l'IP publique du service à mon subnet » à « donner au service une IP privée dans mon VNet ». App Service/Functions ajoutent la **VNet integration** pour les appels sortants, un **ASE** pour l'isolation totale, et Azure SQL Managed Instance se déploie toujours dans un **subnet délégué** que l'on sécurise directement.",
+    "keyPoints": [
+      "**Service endpoint** : étend l'identité de ton VNet au service PaaS via le backbone Azure ; le service **conserve une IP publique** mais peut être restreint aux subnets sélectionnés.",
+      "**Private endpoint** (propulsé par **Azure Private Link**) : attribue au service PaaS une **IP privée dans ton VNet** via une NIC dédiée ; **aucune exposition publique**, joignable depuis des VNets peerés et l'on-prem (VPN/ExpressRoute). Nécessite l'intégration d'une **Private DNS zone** pour que le nom du service résolve vers l'IP privée.",
+      "**Private Link service** : expose **ton propre** service (derrière un Standard Load Balancer) en privé à des consommateurs via un private endpoint de leur côté — le sens **inverse** de la consommation d'un service PaaS Microsoft en privé.",
+      "Configurer un private endpoint : `[ressource PaaS] ▸ Networking ▸ Private endpoint connections ▸ + Private endpoint` ▸ choisir la sous-ressource (ex. blob) + VNet/subnet ▸ intégrer la Private DNS zone ▸ passer **Public network access** à **Disabled**.",
+      "La **VNet integration** permet à App Service/Functions de faire des appels **sortants** dans un VNet ; elle ne sécurise **pas** l'accès entrant — un private endpoint (ou des access restrictions) s'en charge.",
+      "**App Service Environment (ASE)** : déploiement App Service **entièrement isolé, mono-tenant**, dans ton propre VNet — le niveau d'isolation le plus fort, à un coût/une gestion supérieurs à l'App Service multi-tenant + VNet integration/private endpoint.",
+      "**Azure SQL Managed Instance** se déploie toujours dans un **subnet délégué** (pas un réseau multi-tenant partagé) — on le sécurise directement avec NSG et route tables, et on peut ajouter un private endpoint pour l'accès cross-VNet ou on-prem."
+    ],
+    "commonPitfalls": [
+      "**Service endpoint** = le service garde une IP publique, restreinte par subnet source. **Private endpoint** = le service reçoit une IP privée dans ton VNet, sans exposition publique. Distinction testée en permanence — « aucune exposition publique » → toujours un private endpoint.",
+      "**VNet integration (sortant)** et **private endpoint (entrant)** résolvent des directions différentes du même sujet App Service/Functions — pas interchangeables.",
+      "Un **Private Link service** (tu publies ton propre service) est l'image miroir d'un **private endpoint** (tu consommes le service d'un autre en privé) — facile de confondre les deux artefacts dans un scénario."
+    ],
+    "commands": [
+      {
+        "task": "Créer un private endpoint pour un compte de stockage (sous-ressource blob)",
+        "cli": "az network private-endpoint create --name PE1 --resource-group RG1 --vnet-name VNet1 --subnet Subnet1 --private-connection-resource-id <storageId> --group-id blob --connection-name conn1",
+        "powershell": "New-AzPrivateEndpoint -Name PE1 -ResourceGroupName RG1 -Location westeurope -Subnet $subnet -PrivateLinkServiceConnection $conn"
+      },
+      {
+        "task": "Créer la Private DNS zone du service et la lier au VNet",
+        "cli": "az network private-dns zone create --resource-group RG1 --name privatelink.blob.core.windows.net\naz network private-dns link vnet create --resource-group RG1 --zone-name privatelink.blob.core.windows.net --name link1 --virtual-network VNet1 --registration-enabled false",
+        "powershell": "New-AzPrivateDnsZone -ResourceGroupName RG1 -Name privatelink.blob.core.windows.net\nNew-AzPrivateDnsVirtualNetworkLink -ResourceGroupName RG1 -ZoneName privatelink.blob.core.windows.net -Name link1 -VirtualNetworkId $vnetId"
+      },
+      {
+        "task": "Couper l'accès public du compte de stockage une fois le private endpoint en place",
+        "cli": "az storage account update --name stg1 --resource-group RG1 --public-network-access Disabled",
+        "powershell": "Set-AzStorageAccount -Name stg1 -ResourceGroupName RG1 -PublicNetworkAccess Disabled"
+      },
+      {
+        "task": "Activer un service endpoint sur un subnet (le service garde son IP publique restreinte)",
+        "cli": "az network vnet subnet update --vnet-name VNet1 --name Subnet1 --resource-group RG1 --service-endpoints Microsoft.Storage",
+        "powershell": "Set-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet -Name Subnet1 -AddressPrefix 10.0.1.0/24 -ServiceEndpoint Microsoft.Storage ; $vnet | Set-AzVirtualNetwork"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview",
+      "https://learn.microsoft.com/en-us/azure/private-link/create-private-link-service-portal",
+      "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
+    ]
+  },
+  {
+    "objectiveId": "o2-3",
+    "diagrams": ["appgw-vs-frontdoor", "firewall-vs-waf"],
+    "summary": "Les certificats **TLS** et **Azure Firewall / App Gateway / Front Door / WAF / DDoS** forment une défense en couches pour les charges publiques — point d'entrée L7 régional vs global, filtrage réseau général vs spécifique au web, et mitigation des attaques volumétriques désormais répartie sur **deux tiers DDoS**.",
+    "keyPoints": [
+      "**TLS** : chiffrer le trafic en transit, lier des certificats à **App Service** et **API Management**, et imposer une **version TLS minimale**.",
+      "**Azure Firewall** : pare-feu réseau cloud managé, **stateful** (L3–L7), avec règles applicatives/réseau, **threat-intelligence filtering** et **FQDN filtering** — il filtre le trafic VNet **général**, pas spécifiquement les attaques web. **Azure Firewall Manager** gère de façon centralisée plusieurs pare-feux et des **firewall policies** réutilisables à travers VNets et secured virtual hubs.",
+      "**Application Gateway** : load balancer L7 (HTTP/S) **régional**.",
+      "**Azure Front Door** : point d'entrée L7 **global** avec **CDN**, accélération et failover.",
+      "**Web Application Firewall (WAF)** : fonctionnalité **attachée** à Application Gateway ou Front Door pour bloquer les attaques OWASP (SQLi, XSS) via des managed rule sets (ex. **OWASP Core Rule Set**) ; le mode **Prevention** bloque activement, le mode **Detection** ne fait que journaliser.",
+      "Configurer un WAF : `Web Application Firewall policies ▸ Create` ▸ associer à App Gateway ou Front Door ▸ Mode = **Prevention** ▸ choisir un managed rule set ▸ ajouter règles/exclusions ▸ associer au listener ou à la gateway.",
+      "**Azure DDoS Protection** a désormais **deux tiers** : **DDoS Network Protection** (tier complet, anciennement « Standard » — inclut rapid response support, cost protection et remises WAF) et **DDoS IP Protection** (tier plus léger, facturé par IP protégée, même moteur de mitigation mais **sans** ces services à valeur ajoutée). Recommander Network Protection pour les IP publiques critiques ; IP Protection pour les scénarios plus petits/sensibles au coût."
+    ],
+    "commonPitfalls": [
+      "Le **scope décide** : L7 régional → **Application Gateway** ; edge/CDN global → **Front Door**. Le WAF est une fonctionnalité qu'on **attache** à l'un ou l'autre, pas une gateway autonome.",
+      "**Azure Firewall** (trafic réseau général, L3–L7, à l'échelle du VNet) n'est pas la même chose qu'un **WAF** (spécifique aux apps web, couche HTTP/S) — un piège très fréquent.",
+      "Un ancien vocabulaire (y compris le libellé officiel des compétences) dit encore **« DDoS Protection Standard »** — ce nom correspond au **« DDoS Network Protection »** du portail actuel ; **« DDoS IP Protection »** est un tier séparé, plus récent et plus léger. Reconnaître les deux noms pour ce qui est, en pratique, le même tier complet. Source : https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison"
+    ],
+    "commands": [
+      {
+        "task": "Créer un Azure Firewall et sa politique",
+        "cli": "az network firewall policy create --name FWPolicy1 --resource-group RG1\naz network firewall create --name FW1 --resource-group RG1 --firewall-policy FWPolicy1",
+        "powershell": "New-AzFirewallPolicy -Name FWPolicy1 -ResourceGroupName RG1 -Location westeurope\nNew-AzFirewall -Name FW1 -ResourceGroupName RG1 -Location westeurope -FirewallPolicyId $policy.Id ..."
+      },
+      {
+        "task": "Créer une politique WAF (mode Prevention) pour Application Gateway",
+        "cli": "az network application-gateway waf-policy create --name WafPol1 --resource-group RG1\naz network application-gateway waf-policy policy-setting update --policy-name WafPol1 --resource-group RG1 --state Enabled --mode Prevention",
+        "powershell": "New-AzApplicationGatewayFirewallPolicy -Name WafPol1 -ResourceGroupName RG1 -Location westeurope -PolicySetting $settings"
+      },
+      {
+        "task": "Créer un plan DDoS et l'activer sur un VNet",
+        "cli": "az network ddos-protection create --name DdosPlan1 --resource-group RG1\naz network vnet update --name VNet1 --resource-group RG1 --ddos-protection-plan DdosPlan1 --ddos-protection true",
+        "powershell": "New-AzDdosProtectionPlan -Name DdosPlan1 -ResourceGroupName RG1 -Location westeurope\n$vnet.DdosProtectionPlan = ... ; $vnet.EnableDdosProtection = $true ; $vnet | Set-AzVirtualNetwork"
+      },
+      {
+        "task": "Imposer une version TLS minimale sur une App Service",
+        "cli": "az webapp config set --name App1 --resource-group RG1 --min-tls-version 1.2",
+        "powershell": "Set-AzWebApp -Name App1 -ResourceGroupName RG1 -MinTlsVersion 1.2"
+      }
+    ],
+    "learnLinks": [
+      "https://learn.microsoft.com/en-us/azure/web-application-firewall/overview",
+      "https://learn.microsoft.com/en-us/azure/firewall/overview",
+      "https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison"
+    ]
+  }
+]

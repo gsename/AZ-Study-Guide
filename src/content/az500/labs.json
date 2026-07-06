@@ -1,0 +1,146 @@
+[
+  {
+    "id": "lab-o1-1",
+    "objectiveId": "o1-1",
+    "title": "Configure PIM eligibility and Conditional Access MFA for Azure management",
+    "description": "Practice making an Azure resource role eligible via PIM, activating it, and requiring MFA for the Azure management plane via Conditional Access.",
+    "azurePortalSteps": [
+      "Entra admin center ▸ Identity Governance ▸ Privileged Identity Management ▸ Azure resources ▸ select a subscription ▸ add yourself as an Eligible assignment for the Reader role.",
+      "Activate the eligible assignment and observe the MFA/justification prompt, then confirm it appears under 'Active assignments' with an expiry time.",
+      "Create a new Conditional Access policy in Report-only mode targeting 'Windows Azure Service Management API' and requiring MFA; review the Report-only results after a day of sign-ins."
+    ],
+    "portalUrl": "https://portal.azure.com/#view/Microsoft_Azure_PIMCommon/CommonMenuBlade/~/quickStart"
+  },
+  {
+    "id": "lab-o1-2",
+    "objectiveId": "o1-2",
+    "title": "Register an app and configure a managed identity",
+    "description": "Register an application, request a Graph permission, and compare it against a managed identity that needs no stored credentials.",
+    "azurePortalSteps": [
+      "Entra admin center ▸ App registrations ▸ New registration; add an API permission (Microsoft Graph, delegated, User.Read) and observe the consent prompt.",
+      "Open Enterprise applications for the same app and review its service principal, then check Consent and permissions to see the tenant-wide user-consent policy.",
+      "Create (or reuse) a small VM or Function App, enable a system-assigned managed identity, and grant it a data-plane role on a Key Vault."
+    ],
+    "portalUrl": "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade"
+  },
+  {
+    "id": "lab-o2-1",
+    "objectiveId": "o2-1",
+    "title": "Build a network security baseline with NSGs, ASGs, and a UDR",
+    "description": "Practice role-based NSG targeting with Application Security Groups, then force subnet egress through a route table.",
+    "azurePortalSteps": [
+      "Create two test VMs in the same VNet, place each in its own Application Security Group (e.g. 'web', 'db').",
+      "Write NSG rules that reference the ASGs as source/destination instead of IP addresses, and verify connectivity behaves as expected.",
+      "Create a route table with a 0.0.0.0/0 route pointing to a test next-hop IP (Virtual appliance), associate it with the subnet, and use Network Watcher's 'Next hop' tool to confirm the effective route."
+    ],
+    "portalUrl": "https://portal.azure.com/#view/HubsExtension/BrowseResource/resourceType/Microsoft.Network%2FnetworkSecurityGroups"
+  },
+  {
+    "id": "lab-o2-2",
+    "objectiveId": "o2-2",
+    "title": "Add a private endpoint to a storage account",
+    "description": "Remove public exposure from a storage account by switching from default access to a private endpoint.",
+    "azurePortalSteps": [
+      "Create a storage account, then under Networking add a private endpoint for the 'blob' sub-resource, integrating a Private DNS zone.",
+      "Set Public network access to Disabled and confirm the storage account is no longer reachable from outside the VNet.",
+      "From a VM inside the VNet (or peered VNet), resolve the storage account's hostname and confirm it now returns the private IP."
+    ],
+    "portalUrl": "https://portal.azure.com/#view/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FstorageAccounts"
+  },
+  {
+    "id": "lab-o2-3",
+    "objectiveId": "o2-3",
+    "title": "Deploy Application Gateway with a WAF policy",
+    "description": "Stand up a regional layer-7 load balancer with an active Web Application Firewall policy.",
+    "azurePortalSteps": [
+      "Create an Application Gateway (WAF v2 SKU) fronting a simple backend (e.g. an App Service).",
+      "Create a WAF policy with the OWASP Core Rule Set, set Mode to Prevention, and associate it with the gateway.",
+      "Send a request containing a SQL-injection-like string in a query parameter and confirm it is blocked, then check the WAF logs for the matched rule."
+    ],
+    "portalUrl": "https://portal.azure.com/#view/HubsExtension/BrowseResource/resourceType/Microsoft.Network%2FapplicationGateways"
+  },
+  {
+    "id": "lab-o3-1",
+    "objectiveId": "o3-1",
+    "title": "Enable Bastion and just-in-time VM access",
+    "description": "Remove standing exposure of a management VM by combining Azure Bastion with just-in-time access.",
+    "azurePortalSteps": [
+      "Deploy Azure Bastion into a VNet containing a test VM with no public IP.",
+      "In Microsoft Defender for Cloud ▸ Workload protections ▸ Just-in-time VM access, enable JIT for the test VM and configure the RDP/SSH port, allowed source, and max request time.",
+      "Request access via 'Request access', connect through Bastion, and confirm the NSG rule closes automatically once the time window expires."
+    ],
+    "portalUrl": "https://portal.azure.com/#view/Microsoft_Azure_Security/JitOnBoarding"
+  },
+  {
+    "id": "lab-o3-2",
+    "objectiveId": "o3-2",
+    "title": "Configure storage data protection",
+    "description": "Exercise the recovery and tamper-resistance features that protect stored blob data.",
+    "azurePortalSteps": [
+      "On a test storage account, enable soft delete and blob versioning under Data protection.",
+      "Delete a test blob and restore it, then overwrite another blob and browse its version history.",
+      "Enable an immutability policy in time-based retention mode on a container and confirm you cannot delete a blob inside it before the retention period ends."
+    ],
+    "portalUrl": "https://portal.azure.com/#view/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FstorageAccounts"
+  },
+  {
+    "id": "lab-o3-3",
+    "objectiveId": "o3-3",
+    "title": "Configure Azure SQL security features",
+    "description": "Layer identity, auditing, and masking controls onto a test Azure SQL database.",
+    "azurePortalSteps": [
+      "On a test SQL server, set a Microsoft Entra admin under Microsoft Entra ID ▸ Set admin.",
+      "Enable auditing, sending events to a Log Analytics workspace, and generate a few test queries to confirm events appear.",
+      "On a test database, add a dynamic data masking rule to a text column and query it as a non-admin user to see the masked result."
+    ],
+    "portalUrl": "https://portal.azure.com/#view/HubsExtension/BrowseResource/resourceType/Microsoft.Sql%2Fservers"
+  },
+  {
+    "id": "lab-o4-1",
+    "objectiveId": "o4-1",
+    "title": "Harden a Key Vault and create a governance policy",
+    "description": "Combine Key Vault network/access hardening with an Azure Policy that enforces a security baseline.",
+    "azurePortalSteps": [
+      "Create a Key Vault using the Azure RBAC access model, restrict its network to a specific VNet/subnet, and enable purge protection.",
+      "Assign yourself a Key Vault RBAC data role (e.g. Key Vault Secrets User) and create a test secret.",
+      "Create and assign an Azure Policy definition with the Deny effect that blocks public network access on new storage accounts, then attempt to create a public storage account to see it blocked."
+    ],
+    "portalUrl": "https://portal.azure.com/#view/HubsExtension/BrowseResource/resourceType/Microsoft.KeyVault%2Fvaults"
+  },
+  {
+    "id": "lab-o4-2",
+    "objectiveId": "o4-2",
+    "title": "Review Secure Score and enable a compliance standard",
+    "description": "Explore Defender for Cloud's posture-management view and add a regulatory standard.",
+    "azurePortalSteps": [
+      "Open Microsoft Defender for Cloud ▸ Secure Score and review the top recommendations for your subscription.",
+      "Open Regulatory compliance ▸ Manage compliance policies and enable an additional standard (e.g. ISO 27001), then review its control mapping.",
+      "Open Inventory and filter resources by a specific type to see how Defender for Cloud catalogs your environment."
+    ],
+    "portalUrl": "https://portal.azure.com/#view/Microsoft_Azure_Security/SecurityMenuBlade/~/22"
+  },
+  {
+    "id": "lab-o4-3",
+    "objectiveId": "o4-3",
+    "title": "Enable a Defender plan and try agentless scanning",
+    "description": "Turn on active threat protection for a resource type and observe agentless vulnerability scanning.",
+    "azurePortalSteps": [
+      "In Defender for Cloud ▸ Environment settings, enable Microsoft Defender for Servers (Plan 2) on a test subscription.",
+      "Confirm agentless scanning is enabled in the plan's settings, and wait for or trigger a scan cycle.",
+      "Review any vulnerability findings surfaced by Microsoft Defender Vulnerability Management for a scanned VM."
+    ],
+    "portalUrl": "https://portal.azure.com/#view/Microsoft_Azure_Security/EnvironmentSettingsBlade"
+  },
+  {
+    "id": "lab-o4-4",
+    "objectiveId": "o4-4",
+    "title": "Wire up Microsoft Sentinel automation",
+    "description": "Onboard Sentinel and connect detection to an automated response.",
+    "azurePortalSteps": [
+      "Onboard Microsoft Sentinel onto a Log Analytics workspace and connect a data connector (e.g. Azure Activity or Microsoft Entra ID).",
+      "Enable a built-in analytics rule template and confirm it appears under Analytics as an active scheduled rule.",
+      "Create an automation rule that runs a simple Logic App playbook (e.g. sends a notification) whenever a new incident is created."
+    ],
+    "portalUrl": "https://portal.azure.com/#view/Microsoft_Azure_Security_Insights/MainMenuBlade/~/0"
+  }
+]

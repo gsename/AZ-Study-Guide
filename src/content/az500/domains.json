@@ -1,0 +1,211 @@
+{
+  "exam": {
+    "code": "AZ-500",
+    "name": "Microsoft Azure Security Technologies",
+    "certification": "Microsoft Certified: Azure Security Engineer Associate",
+    "skillsMeasuredAsOf": "2026-01-22",
+    "retirementDate": "2026-08-31T23:59:00-06:00",
+    "passingScore": 700,
+    "scoreMax": 1000,
+    "durationMinutes": 100,
+    "questionCountRange": "40-60"
+  },
+  "domains": [
+    {
+      "id": "d1",
+      "name": "Secure identity and access",
+      "weightPercent": { "min": 15, "max": 20 }
+    },
+    {
+      "id": "d2",
+      "name": "Secure networking",
+      "weightPercent": { "min": 20, "max": 25 }
+    },
+    {
+      "id": "d3",
+      "name": "Secure compute, storage, and databases",
+      "weightPercent": { "min": 20, "max": 25 }
+    },
+    {
+      "id": "d4",
+      "name": "Secure Azure using Microsoft Defender for Cloud and Microsoft Sentinel",
+      "weightPercent": { "min": 30, "max": 35 }
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1-1",
+      "domainId": "d1",
+      "title": "Manage security controls for identity and access",
+      "description": "Azure RBAC (built-in and custom roles), Microsoft Entra custom roles, Privileged Identity Management (PIM), MFA, and Conditional Access for Azure resource access.",
+      "officialSkills": [
+        "Manage Azure built-in role assignments",
+        "Manage custom roles, including Azure roles and Microsoft Entra roles",
+        "Plan and manage Azure resources in Microsoft Entra Privileged Identity Management, including settings and assignments",
+        "Implement multi-factor authentication (MFA) for access to Azure resources",
+        "Implement Conditional Access policies for cloud resources in Azure"
+      ]
+    },
+    {
+      "id": "o1-2",
+      "domainId": "d1",
+      "title": "Manage Microsoft Entra application access and managed identities",
+      "description": "Enterprise applications, app registrations, permission scopes/consent, service principals, and managed identities (system- vs user-assigned).",
+      "officialSkills": [
+        "Manage access to enterprise applications in Microsoft Entra ID, including OAuth permission grants",
+        "Manage Microsoft Entra app registrations",
+        "Configure app registration permission scopes",
+        "Manage app registration permission consent",
+        "Manage and use service principals",
+        "Manage managed identities"
+      ]
+    },
+    {
+      "id": "o2-1",
+      "domainId": "d2",
+      "title": "Plan and implement security for virtual networks",
+      "description": "NSGs/ASGs, Azure Virtual Network Manager, UDRs, VNet peering/VPN gateway, Virtual WAN, VPN connectivity (P2S/S2S), ExpressRoute encryption, resource-level firewall settings, Network Watcher.",
+      "officialSkills": [
+        "Plan and implement Network Security Groups (NSGs) and Application Security Groups (ASGs)",
+        "Manage virtual networks by using Azure Virtual Network Manager",
+        "Plan and implement user-defined routes (UDRs)",
+        "Plan and implement Virtual Network peering or VPN gateway",
+        "Plan and implement Virtual WAN, including secured virtual hub",
+        "Secure VPN connectivity, including point-to-site and site-to-site",
+        "Implement encryption over ExpressRoute",
+        "Configure firewall settings on Azure resources",
+        "Monitor network security by using Network Watcher"
+      ]
+    },
+    {
+      "id": "o2-2",
+      "domainId": "d2",
+      "title": "Plan and implement security for private access to Azure resources",
+      "description": "Service Endpoints, Private Endpoints, Private Link services, VNet integration for App Service/Functions, ASE network security, Azure SQL Managed Instance network security.",
+      "officialSkills": [
+        "Plan and implement virtual network Service Endpoints",
+        "Plan and implement Private Endpoints",
+        "Plan and implement Private Link services",
+        "Plan and implement network integration for Azure App Service and Azure Functions",
+        "Plan and implement network security configurations for an App Service Environment (ASE)",
+        "Plan and implement network security configurations for an Azure SQL Managed Instance"
+      ]
+    },
+    {
+      "id": "o2-3",
+      "domainId": "d2",
+      "title": "Plan and implement security for public access to Azure resources",
+      "description": "TLS for App Service/API Management, Azure Firewall + Firewall Manager + policies, Application Gateway, Front Door + CDN, WAF, DDoS Protection Standard.",
+      "officialSkills": [
+        "Plan and implement Transport Layer Security (TLS) to applications, including Azure App Service and API Management",
+        "Plan, implement, and manage an Azure Firewall, including Azure Firewall Manager and firewall policies",
+        "Plan and implement an Azure Application Gateway",
+        "Plan and implement an Azure Front Door, including Content Delivery Network (CDN)",
+        "Plan and implement a Web Application Firewall (WAF)",
+        "Recommend when to use Azure DDoS Protection Standard"
+      ]
+    },
+    {
+      "id": "o3-1",
+      "domainId": "d3",
+      "title": "Plan and implement advanced security for compute",
+      "description": "Bastion/JIT VM access, AKS network isolation/security/monitoring/authentication, ACI/ACA security monitoring, ACR access control, disk encryption (ADE, encryption at host, confidential disk encryption), API Management security.",
+      "officialSkills": [
+        "Plan and implement remote access to virtual machines, including Azure Bastion and just-in-time (JIT) VM access",
+        "Configure network isolation for Azure Kubernetes Service (AKS)",
+        "Secure and monitor AKS",
+        "Configure authentication for AKS",
+        "Configure security monitoring for Azure Container Instances (ACIs)",
+        "Configure security monitoring for Azure Container Apps (ACAs)",
+        "Manage access to Azure Container Registry (ACR)",
+        "Configure disk encryption, including Azure Disk Encryption (ADE), encryption at host, and confidential disk encryption",
+        "Recommend security configurations for Azure API Management"
+      ]
+    },
+    {
+      "id": "o3-2",
+      "domainId": "d3",
+      "title": "Plan and implement security for storage",
+      "description": "Storage account access control (Entra/RBAC, keys, SAS), access methods for Azure Files vs Blob Storage, data-protection features (soft delete, backups, versioning, immutable storage), BYOK, infrastructure double encryption.",
+      "officialSkills": [
+        "Configure access control for storage accounts",
+        "Manage storage account access keys",
+        "Select and configure an appropriate method for access to Azure Files",
+        "Select and configure an appropriate method for access to Azure Blob Storage",
+        "Select and configure appropriate methods for protecting against data security threats, including soft delete, backups, versioning, and immutable storage",
+        "Configure Bring your own key (BYOK)",
+        "Enable double encryption at the Azure Storage infrastructure level"
+      ]
+    },
+    {
+      "id": "o3-3",
+      "domainId": "d3",
+      "title": "Plan and implement security for Azure SQL Database and Azure SQL Managed Instance",
+      "description": "Microsoft Entra database authentication, auditing, dynamic data masking, Transparent Data Encryption (TDE), Always Encrypted.",
+      "officialSkills": [
+        "Enable Microsoft Entra database authentication",
+        "Enable database auditing",
+        "Plan and implement dynamic masking",
+        "Implement Transparent Data Encryption (TDE)",
+        "Recommend when to use Azure SQL Database Always Encrypted"
+      ]
+    },
+    {
+      "id": "o4-1",
+      "domainId": "d4",
+      "title": "Implement and manage enforcement of cloud governance policies",
+      "description": "Azure Policy (policies/initiatives), Key Vault network settings and access model (vault access policies vs Azure RBAC), certificate/secret/key management, key rotation, backup/recovery, backup protection controls, asset-management security controls.",
+      "officialSkills": [
+        "Create, assign, and interpret policies and initiatives in Azure Policy",
+        "Configure Azure Key Vault network settings",
+        "Configure access to Key Vault, including vault access policies and Azure Role Based Access Control",
+        "Manage certificates, secrets, and keys",
+        "Configure key rotation",
+        "Perform backup and recovery of certificates, secrets, and keys",
+        "Implement security controls to protect backups",
+        "Implement security controls for asset management"
+      ]
+    },
+    {
+      "id": "o4-2",
+      "domainId": "d4",
+      "title": "Manage security posture by using Microsoft Defender for Cloud",
+      "description": "Secure Score, asset inventory, compliance framework assessment, compliance standards management, custom standards, multicloud (AWS/GCP) connectors, Defender EASM.",
+      "officialSkills": [
+        "Identify and remediate security risks by using the Microsoft Defender for Cloud Secure Score and Inventory",
+        "Assess compliance against security frameworks by using Microsoft Defender for Cloud",
+        "Manage compliance standards in Microsoft Defender for Cloud",
+        "Add custom standards to Microsoft Defender for Cloud",
+        "Connect hybrid cloud and multi-cloud environments to Microsoft Defender for Cloud, including Amazon Web Services (AWS) and Google Cloud Platform (GCP)",
+        "Implement and use Microsoft Defender External Attack Surface Management (EASM)"
+      ]
+    },
+    {
+      "id": "o4-3",
+      "domainId": "d4",
+      "title": "Configure and manage threat protection by using Microsoft Defender for Cloud",
+      "description": "Cloud workload protection (CWP) plans (Servers, Databases, Storage), agentless scanning, Defender Vulnerability Management, DevOps Security connectors (GitHub, Azure DevOps, GitLab).",
+      "officialSkills": [
+        "Enable cloud workload protection plans in Microsoft Defender for Cloud",
+        "Configure Microsoft Defender for Servers, Microsoft Defender for Databases, and Microsoft Defender for Storage",
+        "Implement and manage agentless scanning for virtual machines in Microsoft Defender for Servers",
+        "Implement and manage Microsoft Defender Vulnerability Management for Azure virtual machines",
+        "Connect to and configure settings in Microsoft Defender for Cloud DevOps Security, including GitHub, Azure DevOps, and GitLab"
+      ]
+    },
+    {
+      "id": "o4-4",
+      "domainId": "d4",
+      "title": "Configure and manage security monitoring and automation solutions",
+      "description": "Security alert management, workflow automation (Logic Apps), Data Collection Rules (DCRs) in Azure Monitor, Microsoft Sentinel data connectors/analytics rules/automation.",
+      "officialSkills": [
+        "Manage and respond to security alerts in Microsoft Defender for Cloud",
+        "Configure workflow automation by using Microsoft Defender for Cloud",
+        "Monitor network security events and performance data by configuring data collection rules (DCRs) in Azure Monitor",
+        "Configure data connectors in Microsoft Sentinel",
+        "Enable analytics rules in Microsoft Sentinel",
+        "Configure automation in Microsoft Sentinel"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,592 @@
+[
+  {
+    "id": "q-o1-2-01",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which statement correctly describes the two objects created when an application is registered in Microsoft Entra ID?",
+    "choices": [
+      "An application object (the global blueprint) and, per tenant, a service principal (the local, governable instance)",
+      "A service principal and a Conditional Access policy",
+      "A managed identity and an app registration, with no service principal involved",
+      "An enterprise application and a Key Vault access policy"
+    ],
+    "correctAnswers": ["An application object (the global blueprint) and, per tenant, a service principal (the local, governable instance)"],
+    "explanation": "Registration always produces an application object plus a service principal per consuming tenant. Conditional Access policies and Key Vault access policies are unrelated objects.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-02",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "What does the app registration primarily define?",
+    "choices": [
+      "What the app is and can request: redirect URIs, certificates/secrets, and requested API permissions",
+      "Which users and groups are assigned to use the app in this tenant",
+      "The RBAC role assignments granted to the app's service principal",
+      "The Conditional Access policy scoped to the app"
+    ],
+    "correctAnswers": ["What the app is and can request: redirect URIs, certificates/secrets, and requested API permissions"],
+    "explanation": "The app registration is the blueprint of the app itself. User/group assignment, RBAC, and Conditional Access are all local, tenant-specific governance handled through the enterprise application (service principal).",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-03",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Under which portal blade do you govern a service principal's assigned users, SSO configuration, and granted (not just requested) permissions in a given tenant?",
+    "choices": [
+      "Enterprise applications",
+      "App registrations",
+      "Privileged Identity Management",
+      "Key Vault access policies"
+    ],
+    "correctAnswers": ["Enterprise applications"],
+    "explanation": "Enterprise applications is where the local service principal is governed: assignments, SSO, Conditional Access, and actually-granted permissions. App registrations only defines what's requested.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-04",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "A multi-tenant SaaS app is consented to by three different customer tenants. How many service principals exist for that single app registration?",
+    "choices": [
+      "Three — one service principal per consuming tenant",
+      "One — service principals are global, not per tenant",
+      "Zero — multi-tenant apps don't use service principals",
+      "Three app registrations and one shared service principal"
+    ],
+    "correctAnswers": ["Three — one service principal per consuming tenant"],
+    "explanation": "Each tenant that consents to a multi-tenant app gets its own local service principal instance, even though there is only one underlying application object.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-05",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "A delegated permission is granted to an application. What can that application do with it?",
+    "choices": [
+      "Act on behalf of the signed-in user, limited to what that user could do themselves",
+      "Act as itself with no user context, regardless of any user's own permissions",
+      "Bypass all Conditional Access policies automatically",
+      "Access every mailbox in the tenant without further consent"
+    ],
+    "correctAnswers": ["Act on behalf of the signed-in user, limited to what that user could do themselves"],
+    "explanation": "Delegated permissions are bounded by the signed-in user's own access. Acting with no user context describes application permissions instead.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-06",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "An application is granted the Mail.Read application permission. What does this allow?",
+    "choices": [
+      "The app can read mail as itself, without any signed-in user, subject to admin consent",
+      "The app can only read the mail of the user who is currently signed in",
+      "The permission is automatically limited to the app's own tenant",
+      "The permission requires no consent because it is scoped to Mail.Read"
+    ],
+    "correctAnswers": ["The app can read mail as itself, without any signed-in user, subject to admin consent"],
+    "explanation": "Application permissions act as the app, independent of any user, and require admin consent regardless of the specific scope name.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-07",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which statement about consenting to application permissions is correct?",
+    "choices": [
+      "Application permissions always require admin consent, since no user is present to consent themselves",
+      "Application permissions can be consented to by any licensed user",
+      "Application permissions are consented to automatically the first time the app signs in",
+      "Application permissions never require consent if the app is single-tenant"
+    ],
+    "correctAnswers": ["Application permissions always require admin consent, since no user is present to consent themselves"],
+    "explanation": "With no signed-in user present, only an administrator can grant consent for application permissions — this is true regardless of the app's tenancy model.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-08",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "An administrator grants admin consent for an application's Mail.ReadWrite application permission. What is the scope of that consent?",
+    "choices": [
+      "It applies tenant-wide, to every user, not just the administrator granting it",
+      "It applies only to the administrator's own mailbox",
+      "It applies only to users who individually re-consent afterward",
+      "It expires automatically after 90 days unless renewed"
+    ],
+    "correctAnswers": ["It applies tenant-wide, to every user, not just the administrator granting it"],
+    "explanation": "Admin consent for an application permission is a tenant-wide grant. It doesn't limit itself to the approver's own data, require per-user re-consent, or expire on a fixed schedule by default.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-09",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which User consent setting is recommended to reduce the risk of illicit consent grant attacks while still allowing convenience for low-risk apps?",
+    "choices": [
+      "Allow user consent only for apps from verified publishers and for permissions classified as low impact",
+      "Allow user consent for any app requesting any permission",
+      "Disable user consent and also disable the admin consent workflow",
+      "Allow user consent only on weekends"
+    ],
+    "correctAnswers": ["Allow user consent only for apps from verified publishers and for permissions classified as low impact"],
+    "explanation": "Restricting to verified publishers plus low-impact permissions balances convenience and risk. Disabling both user and admin consent workflows would block legitimate access requests entirely.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-10",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "A user tries to sign in to an app requiring a permission they cannot consent to themselves. What happens if the admin consent workflow is enabled?",
+    "choices": [
+      "The user can request access, and the request is routed to designated reviewers for approval",
+      "The sign-in silently fails with no way to request access",
+      "The user is automatically granted the permission after 24 hours",
+      "The app registration is automatically deleted"
+    ],
+    "correctAnswers": ["The user can request access, and the request is routed to designated reviewers for approval"],
+    "explanation": "The admin consent workflow gives blocked users a path to request access rather than a dead end, routing the decision to named reviewers.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-11",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "What attack does the admin consent workflow (routing requests to reviewers) primarily defend against?",
+    "choices": [
+      "Illicit consent grant attacks, where a malicious app tricks a user into granting broad access",
+      "Brute-force password attacks against user accounts",
+      "SIM-swap attacks against SMS-based MFA",
+      "Ransomware encryption of on-premises file shares"
+    ],
+    "correctAnswers": ["Illicit consent grant attacks, where a malicious app tricks a user into granting broad access"],
+    "explanation": "Requiring admin review before high-impact consent is granted closes the door on illicit consent grant attacks. It has no bearing on password brute-forcing, SIM-swap, or ransomware.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-12",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Where can an administrator review which OAuth permissions have actually been granted to an app, as opposed to only what it requests?",
+    "choices": [
+      "Enterprise applications ▸ Permissions",
+      "App registrations ▸ Certificates & secrets",
+      "Key Vault ▸ Access configuration",
+      "Conditional Access ▸ Policies"
+    ],
+    "correctAnswers": ["Enterprise applications ▸ Permissions"],
+    "explanation": "Granted permissions (the actual consent record) live on the enterprise application. Certificates & secrets is unrelated, and the other two options belong to entirely different services.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-13",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "During a permissions review, you find an app has an unused Mail.ReadWrite application permission granted tenant-wide. What is the appropriate action?",
+    "choices": [
+      "Remove the unused high-privilege grant, since application permissions act without user context and carry outsized risk",
+      "Leave it, since application permissions are always lower-risk than delegated permissions",
+      "Convert it to a delegated permission automatically",
+      "Ignore it because application permissions cannot be revoked once granted"
+    ],
+    "correctAnswers": ["Remove the unused high-privilege grant, since application permissions act without user context and carry outsized risk"],
+    "explanation": "Unused high-privilege application-permission grants should be revoked as part of least-privilege hygiene; they can absolutely be removed, and they are generally higher-risk than delegated permissions, not lower.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-14",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "What is the defining characteristic of a managed identity compared to a regular service principal?",
+    "choices": [
+      "Azure automatically creates and rotates its credentials — there is no secret or certificate to manage",
+      "It can only be used by Azure Functions",
+      "It requires a Conditional Access policy to function",
+      "It can only hold delegated permissions, never application permissions"
+    ],
+    "correctAnswers": ["Azure automatically creates and rotates its credentials — there is no secret or certificate to manage"],
+    "explanation": "The defining benefit of a managed identity is Azure-managed credentials. It is not restricted to a single resource type, doesn't require CA to work, and can be granted application permissions like Mail.Read.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-15",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which lifecycle statement is correct for a system-assigned managed identity?",
+    "choices": [
+      "It is created with, and deleted automatically when, its single host resource is deleted",
+      "It exists as an independent Azure resource that survives its host's deletion",
+      "It can be attached to multiple resources simultaneously",
+      "It requires a certificate to be uploaded before use"
+    ],
+    "correctAnswers": ["It is created with, and deleted automatically when, its single host resource is deleted"],
+    "explanation": "System-assigned identities are strictly 1:1 with their host and share its lifecycle. Independent survival and multi-resource attachment describe user-assigned identities instead.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-16",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which lifecycle statement is correct for a user-assigned managed identity?",
+    "choices": [
+      "It exists as its own standalone Azure resource and can be attached to multiple resources",
+      "It is automatically deleted whenever any one of its attached resources is deleted",
+      "It can only ever be attached to exactly one resource, like a system-assigned identity",
+      "It cannot be used to authenticate to Key Vault"
+    ],
+    "correctAnswers": ["It exists as its own standalone Azure resource and can be attached to multiple resources"],
+    "explanation": "User-assigned identities are independent resources that outlive any single attached resource, and can be reused across many resources — the opposite of a system-assigned identity's 1:1 lifecycle.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-17",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Ten Azure Functions apps in a fleet all need the same identity to call a downstream API. Which managed identity type best fits this need?",
+    "choices": [
+      "A single user-assigned managed identity attached to all ten function apps",
+      "Ten separate system-assigned managed identities, one per function app",
+      "A single system-assigned managed identity shared across all function apps",
+      "A service principal with a client secret shared via a configuration file"
+    ],
+    "correctAnswers": ["A single user-assigned managed identity attached to all ten function apps"],
+    "explanation": "User-assigned identities are standalone and attachable to many resources — ideal for a shared identity across a fleet. System-assigned is strictly 1:1 and cannot be shared.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-18",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "To let a VM read a secret from Azure Key Vault without storing any credential on the VM, which combination of steps is correct?",
+    "choices": [
+      "Enable a managed identity on the VM, then grant that identity the Key Vault Secrets User role (or equivalent access policy) on the vault",
+      "Store the vault's master key in the VM's application settings, then restart the VM",
+      "Create a service principal with a client secret and embed it in the VM's startup script",
+      "Enable Conditional Access for the VM's IP address range"
+    ],
+    "correctAnswers": ["Enable a managed identity on the VM, then grant that identity the Key Vault Secrets User role (or equivalent access policy) on the vault"],
+    "explanation": "Managed identity plus an RBAC grant achieves credential-free access. The other options all reintroduce a stored secret or misapply Conditional Access, which doesn't govern vault authorization.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-19",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which Azure RBAC role is commonly granted to a managed identity that only needs to read secret values from a Key Vault?",
+    "choices": [
+      "Key Vault Secrets User",
+      "Key Vault Administrator",
+      "Owner",
+      "Contributor"
+    ],
+    "correctAnswers": ["Key Vault Secrets User"],
+    "explanation": "Key Vault Secrets User grants get/list on secrets without administrative control. Administrator, Owner, and Contributor all grant far more than the stated need.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-20",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Microsoft's recommended preference order for workload authentication, from most to least preferred, is:",
+    "choices": [
+      "Managed identity, then service principal with certificate, then service principal with client secret",
+      "Service principal with client secret, then managed identity, then certificate-based service principal",
+      "Certificate-based service principal, then client secret, then managed identity",
+      "There is no preference; all three are equally recommended"
+    ],
+    "correctAnswers": ["Managed identity, then service principal with certificate, then service principal with client secret"],
+    "explanation": "Managed identity removes stored credentials entirely and is always preferred when supported, followed by certificate-based, then secret-based service principals as fallbacks.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-21",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "What does the acronym SPN commonly refer to in the context of Entra application identities?",
+    "choices": [
+      "Service Principal Name/object, the local security identity representing an app in a tenant",
+      "A Security Policy Notification sent by Conditional Access",
+      "A Secrets Provisioning Node used by Key Vault",
+      "A Signed Permission Notice required for admin consent"
+    ],
+    "correctAnswers": ["Service Principal Name/object, the local security identity representing an app in a tenant"],
+    "explanation": "SPN refers to the service principal representing an app locally in a tenant. The other definitions are invented and don't correspond to real Entra or Key Vault concepts.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-2-22",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which statement about credential responsibility is correct for a standard (non-managed-identity) service principal?",
+    "choices": [
+      "You are responsible for creating, storing, and rotating its secrets or certificates",
+      "Azure automatically rotates its credentials with no action required",
+      "It has no credentials at all and authenticates anonymously",
+      "Its credentials are stored in Conditional Access, not in Entra ID"
+    ],
+    "correctAnswers": ["You are responsible for creating, storing, and rotating its secrets or certificates"],
+    "explanation": "Unlike a managed identity, a standard service principal's credentials are entirely your responsibility to manage and rotate.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-23",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "A developer registers a new application that will later be published to multiple customer tenants. In which tenant does the app registration (the application object) live?",
+    "choices": [
+      "The developer's home/origin tenant where it was registered",
+      "Every tenant that later consents to the app",
+      "No tenant — app registrations are global objects with no home tenant",
+      "The tenant of the first user who signs in to the app"
+    ],
+    "correctAnswers": ["The developer's home/origin tenant where it was registered"],
+    "explanation": "The application object lives only in the tenant where it was originally registered; consuming tenants each only get a local service principal.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-24",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "A user consents to a third-party app requesting delegated access to their calendar. What exactly is being granted?",
+    "choices": [
+      "The app may act as that specific user, limited to what the user could do in their own calendar",
+      "The app gains application-level access to every user's calendar in the tenant",
+      "The consent automatically also grants admin consent for the whole tenant",
+      "The app receives a client secret that only the user can see"
+    ],
+    "correctAnswers": ["The app may act as that specific user, limited to what the user could do in their own calendar"],
+    "explanation": "Delegated user consent is scoped to that one user's own data — it does not expand to tenant-wide or admin-level access.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-25",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which of these best distinguishes 'requested' permissions from 'granted' permissions for an application?",
+    "choices": [
+      "Requested permissions are declared on the app registration; granted permissions are the actual consent recorded on the service principal (enterprise application)",
+      "Requested and granted permissions are always identical and cannot differ",
+      "Granted permissions are visible only in Conditional Access logs",
+      "Requested permissions apply only to managed identities"
+    ],
+    "correctAnswers": ["Requested permissions are declared on the app registration; granted permissions are the actual consent recorded on the service principal (enterprise application)"],
+    "explanation": "An app can request permissions it never receives consent for — the two lists can legitimately differ, and granted permissions surface under the enterprise application, not Conditional Access.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-26",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which scenario is the strongest candidate for a system-assigned (rather than user-assigned) managed identity?",
+    "choices": [
+      "A single Azure Function that needs its own dedicated identity with no other resource sharing it",
+      "A fleet of 50 VMs that must all present the same identity to a downstream API",
+      "An identity that must persist after the resource using it is deleted",
+      "An identity that needs to be pre-created before the resource exists"
+    ],
+    "correctAnswers": ["A single Azure Function that needs its own dedicated identity with no other resource sharing it"],
+    "explanation": "A dedicated, non-shared, resource-tied identity is exactly the system-assigned use case. Sharing across many resources, surviving deletion, and pre-creation before the host exists all require user-assigned identities.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-27",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Which statement correctly differentiates delegated and application permissions in terms of consent requirements?",
+    "choices": [
+      "Delegated permissions can sometimes be user-consented for low-risk scopes; application permissions always require admin consent",
+      "Both permission types always require admin consent with no exceptions",
+      "Delegated permissions always require admin consent; application permissions never do",
+      "Neither permission type requires any consent once the app is registered"
+    ],
+    "correctAnswers": ["Delegated permissions can sometimes be user-consented for low-risk scopes; application permissions always require admin consent"],
+    "explanation": "Delegated permissions can be user-consented depending on policy and scope risk; application permissions have no user context to consent, so admin consent is always required.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-28",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "An administrator wants to prevent end users from ever granting consent to new third-party apps, routing every request to a security reviewer instead. Which combination of settings achieves this?",
+    "choices": [
+      "Set user consent to 'Do not allow user consent' and enable the admin consent workflow with named reviewers",
+      "Set user consent to 'Allow user consent for all apps' and disable the admin consent workflow",
+      "Enable Conditional Access requiring MFA for all sign-ins",
+      "Assign every user the Application Administrator Entra role"
+    ],
+    "correctAnswers": ["Set user consent to 'Do not allow user consent' and enable the admin consent workflow with named reviewers"],
+    "explanation": "Disabling user consent removes the self-service path entirely, and the admin consent workflow gives users a reviewed path instead. MFA and directory role assignment don't affect the consent decision.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-29",
+    "objectiveId": "o1-2",
+    "type": "multiple",
+    "prompt": "Which two statements about managed identities are correct? (Choose two.)",
+    "choices": [
+      "Azure automatically rotates their credentials",
+      "System-assigned identities can be attached to multiple resources",
+      "User-assigned identities exist as standalone Azure resources",
+      "They require a client secret to be configured manually"
+    ],
+    "correctAnswers": ["Azure automatically rotates their credentials", "User-assigned identities exist as standalone Azure resources"],
+    "explanation": "System-assigned identities are strictly 1:1 and cannot be shared, and managed identities never require a manually configured secret at all.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-30",
+    "objectiveId": "o1-2",
+    "type": "multiple",
+    "prompt": "Which two are true about application permissions (as opposed to delegated permissions)? (Choose two.)",
+    "choices": [
+      "They always require admin consent",
+      "They act without any signed-in user context",
+      "They are automatically scoped to the consenting user's own data",
+      "They can be consented to by any standard user"
+    ],
+    "correctAnswers": ["They always require admin consent", "They act without any signed-in user context"],
+    "explanation": "Being scoped to a consenting user's own data and being consentable by any standard user both describe delegated permissions, not application permissions.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-31",
+    "objectiveId": "o1-2",
+    "type": "multiple",
+    "prompt": "Which two settings should typically be reviewed and hardened to reduce the risk of illicit consent grant attacks? (Choose two.)",
+    "choices": [
+      "User consent settings (restrict to verified publishers / low-impact permissions)",
+      "Admin consent workflow (named reviewers for requests)",
+      "Storage account public blob access",
+      "Network security group inbound rules"
+    ],
+    "correctAnswers": ["User consent settings (restrict to verified publishers / low-impact permissions)", "Admin consent workflow (named reviewers for requests)"],
+    "explanation": "Both settings directly control who can grant OAuth consent. Storage public access and NSG rules are unrelated network/storage controls.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-32",
+    "objectiveId": "o1-2",
+    "type": "case-study",
+    "caseStudyId": "cs-tailspin-identity",
+    "prompt": "Referring to requirement 2 (a nightly invoicing daemon with no signed-in user must read all mailboxes via Microsoft Graph, with access reviewable and visible to admins, not silently expandable by end users), which permission and consent configuration is correct?",
+    "choices": [
+      "Grant the daemon's app registration the Mail.Read application permission with admin consent, and review it periodically under Enterprise applications ▸ Permissions",
+      "Grant the daemon's app the Mail.Read delegated permission and let end users consent individually",
+      "Enable user consent for all apps from any publisher so the daemon can self-consent at runtime",
+      "Assign the daemon's service principal the Global Administrator Entra role"
+    ],
+    "correctAnswers": ["Grant the daemon's app registration the Mail.Read application permission with admin consent, and review it periodically under Enterprise applications ▸ Permissions"],
+    "explanation": "A daemon has no signed-in user, so it needs an application permission, which always requires admin consent — creating a reviewable, tenant-wide grant. Delegated permission, broad user consent, and an overbroad directory role are all wrong fits.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-33",
+    "objectiveId": "o1-2",
+    "type": "case-study",
+    "caseStudyId": "cs-tailspin-identity",
+    "prompt": "Referring to requirement 2, why is a delegated permission unsuitable for the nightly invoicing daemon?",
+    "choices": [
+      "Delegated permissions require a signed-in user context, which a nightly unattended daemon does not have",
+      "Delegated permissions cannot be scoped to Mail.Read under any circumstances",
+      "Delegated permissions are always more privileged than application permissions",
+      "Delegated permissions cannot be consented to by an administrator"
+    ],
+    "correctAnswers": ["Delegated permissions require a signed-in user context, which a nightly unattended daemon does not have"],
+    "explanation": "The daemon runs with no signed-in user, which is precisely the scenario application permissions exist for. Delegated permissions depend on a user context by design.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-34",
+    "objectiveId": "o1-2",
+    "type": "case-study",
+    "caseStudyId": "cs-tailspin-identity",
+    "prompt": "Referring to requirement 3 (the deployment pipeline on an Azure VM must retrieve a Key Vault secret with no client secret stored on the VM or in code), which identity approach is correct?",
+    "choices": [
+      "Enable a system-assigned managed identity on the VM and grant it a Key Vault RBAC role",
+      "Create a service principal with a client secret and store the secret in an environment variable on the VM",
+      "Embed the Key Vault master key directly in the pipeline's YAML file",
+      "Grant the VM's local administrator account access via a Key Vault access policy"
+    ],
+    "correctAnswers": ["Enable a system-assigned managed identity on the VM and grant it a Key Vault RBAC role"],
+    "explanation": "Managed identity removes the need for any stored client secret. The other options all reintroduce a stored secret, which the requirement explicitly rules out.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-35",
+    "objectiveId": "o1-2",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-2",
+    "prompt": "Proposed solution: Register an app, request the Mail.Read delegated permission, and have the on-call engineer sign in interactively once a day to refresh the token for the background job. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "This still depends on a signed-in user and a delegated scope tied to that user, and is not a true unattended, admin-reviewable application-level grant — it's fragile and doesn't match the stated goal.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-36",
+    "objectiveId": "o1-2",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-2",
+    "prompt": "Proposed solution: Register an app, request the Mail.Read application permission, obtain tenant-wide admin consent from a designated administrator, and periodically review the grant under Enterprise applications ▸ Permissions. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["Yes"],
+    "explanation": "This is exactly the pattern for an unattended background job: an application permission with admin consent, visible and reviewable by administrators.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-37",
+    "objectiveId": "o1-2",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-2",
+    "prompt": "Proposed solution: Enable user consent for all apps and permissions tenant-wide so the background job's service account can self-consent to Mail.Read the first time it runs. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "Broad user consent lets grants expand silently without admin review, directly violating the requirement that access not be silently expandable by end users.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-38",
+    "objectiveId": "o1-2",
+    "type": "reorder",
+    "prompt": "Order the steps an administrator follows to grant a daemon app admin-consented application permissions to Microsoft Graph.",
+    "reorderItems": [
+      "Register the application under App registrations",
+      "Add the required application permission (e.g., Mail.Read) under API permissions",
+      "Select 'Grant admin consent for <tenant>'",
+      "Verify the resulting grant under Enterprise applications ▸ Permissions",
+      "Periodically review the grant for continued need"
+    ],
+    "explanation": "The app must exist and declare the permission before consent can be granted; the grant is verified afterward on the service principal, and reviewed on an ongoing basis.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-39",
+    "objectiveId": "o1-2",
+    "type": "reorder",
+    "prompt": "Order the steps to move a VM-hosted workload from a service principal with a client secret to a managed identity.",
+    "reorderItems": [
+      "Enable a system-assigned (or attach a user-assigned) managed identity on the VM",
+      "Grant the managed identity the required RBAC role on the target resource (e.g., Key Vault)",
+      "Update the application code to acquire tokens via the managed identity endpoint instead of a client secret",
+      "Remove the old client secret from configuration and revoke it on the service principal",
+      "Confirm the workload authenticates successfully with no stored secret remaining"
+    ],
+    "explanation": "The identity must exist and be authorized before the code can rely on it; only once the new path is confirmed working should the old secret be revoked.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-2-40",
+    "objectiveId": "o1-2",
+    "type": "active-screen",
+    "prompt": "Configure this simplified API permissions screen for a nightly daemon app that must read all mailboxes with no signed-in user, ensuring the grant is properly consented at the tenant level.",
+    "screenTitle": "API permissions (simulated)",
+    "fields": [
+      { "id": "permissionType", "label": "Permission type", "kind": "select", "options": ["Delegated permissions", "Application permissions"], "correctValue": "Application permissions" },
+      { "id": "permission", "label": "Permission", "kind": "select", "options": ["Mail.Read (Delegated)", "Mail.Read (Application)", "User.Read (Delegated)", "Mail.ReadWrite.Shared (Delegated)"], "correctValue": "Mail.Read (Application)" },
+      { "id": "adminConsent", "label": "Admin consent granted", "kind": "toggle", "correctValue": "On" }
+    ],
+    "explanation": "The daemon has no signed-in user, so it requires an application permission, which must carry tenant-wide admin consent to function correctly.",
+    "difficulty": "medium"
+  }
+]

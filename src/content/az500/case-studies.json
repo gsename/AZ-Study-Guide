@@ -1,0 +1,82 @@
+[
+  {
+    "id": "cs-contoso-identity",
+    "title": "Contoso Ltd. — Identity hardening",
+    "scenario": "Contoso Ltd. runs production workloads in a single Azure subscription. The security team has set these requirements:\n\n1. Administrators must hold no standing Owner or Contributor rights. They must be able to request time-bound elevation, gated by manager approval and MFA, for a maximum of 4 hours.\n2. Every sign-in to the Azure portal, Azure PowerShell, or Azure CLI must require multi-factor authentication — except for the organization's break-glass emergency-access account, which must never be at risk of lockout.\n3. A third-party invoicing application (a background daemon with no signed-in user) must be able to read invoice data from Microsoft Graph.\n4. An automated deployment pipeline running on an Azure VM must authenticate to Azure Key Vault to retrieve a connection string, without any client secret being stored on the VM."
+  },
+  {
+    "id": "cs-fabrikam-network",
+    "title": "Fabrikam Inc. — Network segmentation redesign",
+    "scenario": "Fabrikam Inc. is redesigning its Azure network for a new regional deployment. The network security team has set these requirements:\n\n1. All egress traffic from the 'workloads' subnet must be inspected by a centrally managed firewall, and the same firewall policy must be reusable across multiple regional secured hubs.\n2. Administrators must be able to enforce a company-wide rule blocking a specific malicious IP range across every VNet in the tenant, regardless of individual NSG configuration, without editing each NSG one by one.\n3. A storage account holding sensitive backups must be reachable only from a specific on-premises network connected via ExpressRoute, with zero exposure on the public internet.\n4. A web app hosted on Azure App Service must make outbound calls to an on-premises SQL Server over a site-to-site VPN connection, while keeping the app's default public inbound endpoint unchanged.\n5. An internal line-of-business API must be reachable from the internet, protected against SQL injection and cross-site scripting, and must scale globally with low latency for users on different continents.\n6. The security team wants to protect a set of critical, well-known public IP addresses from volumetric DDoS attacks with full mitigation support, rapid response, and cost protection guarantees."
+  },
+  {
+    "id": "cs-northwind-compute",
+    "title": "Northwind Traders — Compute and data protection",
+    "scenario": "Northwind Traders is hardening its compute and data estate ahead of a security audit. Requirements:\n\n1. Administrators need to RDP into management VMs without any of them having a public IP address, and only when access is explicitly requested for a limited time.\n2. A containerized workload running on AKS must authenticate cluster users via their corporate identities rather than static kubeconfig credentials.\n3. An on-premises Windows file-server workload is being migrated to Azure Files. The team must keep using Windows NTFS permissions on individual folders, without deploying a domain controller in Azure.\n4. Backups of blob data must be protected so that even a compromised administrator account cannot delete or shorten the retention of that data during its retention period.\n5. Certain columns (national ID numbers) in an Azure SQL database must remain unreadable in plaintext even to the database administrators.\n6. The compliance team must be able to review a full history of who queried a sensitive table and when."
+  },
+  {
+    "id": "cs-adatum-governance",
+    "title": "Adatum Corporation — Governance and security operations",
+    "scenario": "Adatum Corporation is centralizing governance and security operations across a growing multicloud estate. Requirements:\n\n1. Newly created Key Vaults must default to a centrally governed, granular access model without vault access policies, and network access must be limited to specific subnets.\n2. Every new resource must be tagged with a business-criticality classification before it can be provisioned, enforced automatically rather than relying on manual discipline.\n3. The security team needs one score summarizing configuration compliance across Azure, an AWS account, and a GCP project, all in one place.\n4. Before onboarding a newly acquired subsidiary, the team wants to discover the subsidiary's internet-facing web servers the way an external attacker would see them.\n5. VMs across the estate must be scanned for vulnerabilities without installing any agent on them.\n6. Pull requests on the DevOps team's GitHub repository must be scanned for hardcoded secrets before merge.\n7. A Logic App must automatically open a ticket whenever Microsoft Defender for Cloud raises a high-severity alert.\n8. The SOC wants incidents automatically created when suspicious Microsoft Entra ID sign-in patterns are detected, correlated across multiple log sources."
+  },
+  {
+    "id": "sg-o1-1",
+    "title": "Goal: just-in-time privileged access",
+    "scenario": "Goal: Ensure administrators hold no standing Owner or Contributor rights, and can only obtain them after MFA and manager approval, for a maximum of 4 hours, with a full audit trail of every activation and approval."
+  },
+  {
+    "id": "sg-o1-2",
+    "title": "Goal: credential-free access to Key Vault",
+    "scenario": "Goal: A nightly batch job running on an Azure VM must read a connection string from Key Vault. No credentials may ever be stored on the VM or in code."
+  },
+  {
+    "id": "sg-o2-1",
+    "title": "Goal: centralized, tenant-wide IP block",
+    "scenario": "Goal: Block a known malicious IP range from reaching every VNet in the tenant, enforced centrally, without editing each VNet's NSGs individually."
+  },
+  {
+    "id": "sg-o2-2",
+    "title": "Goal: private-only SQL Managed Instance",
+    "scenario": "Goal: A SQL Managed Instance must be reachable from an on-premises network over ExpressRoute, but never exposed to the public internet."
+  },
+  {
+    "id": "sg-o2-3",
+    "title": "Goal: global, protected public API",
+    "scenario": "Goal: Publish an internal API to the internet with global low-latency reach and protection against SQL injection/XSS. Reusing the same firewall policy across multiple regions is NOT a requirement for this API."
+  },
+  {
+    "id": "sg-o3-1",
+    "title": "Goal: host-level disk encryption, no in-guest agent",
+    "scenario": "Goal: Encrypt VM temporary disks and caches at the host level, without installing any agent inside the guest OS."
+  },
+  {
+    "id": "sg-o3-2",
+    "title": "Goal: scoped, key-free blob access",
+    "scenario": "Goal: Give a partner time-limited, read-only access to a single blob without sharing the storage account's keys."
+  },
+  {
+    "id": "sg-o3-3",
+    "title": "Goal: full SQL query audit trail",
+    "scenario": "Goal: Provide a full, queryable audit trail of every login and query against a sensitive Azure SQL database for compliance review."
+  },
+  {
+    "id": "sg-o4-1",
+    "title": "Goal: mandatory tag enforced automatically",
+    "scenario": "Goal: Ensure every newly created resource carries a mandatory 'BusinessCriticality' tag, enforced automatically at creation, without relying on manual discipline."
+  },
+  {
+    "id": "sg-o4-2",
+    "title": "Goal: one trending posture score",
+    "scenario": "Goal: Get a single percentage score that tracks whether the organization's overall security configuration is improving over time, across Azure and connected clouds."
+  },
+  {
+    "id": "sg-o4-3",
+    "title": "Goal: agentless storage malware detection",
+    "scenario": "Goal: Detect malware uploaded to a storage account, without deploying any additional agent."
+  },
+  {
+    "id": "sg-o4-4",
+    "title": "Goal: ticket opened from a Defender for Cloud alert",
+    "scenario": "Goal: Automatically open a ticket the moment Microsoft Defender for Cloud raises a high-severity alert — not a Sentinel incident."
+  }
+]

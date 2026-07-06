@@ -1,0 +1,594 @@
+[
+  {
+    "id": "q-o1-1-01",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "What problem in Microsoft Entra ID does Privileged Identity Management (PIM) primarily address?",
+    "choices": [
+      "Standing (permanent) privileged access held by administrators at all times",
+      "Weak password complexity policies for end users",
+      "Lack of encryption for data at rest",
+      "Missing network segmentation between virtual networks"
+    ],
+    "correctAnswers": ["Standing (permanent) privileged access held by administrators at all times"],
+    "explanation": "PIM converts standing privileged access into just-in-time eligible access. Password policy, encryption at rest, and network segmentation are unrelated concerns handled by other controls.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-02",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "In Privileged Identity Management, what does an 'active' assignment mean?",
+    "choices": [
+      "The role is currently usable — either as a permanent standing assignment or as a time-bound assignment after activation",
+      "The principal is permanently blocked from using the role",
+      "The role can be requested but has not yet been approved",
+      "The assignment only applies to Azure resource roles, never Entra roles"
+    ],
+    "correctAnswers": ["The role is currently usable — either as a permanent standing assignment or as a time-bound assignment after activation"],
+    "explanation": "Active means the permission is usable now. Eligible, by contrast, means the principal is only allowed to activate it, not yet usable.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-03",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which Microsoft Entra ID license edition is required to use Privileged Identity Management?",
+    "choices": [
+      "Microsoft Entra ID P2",
+      "Microsoft Entra ID P1",
+      "Microsoft Entra ID Free",
+      "Microsoft 365 E3 with no add-on"
+    ],
+    "correctAnswers": ["Microsoft Entra ID P2"],
+    "explanation": "PIM, like Identity Protection, requires P2. P1 is enough for Conditional Access but not for PIM.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-04",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which set of roles can Privileged Identity Management govern with eligible/active assignments?",
+    "choices": [
+      "Both Microsoft Entra directory roles and Azure resource roles, plus privileged access groups",
+      "Only Microsoft Entra directory roles",
+      "Only Azure resource roles",
+      "Only custom Azure RBAC roles"
+    ],
+    "correctAnswers": ["Both Microsoft Entra directory roles and Azure resource roles, plus privileged access groups"],
+    "explanation": "PIM spans Entra directory roles (Global Administrator, Security Administrator), Azure resource roles (Owner, Contributor), and privileged access groups — it is not limited to a single system.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-05",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Where do you go to make a user eligible for the Global Administrator role via PIM?",
+    "choices": [
+      "Entra admin center ▸ Identity Governance ▸ Privileged Identity Management ▸ Microsoft Entra roles ▸ Roles ▸ Add assignments",
+      "Entra admin center ▸ Enterprise applications ▸ Roles and administrators",
+      "Azure portal ▸ Subscription ▸ Access control (IAM) ▸ Add role assignment",
+      "Entra admin center ▸ Conditional Access ▸ Policies ▸ New policy"
+    ],
+    "correctAnswers": ["Entra admin center ▸ Identity Governance ▸ Privileged Identity Management ▸ Microsoft Entra roles ▸ Roles ▸ Add assignments"],
+    "explanation": "PIM eligible assignments for Entra roles are created under Identity Governance ▸ PIM ▸ Microsoft Entra roles. Access control (IAM) is for Azure RBAC, and Conditional Access has nothing to do with creating eligibility.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-06",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which PIM role setting limits how long an activated role remains usable before it must be reactivated?",
+    "choices": [
+      "Maximum activation duration",
+      "Sign-in frequency",
+      "Persistent browser session",
+      "Terms of use"
+    ],
+    "correctAnswers": ["Maximum activation duration"],
+    "explanation": "Maximum activation duration caps a single activation window (e.g., 8 hours). Sign-in frequency and persistent browser session are Conditional Access session controls, not PIM activation settings.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-07",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "A PIM role setting requires a designated approver to sign off before an activation succeeds. What is this setting called?",
+    "choices": [
+      "Require approval to activate",
+      "Require justification",
+      "Require Conditional Access",
+      "Require ticket information only"
+    ],
+    "correctAnswers": ["Require approval to activate"],
+    "explanation": "Approval routes the activation request to named approvers who must sign off. Justification only requires typed text with no approval gate.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-08",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "From an eligible administrator's perspective, where do they go to activate an eligible PIM role?",
+    "choices": [
+      "PIM ▸ My roles ▸ Eligible assignments ▸ Activate",
+      "Entra admin center ▸ Roles and administrators ▸ Assign",
+      "Azure portal ▸ Access control (IAM) ▸ Add role assignment",
+      "Conditional Access ▸ Policies ▸ Report-only"
+    ],
+    "correctAnswers": ["PIM ▸ My roles ▸ Eligible assignments ▸ Activate"],
+    "explanation": "The self-service activation path is PIM ▸ My roles ▸ Eligible assignments ▸ Activate. The other locations either create standing role assignments or manage unrelated sign-in policies.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-09",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "What is the purpose of a PIM access review?",
+    "choices": [
+      "To periodically recertify that existing eligible/active assignments are still needed",
+      "To permanently revoke MFA for inactive users",
+      "To automatically approve every pending activation request",
+      "To replace Conditional Access policies with a single audit"
+    ],
+    "correctAnswers": ["To periodically recertify that existing eligible/active assignments are still needed"],
+    "explanation": "Access reviews recertify privileged assignments on a schedule, catching stale or unnecessary eligibility. They don't touch MFA registration or Conditional Access policies.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-10",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which PIM alert would warn an organization about a risky privileged-access posture?",
+    "choices": [
+      "Too many Global Administrators are assigned",
+      "A storage account allows public blob access",
+      "A Key Vault firewall allows all networks",
+      "A resource lock is missing on a production resource group"
+    ],
+    "correctAnswers": ["Too many Global Administrators are assigned"],
+    "explanation": "PIM ships built-in alerts such as 'too many Global Administrators' and 'administrators not using PIM'. The other options are Defender for Cloud, Key Vault, and governance findings, not PIM alerts.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-11",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Why must break-glass accounts be excluded from both Conditional Access policies and PIM?",
+    "choices": [
+      "To guarantee emergency access even if a CA misconfiguration, an MFA outage, or a PIM approval bottleneck locks out every other administrator",
+      "Because break-glass accounts cannot receive Entra role assignments",
+      "Because Microsoft disables PIM automatically for cloud-only accounts",
+      "Because break-glass accounts are only used for Azure resource roles, never Entra roles"
+    ],
+    "correctAnswers": ["To guarantee emergency access even if a CA misconfiguration, an MFA outage, or a PIM approval bottleneck locks out every other administrator"],
+    "explanation": "Break-glass accounts are the recovery path of last resort. Excluding them from CA and PIM prevents a total lockout scenario; the other statements are false.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-12",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "At which point in the sign-in flow does Conditional Access evaluate its policies?",
+    "choices": [
+      "After the first authentication factor (e.g., password) succeeds",
+      "Before any credentials are submitted, as a network-layer filter",
+      "Only during passwordless registration",
+      "Only when Identity Protection detects a data breach"
+    ],
+    "correctAnswers": ["After the first authentication factor (e.g., password) succeeds"],
+    "explanation": "Conditional Access is a post-authentication policy engine, not a perimeter or anti-DoS control, and it isn't limited to registration flows or breach events.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-13",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which of the following is evaluated as a Conditional Access 'condition' within a policy's assignment?",
+    "choices": [
+      "Sign-in risk level",
+      "Resource lock type",
+      "Key Vault access policy",
+      "Azure Policy effect"
+    ],
+    "correctAnswers": ["Sign-in risk level"],
+    "explanation": "Sign-in risk is one of the standard CA conditions (alongside platform, location, client app, and device filters). Resource locks, Key Vault access policies, and Policy effects belong to unrelated governance systems.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-14",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Risk-based Conditional Access using sign-in risk and user risk requires which capability?",
+    "choices": [
+      "Microsoft Entra ID Protection, included with P2",
+      "Microsoft Entra ID P1 alone",
+      "Microsoft Defender for Cloud CSPM",
+      "Azure Policy initiatives"
+    ],
+    "correctAnswers": ["Microsoft Entra ID Protection, included with P2"],
+    "explanation": "Risk signals come from Identity Protection, a P2 feature. P1 covers baseline Conditional Access but not risk-based conditions.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-15",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which of these is a Conditional Access grant control?",
+    "choices": [
+      "Require multifactor authentication",
+      "Sign-in frequency",
+      "Persistent browser session",
+      "Conditional Access App Control"
+    ],
+    "correctAnswers": ["Require multifactor authentication"],
+    "explanation": "MFA is a grant control. Sign-in frequency, persistent browser session, and Conditional Access App Control are session controls, applied after grant controls are satisfied.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-16",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which Conditional Access session control forces re-authentication after a set time interval?",
+    "choices": [
+      "Sign-in frequency",
+      "Require multifactor authentication",
+      "Require compliant device",
+      "Require approved client app"
+    ],
+    "correctAnswers": ["Sign-in frequency"],
+    "explanation": "Sign-in frequency is a session control that periodically forces re-authentication. The other three are grant controls evaluated before the session begins.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-17",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which Conditional Access capability lets you require a specific set of methods, such as phishing-resistant MFA only?",
+    "choices": [
+      "Authentication strength",
+      "Sign-in frequency",
+      "Terms of use",
+      "Named locations"
+    ],
+    "correctAnswers": ["Authentication strength"],
+    "explanation": "Authentication strength defines the exact combination of methods a policy will accept. The other options define timing, acceptance text, or location-based conditions.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-18",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which Microsoft Entra ID license edition is the minimum required to use Conditional Access at all?",
+    "choices": [
+      "Microsoft Entra ID P1",
+      "Microsoft Entra ID Free",
+      "Microsoft Entra ID P2",
+      "No license — Conditional Access is free for all tenants"
+    ],
+    "correctAnswers": ["Microsoft Entra ID P1"],
+    "explanation": "P1 is the baseline license for Conditional Access. P2 adds risk-based signals and PIM on top of that baseline.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-19",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Beyond Conditional Access itself, what does upgrading from P1 to P2 add?",
+    "choices": [
+      "Microsoft Entra ID Protection (risk-based Conditional Access) and Privileged Identity Management",
+      "Self-service password reset for all users",
+      "Microsoft Defender for Cloud regulatory compliance dashboard",
+      "Azure Policy DeployIfNotExists remediation"
+    ],
+    "correctAnswers": ["Microsoft Entra ID Protection (risk-based Conditional Access) and Privileged Identity Management"],
+    "explanation": "P2 layers Identity Protection and PIM on top of P1. Compliance dashboards and Policy remediation belong to Defender for Cloud and Azure Policy, not Entra licensing tiers.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-20",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "What does SSPR let end users do?",
+    "choices": [
+      "Reset their own password without contacting the help desk, using registered verification methods",
+      "Approve PIM activation requests for other users",
+      "Register a FIDO2 key on behalf of another user",
+      "Bypass Conditional Access during an outage"
+    ],
+    "correctAnswers": ["Reset their own password without contacting the help desk, using registered verification methods"],
+    "explanation": "Self-service password reset lets users recover access on their own. It has nothing to do with PIM approvals, registering other users' devices, or bypassing policy.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-21",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "What is a Temporary Access Pass (TAP) used for?",
+    "choices": [
+      "A time-limited passcode that lets a user bootstrap registration of passwordless methods without a password",
+      "A permanent bypass of Conditional Access for service accounts",
+      "An emergency Global Administrator credential",
+      "A license required to enable Privileged Identity Management"
+    ],
+    "correctAnswers": ["A time-limited passcode that lets a user bootstrap registration of passwordless methods without a password"],
+    "explanation": "TAP solves the chicken-and-egg problem of registering passwordless credentials without an existing password. It is not a CA bypass, an emergency admin account, or a licensing requirement.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-22",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "A Conditional Access policy is enabled in 'Report-only' mode. What is its effect on sign-ins?",
+    "choices": [
+      "It evaluates and logs the outcome without enforcing the grant or block controls",
+      "It behaves identically to the policy being Off",
+      "It immediately blocks any sign-in that would have failed the policy",
+      "It only applies to Azure resource role activations"
+    ],
+    "correctAnswers": ["It evaluates and logs the outcome without enforcing the grant or block controls"],
+    "explanation": "Report-only is distinct from Off: sign-in logs show what would have happened, which is exactly why it's the recommended way to pilot a new policy before enforcing it.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-23",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "A Conditional Access policy targets 'All users' and requires MFA. Why does a daemon application authenticating with a client secret still succeed without MFA?",
+    "choices": [
+      "User-targeted policies don't evaluate service principals; Conditional Access for workload identities is needed for that",
+      "MFA is automatically satisfied by any client certificate",
+      "Service principals are exempt from all security controls by design",
+      "The policy must be set to Report-only for service principals to be evaluated"
+    ],
+    "correctAnswers": ["User-targeted policies don't evaluate service principals; Conditional Access for workload identities is needed for that"],
+    "explanation": "Policies scoped to users/groups don't cover non-interactive service principals. A dedicated Workload Identity CA policy is required to govern them.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o1-1-24",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which statement about legacy authentication and Conditional Access is correct?",
+    "choices": [
+      "Legacy authentication protocols must be blocked with a dedicated Conditional Access policy, since MFA prompts aren't supported by legacy clients",
+      "Legacy authentication automatically satisfies any MFA grant control",
+      "Conditional Access is disabled tenant-wide whenever legacy authentication is in use",
+      "Legacy authentication is blocked by default in every new tenant with no policy required"
+    ],
+    "correctAnswers": ["Legacy authentication protocols must be blocked with a dedicated Conditional Access policy, since MFA prompts aren't supported by legacy clients"],
+    "explanation": "Legacy protocols can't render an MFA challenge, so they must be explicitly blocked by a separate CA policy rather than relying on an MFA requirement to stop them.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-25",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which passwordless method binds a biometric gesture or PIN to a TPM-protected key on the device?",
+    "choices": [
+      "Windows Hello for Business",
+      "SMS-based one-time passcode",
+      "Voice call verification",
+      "Security questions"
+    ],
+    "correctAnswers": ["Windows Hello for Business"],
+    "explanation": "Windows Hello for Business ties biometrics/PIN to a TPM-backed key pair on the device. SMS, voice, and security questions are older, weaker knowledge/possession factors.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o1-1-26",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which authentication methods are considered phishing-resistant?",
+    "choices": [
+      "FIDO2 security keys and passkeys",
+      "SMS one-time passcodes",
+      "Voice call verification",
+      "Email-based magic links"
+    ],
+    "correctAnswers": ["FIDO2 security keys and passkeys"],
+    "explanation": "FIDO2/passkeys use public-key cryptography bound to the origin, defeating credential phishing. SMS, voice, and email links can all be intercepted or relayed by an attacker.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-27",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Where are passwordless methods such as FIDO2 and Microsoft Authenticator phone sign-in enabled and managed?",
+    "choices": [
+      "The Authentication methods policy in the Entra admin center",
+      "Conditional Access ▸ Named locations",
+      "Azure Policy ▸ Definitions",
+      "Key Vault ▸ Access configuration"
+    ],
+    "correctAnswers": ["The Authentication methods policy in the Entra admin center"],
+    "explanation": "The Authentication methods policy is where each method (FIDO2, Authenticator, Windows Hello, etc.) is enabled or scoped to groups. The other locations govern unrelated features.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-28",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "Which authentication method sits at the bottom of Microsoft's recommended preference order due to SIM-swap risk?",
+    "choices": [
+      "SMS and voice call",
+      "FIDO2 security keys",
+      "Windows Hello for Business",
+      "Microsoft Authenticator push with number matching"
+    ],
+    "correctAnswers": ["SMS and voice call"],
+    "explanation": "SMS/voice are the weakest methods because they can be hijacked via SIM-swap. Microsoft's recommended order places phishing-resistant methods first, SMS/voice last.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-29",
+    "objectiveId": "o1-1",
+    "type": "multiple",
+    "prompt": "Which two of the following can a Conditional Access grant control require? (Choose two.)",
+    "choices": [
+      "Multifactor authentication",
+      "A compliant device",
+      "A specific PIM approval chain",
+      "A resource lock"
+    ],
+    "correctAnswers": ["Multifactor authentication", "A compliant device"],
+    "explanation": "Grant controls include MFA, compliant device, hybrid join, approved app, password change, and terms of use. PIM approval chains and resource locks are unrelated constructs from different systems.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-30",
+    "objectiveId": "o1-1",
+    "type": "multiple",
+    "prompt": "Which two statements about Privileged Identity Management activation settings are correct? (Choose two.)",
+    "choices": [
+      "Activation can require multifactor authentication",
+      "Activation can require a written justification",
+      "Activation can require the resource to reside in a specific Azure region",
+      "Activation permanently removes the eligible assignment after first use"
+    ],
+    "correctAnswers": ["Activation can require multifactor authentication", "Activation can require a written justification"],
+    "explanation": "MFA and justification are legitimate activation gates. Region restriction is an Azure Policy concern, not a PIM setting, and eligible assignments persist for reactivation rather than being consumed after one use.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-31",
+    "objectiveId": "o1-1",
+    "type": "multiple",
+    "prompt": "Which two are true about Conditional Access licensing? (Choose two.)",
+    "choices": [
+      "Entra ID P1 is required to create Conditional Access policies at all",
+      "Entra ID P2 adds risk-based Conditional Access via Identity Protection",
+      "SSPR requires Entra ID P2 exclusively",
+      "Conditional Access is available at no cost in every tenant tier"
+    ],
+    "correctAnswers": ["Entra ID P1 is required to create Conditional Access policies at all", "Entra ID P2 adds risk-based Conditional Access via Identity Protection"],
+    "explanation": "P1 gates baseline Conditional Access; P2 layers on risk signals. SSPR is not exclusively a P2 feature, and Conditional Access isn't available in every free tier.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-32",
+    "objectiveId": "o1-1",
+    "type": "case-study",
+    "caseStudyId": "cs-tailspin-identity",
+    "prompt": "Referring to requirement 1 (no standing Owner/Global Administrator rights; time-bound elevation gated by manager approval and MFA, max 4 hours, with a full audit trail), which configuration satisfies it?",
+    "choices": [
+      "PIM eligible assignments for the relevant roles, with MFA and approval required at activation, a 4-hour maximum activation duration, and PIM audit logs enabled",
+      "Assign Owner permanently and require MFA on every Azure sign-in via Conditional Access",
+      "Create a custom Azure role whose AssignableScopes list expires after 4 hours",
+      "Grant Global Administrator to a security group and review its membership quarterly"
+    ],
+    "correctAnswers": ["PIM eligible assignments for the relevant roles, with MFA and approval required at activation, a 4-hour maximum activation duration, and PIM audit logs enabled"],
+    "explanation": "PIM directly provides eligible (not standing) access, an approval + MFA gate, a maximum activation duration, and automatic audit logging. The other options either leave standing access in place or misuse constructs that don't actually expire.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-33",
+    "objectiveId": "o1-1",
+    "type": "case-study",
+    "caseStudyId": "cs-tailspin-identity",
+    "prompt": "Referring to requirement 1, which statement about the audit trail is correct?",
+    "choices": [
+      "PIM automatically records every activation request, approval decision, and assignment change in its audit history",
+      "The audit trail must be built manually using Azure Policy Audit effects",
+      "Conditional Access sign-in logs alone provide a complete privileged-access audit trail",
+      "No native Azure feature can audit PIM activations; a third-party SIEM is required"
+    ],
+    "correctAnswers": ["PIM automatically records every activation request, approval decision, and assignment change in its audit history"],
+    "explanation": "PIM's built-in audit history natively captures the full elevation lifecycle. Policy Audit effects and CA sign-in logs don't cover role activation or approval events.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-34",
+    "objectiveId": "o1-1",
+    "type": "case-study",
+    "caseStudyId": "cs-tailspin-identity",
+    "prompt": "Referring to requirement 1, an administrator activates their eligible Contributor role but is never prompted for MFA or approval. What is the most likely cause?",
+    "choices": [
+      "The role's PIM activation settings were not configured to require MFA and approval",
+      "PIM eligible assignments never support MFA or approval gates",
+      "The administrator's account is excluded from Conditional Access as a break-glass account",
+      "Azure resource roles cannot use PIM approval workflows, only Entra roles can"
+    ],
+    "correctAnswers": ["The role's PIM activation settings were not configured to require MFA and approval"],
+    "explanation": "MFA and approval are opt-in per role in that role's PIM settings — if left unset, activation proceeds without them. Both Entra and Azure resource roles support these gates in PIM.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-35",
+    "objectiveId": "o1-1",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-1",
+    "prompt": "Proposed solution: Grant the IT team the Contributor role at the subscription scope permanently, and enable Microsoft Entra ID Protection to flag risky sign-ins after the fact. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "Standing Contributor access with no activation gate or time limit doesn't satisfy just-in-time, approval-gated, 4-hour elevation — flagging risk after the fact isn't a preventive control.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-36",
+    "objectiveId": "o1-1",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-1",
+    "prompt": "Proposed solution: Make the IT team eligible for the Owner role via PIM, with MFA and manager approval required at activation and the maximum activation duration set to 4 hours. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["Yes"],
+    "explanation": "This configuration matches every stated requirement: no standing access, MFA plus approval at activation, a 4-hour cap, and PIM's automatic audit trail.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-37",
+    "objectiveId": "o1-1",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o1-1",
+    "prompt": "Proposed solution: Keep the IT team's existing standing Owner assignments, but require them to submit a change-ticket number in an internal ticketing tool before performing any privileged action. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "A ticketing convention outside PIM doesn't remove standing access or enforce MFA, approval, or a time-bound activation window — access remains persistent and isn't natively audited by Entra.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-38",
+    "objectiveId": "o1-1",
+    "type": "reorder",
+    "prompt": "Order the steps to configure and activate a PIM-eligible Microsoft Entra directory role.",
+    "reorderItems": [
+      "Sign in to the Entra admin center as a Privileged Role Administrator",
+      "Go to Identity Governance ▸ Privileged Identity Management ▸ Microsoft Entra roles ▸ Roles",
+      "Select the role and add an Eligible assignment for the target user",
+      "Configure the role's settings: maximum activation duration, MFA, justification, and approval",
+      "The eligible user activates the role from PIM ▸ My roles when access is needed"
+    ],
+    "explanation": "Configuration happens first (reach PIM, create the eligible assignment, set its gates), and activation by the eligible user comes last, on demand.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-39",
+    "objectiveId": "o1-1",
+    "type": "reorder",
+    "prompt": "Order the steps to safely roll out a new Conditional Access policy that requires MFA for all administrators.",
+    "reorderItems": [
+      "Create a new policy under Conditional Access ▸ Policies",
+      "Assign the target admin roles as Users, excluding break-glass accounts",
+      "Set Target resources to All resources (or the desired app scope)",
+      "Under Grant, select Require multifactor authentication",
+      "Enable the policy in Report-only and review Sign-in logs for impact",
+      "Switch the policy from Report-only to On"
+    ],
+    "explanation": "Assignment and grant controls are configured first, the policy is piloted in Report-only to check impact, and only then switched On — this order avoids locking anyone out.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o1-1-40",
+    "objectiveId": "o1-1",
+    "type": "active-screen",
+    "prompt": "Configure this simplified Conditional Access policy so administrators are challenged for MFA on every sign-in to Azure resources, the break-glass account remains unaffected, and the policy is still being validated before enforcement.",
+    "screenTitle": "New Conditional Access policy (simulated)",
+    "fields": [
+      { "id": "targetResource", "label": "Target resources", "kind": "select", "options": ["All resources", "Selected apps only", "User actions", "Authentication context"], "correctValue": "All resources" },
+      { "id": "grant", "label": "Grant control", "kind": "select", "options": ["Block access", "Require multifactor authentication", "Require password change", "Require terms of use"], "correctValue": "Require multifactor authentication" },
+      { "id": "exclude", "label": "Break-glass account excluded", "kind": "toggle", "correctValue": "On" },
+      { "id": "enableState", "label": "Policy state", "kind": "select", "options": ["On", "Off", "Report-only"], "correctValue": "Report-only" }
+    ],
+    "explanation": "Targeting All resources covers the Azure management plane, MFA is the grant control that satisfies the requirement, the break-glass account must be excluded to prevent lockout, and Report-only validates impact before the policy is enforced.",
+    "difficulty": "medium"
+  }
+]

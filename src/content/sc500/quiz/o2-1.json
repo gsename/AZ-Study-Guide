@@ -1,0 +1,586 @@
+[
+  {
+    "id": "q-o2-1-01",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Which storage account setting must be enabled to force all connections to use HTTPS instead of plaintext HTTP?",
+    "choices": ["Secure transfer required", "Minimum TLS version 1.2", "Allow Blob public access", "Allow Shared Key authorization"],
+    "correctAnswers": ["Secure transfer required"],
+    "explanation": "Secure transfer required forces every REST call onto HTTPS. Minimum TLS version is a separate setting that only matters once HTTPS is already in use.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o2-1-02",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Which storage account setting enforces a minimum protocol version for encryption in transit?",
+    "choices": ["Minimum TLS version", "Secure transfer required", "Cross-tenant replication", "Allow Blob public access"],
+    "correctAnswers": ["Minimum TLS version"],
+    "explanation": "Minimum TLS version retires legacy protocol versions (e.g. TLS 1.0/1.1). Secure transfer required only forces HTTPS in general, without pinning a minimum version.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o2-1-03",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "What does disabling 'Allow Blob public access' at the account level do?",
+    "choices": [
+      "Prevents any container from ever being configured for anonymous public read access",
+      "Encrypts blobs at rest with a customer-managed key",
+      "Forces Microsoft Entra authentication for all requests",
+      "Blocks all inbound network traffic to the account"
+    ],
+    "correctAnswers": ["Prevents any container from ever being configured for anonymous public read access"],
+    "explanation": "This account-level setting overrides any attempt to set a container's access level to anonymous. It has nothing to do with encryption or network firewalling.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-04",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Which setting should be disabled to prevent clients from authenticating with the storage account's master access key?",
+    "choices": ["Allow Shared Key authorization", "Allow Blob public access", "Secure transfer required", "Cross-tenant replication"],
+    "correctAnswers": ["Allow Shared Key authorization"],
+    "explanation": "Disabling Shared Key authorization forces every client onto Microsoft Entra ID/RBAC. Allow Blob public access controls anonymous container access, a different concern.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-05",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Why is the storage account key considered a high-risk credential if leaked?",
+    "choices": [
+      "It grants full, unscoped access to every service in the account, with no built-in expiry",
+      "It only grants read access to blobs",
+      "It automatically rotates every 24 hours, limiting exposure",
+      "It cannot be used outside the Azure portal"
+    ],
+    "correctAnswers": ["It grants full, unscoped access to every service in the account, with no built-in expiry"],
+    "explanation": "The account key is a master credential — unlike a SAS, it isn't scoped or time-limited, so a leak exposes the entire account until the key is manually rotated.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-06",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Which type of SAS is scoped to a single storage service, such as Blob, and signed with the storage account key?",
+    "choices": ["Service SAS", "Account SAS", "User delegation SAS", "Stored access policy"],
+    "correctAnswers": ["Service SAS"],
+    "explanation": "A service SAS targets one service and is signed with the account key. An account SAS can span multiple services; a user delegation SAS is signed with Entra credentials instead.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o2-1-07",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "What distinguishes an account SAS from a service SAS?",
+    "choices": [
+      "An account SAS can span multiple services and grant account-level operations; a service SAS is scoped to one service",
+      "An account SAS is signed with Entra credentials while a service SAS uses the account key",
+      "An account SAS cannot have an expiry",
+      "A service SAS never requires a defined scope"
+    ],
+    "correctAnswers": ["An account SAS can span multiple services and grant account-level operations; a service SAS is scoped to one service"],
+    "explanation": "Both account and service SAS are signed with the account key — the difference is breadth of scope, not the signing credential.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-08",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Which SAS type is signed with Microsoft Entra credentials instead of the storage account key?",
+    "choices": ["User delegation SAS", "Account SAS", "Service SAS", "Stored access policy"],
+    "correctAnswers": ["User delegation SAS"],
+    "explanation": "A user delegation SAS is issued against a caller's Entra identity rather than the account key, which is why it can be revoked without rotating the key.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-09",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Why is a user delegation SAS considered more secure than an account or service SAS?",
+    "choices": [
+      "Revoking it doesn't require rotating the account key — it can be revoked via Entra permission changes or delegation key expiry",
+      "It never expires, so it's simpler to manage",
+      "It grants access to every container instead of just one",
+      "It's stored inside the storage account rather than shared with the client"
+    ],
+    "correctAnswers": ["Revoking it doesn't require rotating the account key — it can be revoked via Entra permission changes or delegation key expiry"],
+    "explanation": "Because it isn't signed with the account key, revoking access doesn't require the disruptive step of rotating the key and breaking every other SAS issued from it.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o2-1-10",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "What is the purpose of a stored access policy on a container?",
+    "choices": [
+      "It attaches server-side constraints (permissions, expiry) to SAS tokens so they can be revoked or changed centrally without reissuing them",
+      "It encrypts blobs with a customer-managed key",
+      "It restricts network access to specific subnets",
+      "It forces HTTPS for all requests to that container"
+    ],
+    "correctAnswers": ["It attaches server-side constraints (permissions, expiry) to SAS tokens so they can be revoked or changed centrally without reissuing them"],
+    "explanation": "Editing or deleting the stored access policy immediately changes or revokes every SAS token linked to it, without touching the account key or reissuing tokens.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-11",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "A team needs to be able to instantly revoke a leaked SAS token without invalidating other SAS tokens issued from the same account key. What should they have used?",
+    "choices": [
+      "A SAS linked to a stored access policy, so only that policy needs to change",
+      "Rotating the storage account key",
+      "Disabling Allow Blob public access",
+      "Disabling the storage account entirely"
+    ],
+    "correctAnswers": ["A SAS linked to a stored access policy, so only that policy needs to change"],
+    "explanation": "Rotating the account key would invalidate every SAS signed with it, not just the leaked one. A stored access policy allows surgical revocation.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-12",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "What happens to all account and service SAS tokens signed with a storage account key when that key is rotated?",
+    "choices": [
+      "They are all immediately invalidated",
+      "Only the most recently issued SAS is invalidated",
+      "Nothing — key rotation doesn't affect SAS validity",
+      "Only user delegation SAS tokens are invalidated"
+    ],
+    "correctAnswers": ["They are all immediately invalidated"],
+    "explanation": "Since account/service SAS tokens are signed with the key itself, rotating the key breaks the signature of every token issued with it — a wide blast radius. User delegation SAS tokens are unaffected since they don't use the account key.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-13",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "What is the effect of a service endpoint on a storage account's network exposure?",
+    "choices": [
+      "Traffic stays on the Azure backbone and the storage firewall can trust a specific subnet, but the account keeps a public IP",
+      "The account gets a private IP address inside the VNet",
+      "All internet access to the account is blocked",
+      "It encrypts traffic between the VNet and the account"
+    ],
+    "correctAnswers": ["Traffic stays on the Azure backbone and the storage firewall can trust a specific subnet, but the account keeps a public IP"],
+    "explanation": "A service endpoint only extends VNet identity to the firewall rule evaluation; the account's endpoint is still publicly addressable, just restricted by source. A private endpoint is what removes the public IP.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-14",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "What is the effect of adding a private endpoint to a storage account?",
+    "choices": [
+      "The account receives a private IP address inside the VNet, and traffic never touches the public endpoint",
+      "The account's public IP is merely restricted by subnet",
+      "It only affects control-plane (management) calls, not data-plane access",
+      "It requires Shared Key authorization to be enabled"
+    ],
+    "correctAnswers": ["The account receives a private IP address inside the VNet, and traffic never touches the public endpoint"],
+    "explanation": "A private endpoint attaches a NIC with a private VNet IP to the storage account's data plane. Restricting a public IP by subnet describes a service endpoint instead.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-15",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "A requirement states a backup storage account must have zero public internet exposure and be reachable only from an on-premises network over ExpressRoute. Which network configuration meets this?",
+    "choices": [
+      "Public network access Disabled, with a private endpoint in a VNet reachable over ExpressRoute",
+      "Selected networks with a service endpoint on the ExpressRoute gateway subnet",
+      "Enabled from all networks with an IP restriction rule for the on-prem public IP",
+      "Allow trusted Microsoft services only"
+    ],
+    "correctAnswers": ["Public network access Disabled, with a private endpoint in a VNet reachable over ExpressRoute"],
+    "explanation": "Only Disabled + private endpoint eliminates the public endpoint entirely. A service endpoint would still leave the account's IP publicly addressable, failing the 'zero internet exposure' requirement.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o2-1-16",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Which of the three storage network postures is the least secure?",
+    "choices": ["Enabled from all networks", "Selected networks", "Disabled with a private endpoint", "Selected networks with service endpoints"],
+    "correctAnswers": ["Enabled from all networks"],
+    "explanation": "Enabled from all networks accepts traffic from anywhere on the internet, with no restriction — the most exposed of the three postures.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-17",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "What does Microsoft Defender for Storage's malware scanning check?",
+    "choices": [
+      "Uploaded blobs, using Microsoft Defender Antivirus, at ingestion time",
+      "Existing NSG rules on the storage account's subnet",
+      "TLS certificate validity on custom domains",
+      "SAS token expiry dates"
+    ],
+    "correctAnswers": ["Uploaded blobs, using Microsoft Defender Antivirus, at ingestion time"],
+    "explanation": "Malware scanning inspects blob content on upload using Microsoft Defender Antivirus. It has no relation to NSGs, certificates, or SAS expiry.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-18",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Besides malware scanning, what else does Microsoft Defender for Storage detect?",
+    "choices": [
+      "Anomalous access patterns and sensitive-data exfiltration threats",
+      "Missing resource tags",
+      "Expired SSL certificates on custom domains",
+      "Orphaned SAS tokens"
+    ],
+    "correctAnswers": ["Anomalous access patterns and sensitive-data exfiltration threats"],
+    "explanation": "Defender for Storage's threat detection also covers unusual access behavior and exfiltration of classified sensitive data, beyond the malware-scanning feature.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-19",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "At what scope can Microsoft Defender for Storage be enabled?",
+    "choices": [
+      "Per subscription or per individual storage account",
+      "Only per management group",
+      "Only per storage account, never per subscription",
+      "Only globally for the entire tenant"
+    ],
+    "correctAnswers": ["Per subscription or per individual storage account"],
+    "explanation": "Defender for Storage can be turned on broadly at the subscription level or narrowly for a specific account, giving flexible cost/coverage tradeoffs.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o2-1-20",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "What does infrastructure encryption add on top of standard Storage Service Encryption (SSE)?",
+    "choices": [
+      "A second layer of encryption at the infrastructure level, using a separate key, for defense-in-depth",
+      "The ability to disable encryption entirely",
+      "Encryption in transit instead of at rest",
+      "A requirement to keep Shared Key authorization enabled"
+    ],
+    "correctAnswers": ["A second layer of encryption at the infrastructure level, using a separate key, for defense-in-depth"],
+    "explanation": "Infrastructure encryption double-encrypts data with an independent key, protecting against the compromise of a single encryption algorithm or key. SSE cannot be disabled, so 'disable encryption entirely' is never an option.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-21",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "When is a customer-managed key (CMK) for storage encryption most useful?",
+    "choices": [
+      "When the organization needs to control the encryption key's lifecycle (rotation, revocation) themselves via Key Vault",
+      "When Shared Key authorization must remain enabled",
+      "When public blob access is required",
+      "When TLS 1.0 must be supported for legacy clients"
+    ],
+    "correctAnswers": ["When the organization needs to control the encryption key's lifecycle (rotation, revocation) themselves via Key Vault"],
+    "explanation": "A CMK moves key management from Microsoft to a customer-controlled Key Vault key. It has no relationship to Shared Key auth, public access, or TLS version.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-22",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Is Storage Service Encryption (SSE) at rest optional on an Azure storage account?",
+    "choices": [
+      "No, it is always enabled and cannot be turned off",
+      "Yes, it must be manually enabled per container",
+      "Yes, but only for Premium storage accounts",
+      "No, it only applies to Table storage"
+    ],
+    "correctAnswers": ["No, it is always enabled and cannot be turned off"],
+    "explanation": "SSE encrypts all data at rest by default across every storage account and service, with no opt-out — infrastructure encryption is the optional add-on layer.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o2-1-23",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "A compliance requirement says a document storage account must reject anonymous container access and plaintext HTTP, and must never rely on the account's master key. Which combination of settings satisfies this?",
+    "choices": [
+      "Allow Blob public access = Disabled, Secure transfer required = Enabled, Allow Shared Key authorization = Disabled",
+      "Allow Blob public access = Enabled, Minimum TLS = 1.0, Allow Shared Key authorization = Enabled",
+      "Public network access = Enabled from all networks, Secure transfer required = Disabled",
+      "Infrastructure encryption = Disabled, no CMK, Defender for Storage = Off"
+    ],
+    "correctAnswers": ["Allow Blob public access = Disabled, Secure transfer required = Enabled, Allow Shared Key authorization = Disabled"],
+    "explanation": "Each requirement maps directly to one setting: no anonymous access → Blob public access Disabled; no plaintext HTTP → Secure transfer Enabled; no master key → Shared Key authorization Disabled.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-24",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Which authentication model should replace Shared Key access for a storage account under a 'no master key usage' requirement?",
+    "choices": [
+      "Microsoft Entra ID with Azure RBAC role assignments",
+      "A single shared connection string distributed to all apps",
+      "Anonymous container access scoped to read-only",
+      "A service endpoint with IP allow-listing"
+    ],
+    "correctAnswers": ["Microsoft Entra ID with Azure RBAC role assignments"],
+    "explanation": "Entra ID + RBAC lets each identity get scoped, revocable, auditable permissions instead of a single all-powerful key. A shared connection string and anonymous access both reintroduce the risks the requirement is meant to eliminate.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-25",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "What is the purpose of the 'Allow trusted Microsoft services to access this storage account' exception on the storage firewall?",
+    "choices": [
+      "To let specific first-party Azure services bypass network restrictions for legitimate integration scenarios",
+      "To allow any authenticated Entra user through the firewall",
+      "To permit Shared Key authorization only for Microsoft support",
+      "To disable TLS enforcement for Microsoft IP ranges"
+    ],
+    "correctAnswers": ["To let specific first-party Azure services bypass network restrictions for legitimate integration scenarios"],
+    "explanation": "This exception is scoped to a curated list of Microsoft services (e.g. certain resource providers in the same tenant) needing legitimate access, not a blanket bypass for any user or purpose.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-26",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Which Azure CLI command sets `--allow-shared-key-access false` and `--allow-blob-public-access false` when provisioning a storage account?",
+    "choices": ["az storage account create", "az storage account keys renew", "az storage container create", "az role assignment create"],
+    "correctAnswers": ["az storage account create"],
+    "explanation": "These are account-level properties set at creation (or update) time via `az storage account create`/`update`. The other commands manage keys, containers, or RBAC assignments respectively, not these account-wide toggles.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-27",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Which PowerShell cmdlet updates a storage account's minimum TLS version and Shared Key access setting?",
+    "choices": ["Set-AzStorageAccount", "Set-AzStorageBlobContent", "New-AzStorageContext", "Set-AzStorageContainerAcl"],
+    "correctAnswers": ["Set-AzStorageAccount"],
+    "explanation": "Set-AzStorageAccount manages account-level properties including MinimumTlsVersion and AllowSharedKeyAccess. The other cmdlets operate on blob content, contexts, or container ACLs.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-28",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "Which Azure CLI command generates a SAS signed with the caller's Microsoft Entra identity rather than the account key?",
+    "choices": [
+      "az storage container generate-sas --auth-mode login --as-user",
+      "az storage account keys list",
+      "az storage container generate-sas --auth-mode key",
+      "az ad sp create-for-rbac"
+    ],
+    "correctAnswers": ["az storage container generate-sas --auth-mode login --as-user"],
+    "explanation": "`--auth-mode login --as-user` produces a user delegation SAS signed with Entra credentials. `--auth-mode key` (the default) would sign it with the account key instead.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o2-1-29",
+    "objectiveId": "o2-1",
+    "type": "multiple",
+    "prompt": "Which two settings should be disabled to reduce a storage account's attack surface? (Choose two.)",
+    "choices": ["Allow Blob public access", "Allow Shared Key authorization", "Secure transfer required", "Infrastructure encryption"],
+    "correctAnswers": ["Allow Blob public access", "Allow Shared Key authorization"],
+    "explanation": "Blob public access and Shared Key authorization are the two toggles that should be turned OFF for hardening. Secure transfer required and infrastructure encryption should instead be turned ON.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-30",
+    "objectiveId": "o2-1",
+    "type": "multiple",
+    "prompt": "Which two statements about a user delegation SAS are correct? (Choose two.)",
+    "choices": [
+      "It is signed with Microsoft Entra credentials",
+      "It can be revoked via Entra role/permission changes without rotating the account key",
+      "It is signed with the storage account key",
+      "It cannot be scoped to a specific container"
+    ],
+    "correctAnswers": ["It is signed with Microsoft Entra credentials", "It can be revoked via Entra role/permission changes without rotating the account key"],
+    "explanation": "A user delegation SAS is the Entra-signed alternative to account/service SAS, which is why revoking it doesn't require the disruptive step of rotating the account key.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-31",
+    "objectiveId": "o2-1",
+    "type": "multiple",
+    "prompt": "Which two capabilities does Microsoft Defender for Storage provide? (Choose two.)",
+    "choices": ["Malware scanning on blob upload", "Sensitive-data exfiltration alerts", "Automatic account key rotation", "TLS certificate issuance"],
+    "correctAnswers": ["Malware scanning on blob upload", "Sensitive-data exfiltration alerts"],
+    "explanation": "Defender for Storage detects threats — malware on upload and exfiltration of sensitive data. It does not manage key rotation or issue certificates.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-32",
+    "objectiveId": "o2-1",
+    "type": "case-study",
+    "caseStudyId": "cs-woodgrove-data",
+    "prompt": "Referring to requirement 1 (the scanned-documents storage account must reject anonymous container access and plaintext HTTP, and must never authorize access with the account's master key), which combination of settings is correct?",
+    "choices": [
+      "Allow Blob public access = Disabled, Secure transfer required = Enabled, Allow Shared Key authorization = Disabled",
+      "Allow Blob public access = Enabled with container-level private access, Minimum TLS = 1.0",
+      "Allow Shared Key authorization = Enabled, restricted to read-only keys",
+      "Public network access = Disabled, Allow Shared Key authorization = Enabled"
+    ],
+    "correctAnswers": ["Allow Blob public access = Disabled, Secure transfer required = Enabled, Allow Shared Key authorization = Disabled"],
+    "explanation": "All three requirements map to account-level toggles being set correctly together. Leaving Shared Key authorization enabled — even 'restricted to read-only keys,' which isn't a real capability — would still allow master-key authentication.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-33",
+    "objectiveId": "o2-1",
+    "type": "case-study",
+    "caseStudyId": "cs-woodgrove-data",
+    "prompt": "Requirement 1 also implies clients must authenticate without the account key. Which approach grants a third-party scanning vendor scoped, time-limited access to a single container without ever sharing the account key?",
+    "choices": [
+      "A user delegation SAS scoped to the specific container with a short expiry",
+      "An account SAS signed with the storage account key",
+      "Sharing the account's primary key over a secure channel",
+      "Enabling anonymous container read access for the vendor's IP range"
+    ],
+    "correctAnswers": ["A user delegation SAS scoped to the specific container with a short expiry"],
+    "explanation": "A user delegation SAS provides scoped, time-limited, Entra-signed access — exactly what's needed without ever exposing the account key. An account SAS would still depend on the very key the requirement forbids using.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-34",
+    "objectiveId": "o2-1",
+    "type": "case-study",
+    "caseStudyId": "cs-woodgrove-data",
+    "prompt": "Referring to requirement 2 (the backup archive storage account must be reachable only from a specific on-premises network via ExpressRoute, with zero internet exposure), which network configuration is correct?",
+    "choices": [
+      "Public network access Disabled, with a private endpoint in a VNet reachable over ExpressRoute",
+      "Selected networks with the on-prem public IP allow-listed",
+      "Enabled from all networks, with Secure transfer required enabled",
+      "A service endpoint on the ExpressRoute gateway subnet, with public access left Enabled"
+    ],
+    "correctAnswers": ["Public network access Disabled, with a private endpoint in a VNet reachable over ExpressRoute"],
+    "explanation": "Only Disabled + private endpoint removes the public endpoint entirely, satisfying 'zero internet exposure.' A service endpoint or IP allow-list would still leave a publicly reachable IP.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-35",
+    "objectiveId": "o2-1",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o2-1",
+    "prompt": "Proposed solution: Set every container's individual access level to Private, but leave Allow Blob public access enabled at the account level, and keep Allow Shared Key authorization enabled for app compatibility. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "Leaving Allow Shared Key authorization enabled still permits master-key authentication, and leaving Allow Blob public access enabled at the account risks a future container being flipped to anonymous — neither goal condition is guaranteed.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-36",
+    "objectiveId": "o2-1",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o2-1",
+    "prompt": "Proposed solution: Disable Allow Blob public access and Allow Shared Key authorization at the account level, and require every client to authenticate via Microsoft Entra ID with Azure RBAC role assignments. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["Yes"],
+    "explanation": "Disabling both account-level toggles permanently blocks anonymous access and master-key authentication, while Entra ID/RBAC provides the scoped replacement authentication model.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-37",
+    "objectiveId": "o2-1",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o2-1",
+    "prompt": "Proposed solution: Keep Allow Blob public access and Allow Shared Key authorization at their default (enabled) values, but rotate the storage account key every 24 hours. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "Rotating the key doesn't prevent anonymous access, nor does it stop key-based authentication from being used between rotations — it only limits, rather than eliminates, the exposure window.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-38",
+    "objectiveId": "o2-1",
+    "type": "reorder",
+    "prompt": "Order the steps to issue a revocable, container-scoped SAS token backed by a stored access policy.",
+    "reorderItems": [
+      "Create the stored access policy on the container (permissions, start/expiry)",
+      "Generate a SAS token that references the stored access policy",
+      "Distribute the SAS token to the client",
+      "Revoke or modify access at any time by updating or deleting the stored access policy"
+    ],
+    "explanation": "The policy must exist before a SAS can reference it; the token is then distributed and used, and later governed centrally by editing the same policy rather than reissuing tokens.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-39",
+    "objectiveId": "o2-1",
+    "type": "reorder",
+    "prompt": "Order the steps to migrate a storage account from open network access to a fully private posture.",
+    "reorderItems": [
+      "Create a private endpoint for the storage account in the target VNet/subnet",
+      "Create and link a private DNS zone so the account's FQDN resolves to the private endpoint's IP",
+      "Verify connectivity to the storage account over the private IP from within the VNet",
+      "Set the storage account's public network access to Disabled"
+    ],
+    "explanation": "The private endpoint and its DNS resolution must be working and verified before removing the public endpoint, to avoid an outage while the migration is in progress.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-40",
+    "objectiveId": "o2-1",
+    "type": "active-screen",
+    "prompt": "Configure this simplified storage account security screen so the account rejects anonymous access, requires HTTPS with a modern TLS version, and never accepts the account's master key.",
+    "screenTitle": "Storage account - Configuration (simulated)",
+    "fields": [
+      { "id": "secureTransfer", "label": "Secure transfer required", "kind": "toggle", "correctValue": "On" },
+      { "id": "minTls", "label": "Minimum TLS version", "kind": "select", "options": ["TLS 1.0", "TLS 1.1", "TLS 1.2"], "correctValue": "TLS 1.2" },
+      { "id": "blobPublicAccess", "label": "Allow Blob public access", "kind": "toggle", "correctValue": "Off" },
+      { "id": "sharedKeyAccess", "label": "Allow storage account key access", "kind": "toggle", "correctValue": "Off" }
+    ],
+    "explanation": "Secure transfer On forces HTTPS, TLS 1.2 retires legacy protocol versions, and disabling Blob public access plus storage account key access removes anonymous and master-key paths, leaving Entra ID/RBAC as the only route in.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-41",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "A single named Microsoft Foundry resource must be allowed through a storage account's network firewall, without opening the account to an entire virtual network or to the public internet. Which mechanism is designed for this?",
+    "choices": [
+      "A resource instance rule scoped to the Foundry resource's ID",
+      "Allow trusted Microsoft services",
+      "A service endpoint on every subnet",
+      "Disabling the storage firewall entirely"
+    ],
+    "correctAnswers": ["A resource instance rule scoped to the Foundry resource's ID"],
+    "explanation": "A resource instance rule allows one named resource, by resource ID, to bypass the firewall — narrower than 'Allow trusted Microsoft services', which opens access to a whole class of first-party services.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-42",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "What is the key difference between a storage account resource instance rule and the 'Allow trusted Microsoft services' exception?",
+    "choices": [
+      "A resource instance rule scopes access to one named resource by ID; the trusted-services exception opens access to an entire class of first-party services",
+      "They are functionally identical and interchangeable",
+      "A resource instance rule only works with Shared Key authorization",
+      "The trusted-services exception is more restrictive than a resource instance rule"
+    ],
+    "correctAnswers": ["A resource instance rule scopes access to one named resource by ID; the trusted-services exception opens access to an entire class of first-party services"],
+    "explanation": "A resource instance rule is the narrower, more targeted option — it names a specific resource ID rather than trusting an entire category of Microsoft services.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-43",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "prompt": "A security review flags that a storage account has 'Allow trusted Microsoft services' enabled, but investigation shows only one specific Azure AI service resource actually needs access. What is the recommended remediation?",
+    "choices": [
+      "Replace the broad exception with a resource instance rule scoped to that one AI service resource's ID",
+      "Enable Allow Blob public access instead",
+      "Re-enable Shared Key authorization for the AI service",
+      "Leave the setting as-is since both options are equally secure"
+    ],
+    "correctAnswers": ["Replace the broad exception with a resource instance rule scoped to that one AI service resource's ID"],
+    "explanation": "Once only one specific resource needs access, a resource instance rule scoped to it is strictly narrower and preferred over the blanket trusted-services exception.",
+    "difficulty": "medium"
+  }
+]

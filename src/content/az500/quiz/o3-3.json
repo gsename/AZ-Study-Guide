@@ -1,0 +1,614 @@
+[
+  {
+    "id": "q-o3-3-01",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "What does Transparent Data Encryption (TDE) protect in Azure SQL?",
+    "choices": [
+      "Data at rest — database files and backups — transparently to the application",
+      "Only specific sensitive columns",
+      "Only data in transit",
+      "Only query results shown to unprivileged users"
+    ],
+    "correctAnswers": ["Data at rest — database files and backups — transparently to the application"],
+    "explanation": "TDE encrypts the whole database at rest and is on by default; it is transparent to applications.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-3-02",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "What does Always Encrypted protect, and from whom?",
+    "choices": [
+      "Specific columns end-to-end, so even the database engine and DBAs never see plaintext",
+      "The whole database at rest, transparently to the app",
+      "Only values displayed in query results",
+      "Traffic between the client and the server"
+    ],
+    "correctAnswers": ["Specific columns end-to-end, so even the database engine and DBAs never see plaintext"],
+    "explanation": "Always Encrypted keeps the key on the client, hiding plaintext from the engine and administrators.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-3-03",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "What does dynamic data masking actually do?",
+    "choices": [
+      "Obscures sensitive values in query results for non-privileged users; stored data is unchanged",
+      "Encrypts sensitive columns at rest",
+      "Permanently deletes sensitive data",
+      "Prevents everyone, including admins, from ever seeing the data"
+    ],
+    "correctAnswers": ["Obscures sensitive values in query results for non-privileged users; stored data is unchanged"],
+    "explanation": "Masking is a display-time control; it is not encryption and does not alter stored data.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-3-04",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which Azure SQL feature does NOT stop a privileged DBA from reading the real underlying values?",
+    "choices": [
+      "Dynamic data masking",
+      "Always Encrypted",
+      "Both stop a DBA equally",
+      "Neither provides any protection"
+    ],
+    "correctAnswers": ["Dynamic data masking"],
+    "explanation": "Masking only affects results for non-privileged users; a sufficiently privileged account can still see the data. Always Encrypted defeats this by keeping the key off the server.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-05",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which feature is recommended for columns like national ID or payment-card numbers where even admins must not see plaintext?",
+    "choices": [
+      "Always Encrypted",
+      "Dynamic data masking",
+      "Transparent Data Encryption alone",
+      "Auditing alone"
+    ],
+    "correctAnswers": ["Always Encrypted"],
+    "explanation": "Always Encrypted is designed for fields where insider/admin access is the risk to mitigate.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-3-06",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "What is the benefit of enabling Microsoft Entra database authentication for Azure SQL?",
+    "choices": [
+      "Use Entra identities and groups instead of SQL logins, under central identity governance",
+      "It automatically encrypts every column",
+      "It disables auditing overhead",
+      "It is required before TDE can be turned on"
+    ],
+    "correctAnswers": ["Use Entra identities and groups instead of SQL logins, under central identity governance"],
+    "explanation": "Entra authentication brings SQL access under the same identity governance as the rest of Azure.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-3-07",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which setting disables SQL logins entirely, allowing only Microsoft Entra authentication?",
+    "choices": [
+      "Support only Microsoft Entra authentication",
+      "Set the Microsoft Entra admin",
+      "Enable Transparent Data Encryption",
+      "Enable Always Encrypted"
+    ],
+    "correctAnswers": ["Support only Microsoft Entra authentication"],
+    "explanation": "This setting fully disables SQL authentication; confirm no app depends on SQL logins before enabling it.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-08",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Where can Azure SQL database auditing send recorded events?",
+    "choices": [
+      "A Log Analytics workspace, a storage account, or Event Hubs",
+      "Only a local file on the SQL server",
+      "Only to Microsoft Support",
+      "Auditing has no configurable destination"
+    ],
+    "correctAnswers": ["A Log Analytics workspace, a storage account, or Event Hubs"],
+    "explanation": "Auditing supports these three destinations for database events.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-09",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Is Transparent Data Encryption enabled by default on new Azure SQL databases?",
+    "choices": [
+      "Yes, TDE is on by default",
+      "No, it must always be enabled manually",
+      "Only on Managed Instance, not SQL Database",
+      "Only when Always Encrypted is enabled"
+    ],
+    "correctAnswers": ["Yes, TDE is on by default"],
+    "explanation": "TDE is enabled by default for Azure SQL Database and Managed Instance.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-3-10",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Where does the decryption key live when using Always Encrypted?",
+    "choices": [
+      "Entirely on the client side — it is never given to the database engine",
+      "On the SQL server, alongside the data",
+      "In the database transaction log",
+      "In the TDE protector in Key Vault"
+    ],
+    "correctAnswers": ["Entirely on the client side — it is never given to the database engine"],
+    "explanation": "Client-side keys are what prevent the engine and administrators from seeing plaintext.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-11",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Where do you set the Microsoft Entra admin for an Azure SQL logical server?",
+    "choices": [
+      "SQL server ▸ Microsoft Entra ID (Microsoft Entra admin) ▸ Set admin",
+      "Key Vault ▸ Access configuration",
+      "Defender for Cloud ▸ Environment settings",
+      "The database ▸ Dynamic Data Masking blade"
+    ],
+    "correctAnswers": ["SQL server ▸ Microsoft Entra ID (Microsoft Entra admin) ▸ Set admin"],
+    "explanation": "The Entra admin is set at the server level under Microsoft Entra ID (Microsoft Entra admin).",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-12",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Of TDE, Always Encrypted, and dynamic data masking, which is NOT a form of encryption?",
+    "choices": [
+      "Dynamic data masking",
+      "Transparent Data Encryption",
+      "Always Encrypted",
+      "All three are equally strong encryption"
+    ],
+    "correctAnswers": ["Dynamic data masking"],
+    "explanation": "Masking only alters what is displayed; stored data is never encrypted or changed by it.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-13",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "A support team needs to query a customer table for troubleshooting, but card numbers must not appear in their results, with no application changes. Which feature fits best?",
+    "choices": [
+      "Dynamic data masking",
+      "Always Encrypted",
+      "Transparent Data Encryption",
+      "Auditing"
+    ],
+    "correctAnswers": ["Dynamic data masking"],
+    "explanation": "Masking hides values in results for a class of users without changing the app or the stored data.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-14",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "TDE protects backups and files at rest but would NOT prevent which of the following?",
+    "choices": [
+      "A DBA with query access reading sensitive column values in plaintext",
+      "An attacker who steals the raw database files",
+      "An attacker who steals a backup file",
+      "Data exposure if a disk is physically removed"
+    ],
+    "correctAnswers": ["A DBA with query access reading sensitive column values in plaintext"],
+    "explanation": "TDE is transparent to authorized queries, so a DBA still sees plaintext. Protecting against that requires Always Encrypted.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-3-15",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which control gives the compliance team a record of WHO queried a sensitive table and WHEN?",
+    "choices": [
+      "Database auditing",
+      "Dynamic data masking",
+      "Transparent Data Encryption",
+      "Always Encrypted"
+    ],
+    "correctAnswers": ["Database auditing"],
+    "explanation": "Auditing records database events (logins, queries, changes) for investigation and compliance.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-3-16",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which is a valid caution before enabling 'Support only Microsoft Entra authentication'?",
+    "choices": [
+      "It disables SQL logins entirely, which can break apps that still use them",
+      "It permanently deletes existing SQL logins with no way to recreate them",
+      "It disables TDE",
+      "It requires Always Encrypted to be configured first"
+    ],
+    "correctAnswers": ["It disables SQL logins entirely, which can break apps that still use them"],
+    "explanation": "It's a one-way hardening step; verify no application depends on SQL authentication before enabling.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-17",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which feature would you use to centralize SQL access on corporate group membership rather than individual database logins?",
+    "choices": [
+      "Microsoft Entra authentication with an Entra group as the admin/users",
+      "Dynamic data masking",
+      "Transparent Data Encryption",
+      "A shared SQL login for the team"
+    ],
+    "correctAnswers": ["Microsoft Entra authentication with an Entra group as the admin/users"],
+    "explanation": "Entra authentication lets you grant database access via Entra groups, aligning with central identity governance.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-18",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "A requirement states sensitive data must be encrypted such that a cloud operator with full server access still cannot read it. Which feature is required?",
+    "choices": [
+      "Always Encrypted",
+      "Transparent Data Encryption",
+      "Dynamic data masking",
+      "Database auditing"
+    ],
+    "correctAnswers": ["Always Encrypted"],
+    "explanation": "Always Encrypted keeps the key client-side, so even a full-access server operator cannot read the plaintext.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-19",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which statement about TDE and Always Encrypted used together is correct?",
+    "choices": [
+      "They are complementary — TDE protects everything at rest, Always Encrypted additionally hides specific columns from the engine/admins",
+      "They are mutually exclusive and cannot both be enabled",
+      "Always Encrypted replaces the need for TDE",
+      "TDE encrypts columns end-to-end, so Always Encrypted is redundant"
+    ],
+    "correctAnswers": ["They are complementary — TDE protects everything at rest, Always Encrypted additionally hides specific columns from the engine/admins"],
+    "explanation": "TDE (whole-database, at rest) and Always Encrypted (specific columns, end-to-end) address different threats and can be used together.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-3-20",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which is the correct order of steps to enforce Entra-only access on an Azure SQL server?",
+    "choices": [
+      "Set the Microsoft Entra admin, then enable 'Support only Microsoft Entra authentication'",
+      "Enable 'Support only Microsoft Entra authentication' first, then set the admin",
+      "Enable TDE, then set the Entra admin",
+      "Disable auditing, then set the Entra admin"
+    ],
+    "correctAnswers": ["Set the Microsoft Entra admin, then enable 'Support only Microsoft Entra authentication'"],
+    "explanation": "An Entra admin must exist before Entra-only authentication is enforced, otherwise you'd lock out administration.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-21",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "What is TDE transparent TO?",
+    "choices": [
+      "The application — it needs no changes to read/write the encrypted data",
+      "The storage layer — it bypasses disk encryption",
+      "Administrators — they cannot see any data",
+      "The network — it encrypts data in transit"
+    ],
+    "correctAnswers": ["The application — it needs no changes to read/write the encrypted data"],
+    "explanation": "TDE encrypts/decrypts at the I/O level, transparent to the application; it does not address in-transit or admin-visibility concerns.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-22",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "A security review flags that dynamic data masking was chosen to 'protect' SSNs from database administrators. Why is this inappropriate?",
+    "choices": [
+      "Masking only hides values in results for non-privileged users and is not a boundary against admins",
+      "Masking permanently encrypts the SSNs, which breaks the app",
+      "Masking cannot be applied to text columns",
+      "Masking requires Always Encrypted to function"
+    ],
+    "correctAnswers": ["Masking only hides values in results for non-privileged users and is not a boundary against admins"],
+    "explanation": "Masking is a convenience control, not a cryptographic boundary; Always Encrypted is the correct tool against admin access.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-23",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which Azure SQL protection is enabled by default and requires no application awareness?",
+    "choices": [
+      "Transparent Data Encryption",
+      "Always Encrypted",
+      "Dynamic data masking",
+      "Microsoft Entra-only authentication"
+    ],
+    "correctAnswers": ["Transparent Data Encryption"],
+    "explanation": "TDE is on by default and transparent to apps. Always Encrypted needs client driver/key setup; masking and Entra-only auth are opt-in.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-24",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "To investigate a suspected data-exfiltration incident, which SQL feature provides the evidence trail?",
+    "choices": [
+      "Database auditing sent to a Log Analytics workspace",
+      "Transparent Data Encryption",
+      "Dynamic data masking",
+      "Always Encrypted"
+    ],
+    "correctAnswers": ["Database auditing sent to a Log Analytics workspace"],
+    "explanation": "Auditing records the queries and access events needed for an investigation; the encryption/masking features do not produce an activity trail.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-25",
+    "objectiveId": "o3-3",
+    "type": "multiple",
+    "prompt": "Which two statements are correct? (Choose two.)",
+    "choices": [
+      "Transparent Data Encryption encrypts the whole database at rest",
+      "Always Encrypted hides column data from database administrators",
+      "Dynamic data masking is a strong cryptographic boundary against admins",
+      "Transparent Data Encryption is disabled by default"
+    ],
+    "correctAnswers": [
+      "Transparent Data Encryption encrypts the whole database at rest",
+      "Always Encrypted hides column data from database administrators"
+    ],
+    "explanation": "TDE is on by default (not disabled) and masking is not a strong boundary — those are the false options.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-26",
+    "objectiveId": "o3-3",
+    "type": "multiple",
+    "prompt": "Which two statements are correct? (Choose two.)",
+    "choices": [
+      "Always Encrypted keeps its key on the client side",
+      "Database auditing can target Event Hubs",
+      "Enabling Entra-only authentication is easily reversible with no app impact",
+      "Dynamic data masking permanently modifies stored data"
+    ],
+    "correctAnswers": [
+      "Always Encrypted keeps its key on the client side",
+      "Database auditing can target Event Hubs"
+    ],
+    "explanation": "Entra-only auth can break SQL-login-dependent apps, and masking never modifies stored data — those are false.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-27",
+    "objectiveId": "o3-3",
+    "type": "multiple",
+    "prompt": "Which two threats does Always Encrypted specifically address that TDE does not? (Choose two.)",
+    "choices": [
+      "A database administrator reading sensitive column values",
+      "A cloud operator with server access reading plaintext",
+      "Theft of a raw backup file at rest",
+      "Physical theft of the underlying disk"
+    ],
+    "correctAnswers": [
+      "A database administrator reading sensitive column values",
+      "A cloud operator with server access reading plaintext"
+    ],
+    "explanation": "TDE already covers stolen backups/disks (at rest). Always Encrypted additionally hides column plaintext from DBAs and operators.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-3-28",
+    "objectiveId": "o3-3",
+    "type": "case-study",
+    "caseStudyId": "cs-northwind-compute",
+    "prompt": "Referring to requirement 5 (national ID columns must remain unreadable in plaintext even to database administrators), which feature should Northwind use?",
+    "choices": [
+      "Always Encrypted",
+      "Dynamic data masking",
+      "Transparent Data Encryption alone",
+      "Auditing alone"
+    ],
+    "correctAnswers": ["Always Encrypted"],
+    "explanation": "Only Always Encrypted keeps plaintext away from the engine and administrators.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-3-29",
+    "objectiveId": "o3-3",
+    "type": "case-study",
+    "caseStudyId": "cs-northwind-compute",
+    "prompt": "Referring to requirement 6 (compliance must review a full history of who queried a sensitive table and when), which feature should Northwind enable?",
+    "choices": [
+      "Database auditing",
+      "Dynamic data masking",
+      "Always Encrypted",
+      "Transparent Data Encryption"
+    ],
+    "correctAnswers": ["Database auditing"],
+    "explanation": "Auditing records and preserves the history of database events such as queries.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o3-3-30",
+    "objectiveId": "o3-3",
+    "type": "case-study",
+    "caseStudyId": "cs-northwind-compute",
+    "prompt": "Northwind also wants to stop using individual SQL logins and instead govern database access through corporate identities and groups. What should they implement?",
+    "choices": [
+      "Microsoft Entra authentication (with an Entra admin/groups), optionally enforcing Entra-only auth",
+      "A shared SQL login for the whole team",
+      "Dynamic data masking on the login table",
+      "Transparent Data Encryption with a customer-managed key"
+    ],
+    "correctAnswers": ["Microsoft Entra authentication (with an Entra admin/groups), optionally enforcing Entra-only auth"],
+    "explanation": "Entra authentication moves SQL access onto corporate identities/groups; Entra-only enforcement can then retire SQL logins.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-31",
+    "objectiveId": "o3-3",
+    "type": "reorder",
+    "prompt": "Order the steps to enforce Microsoft Entra-only authentication on an Azure SQL server.",
+    "reorderItems": [
+      "Set a Microsoft Entra admin for the SQL server",
+      "Confirm all applications have migrated off SQL logins",
+      "Enable 'Support only Microsoft Entra authentication'",
+      "Verify SQL logins can no longer authenticate"
+    ],
+    "explanation": "An Entra admin must exist and apps must be migrated before disabling SQL logins, to avoid locking out administration or breaking apps.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-32",
+    "objectiveId": "o3-3",
+    "type": "reorder",
+    "prompt": "Order the steps to protect a national-ID column so even DBAs cannot see it in plaintext.",
+    "reorderItems": [
+      "Identify the sensitive column",
+      "Configure Always Encrypted for that column with a client-side key",
+      "Store the column encryption key in Key Vault",
+      "Update client applications to use an Always Encrypted-enabled driver"
+    ],
+    "explanation": "The column and its key must be defined before applications can be updated to use the encrypted-aware driver.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-33",
+    "objectiveId": "o3-3",
+    "type": "active-screen",
+    "prompt": "Configure this simplified Azure SQL security screen for a table with card numbers, where a support team must query it without seeing card numbers, and compliance needs an audit trail.",
+    "screenTitle": "Azure SQL security (simulated)",
+    "fields": [
+      { "id": "masking", "label": "Dynamic data masking on CardNumber", "kind": "toggle", "correctValue": "On" },
+      { "id": "tde", "label": "Transparent Data Encryption", "kind": "toggle", "correctValue": "On" },
+      { "id": "auditing", "label": "Auditing", "kind": "select", "options": ["Disabled", "Enabled, to Log Analytics"], "correctValue": "Enabled, to Log Analytics" }
+    ],
+    "explanation": "Masking hides card numbers from the support team's results, TDE remains on for at-rest protection, and auditing provides the compliance trail.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-34",
+    "objectiveId": "o3-3",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o3-3",
+    "prompt": "Proposed solution: Enable database auditing sending events to a Log Analytics workspace. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["Yes"],
+    "explanation": "Auditing records logins and queries to a queryable destination, exactly the compliance trail requested.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-35",
+    "objectiveId": "o3-3",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o3-3",
+    "prompt": "Proposed solution: Enable dynamic data masking on all sensitive columns. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "Masking hides values in results; it does not record who queried what or when, so it produces no audit trail.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-36",
+    "objectiveId": "o3-3",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o3-3",
+    "prompt": "Proposed solution: Enable Transparent Data Encryption. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "TDE protects data at rest; it does not log access or queries, so it cannot provide an audit trail.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-37",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which command sets an Entra group as the Microsoft Entra admin of SQL server sql1?",
+    "choices": [
+      "az sql server ad-admin create --server sql1 --resource-group RG1 --display-name SecAdmins --object-id <groupObjectId>",
+      "az sql server update --name sql1 --admin-group SecAdmins",
+      "az sql db ad-admin set --database db1 --group SecAdmins",
+      "az ad group update --id SecAdmins --sql-server sql1"
+    ],
+    "correctAnswers": ["az sql server ad-admin create --server sql1 --resource-group RG1 --display-name SecAdmins --object-id <groupObjectId>"],
+    "explanation": "The Entra admin is a SERVER-level setting via `az sql server ad-admin create`. It isn't per-database, and the other syntaxes don't exist.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-38",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which command disables SQL logins entirely on server sql1 (Entra-only authentication)?",
+    "choices": [
+      "az sql server ad-only-auth enable --name sql1 --resource-group RG1",
+      "az sql server update --name sql1 --sql-logins disabled",
+      "az sql server ad-admin create --server sql1 --exclusive",
+      "az sql db update --name db1 --auth entra-only"
+    ],
+    "correctAnswers": ["az sql server ad-only-auth enable --name sql1 --resource-group RG1"],
+    "explanation": "`az sql server ad-only-auth enable` (PowerShell: Enable-AzSqlServerActiveDirectoryOnlyAuthentication) enforces Entra-only auth. The others are invented.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-39",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which command enables auditing on database db1, sending events to a Log Analytics workspace?",
+    "choices": [
+      "az sql db audit-policy update --server sql1 --name db1 --resource-group RG1 --state Enabled --log-analytics-target-state Enabled --log-analytics-workspace-resource-id <wsId>",
+      "az sql db update --name db1 --audit-log workspace <wsId>",
+      "az monitor diagnostic-settings create --resource db1 --audit true",
+      "az sql server audit enable --workspace <wsId>"
+    ],
+    "correctAnswers": ["az sql db audit-policy update --server sql1 --name db1 --resource-group RG1 --state Enabled --log-analytics-target-state Enabled --log-analytics-workspace-resource-id <wsId>"],
+    "explanation": "SQL auditing is managed with `az sql db audit-policy update` (or server-level `az sql server audit-policy update`). Diagnostic settings alone don't enable SQL auditing; the others don't exist.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-3-40",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which PowerShell cmdlet checks whether TDE is enabled on a database?",
+    "choices": [
+      "Get-AzSqlDatabaseTransparentDataEncryption",
+      "Get-AzSqlDatabaseEncryptionStatus",
+      "Get-AzTdeState",
+      "Get-AzSqlServerKeyVaultKey"
+    ],
+    "correctAnswers": ["Get-AzSqlDatabaseTransparentDataEncryption"],
+    "explanation": "Get-AzSqlDatabaseTransparentDataEncryption returns the TDE state. Get-AzSqlServerKeyVaultKey relates to BYOK keys for TDE, not its status; the other two don't exist.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-41",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Which PowerShell cmdlet sets the Microsoft Entra admin on a SQL server?",
+    "choices": [
+      "Set-AzSqlServerActiveDirectoryAdministrator",
+      "Set-AzSqlServerAdmin",
+      "New-AzSqlServerEntraAdmin",
+      "Set-AzSqlDatabaseAdministrator"
+    ],
+    "correctAnswers": ["Set-AzSqlServerActiveDirectoryAdministrator"],
+    "explanation": "Set-AzSqlServerActiveDirectoryAdministrator is the real cmdlet (the module still uses the ActiveDirectory naming). The other three don't exist.",
+    "difficulty": "medium"
+  }
+]

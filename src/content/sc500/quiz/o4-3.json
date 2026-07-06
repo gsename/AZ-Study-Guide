@@ -1,0 +1,591 @@
+[
+  {
+    "id": "q-o4-3-01",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What is Microsoft Security Copilot?",
+    "choices": [
+      "A generative-AI assistant that reasons over an organization's security data via plugins",
+      "A SIEM that replaces Microsoft Sentinel",
+      "A CSPM engine that replaces Defender for Cloud",
+      "A firewall rule engine"
+    ],
+    "correctAnswers": ["A generative-AI assistant that reasons over an organization's security data via plugins"],
+    "explanation": "Security Copilot is a generative-AI assistant layered on top of security products via plugins — it doesn't replace Sentinel or Defender for Cloud, and it isn't a firewall.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-02",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What does SCU stand for in the context of Security Copilot?",
+    "choices": [
+      "Security Compute Unit",
+      "Sentinel Correlation Unit",
+      "Secure Configuration Update",
+      "Software Compliance Utility"
+    ],
+    "correctAnswers": ["Security Compute Unit"],
+    "explanation": "SCU stands for Security Compute Unit, the provisioned hourly capacity that powers Copilot usage; the other expansions are invented.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-03",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "How is Security Copilot capacity billed?",
+    "choices": [
+      "By provisioned Security Compute Units (SCU), scaled to manage cost",
+      "Per user seat, like a traditional software license",
+      "Per incident investigated",
+      "It is included free with any Microsoft 365 license"
+    ],
+    "correctAnswers": ["By provisioned Security Compute Units (SCU), scaled to manage cost"],
+    "explanation": "Copilot capacity is provisioned and billed as SCUs rather than per-seat, per-incident, or bundled free licensing.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-04",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What must be configured before first using Security Copilot?",
+    "choices": [
+      "Provisioned SCU capacity and a default environment (geo, subscription/resource group, data storage location)",
+      "A Sentinel Log Analytics workspace",
+      "A Defender for Cloud regulatory compliance standard",
+      "An Azure Policy initiative"
+    ],
+    "correctAnswers": ["Provisioned SCU capacity and a default environment (geo, subscription/resource group, data storage location)"],
+    "explanation": "Initial setup requires SCU capacity plus the default environment settings; Sentinel workspaces, compliance standards, and policy initiatives are unrelated prerequisites for Copilot itself.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-05",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Where is Security Copilot capacity provisioned?",
+    "choices": [
+      "In Azure, via Create a resource ▸ Microsoft Security Copilot ▸ capacity",
+      "Inside Microsoft Sentinel's Content hub",
+      "Inside the Microsoft Entra admin center's PIM blade",
+      "Inside Microsoft Purview's compliance portal"
+    ],
+    "correctAnswers": ["In Azure, via Create a resource ▸ Microsoft Security Copilot ▸ capacity"],
+    "explanation": "SCU capacity is an Azure resource provisioned through the standard Azure resource-creation flow; the other portals don't manage Copilot capacity.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-06",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What does the Security Copilot owner role control that contributor does not?",
+    "choices": [
+      "Managing settings, capacity, role assignments, and plugins",
+      "Running investigation sessions",
+      "Reading incident summaries",
+      "Using promptbooks"
+    ],
+    "correctAnswers": ["Managing settings, capacity, role assignments, and plugins"],
+    "explanation": "Owner administers the environment (capacity/roles/plugins); contributor is scoped to day-to-day usage like running sessions, reading summaries, and using promptbooks.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-07",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What can a Security Copilot contributor do?",
+    "choices": [
+      "Use Copilot and run investigation sessions",
+      "Change which plugins are enabled tenant-wide",
+      "Reassign the owner role to another user",
+      "Modify provisioned SCU capacity"
+    ],
+    "correctAnswers": ["Use Copilot and run investigation sessions"],
+    "explanation": "Contributor is the day-to-day usage role; managing plugins, roles, and capacity are owner responsibilities.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-08",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "By default, who in the tenant can be made a Security Copilot contributor?",
+    "choices": [
+      "Any Microsoft Entra user in the tenant",
+      "Only Global Administrators",
+      "Only users with an active PIM-eligible role",
+      "No one — contributor access must be requested from Microsoft support"
+    ],
+    "correctAnswers": ["Any Microsoft Entra user in the tenant"],
+    "explanation": "Any tenant Entra user can be assigned contributor by default; owners control that assignment, but it isn't restricted to Global Administrators, PIM-eligible roles, or a Microsoft support process.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-09",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What decides what data and actions Security Copilot can reach?",
+    "choices": [
+      "The plugins enabled for the environment",
+      "The user's browser extensions",
+      "The Azure region selected for the tenant",
+      "The number of provisioned SCUs"
+    ],
+    "correctAnswers": ["The plugins enabled for the environment"],
+    "explanation": "Plugins gate what Copilot can see and do (Defender, Sentinel, Entra, Intune, Purview, third-party, or custom); browser extensions, region, and SCU count don't determine data/action reach.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-10",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which of these is a Microsoft-provided Security Copilot plugin category?",
+    "choices": [
+      "Defender XDR, Sentinel, Entra, Intune, and Purview",
+      "Only third-party SIEM plugins",
+      "Only custom KQL plugins built in-house",
+      "None — Copilot has no plugin system"
+    ],
+    "correctAnswers": ["Defender XDR, Sentinel, Entra, Intune, and Purview"],
+    "explanation": "Microsoft ships first-party plugins for its own security products; third-party and custom plugins are additional categories, not the only ones, and Copilot does have a plugin system.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-11",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Besides Microsoft plugins, what other plugin types can extend Security Copilot?",
+    "choices": [
+      "Third-party plugins and custom plugins built via API or KQL",
+      "Only plugins published by Microsoft",
+      "Only plugins bundled with Microsoft Sentinel's Content hub",
+      "Copilot cannot be extended beyond its defaults"
+    ],
+    "correctAnswers": ["Third-party plugins and custom plugins built via API or KQL"],
+    "explanation": "Copilot supports third-party plugins and custom ones built via API/KQL in addition to Microsoft's own — it isn't limited to Microsoft-only or Sentinel Content hub bundles.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-12",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What is a promptbook in Security Copilot?",
+    "choices": [
+      "A saved, reusable sequence of prompts that runs a multi-step task consistently",
+      "An autonomous agent that runs unattended",
+      "A billing report of SCU consumption",
+      "A Sentinel analytics rule template"
+    ],
+    "correctAnswers": ["A saved, reusable sequence of prompts that runs a multi-step task consistently"],
+    "explanation": "A promptbook packages a repeatable multi-step prompt sequence (e.g., an investigation workflow); autonomous unattended execution describes an agent instead, and it isn't a billing report or a Sentinel artifact.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-13",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What is a Security Copilot agent?",
+    "choices": [
+      "An autonomous Copilot worker that runs a security task end-to-end without step-by-step prompting",
+      "A human analyst assigned to Tier-2 triage",
+      "A saved prompt sequence a user runs manually each time",
+      "A Sentinel data connector"
+    ],
+    "correctAnswers": ["An autonomous Copilot worker that runs a security task end-to-end without step-by-step prompting"],
+    "explanation": "Agents (from Microsoft or the Security Store) run tasks like phishing triage autonomously; a manually run saved sequence is a promptbook, not an agent, and agents are software, not human analysts or data connectors.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-14",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which example best illustrates a Security Copilot agent rather than a promptbook?",
+    "choices": [
+      "A Phishing Triage agent that investigates and closes low-risk phishing reports without analyst intervention",
+      "An analyst manually running a saved 'incident investigation' prompt sequence each time a new incident appears",
+      "An analyst typing a one-off question into the Copilot prompt bar",
+      "A dashboard showing SCU consumption over time"
+    ],
+    "correctAnswers": ["A Phishing Triage agent that investigates and closes low-risk phishing reports without analyst intervention"],
+    "explanation": "The Phishing Triage example runs autonomously end-to-end, which defines an agent; a manually re-run saved sequence is a promptbook, a one-off question is just a standalone prompt, and SCU consumption is unrelated.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-15",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What is the standalone Security Copilot experience?",
+    "choices": [
+      "A dedicated Copilot portal with a free-form prompt bar and promptbooks",
+      "Copilot panels embedded inside the Defender portal",
+      "A read-only export of Sentinel incidents",
+      "A Teams bot with no data access"
+    ],
+    "correctAnswers": ["A dedicated Copilot portal with a free-form prompt bar and promptbooks"],
+    "explanation": "Standalone means the dedicated Copilot portal; panels inside other portals (like Defender) describe the embedded experience instead.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-16",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What is the embedded Security Copilot experience?",
+    "choices": [
+      "Copilot panels appearing inside other portals, such as Defender, Intune, Entra, or Purview",
+      "The dedicated standalone Copilot portal",
+      "A monthly PDF security report",
+      "A CLI tool for querying incidents"
+    ],
+    "correctAnswers": ["Copilot panels appearing inside other portals, such as Defender, Intune, Entra, or Purview"],
+    "explanation": "Embedded refers to Copilot surfaced inside existing product portals; the dedicated portal is the standalone experience, and a PDF report or CLI tool aren't how Copilot is delivered.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-17",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "An analyst asks Copilot to 'summarize this incident' directly from inside the Microsoft Defender portal. Which mode is this?",
+    "choices": [
+      "Embedded",
+      "Standalone",
+      "Agentic",
+      "Promptbook-only"
+    ],
+    "correctAnswers": ["Embedded"],
+    "explanation": "Asking from inside an existing product portal (Defender) is the embedded experience; standalone would mean using the dedicated Copilot portal instead, and 'agentic'/'promptbook-only' aren't the terms for this mode.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-18",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "An analyst opens the dedicated Security Copilot portal and runs a saved investigation promptbook. Which mode is this?",
+    "choices": [
+      "Standalone",
+      "Embedded",
+      "Contributor-restricted",
+      "Read-only"
+    ],
+    "correctAnswers": ["Standalone"],
+    "explanation": "Using the separate, dedicated Copilot portal is the standalone experience; embedded would mean staying inside another product's portal instead.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-19",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Copilot appears unable to see certain incident data for a user. What should be checked first?",
+    "choices": [
+      "Whether the relevant plugin is enabled and whether the user has rights to that data",
+      "Whether the model needs retraining",
+      "Whether the tenant needs a new Azure region",
+      "Whether the user's SCU quota is set to zero"
+    ],
+    "correctAnswers": ["Whether the relevant plugin is enabled and whether the user has rights to that data"],
+    "explanation": "Copilot's visibility is bounded by enabled plugins and the querying user's existing permissions — that's the first thing to check, not model retraining, region, or (usually) SCU quota.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-20",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Does Security Copilot bypass a user's existing RBAC permissions to answer a question?",
+    "choices": [
+      "No — its answers are governed by the user's existing permissions and enabled plugins",
+      "Yes — Copilot has its own elevated identity that ignores RBAC",
+      "Yes, but only for Global Administrators",
+      "Only if the owner role grants a bypass setting"
+    ],
+    "correctAnswers": ["No — its answers are governed by the user's existing permissions and enabled plugins"],
+    "explanation": "Copilot never bypasses RBAC; it can only surface data the requesting user (via enabled plugins) is already permitted to see — there's no bypass setting, even for owners or admins.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-21",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which role would be needed to enable a new third-party plugin for the whole tenant's Security Copilot instance?",
+    "choices": [
+      "Owner",
+      "Contributor",
+      "Reader",
+      "Any authenticated Entra user"
+    ],
+    "correctAnswers": ["Owner"],
+    "explanation": "Enabling/managing plugins is an administrative action reserved for the owner role; contributor and general users can only consume Copilot, not reconfigure its plugins.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-22",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which task falls under 'usage,' appropriate for a contributor, rather than 'administration,' which needs an owner?",
+    "choices": [
+      "Running an investigation session and asking Copilot to explain a KQL query",
+      "Changing the default environment's data storage location",
+      "Reassigning who holds the owner role",
+      "Provisioning additional SCU capacity"
+    ],
+    "correctAnswers": ["Running an investigation session and asking Copilot to explain a KQL query"],
+    "explanation": "Running sessions and asking questions is day-to-day usage (contributor); changing environment/storage settings, reassigning owner, and provisioning capacity are administrative actions requiring owner.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-23",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What kind of natural-language request is Copilot well suited to answer about a piece of KQL?",
+    "choices": [
+      "Explaining what the query does in plain language",
+      "Automatically rewriting all Sentinel analytics rules",
+      "Granting the querying user new RBAC permissions",
+      "Deleting the underlying Log Analytics workspace"
+    ],
+    "correctAnswers": ["Explaining what the query does in plain language"],
+    "explanation": "Explaining a query in natural language is a core Copilot capability; it doesn't rewrite analytics rules, grant permissions, or delete infrastructure.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-24",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "A team wants a consistent, repeatable multi-step phishing-investigation workflow that any analyst can trigger the same way each time. What should they build or use?",
+    "choices": [
+      "A promptbook",
+      "A one-off free-form prompt each time",
+      "An Azure Policy initiative",
+      "A Key Vault access policy"
+    ],
+    "correctAnswers": ["A promptbook"],
+    "explanation": "Promptbooks exist precisely to standardize repeatable multi-step investigations; ad hoc free-form prompts vary each time, and Policy/Key Vault are unrelated governance tools.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-25",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "A team wants low-risk phishing reports triaged and closed automatically with zero analyst prompting. What should they deploy?",
+    "choices": [
+      "An autonomous agent, such as a Phishing Triage agent",
+      "A promptbook run manually by an analyst",
+      "A Sentinel automation rule alone",
+      "A Defender for Cloud workload protection plan"
+    ],
+    "correctAnswers": ["An autonomous agent, such as a Phishing Triage agent"],
+    "explanation": "Zero-prompting, end-to-end automation is exactly what an autonomous agent provides; a promptbook still needs a human to trigger it, and Sentinel automation rules/Defender workload plans don't perform Copilot-style AI triage.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-26",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Where can autonomous Security Copilot agents come from?",
+    "choices": [
+      "Microsoft or the Security Store",
+      "Only from a custom in-house build process, never Microsoft",
+      "Only from third-party marketplaces unrelated to Microsoft",
+      "They cannot be added — only promptbooks can be added"
+    ],
+    "correctAnswers": ["Microsoft or the Security Store"],
+    "explanation": "Agents can be Microsoft-built or sourced from the Security Store; the other options wrongly exclude Microsoft or agents entirely.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-27",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "What must be true before Copilot can summarize Sentinel incidents for a given analyst?",
+    "choices": [
+      "The Sentinel plugin must be enabled and the analyst must already have permission to view that incident data",
+      "The analyst must be assigned the Copilot owner role",
+      "The tenant must disable RBAC for Sentinel",
+      "The analyst must first export the incident to a promptbook"
+    ],
+    "correctAnswers": ["The Sentinel plugin must be enabled and the analyst must already have permission to view that incident data"],
+    "explanation": "Plugin enablement plus the analyst's existing Sentinel permissions are the gating factors; owner role isn't needed just to use Copilot, RBAC is never disabled, and exporting to a promptbook isn't a prerequisite.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-28",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Which statement best distinguishes an SCU capacity decision from a role assignment decision in Security Copilot administration?",
+    "choices": [
+      "SCU capacity controls the throughput/cost of Copilot usage; role assignments (owner/contributor) control who can administer versus use it",
+      "They are the same setting configured in one place",
+      "SCU capacity determines which plugins are visible",
+      "Role assignments determine how many SCUs are provisioned"
+    ],
+    "correctAnswers": ["SCU capacity controls the throughput/cost of Copilot usage; role assignments (owner/contributor) control who can administer versus use it"],
+    "explanation": "SCU capacity and role assignments are independent controls — one governs compute/cost, the other governs administrative vs usage access; neither directly determines the other.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-29",
+    "objectiveId": "o4-3",
+    "type": "multiple",
+    "prompt": "Which two are true about Security Copilot's owner role? (Choose two.)",
+    "choices": [
+      "It can manage plugins",
+      "It can manage provisioned SCU capacity",
+      "It is required just to run an investigation session",
+      "It is the only role that can view incident summaries"
+    ],
+    "correctAnswers": ["It can manage plugins", "It can manage provisioned SCU capacity"],
+    "explanation": "Owner manages plugins and capacity; running sessions and viewing summaries only require contributor, not owner.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-30",
+    "objectiveId": "o4-3",
+    "type": "multiple",
+    "prompt": "Which two statements correctly distinguish standalone from embedded Security Copilot? (Choose two.)",
+    "choices": [
+      "Standalone is the dedicated Copilot portal with a free-form prompt bar",
+      "Embedded surfaces Copilot panels inside products like Defender or Purview",
+      "Embedded requires switching to a separate portal",
+      "Standalone cannot use promptbooks"
+    ],
+    "correctAnswers": ["Standalone is the dedicated Copilot portal with a free-form prompt bar", "Embedded surfaces Copilot panels inside products like Defender or Purview"],
+    "explanation": "These correctly define the two modes; embedded specifically avoids switching portals (the opposite of what's stated), and promptbooks are available in standalone.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-31",
+    "objectiveId": "o4-3",
+    "type": "multiple",
+    "prompt": "Which two statements about how Copilot's answers are governed are correct? (Choose two.)",
+    "choices": [
+      "Answers are bounded by the querying user's existing RBAC permissions",
+      "Answers depend on which plugins are enabled",
+      "Copilot has an elevated identity that bypasses RBAC",
+      "The owner role grants Copilot the ability to ignore data permissions"
+    ],
+    "correctAnswers": ["Answers are bounded by the querying user's existing RBAC permissions", "Answers depend on which plugins are enabled"],
+    "explanation": "Copilot never bypasses RBAC, and there's no owner setting to ignore data permissions — visibility is strictly a function of the user's permissions and the enabled plugins.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-32",
+    "objectiveId": "o4-3",
+    "type": "case-study",
+    "caseStudyId": "cs-relecloud-posture",
+    "prompt": "Referring to requirement 7 (analysts must ask, in natural language, to summarize an incident and explain a KQL query, from inside the existing investigation portal), which Security Copilot mode fits?",
+    "choices": [
+      "Embedded Security Copilot inside the existing Defender/Sentinel investigation portal",
+      "Standalone Security Copilot in a separate browser tab",
+      "A Sentinel automation rule",
+      "A Defender for Cloud workflow automation"
+    ],
+    "correctAnswers": ["Embedded Security Copilot inside the existing Defender/Sentinel investigation portal"],
+    "explanation": "'From inside the existing investigation portal, without switching tools' describes the embedded experience; standalone means a separate portal, and automation rules/workflow automation don't provide natural-language Q&A.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-33",
+    "objectiveId": "o4-3",
+    "type": "case-study",
+    "caseStudyId": "cs-relecloud-posture",
+    "prompt": "Still referring to requirement 7, which plugins must be enabled for Copilot to reason about the Sentinel incident and its underlying KQL query?",
+    "choices": [
+      "The Sentinel (and related Defender XDR) plugins",
+      "Only the Purview plugin",
+      "Only the Intune plugin",
+      "No plugins are required — Copilot reasons independently of source data"
+    ],
+    "correctAnswers": ["The Sentinel (and related Defender XDR) plugins"],
+    "explanation": "Copilot needs the relevant product plugin(s) — here Sentinel/Defender XDR — enabled to reach the incident and query data; Purview/Intune plugins are for different data domains, and Copilot always relies on plugins to reach source data.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-34",
+    "objectiveId": "o4-3",
+    "type": "case-study",
+    "caseStudyId": "cs-relecloud-posture",
+    "prompt": "Still referring to requirement 7, if an analyst with only Security Copilot contributor access, but no Sentinel incident-view permission, asks Copilot to summarize a specific incident, what happens?",
+    "choices": [
+      "Copilot cannot surface that incident's details, because its answers are bounded by the analyst's existing Sentinel permissions",
+      "Copilot summarizes it anyway, since Copilot access overrides Sentinel RBAC",
+      "Copilot automatically grants the analyst Sentinel Reader to answer the question",
+      "Copilot summarizes only if the analyst is also a Security Copilot owner"
+    ],
+    "correctAnswers": ["Copilot cannot surface that incident's details, because its answers are bounded by the analyst's existing Sentinel permissions"],
+    "explanation": "Copilot respects the analyst's existing RBAC — lacking Sentinel view rights means Copilot cannot surface that incident's data; it never overrides RBAC or auto-grants roles, and the Copilot owner role is about administering Copilot, not a workaround for missing Sentinel permissions.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-3-35",
+    "objectiveId": "o4-3",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o4-3",
+    "prompt": "Proposed solution: Enable the embedded Security Copilot experience inside the Microsoft Defender portal, with the Defender XDR and Sentinel plugins turned on. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["Yes"],
+    "explanation": "This lets analysts ask natural-language questions about incidents and KQL queries directly inside the existing investigation portal, with the necessary plugins enabled to reach the data.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-o4-3-36",
+    "objectiveId": "o4-3",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o4-3",
+    "prompt": "Proposed solution: Direct analysts to open the standalone Security Copilot portal in a separate browser tab and paste incident details manually for summarization. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "This requires switching tools and manually copy-pasting data, which fails the requirement of working 'from directly inside the existing investigation portal.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-37",
+    "objectiveId": "o4-3",
+    "type": "solution-goal",
+    "caseStudyId": "sg-o4-3",
+    "prompt": "Proposed solution: Grant every analyst the Security Copilot owner role so they can query incidents and explain KQL from within Defender. Does this solution meet the goal?",
+    "choices": ["Yes", "No"],
+    "correctAnswers": ["No"],
+    "explanation": "Owner administers plugins/capacity/roles; querying incidents and explaining KQL only requires contributor plus the right plugins enabled and Copilot embedded in the portal — granting owner is unnecessary over-privileging and doesn't by itself embed Copilot in the portal.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-38",
+    "objectiveId": "o4-3",
+    "type": "reorder",
+    "prompt": "Order the steps for the first-time setup of Microsoft Security Copilot.",
+    "reorderItems": [
+      "Provision/assign SCU capacity in Azure (Create a resource ▸ Microsoft Security Copilot ▸ capacity)",
+      "Open the Security Copilot portal for the first time",
+      "Set the default capacity, environment/geo, and data-sharing options",
+      "Assign owner and contributor roles under Settings ▸ Role assignments",
+      "Enable the required Microsoft plugins (Defender XDR, Sentinel, Entra, Intune, Purview) under Settings ▸ Plugins"
+    ],
+    "explanation": "Capacity must be provisioned in Azure before the portal has anything to run on; the first launch configures the default environment, after which roles and plugins are set up.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-39",
+    "objectiveId": "o4-3",
+    "type": "reorder",
+    "prompt": "Order the steps to run a promptbook-based investigation in standalone Security Copilot.",
+    "reorderItems": [
+      "Open the standalone Security Copilot portal",
+      "Select or search for a relevant promptbook (e.g. incident investigation)",
+      "Provide the required inputs (e.g. an incident ID)",
+      "Run the promptbook and review the generated multi-step summary",
+      "Take follow-up action in Sentinel or Defender based on the findings"
+    ],
+    "explanation": "You first reach the standalone portal, locate the right promptbook, supply its inputs, run it, and then act on its output in the underlying product.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-3-40",
+    "objectiveId": "o4-3",
+    "type": "active-screen",
+    "prompt": "Configure this simplified Security Copilot settings screen so a SOC analyst can run investigation sessions and use promptbooks, but cannot change which plugins are enabled tenant-wide.",
+    "screenTitle": "Security Copilot role assignment (simulated)",
+    "fields": [
+      { "id": "role", "label": "Role", "kind": "select", "options": ["Owner", "Contributor"], "correctValue": "Contributor" },
+      { "id": "managePlugins", "label": "Can manage plugins", "kind": "toggle", "correctValue": "Off" }
+    ],
+    "explanation": "Contributor covers running sessions and using promptbooks without the plugin/capacity/role administration rights that only Owner holds — plugin management should stay off for this analyst.",
+    "difficulty": "medium"
+  }
+]
