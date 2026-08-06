@@ -1,317 +1,436 @@
 [
   {
-    "id": "q-o4-1-01",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-01",
     "type": "single",
     "prompt": "What best describes Microsoft Defender for Cloud (MDC)?",
     "choices": [
-      "A CNAPP that combines cloud security posture management (CSPM) with cloud workload protection (CWP)",
-      "A SIEM that only stores and queries security logs",
-      "An identity governance tool for just-in-time role activation",
-      "A network firewall service for inspecting east-west traffic"
+      "A CNAPP combining posture management with workload protection",
+      "An identity governance tool for just-in-time role activation and review",
+      "A network firewall service for inspecting east-west traffic",
+      "A SIEM that only stores and queries security log data"
     ],
-    "correctAnswers": ["A CNAPP that combines cloud security posture management (CSPM) with cloud workload protection (CWP)"],
-    "explanation": "MDC is a CNAPP unifying CSPM (configuration posture) and CWP (runtime threat protection); it is not a SIEM, a PIM tool, or a firewall.",
+    "correctAnswers": [
+      "A CNAPP combining posture management with workload protection"
+    ],
+    "explanation": "Defender for Cloud is both halves at once: posture management asks whether you are configured safely, workload protection asks whether you are under attack. The SIEM option is the tempting neighbour and describes Microsoft Sentinel, whereas Defender for Cloud produces the alerts a SIEM would then correlate rather than storing and querying logs itself.",
+    "skillRef": "d4a3",
     "difficulty": "easy"
   },
   {
+    "src": "kb-dfc",
+    "objectiveId": "o4-1",
     "id": "q-o4-1-02",
-    "objectiveId": "o4-1",
-    "type": "single",
-    "prompt": "In the CSPM vs CWP framing, which question does CSPM answer?",
-    "choices": [
-      "Are we configured safely?",
-      "Are we being attacked right now?",
-      "Which internet-facing assets do we own?",
-      "Which CVEs exist on our container images?"
+    "type": "drag-match",
+    "prompt": "Four security questions, four capabilities. Assign the one that answers each; two capabilities in the list answer none of them.",
+    "sources": [
+      "Secure Score",
+      "A Defender workload protection plan",
+      "External Attack Surface Management",
+      "Microsoft Defender Vulnerability Management",
+      "The regulatory compliance dashboard",
+      "Microsoft Sentinel automation rules"
     ],
-    "correctAnswers": ["Are we configured safely?"],
-    "explanation": "CSPM continuously evaluates configuration against best practices/benchmarks — 'are we configured safely?'. 'Are we being attacked now?' is CWP; the other two describe EASM and MDVM respectively.",
-    "difficulty": "easy"
+    "targets": [
+      {
+        "id": "t1",
+        "label": "Are we configured safely? — one impact-weighted percentage across the estate",
+        "correctSource": "Secure Score"
+      },
+      {
+        "id": "t2",
+        "label": "Are we being attacked right now? — runtime alerts for a given resource type",
+        "correctSource": "A Defender workload protection plan"
+      },
+      {
+        "id": "t3",
+        "label": "Which internet-facing assets do we own, including ones nobody remembers?",
+        "correctSource": "External Attack Surface Management"
+      },
+      {
+        "id": "t4",
+        "label": "Which known CVEs exist on our machines and container images?",
+        "correctSource": "Microsoft Defender Vulnerability Management"
+      }
+    ],
+    "explanation": "The first two are the CSPM and CWP halves of the product and the split is worth internalizing: posture is a configuration question answered continuously, workload protection is an attack question answered in real time. The other two narrow further — EASM looks inward from outside, MDVM looks at software versions. Neither unused capability is a discovery tool: the compliance dashboard maps posture to a standard, and automation rules act on incidents that already exist.",
+    "skillRef": "d4a6",
+    "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-03",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-03",
     "type": "single",
     "prompt": "Which question does CWP (workload protection) answer?",
     "choices": [
       "Are we being attacked right now?",
-      "Are we configured safely?",
+      "Are we configured safely across the estate today?",
       "What does our Secure Score currently show?",
-      "Which regulatory standards are we compliant with?"
+      "Which standards are we compliant with?"
     ],
-    "correctAnswers": ["Are we being attacked right now?"],
-    "explanation": "CWP plans provide runtime threat detection and alerting per resource type — the 'are we under attack' half of the CNAPP; the others describe CSPM outputs.",
+    "correctAnswers": [
+      "Are we being attacked right now?"
+    ],
+    "explanation": "Workload protection is the runtime half and produces alerts as events happen. The configuration question is CSPM, and Secure Score is how CSPM reports itself, whereas neither says anything about an attack in progress — two of the distractors are therefore the same half of the product asked in two ways.",
+    "skillRef": "d4a3",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-1-04",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-04",
     "type": "single",
     "prompt": "Which environments can Microsoft Defender for Cloud govern?",
     "choices": [
-      "Azure, AWS, GCP, and on-premises resources connected via Azure Arc",
-      "Azure only",
-      "Azure and AWS only — GCP is not supported",
-      "Any cloud, but only if Microsoft Sentinel is also deployed"
+      "Azure, AWS, GCP, and on-premises resources connected via Arc",
+      "Any cloud, but only if Microsoft Sentinel is also deployed there",
+      "Azure and AWS only, since GCP is not supported at all",
+      "Azure subscriptions only, and nothing outside them"
     ],
-    "correctAnswers": ["Azure, AWS, GCP, and on-premises resources connected via Azure Arc"],
-    "explanation": "MDC extends across Azure, AWS, GCP and, via Arc, on-premises/hybrid machines — Sentinel is a separate product and not a prerequisite.",
+    "correctAnswers": [
+      "Azure, AWS, GCP, and on-premises resources connected via Arc"
+    ],
+    "explanation": "Multicloud is native: AWS and GCP connect through their own identity federation, and anything else arrives via Arc. The Sentinel-dependency option is the tempting one because the two products are usually discussed together, whereas they are independent — Defender for Cloud governs posture with or without a SIEM.",
+    "skillRef": "d4a4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-05",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-05",
     "type": "single",
     "prompt": "What is the Secure Score in Microsoft Defender for Cloud?",
     "choices": [
-      "A single percentage summarizing how many impact-weighted security recommendations have been satisfied",
-      "A count of open Sentinel incidents",
-      "A per-resource CVE severity rating",
-      "The number of Defender plans currently enabled"
+      "A percentage summarizing how many weighted recommendations pass",
+      "The number of Defender plans currently enabled on the subscription",
+      "A count of the security incidents currently open in Sentinel",
+      "A per-resource severity rating for each discovered CVE"
     ],
-    "correctAnswers": ["A single percentage summarizing how many impact-weighted security recommendations have been satisfied"],
-    "explanation": "Secure Score aggregates completed recommendations, weighted by their security impact, into one percentage — it isn't an incident count, a CVE score, or a plan counter.",
+    "correctAnswers": [
+      "A percentage summarizing how many weighted recommendations pass"
+    ],
+    "explanation": "Secure Score aggregates recommendations weighted by impact, so it measures configuration rather than activity. Counting enabled Defender plans is the tempting proxy and measures spend instead of posture — a subscription can have every plan on and a poor score, which is exactly the confusion the score exists to prevent.",
+    "skillRef": "d4a5",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-1-06",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-06",
     "type": "single",
     "prompt": "Recommendations in Defender for Cloud are grouped into security controls. When does a control contribute its points to the Secure Score?",
     "choices": [
       "Only when every resource covered by that control is healthy",
-      "As soon as any single resource in the control is healthy",
-      "Automatically after 30 days regardless of resource state",
-      "Only after a Defender plan is purchased for that control"
+      "Only after a Defender plan is purchased for that control area",
+      "Automatically after 30 days, whatever the resource state",
+      "As soon as any single resource in the control is healthy"
     ],
-    "correctAnswers": ["Only when every resource covered by that control is healthy"],
-    "explanation": "A control earns its points only when ALL in-scope resources satisfy it — partial remediation across a control yields zero points, which is why full Secure Score gains require the control to be entirely healthy.",
+    "correctAnswers": [
+      "Only when every resource covered by that control is healthy"
+    ],
+    "explanation": "A control is all-or-nothing, which is why fixing nine of ten resources moves the score not at all and finishing the tenth moves it in one step. Expecting partial credit is the tempting model and it makes remediation look ineffective — the practical consequence is to finish a control rather than to spread effort across several.",
+    "skillRef": "d4a3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-07",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-07",
     "type": "single",
     "prompt": "What is the most effective way to raise Secure Score quickly?",
     "choices": [
       "Remediate the highest-impact recommendations first",
-      "Remediate recommendations in alphabetical order",
+      "Remediate the recommendations in alphabetical order",
       "Enable every paid Defender plan immediately",
-      "Disable low-scoring resources from the inventory"
+      "Remove low-scoring resources from the inventory"
     ],
-    "correctAnswers": ["Remediate the highest-impact recommendations first"],
-    "explanation": "Since points are weighted by impact, tackling high-impact recommendations first raises the score fastest; alphabetical order is arbitrary, enabling paid CWP plans doesn't directly move the CSPM score, and hiding resources doesn't fix posture.",
+    "correctAnswers": [
+      "Remediate the highest-impact recommendations first"
+    ],
+    "explanation": "Recommendations are impact-weighted, so the order in which you work through them changes how fast the score moves. Enabling every paid plan is the tempting shortcut because it feels like buying security, whereas plans add detection rather than satisfying recommendations and the score barely responds.",
+    "skillRef": "d4a3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-08",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-08",
     "type": "single",
     "prompt": "What does the free, foundational CSPM tier include by default for every Azure subscription?",
     "choices": [
-      "Secure Score, asset inventory, and Microsoft Cloud Security Benchmark recommendations",
-      "Attack path analysis and cloud security explorer",
-      "Agentless malware scanning of VM disks",
-      "External Attack Surface Management insights"
+      "Secure Score, asset inventory, and MCSB recommendations",
+      "External Attack Surface Management insights and discovery",
+      "Agentless malware scanning of the virtual machine disks",
+      "Attack path analysis and the cloud security explorer"
     ],
-    "correctAnswers": ["Secure Score, asset inventory, and Microsoft Cloud Security Benchmark recommendations"],
-    "explanation": "The free tier ships Secure Score, inventory, and MCSB-based recommendations automatically; attack path analysis, cloud security explorer, agentless scanning, and EASM insights are Defender CSPM (paid) additions.",
+    "correctAnswers": [
+      "Secure Score, asset inventory, and MCSB recommendations"
+    ],
+    "explanation": "The free tier gives you the score, the inventory and the benchmark recommendations, which is enough to know where you stand without buying anything. Attack path analysis and the cloud security explorer are the tempting additions and are exactly what the paid Defender CSPM plan adds — the line between the two tiers is the most-tested fact in this objective.",
+    "skillRef": "d4a6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-09",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-09",
     "type": "single",
     "prompt": "A subscription has never enabled any paid Defender plan. Which capability is still available?",
     "choices": [
-      "Secure Score and baseline MCSB recommendations",
-      "Attack path analysis",
-      "Cloud security explorer queries",
-      "Agentless vulnerability and malware scanning"
+      "Secure Score and the baseline MCSB recommendations",
+      "Agentless vulnerability and malware scanning of disks",
+      "Attack path analysis across the estate",
+      "Cloud security explorer graph queries"
     ],
-    "correctAnswers": ["Secure Score and baseline MCSB recommendations"],
-    "explanation": "Foundational CSPM (free) is active by default, so Secure Score/MCSB recommendations already work; the other three require the paid Defender CSPM plan.",
+    "correctAnswers": [
+      "Secure Score and the baseline MCSB recommendations"
+    ],
+    "explanation": "Foundational CSPM is on by default and costs nothing, so the score and the benchmark recommendations are always there. Agentless scanning is the tempting answer because it needs no agent and therefore feels free, whereas \"no agent\" is about deployment rather than licensing — it requires a paid plan.",
+    "skillRef": "d4a1",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-1-10",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-10",
     "type": "single",
     "prompt": "Which of the following is added specifically by the paid Defender CSPM plan, not the free tier?",
     "choices": [
-      "Cloud security explorer",
-      "Secure Score",
-      "Asset inventory",
-      "MCSB baseline recommendations"
+      "The cloud security explorer",
+      "MCSB baseline recommendations",
+      "The asset inventory view",
+      "Secure Score percentage"
     ],
-    "correctAnswers": ["Cloud security explorer"],
-    "explanation": "Cloud security explorer is a Defender CSPM feature; Secure Score, inventory, and MCSB recommendations are already part of the free foundational tier.",
+    "correctAnswers": [
+      "The cloud security explorer"
+    ],
+    "explanation": "The explorer runs graph queries over the security graph, and that graph is what the paid plan builds. The MCSB recommendations are the tempting answer because the benchmark sounds like a premium feature, whereas it is the default standard every subscription is scored against for free.",
+    "skillRef": "d4a1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-11",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-11",
     "type": "single",
     "prompt": "What does attack path analysis in Defender CSPM provide?",
     "choices": [
-      "A visualization of exploitable chains connecting exposed resources to sensitive assets",
-      "A list of missing patches on a single VM",
-      "A pass/fail compliance report against ISO 27001",
-      "A record of AWS IAM role trust relationships only"
+      "A visualization of exploitable chains from exposure to sensitive assets",
+      "A pass or fail compliance report against the ISO 27001 standard controls",
+      "A list of the missing patches on one individual virtual machine",
+      "A record of AWS IAM role trust relationships, and nothing else"
     ],
-    "correctAnswers": ["A visualization of exploitable chains connecting exposed resources to sensitive assets"],
-    "explanation": "Attack path analysis maps realistic exploitation chains across resources (e.g., an internet-exposed VM reaching a database with sensitive data); patch lists are MDVM's job, and compliance pass/fail is the regulatory dashboard.",
+    "correctAnswers": [
+      "A visualization of exploitable chains from exposure to sensitive assets"
+    ],
+    "explanation": "The value is the chain rather than the individual finding: an exposed VM plus a vulnerability plus a path to sensitive data is a different priority from any of the three alone. The single-VM patch list is the tempting answer and is what MDVM produces, whereas it says nothing about what that VM can reach.",
+    "skillRef": "d4a5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-12",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-12",
     "type": "single",
     "prompt": "What is the cloud security explorer used for?",
     "choices": [
-      "Running graph queries across your security posture to find specific risk combinations",
-      "Editing Azure Policy definitions",
-      "Managing Sentinel automation rules",
-      "Rotating Key Vault keys automatically"
+      "Running graph queries over your posture to find risk combinations",
+      "Managing the automation rules and the playbooks in Microsoft Sentinel",
+      "Editing the Azure Policy definitions assigned in a subscription",
+      "Rotating the keys held in Key Vault automatically"
     ],
-    "correctAnswers": ["Running graph queries across your security posture to find specific risk combinations"],
-    "explanation": "The cloud security explorer lets you query a security graph (e.g., internet-exposed VMs with a known vulnerability that can reach a database holding sensitive data) — a Defender CSPM capability unrelated to Policy editing, Sentinel automation, or Key Vault rotation.",
+    "correctAnswers": [
+      "Running graph queries over your posture to find risk combinations"
+    ],
+    "explanation": "The explorer is the query interface to the same graph attack path analysis draws on, which is what lets you ask for a combination nobody wrote a recommendation for. Editing Policy definitions is the tempting neighbour because both concern configuration, whereas Policy changes what is enforced and the explorer only asks questions.",
+    "skillRef": "d4a1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-13",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-13",
     "type": "single",
     "prompt": "A security team wants to find 'internet-exposed VMs with a known vulnerability that can reach a database containing sensitive data.' Which capability and tier delivers this?",
     "choices": [
-      "Attack path analysis / cloud security explorer, which requires Defender CSPM",
-      "Asset inventory, available in the free tier",
-      "Regulatory compliance dashboard, available in the free tier",
-      "Microsoft Defender Vulnerability Management alone"
+      "Attack path analysis or cloud security explorer, in Defender CSPM",
+      "The asset inventory, which is available in the free foundational tier",
+      "The regulatory compliance dashboard, available in the free tier",
+      "Microsoft Defender Vulnerability Management on its own"
     ],
-    "correctAnswers": ["Attack path analysis / cloud security explorer, which requires Defender CSPM"],
-    "explanation": "This exact exploit-chain query is the signature attack-path/cloud-security-explorer scenario, which needs the paid Defender CSPM plan — free-tier inventory and the compliance dashboard don't chain risk across resources, and MDVM alone finds CVEs but doesn't map reachability to sensitive data.",
+    "correctAnswers": [
+      "Attack path analysis or cloud security explorer, in Defender CSPM"
+    ],
+    "explanation": "The question joins three facts about three different resources, which only a graph can answer — and the graph comes with the paid plan. MDVM alone is the tempting answer because it supplies the vulnerability half, whereas it cannot express exposure or reachability, so it would return every vulnerable VM rather than the few that matter.",
+    "skillRef": "d4a5",
     "difficulty": "hard"
   },
   {
-    "id": "q-o4-1-14",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-14",
     "type": "single",
     "prompt": "What is the Microsoft Cloud Security Benchmark (MCSB)?",
     "choices": [
-      "The default built-in standard Defender for Cloud scores your environment against before you add others",
-      "A paid add-on standard you must purchase separately",
-      "A replacement for ISO 27001 and PCI-DSS assessments",
-      "A Sentinel analytics rule template pack"
+      "The built-in default standard your environment is scored against",
+      "A pack of analytics rule templates for Microsoft Sentinel content",
+      "A paid add-on standard that must be purchased separately",
+      "A replacement for the ISO 27001 and PCI-DSS assessments"
     ],
-    "correctAnswers": ["The default built-in standard Defender for Cloud scores your environment against before you add others"],
-    "explanation": "MCSB is applied by default as the baseline; you add regulatory standards like ISO 27001 or PCI-DSS on top of it, you don't purchase it separately, and it isn't a Sentinel artifact.",
+    "correctAnswers": [
+      "The built-in default standard your environment is scored against"
+    ],
+    "explanation": "MCSB is assigned by default and is what Secure Score reflects before you add any other standard. Reading it as a replacement for ISO 27001 or PCI-DSS is the misconception that matters commercially: those are added alongside it in the regulatory compliance dashboard, whereas MCSB never satisfies an external auditor on its own.",
+    "skillRef": "d4a2",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-1-15",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-15",
     "type": "single",
     "prompt": "What does the regulatory compliance dashboard in Defender for Cloud do?",
     "choices": [
-      "Maps your environment's state against formal standards like ISO 27001, PCI-DSS, or NIST, with pass/fail evidence per control",
-      "Lists every CVE affecting your container images",
-      "Shows the trust relationship between your Azure tenant and connected AWS accounts",
-      "Calculates the SCU consumption of Security Copilot"
+      "Maps your estate against formal standards, with per-control evidence",
+      "Calculates the Security Compute Unit consumption of Microsoft Security Copilot",
+      "Lists every CVE affecting the container images in your registries",
+      "Shows the trust relationship between your tenant and AWS accounts"
     ],
-    "correctAnswers": ["Maps your environment's state against formal standards like ISO 27001, PCI-DSS, or NIST, with pass/fail evidence per control"],
-    "explanation": "The dashboard's job is standards mapping with audit-ready pass/fail evidence; CVE listings are MDVM, AWS trust relationships relate to multicloud connectors, and SCU consumption is a Security Copilot concept.",
+    "correctAnswers": [
+      "Maps your estate against formal standards, with per-control evidence"
+    ],
+    "explanation": "Each control shows pass or fail with the resources behind the verdict, which is what makes it usable as audit evidence rather than as a dashboard. The CVE list is the tempting answer because it is also a compliance concern, whereas vulnerabilities are MDVM findings and appear nowhere in a control-by-control assessment.",
+    "skillRef": "d4a5",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-1-16",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
-    "type": "single",
-    "prompt": "Where do you add a new compliance standard such as PCI-DSS v4 to be evaluated against a subscription?",
-    "choices": [
-      "Defender for Cloud ▸ Regulatory compliance ▸ Manage compliance policies ▸ Security policies ▸ Add more standards",
-      "Microsoft Sentinel ▸ Content hub ▸ Solutions",
-      "Microsoft Entra admin center ▸ Identity Governance",
-      "Azure Monitor ▸ Data Collection Rules"
+    "id": "q-o4-1-16",
+    "type": "dropdown-sentence",
+    "prompt": "Complete the statement describing how a new compliance standard such as PCI-DSS v4 is added and scoped.",
+    "template": "A standard is added under [[b1]], and it can be assigned at [[b2]].",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "Defender for Cloud ▸ Regulatory compliance ▸ Manage compliance policies",
+          "Microsoft Sentinel ▸ Content hub ▸ Solutions",
+          "Microsoft Entra admin center ▸ Identity Governance",
+          "Azure Monitor ▸ Data Collection Rules"
+        ],
+        "correctValue": "Defender for Cloud ▸ Regulatory compliance ▸ Manage compliance policies"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "a management group or a subscription",
+          "an individual resource only",
+          "the tenant root only, with no narrower scope",
+          "a resource group only"
+        ],
+        "correctValue": "a management group or a subscription"
+      }
     ],
-    "correctAnswers": ["Defender for Cloud ▸ Regulatory compliance ▸ Manage compliance policies ▸ Security policies ▸ Add more standards"],
-    "explanation": "Adding/assigning compliance standards happens in Defender for Cloud's Regulatory compliance blade; the other locations manage Sentinel content, identity governance, and telemetry collection — unrelated to compliance standard assignment.",
+    "explanation": "The scope is the half people get wrong: a standard is assigned at a management group or a subscription, never at a resource group or a single resource — so an estate that needs PCI-DSS on part of itself is organized by subscription rather than by resource group. The Sentinel Content hub is the tempting path because that is where analytics content is added, whereas compliance standards live in Defender for Cloud.",
+    "skillRef": "d4a2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-17",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-17",
     "type": "single",
     "prompt": "At what scope can a regulatory compliance standard be assigned in Defender for Cloud?",
     "choices": [
       "A management group or a subscription",
-      "Only an individual resource",
-      "Only the tenant root, with no narrower scope",
-      "Only a resource group"
+      "The tenant root only, with no narrower scope",
+      "An individual resource, and nothing wider",
+      "A resource group, and nothing wider"
     ],
-    "correctAnswers": ["A management group or a subscription"],
-    "explanation": "Compliance standards are assigned at management group or subscription scope, not at individual resource or resource-group granularity, and narrower-than-subscription scoping isn't offered for this feature.",
+    "correctAnswers": [
+      "A management group or a subscription"
+    ],
+    "explanation": "Assignment happens at a management group or a subscription, which is why compliance boundaries have to line up with subscription structure. The resource-group option is the tempting one because that is the usual unit of Azure governance, whereas compliance standards deliberately sit above it.",
+    "skillRef": "d4a2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-18",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-18",
     "type": "single",
     "prompt": "Why does the regulatory compliance dashboard double as audit preparation?",
     "choices": [
-      "Each control shows pass/fail status with supporting evidence that maps directly to audit requirements",
+      "Each control shows pass or fail with evidence an auditor can use",
+      "It disables non-compliant resources until they have been corrected",
       "It automatically generates a signed compliance certificate",
-      "It disables non-compliant resources until they are fixed",
-      "It only reports on Azure, so multicloud audits are out of scope"
+      "It reports only on Azure, so a multicloud audit is out of scope"
     ],
-    "correctAnswers": ["Each control shows pass/fail status with supporting evidence that maps directly to audit requirements"],
-    "explanation": "The per-control pass/fail plus evidence is exactly what auditors need; the dashboard doesn't issue certificates, doesn't auto-remediate/disable resources, and does cover connected AWS/GCP environments too.",
+    "correctAnswers": [
+      "Each control shows pass or fail with evidence an auditor can use"
+    ],
+    "explanation": "The dashboard produces per-control evidence, which is the artefact an audit actually asks for. The signed-certificate option is the tempting overreach: Defender for Cloud reports your state and never attests to it, so certification still comes from an auditor rather than from the portal.",
+    "skillRef": "d4a4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-19",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-19",
     "type": "single",
     "prompt": "What is a Defender workload protection ('Defender for X') plan?",
     "choices": [
-      "A per-resource-type threat-protection capability, such as Defender for Servers or Defender for Storage, that adds runtime alerts",
-      "A free CSPM recommendation set",
-      "A KQL query saved in Sentinel's Content hub",
-      "A Conditional Access policy scoped to a resource type"
+      "A per-resource-type threat-protection plan that adds runtime alerts",
+      "A free posture recommendation set applied to every subscription in scope",
+      "A Conditional Access policy scoped to one Azure resource type",
+      "A KQL query saved in the Microsoft Sentinel Content hub"
     ],
-    "correctAnswers": ["A per-resource-type threat-protection capability, such as Defender for Servers or Defender for Storage, that adds runtime alerts"],
-    "explanation": "Workload protection plans are the CWP half of MDC, delivering resource-type-specific alerts once toggled on — they are not free CSPM content, Sentinel artifacts, or Conditional Access policies.",
+    "correctAnswers": [
+      "A per-resource-type threat-protection plan that adds runtime alerts"
+    ],
+    "explanation": "Each plan is bought and toggled per resource type, and what it adds is detection at runtime. The free posture recommendation set is the tempting confusion with foundational CSPM, whereas that is the always-on configuration half — enabling a Defender plan changes what you are told about attacks rather than about misconfiguration.",
+    "skillRef": "d4a3",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-1-20",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-20",
     "type": "single",
     "prompt": "Where do you turn on a specific Defender plan, such as Defender for Storage, for a subscription?",
     "choices": [
-      "Defender for Cloud ▸ Environment settings ▸ select the subscription ▸ Defender plans ▸ toggle the plan on",
-      "Microsoft Sentinel ▸ Automation ▸ Create",
+      "Defender for Cloud ▸ Environment settings ▸ Defender plans",
+      "Microsoft Sentinel ▸ Automation ▸ Create a new automation rule",
       "Microsoft Entra admin center ▸ Roles and administrators",
-      "Azure Policy ▸ Assignments"
+      "Azure Policy ▸ Assignments ▸ Assign initiative"
     ],
-    "correctAnswers": ["Defender for Cloud ▸ Environment settings ▸ select the subscription ▸ Defender plans ▸ toggle the plan on"],
-    "explanation": "Per-resource Defender plans are toggled under Environment settings for the target subscription (or connected AWS/GCP account); the other locations manage Sentinel automation, Entra roles, and Azure Policy respectively.",
+    "correctAnswers": [
+      "Defender for Cloud ▸ Environment settings ▸ Defender plans"
+    ],
+    "explanation": "Every plan is enabled per environment under Environment settings, which is worth memorising because the path is identical for Storage, Servers, Containers and AI Services. Azure Policy is the tempting alternative since Defender plans can be enforced by policy, whereas the policy assigns the setting rather than being where the toggle lives.",
+    "skillRef": "d4a3",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-1-21",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-21",
     "type": "single",
     "prompt": "A team enables Defender for Servers on a subscription. What happens to Defender for Storage on the same subscription?",
     "choices": [
-      "It remains off — each Defender plan is a separate, independently billed toggle",
-      "It is enabled automatically at no extra cost",
-      "It is enabled automatically but billed separately",
-      "Defender for Servers cannot be enabled without also enabling Defender for Storage"
+      "It remains off — each plan is a separate, independently billed toggle",
+      "Defender for Servers cannot be enabled unless Defender for Storage is too",
+      "It is enabled automatically, but billed separately from Servers",
+      "It is enabled automatically, at no additional cost at all"
     ],
-    "correctAnswers": ["It remains off — each Defender plan is a separate, independently billed toggle"],
-    "explanation": "Defender plans are independent per-resource-type switches with their own billing — enabling one never auto-enables or requires another.",
+    "correctAnswers": [
+      "It remains off — each plan is a separate, independently billed toggle"
+    ],
+    "explanation": "Plans are independent, so enabling one leaves every other exactly as it was — which is how estates end up with storage accounts nobody is watching. Believing the plans imply one another is the assumption to remove, and neither dependency exists: Servers does not require Storage, and Storage is not switched on for free alongside it.",
+    "skillRef": "d4a3",
     "difficulty": "medium"
   },
   {
@@ -325,191 +444,264 @@
       "Choosing which Sentinel workspace to use",
       "Choosing the Secure Score weighting formula"
     ],
-    "correctAnswers": ["Choosing between Plan 1 and Plan 2 tiers"],
-    "explanation": "Defender for Servers exposes Plan 1/Plan 2 sub-options in its plan settings; regulatory standards, Sentinel workspace choice, and Secure Score weighting are unrelated settings elsewhere.",
+    "correctAnswers": [
+      "Choosing between Plan 1 and Plan 2 tiers"
+    ],
+    "explanation": "Defender for Servers exposes its Plan 1 and Plan 2 tiers as a sub-option inside the plan settings, which is where the choice between EDR-only and the full posture feature set is made. The Sentinel workspace option is the tempting neighbour because Defender data does flow to a workspace, whereas that binding is configured in Sentinel rather than in a Defender plan.",
+    "src": "kb-dfc",
+    "skillRef": "d4a2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-23",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-23",
     "type": "single",
     "prompt": "How does Defender for Cloud authenticate to a connected AWS account to read configuration and deploy protections?",
     "choices": [
-      "Via AWS's native identity federation, assuming an IAM role — no long-lived keys are stored",
+      "Through AWS identity federation, assuming an IAM role — no stored keys",
       "By storing a permanent AWS access key and secret in the Azure connector",
-      "By requiring the AWS root account password",
-      "By requiring a VPN tunnel between AWS and Azure"
+      "By requiring the AWS root account password to be supplied",
+      "By requiring a VPN tunnel between the AWS VPC and Azure"
     ],
-    "correctAnswers": ["Via AWS's native identity federation, assuming an IAM role — no long-lived keys are stored"],
-    "explanation": "The AWS connector uses native federation (an IAM role that Defender for Cloud assumes), avoiding stored long-lived secrets; storing access keys, using the root password, or requiring a VPN are not how the connector authenticates.",
+    "correctAnswers": [
+      "Through AWS identity federation, assuming an IAM role — no stored keys"
+    ],
+    "explanation": "Federation means Defender for Cloud assumes a role you created, so no long-lived credential is stored anywhere. The permanent access key is the tempting mental model because that is how most third-party AWS integrations used to work, whereas it is exactly the pattern the connector was designed to avoid.",
+    "skillRef": "d4a4",
     "difficulty": "medium"
   },
   {
+    "src": "kb-dfc",
+    "objectiveId": "o4-1",
     "id": "q-o4-1-24",
-    "objectiveId": "o4-1",
-    "type": "single",
-    "prompt": "What does the CloudFormation template downloaded during AWS onboarding to Defender for Cloud create?",
-    "choices": [
-      "The IAM role that Defender for Cloud assumes via trusted federation",
-      "A new EC2 instance running the Log Analytics agent",
-      "An S3 bucket to store Secure Score history",
-      "A Sentinel data connector"
+    "type": "build-list",
+    "prompt": "Build the sequence that connects an AWS account to Defender for Cloud. Not every action in the pool belongs in the answer.",
+    "poolItems": [
+      "Add an AWS environment in Defender for Cloud, giving a connector name and the AWS account ID",
+      "Download the generated CloudFormation template",
+      "Run the template in the AWS account so it creates the IAM role Defender assumes",
+      "Confirm AWS recommendations and Secure Score data appear in Defender for Cloud",
+      "Paste a permanent AWS access key and secret into the connector",
+      "Launch an EC2 instance running the Log Analytics agent",
+      "Establish a VPN tunnel between the AWS VPC and an Azure virtual network"
     ],
-    "correctAnswers": ["The IAM role that Defender for Cloud assumes via trusted federation"],
-    "explanation": "The CloudFormation template provisions the IAM role (with a federated trust policy) that MDC assumes to read/protect the account — it doesn't stand up compute, storage, or a Sentinel connector.",
+    "correctOrder": [
+      "Add an AWS environment in Defender for Cloud, giving a connector name and the AWS account ID",
+      "Download the generated CloudFormation template",
+      "Run the template in the AWS account so it creates the IAM role Defender assumes",
+      "Confirm AWS recommendations and Secure Score data appear in Defender for Cloud"
+    ],
+    "explanation": "The template is generated for the connector you just created, so the connector comes first and the role it references cannot exist before it. The three excluded actions are each a different wrong model of how this works: a stored access key is what federation replaces, no compute is deployed in the AWS account, and nothing here needs network connectivity at all — the connector reads the AWS control plane over its API.",
+    "skillRef": "d4a4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-25",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-25",
     "type": "single",
     "prompt": "Which information is required when adding an AWS environment in Defender for Cloud, before running the CloudFormation template?",
     "choices": [
-      "A connector name and the AWS account ID (single account or management/Organization account)",
-      "The AWS root password and MFA device serial",
-      "A VNet peering configuration",
-      "A Sentinel workspace resource ID"
+      "A connector name and the AWS account ID, single or Organization",
+      "The AWS root account password and its MFA device serial number, both",
+      "A virtual network peering configuration between AWS and Azure",
+      "A Microsoft Sentinel workspace resource ID for the connector"
     ],
-    "correctAnswers": ["A connector name and the AWS account ID (single account or management/Organization account)"],
-    "explanation": "Onboarding starts by naming the connector and supplying the AWS account ID/organization scope; it never needs the root password/MFA serial, VNet peering, or a Sentinel workspace.",
+    "correctAnswers": [
+      "A connector name and the AWS account ID, single or Organization"
+    ],
+    "explanation": "Only a name and the account ID are needed, and choosing the Organization management account is what makes the connector cover every member account. Asking for the root password is the tempting assumption from the old integration model, whereas federation means Defender never holds an AWS credential at all.",
+    "skillRef": "d4a4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-26",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-26",
     "type": "single",
     "prompt": "How is connecting a GCP project to Defender for Cloud similar to connecting AWS?",
     "choices": [
-      "It also uses native cloud identity federation, run via a script (e.g. Cloud Shell/Terraform) instead of a CloudFormation template",
-      "It requires the same CloudFormation template as AWS",
-      "It requires storing a GCP service account key permanently in Azure",
-      "GCP cannot be connected at all — only AWS and Azure are supported"
+      "It also uses native identity federation, run via a script rather than a template",
+      "It requires a GCP service account key to be stored permanently in the Azure connector",
+      "GCP cannot be connected at all — only AWS and Azure are supported",
+      "It requires the same CloudFormation template that AWS uses"
     ],
-    "correctAnswers": ["It also uses native cloud identity federation, run via a script (e.g. Cloud Shell/Terraform) instead of a CloudFormation template"],
-    "explanation": "GCP onboarding mirrors AWS's federation-based, secret-free trust model but uses a Cloud Shell/Terraform script rather than the AWS-specific CloudFormation template; no permanent key storage is required, and GCP is fully supported.",
+    "correctAnswers": [
+      "It also uses native identity federation, run via a script rather than a template"
+    ],
+    "explanation": "The principle is identical and only the mechanics differ: GCP federation is established by a script run in Cloud Shell or Terraform instead of a CloudFormation template, which is AWS-specific. The stored service-account key is the tempting answer and is precisely what federation exists to avoid on both clouds.",
+    "skillRef": "d4a4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-27",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-27",
     "type": "single",
     "prompt": "What does Microsoft Defender Vulnerability Management (MDVM) find?",
     "choices": [
-      "Missing patches and vulnerable software (CVEs) on machines and container images",
-      "Internet-facing domains and IP addresses owned by the organization",
-      "Misconfigured Azure Policy assignments",
-      "Sentinel incidents with no assigned owner"
+      "Missing patches and vulnerable software on machines and images",
+      "Internet-facing domains and IP addresses that the organization owns",
+      "Azure Policy assignments that are misconfigured or unassigned",
+      "Microsoft Sentinel incidents that have no assigned owner yet"
     ],
-    "correctAnswers": ["Missing patches and vulnerable software (CVEs) on machines and container images"],
-    "explanation": "MDVM looks inward at machines/images for missing patches and known CVEs; discovering external-facing assets is EASM's job, and policy/incident management are unrelated domains.",
+    "correctAnswers": [
+      "Missing patches and vulnerable software on machines and images"
+    ],
+    "explanation": "MDVM answers a software-version question: which known CVEs are present on machines and container images. Internet-facing domains and addresses are the closest miss and are what EASM discovers — one looks at what your assets are running, the other at which assets exist and are reachable.",
+    "skillRef": "d4a6",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-1-28",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-28",
     "type": "single",
     "prompt": "What does External Attack Surface Management (EASM) find?",
     "choices": [
-      "Internet-facing domains, IPs, certificates, and services the organization owns — including forgotten shadow IT",
-      "Missing OS patches on internal VMs",
-      "CVEs inside container base images",
-      "Non-compliant Azure Policy resources"
+      "Internet-facing domains, IPs, certificates and services you own",
+      "Missing operating-system patches on the internal virtual machines",
+      "Azure resources that are non-compliant with an assigned policy",
+      "Known CVEs inside the base images used by your containers"
     ],
-    "correctAnswers": ["Internet-facing domains, IPs, certificates, and services the organization owns — including forgotten shadow IT"],
-    "explanation": "EASM crawls the internet like an attacker to discover externally exposed assets, including shadow IT; missing patches and container CVEs are MDVM's domain, and policy compliance is unrelated.",
+    "correctAnswers": [
+      "Internet-facing domains, IPs, certificates and services you own"
+    ],
+    "explanation": "EASM looks at your organization the way an outsider would, which is why it surfaces forgotten shadow IT that no inventory of your subscriptions contains. The patch and CVE options are tempting because both are vulnerability work, whereas they describe MDVM and presuppose you already know the asset exists.",
+    "skillRef": "d4a6",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-1-29",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
-    "type": "multiple",
-    "prompt": "Which two capabilities are exclusive to the paid Defender CSPM plan? (Choose two.)",
-    "choices": [
-      "Attack path analysis",
-      "Cloud security explorer",
-      "Secure Score",
-      "Microsoft Cloud Security Benchmark recommendations"
+    "id": "q-o4-1-29",
+    "type": "statement-grid",
+    "prompt": "For each statement about the free foundational tier and the paid Defender CSPM plan, select Yes if it is true.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "Secure Score is only available once Defender CSPM has been purchased.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s2",
+        "text": "Attack path analysis requires the paid Defender CSPM plan.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s3",
+        "text": "The cloud security explorer is part of the free foundational tier.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s4",
+        "text": "Microsoft Cloud Security Benchmark recommendations are included at no cost.",
+        "correctValue": "Yes"
+      }
     ],
-    "correctAnswers": ["Attack path analysis", "Cloud security explorer"],
-    "explanation": "Attack path analysis and cloud security explorer require Defender CSPM; Secure Score and MCSB recommendations already ship in the free foundational tier.",
+    "explanation": "The line runs between reporting and reasoning: Secure Score, the asset inventory and the MCSB recommendations are free, whereas attack path analysis and the cloud security explorer both depend on the security graph the paid plan builds. Assuming the score is behind the paywall is the more expensive error of the two, since it leads teams to buy a plan for a capability they already had.",
+    "skillRef": "d4a1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-30",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-30",
     "type": "multiple",
     "prompt": "Which two statements correctly describe the free foundational CSPM tier? (Choose two.)",
     "choices": [
       "It is active by default for every Azure subscription",
       "It includes Secure Score and MCSB recommendations",
-      "It includes agentless disk scanning",
-      "It includes EASM insights"
+      "It includes agentless disk scanning of virtual machines",
+      "It includes External Attack Surface Management insights"
     ],
-    "correctAnswers": ["It is active by default for every Azure subscription", "It includes Secure Score and MCSB recommendations"],
-    "explanation": "The free tier is on by default and covers Secure Score/MCSB; agentless scanning and EASM insights are paid Defender CSPM additions.",
+    "correctAnswers": [
+      "It is active by default for every Azure subscription",
+      "It includes Secure Score and MCSB recommendations"
+    ],
+    "explanation": "Nothing has to be enabled for the free tier to be working, and what it provides is the score plus the benchmark recommendations. Agentless scanning and EASM are the two tempting additions and both need a paid plan — agentless in particular, because \"no agent\" sounds like \"no cost\" and means nothing of the kind.",
+    "skillRef": "d4a6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-31",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-31",
     "type": "multiple",
     "prompt": "Which two statements about connecting AWS and GCP accounts to Defender for Cloud are correct? (Choose two.)",
     "choices": [
-      "The connector uses native cloud identity federation instead of stored secrets",
-      "Connected accounts can receive Secure Score, recommendations, and Defender plans alongside Azure",
-      "A permanent AWS access key must be pasted into the Azure connector",
-      "Only GCP supports multicloud connection; AWS is not supported"
+      "The connector uses native cloud identity federation, not stored secrets",
+      "Connected accounts receive Secure Score, recommendations and plans",
+      "A permanent AWS access key must be pasted into the Azure connector first",
+      "Only GCP supports multicloud connection, since AWS is not supported"
     ],
-    "correctAnswers": ["The connector uses native cloud identity federation instead of stored secrets", "Connected accounts can receive Secure Score, recommendations, and Defender plans alongside Azure"],
-    "explanation": "Federation avoids stored secrets, and once connected, AWS/GCP resources are governed alongside Azure under the same Secure Score/plans — the other two statements are false: no long-lived keys are needed, and AWS is fully supported.",
+    "correctAnswers": [
+      "The connector uses native cloud identity federation, not stored secrets",
+      "Connected accounts receive Secure Score, recommendations and plans"
+    ],
+    "explanation": "Federation removes the stored credential, and a connected account is then treated like an Azure one — scored, recommended against, and able to carry Defender plans. The access-key statement is the tempting one because it describes how these integrations used to work, whereas both clouds now connect without a long-lived secret.",
+    "skillRef": "d4a3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-32",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-32",
     "type": "case-study",
     "caseStudyId": "cs-relecloud-posture",
     "prompt": "Referring to requirement 1 (a single score summarizing configuration compliance across Azure, AWS, and GCP in one place, prioritized by impact), which Defender for Cloud capability meets this?",
     "choices": [
-      "Secure Score, aggregated across all connected Azure, AWS, and GCP environments",
-      "Attack path analysis on the Azure subscription only",
-      "The regulatory compliance dashboard scoped to ISO 27001 only",
-      "Microsoft Defender Vulnerability Management scoped to VMs only"
+      "Secure Score, aggregated across Azure, AWS and GCP",
+      "The regulatory compliance dashboard, scoped to ISO 27001",
+      "Microsoft Defender Vulnerability Management, on VMs only",
+      "Attack path analysis, on the Azure subscription only"
     ],
-    "correctAnswers": ["Secure Score, aggregated across all connected Azure, AWS, and GCP environments"],
-    "explanation": "Secure Score is precisely the single, impact-weighted score spanning connected clouds; attack path analysis maps exploit chains (not a single score), the compliance dashboard is standard-specific pass/fail (not impact-prioritized remediation), and MDVM is CVE-focused, not a unified posture score.",
+    "correctAnswers": [
+      "Secure Score, aggregated across Azure, AWS and GCP"
+    ],
+    "explanation": "The requirement asks for one impact-prioritized number over all three clouds, which is what Secure Score is. The compliance dashboard is the tempting alternative because it also aggregates posture, whereas it reports control-by-control against one standard rather than producing a single prioritized score.",
+    "skillRef": "d4a5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-33",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-33",
     "type": "case-study",
     "caseStudyId": "cs-relecloud-posture",
     "prompt": "Referring to requirement 2 (before onboarding an acquired subsidiary, discover its internet-facing web servers the way an external attacker would), which capability should Relecloud use?",
     "choices": [
       "External Attack Surface Management (EASM)",
       "Microsoft Defender Vulnerability Management",
-      "Agentless VM scanning",
+      "Agentless virtual machine disk scanning",
       "The regulatory compliance dashboard"
     ],
-    "correctAnswers": ["External Attack Surface Management (EASM)"],
-    "explanation": "Discovering assets from an attacker's-eye, outside view is exactly EASM's purpose; MDVM and agentless scanning look inward at owned/connected machines, and the compliance dashboard evaluates configuration, not asset discovery.",
+    "correctAnswers": [
+      "External Attack Surface Management (EASM)"
+    ],
+    "explanation": "The phrase \"the way an external attacker would\" is the whole clue: nothing has been onboarded yet, so any capability that reads your subscriptions has nothing to read. MDVM and agentless scanning are both tempting and both require the asset to be known and connected already, whereas EASM starts from the outside with only a domain name.",
+    "skillRef": "d4a6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-34",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
+    "id": "q-o4-1-34",
     "type": "case-study",
     "caseStudyId": "cs-relecloud-posture",
     "prompt": "Referring to requirement 3 (scan VMs across the estate for known vulnerabilities and malware without installing any agent), which Defender for Cloud capability applies?",
     "choices": [
-      "Agentless scanning under Defender CSPM/Defender for Servers",
-      "The Content hub in Microsoft Sentinel",
-      "A Conditional Access policy targeting VMs",
-      "EASM asset discovery"
+      "Agentless scanning under Defender CSPM or Defender for Servers",
+      "A Conditional Access policy targeting all of the virtual machines",
+      "The Content hub in Microsoft Sentinel, for solutions",
+      "External Attack Surface Management asset discovery"
     ],
-    "correctAnswers": ["Agentless scanning under Defender CSPM/Defender for Servers"],
-    "explanation": "Agentless scanning evaluates VM disks for vulnerabilities/malware without an installed agent — Sentinel's Content hub is a Sentinel concept, Conditional Access governs sign-in, and EASM looks outward rather than scanning owned VM disks.",
+    "correctAnswers": [
+      "Agentless scanning under Defender CSPM or Defender for Servers"
+    ],
+    "explanation": "Agentless scanning snapshots the disk and analyses it out of band, which satisfies \"without installing any agent\" while still finding vulnerabilities and malware. EASM is the tempting neighbour from the previous requirement, whereas it discovers assets from outside and never looks inside a disk.",
+    "skillRef": "d4a6",
     "difficulty": "medium"
   },
   {
@@ -518,9 +710,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o4-1",
     "prompt": "Proposed solution: Connect the AWS account and GCP project to Defender for Cloud using their native connectors with CSPM enabled, so Secure Score aggregates configuration compliance across Azure, AWS, and GCP. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "This is exactly the native-federation, agentless CSPM connection model that produces one impact-prioritized score across all three clouds without deploying agents everywhere first.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "The native connectors use identity federation and read each cloud's control plane directly, so one impact-prioritized Secure Score covers all three environments with nothing deployed inside them. Note the prerequisite it still carries: CSPM must be enabled on each connector, since a connector added without it produces an inventory rather than a score.",
+    "src": "kb-dfc",
+    "skillRef": "d4a4",
     "difficulty": "easy"
   },
   {
@@ -529,9 +728,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o4-1",
     "prompt": "Proposed solution: Install the Log Analytics agent on every AWS EC2 instance and GCP VM, then connect the accounts to Defender for Cloud. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "The goal explicitly requires a solution without deploying agents everywhere first, and the Log Analytics agent is also retired — CSPM connectors work agentlessly to produce the compliance score.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "The goal rules out deploying agents first, and this solution begins by deploying one on every instance — so it fails on the stated constraint rather than on capability. It is doubly wrong in practice: the Log Analytics agent is retired, whereas the CSPM connectors were always agentless and would have produced the score on their own.",
+    "src": "kb-dfc",
+    "skillRef": "d4a4",
     "difficulty": "medium"
   },
   {
@@ -540,9 +746,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o4-1",
     "prompt": "Proposed solution: Enable Defender CSPM only on the Azure subscription, and manually track AWS and GCP posture using spreadsheets exported from each cloud console. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
     "explanation": "This produces three disconnected views rather than a single automated, impact-prioritized score spanning all three clouds — it does not meet the 'one score' requirement.",
+    "src": "kb-dfc",
+    "skillRef": "d4a1",
     "difficulty": "medium"
   },
   {
@@ -557,22 +770,34 @@
       "Download the CloudFormation template and run it in AWS to create the trusted IAM role",
       "Return to Azure and select Create to finish onboarding"
     ],
-    "explanation": "Onboarding starts in Environment settings, moves through naming/plan selection, then requires running the CloudFormation template in AWS to establish the federated trust before finishing the connector in Azure.",
+    "explanation": "The connector is created in Azure and named before the template exists, because the template is generated for that specific connector. Running the CloudFormation template before creating the connector is the ordering mistake, and selecting Create in Azure comes last — doing it before the IAM role exists leaves a connector that cannot read anything.",
+    "src": "kb-dfc",
+    "skillRef": "d4a3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-1-39",
+    "src": "kb-dfc",
     "objectiveId": "o4-1",
-    "type": "reorder",
-    "prompt": "Order the steps to add a new regulatory compliance standard to a subscription in Defender for Cloud.",
-    "reorderItems": [
+    "id": "q-o4-1-39",
+    "type": "build-list",
+    "prompt": "Build the sequence that adds a regulatory compliance standard to a subscription and produces usable evidence. Not every action in the pool belongs in the answer.",
+    "poolItems": [
       "Open Defender for Cloud ▸ Regulatory compliance ▸ Manage compliance policies",
       "Choose the scope: a management group or a subscription",
-      "Under Security policies, select Add more standards and pick the standard (e.g. PCI-DSS v4)",
-      "Assign the standard and allow time for the environment to be evaluated",
-      "Review pass/fail status with evidence per control"
+      "Under Security policies, add the standard and assign it",
+      "Allow the environment to be evaluated, then review pass/fail evidence per control",
+      "Assign the standard at a resource group, to keep its scope narrow",
+      "Read the per-control evidence immediately after assigning the standard",
+      "Enable every paid Defender plan first, so the standard has data to score"
     ],
-    "explanation": "You first navigate to the compliance management surface, pick a scope, add and assign the standard, then wait for evaluation before reading the per-control pass/fail evidence.",
+    "correctOrder": [
+      "Open Defender for Cloud ▸ Regulatory compliance ▸ Manage compliance policies",
+      "Choose the scope: a management group or a subscription",
+      "Under Security policies, add the standard and assign it",
+      "Allow the environment to be evaluated, then review pass/fail evidence per control"
+    ],
+    "explanation": "Scope is chosen before the standard is added, because the same standard behaves differently at a management group than at one subscription — and a resource group is not an available scope at all, which is why that action is excluded rather than merely suboptimal. Reading the evidence immediately is the other excluded action: nothing has been evaluated yet, so the dashboard shows a verdict that is not one.",
+    "skillRef": "d4a2",
     "difficulty": "medium"
   },
   {
@@ -582,10 +807,27 @@
     "prompt": "Configure this simplified Defender for Cloud environment screen so the subscription gains attack path analysis and the cloud security explorer, while keeping workload-protection cost to a minimum.",
     "screenTitle": "Defender plans (simulated)",
     "fields": [
-      { "id": "cspm", "label": "Defender CSPM", "kind": "toggle", "correctValue": "On" },
-      { "id": "servers", "label": "Defender for Servers", "kind": "select", "options": ["Off", "Plan 1", "Plan 2"], "correctValue": "Off" }
+      {
+        "id": "cspm",
+        "label": "Defender CSPM",
+        "kind": "toggle",
+        "correctValue": "On"
+      },
+      {
+        "id": "servers",
+        "label": "Defender for Servers",
+        "kind": "select",
+        "options": [
+          "Off",
+          "Plan 1",
+          "Plan 2"
+        ],
+        "correctValue": "Off"
+      }
     ],
-    "explanation": "Attack path analysis and cloud security explorer are unlocked by turning on Defender CSPM; since the goal only asks for posture features at minimum cost, Defender for Servers (a CWP workload-protection plan with its own cost) should stay off.",
+    "explanation": "Attack path analysis and the cloud security explorer are unlocked by Defender CSPM, so that toggle alone satisfies the requirement. Defender for Servers is the tempting addition because it also contains posture features, whereas it is a workload-protection plan billed per machine — turning it on would meet the goal and violate the cost constraint attached to it.",
+    "src": "kb-dfc",
+    "skillRef": "d4a1",
     "difficulty": "medium"
   }
 ]

@@ -1,32 +1,40 @@
 [
   {
-    "id": "q-o3-1-01",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-01",
     "type": "single",
     "prompt": "Why do generative AI apps and autonomous agents require security controls beyond classic application security?",
     "choices": [
-      "They can be tricked into leaking data via prompt injection, and can expose data via oversharing that classic controls don't detect",
-      "They run entirely offline, so no network controls ever apply to them",
-      "They never process sensitive data, so no data controls are needed",
-      "They are automatically covered by existing NSGs and Azure Firewall rules"
+      "Prompt injection can trick them into leaking data, and oversharing exposes it",
+      "They run entirely offline, so no network control ever applies to them at all",
+      "They never process sensitive data, so no data control is needed for them",
+      "They are automatically covered by existing NSG and Azure Firewall rules already"
     ],
-    "correctAnswers": ["They can be tricked into leaking data via prompt injection, and can expose data via oversharing that classic controls don't detect"],
-    "explanation": "Prompt injection/jailbreak and oversharing/overexposure are risks specific to generative AI and agents that traditional network/app controls were never designed to see. AI workloads are online and data-processing, so the other options are false.",
+    "correctAnswers": [
+      "Prompt injection can trick them into leaking data, and oversharing exposes it"
+    ],
+    "explanation": "Both risks are invisible to classic controls: prompt injection arrives as legitimate-looking input, and oversharing means the model surfaces data the user was already technically permitted to open. The NSG option is the tempting one because those controls do exist and do apply, whereas neither of them can see a prompt or judge whether a permission was intended.",
+    "skillRef": "d3a9",
     "difficulty": "easy"
   },
   {
-    "id": "q-o3-1-02",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-02",
     "type": "single",
     "prompt": "What is 'oversharing' (overexposure) in the context of Microsoft 365 Copilot?",
     "choices": [
-      "Content shared far more broadly than intended, which Copilot can surface because it can open anything a user is technically permitted to access",
-      "A vulnerability in the underlying language model's weights",
-      "A type of prompt injection attack against the model",
-      "A billing overage caused by excessive AI token consumption"
+      "Content shared far more broadly than intended, which Copilot can then surface",
+      "A vulnerability in the weights of the underlying large language model, exploited directly",
+      "A type of prompt injection attack directed against the model",
+      "A billing overage caused by excessive AI token consumption in the tenant"
     ],
-    "correctAnswers": ["Content shared far more broadly than intended, which Copilot can surface because it can open anything a user is technically permitted to access"],
-    "explanation": "Oversharing means permissions are broader than intended (e.g. 'everyone except external'), so Copilot can technically open and surface that content to the wrong user. It's a permissions problem, not a model vulnerability, injection technique, or billing issue.",
+    "correctAnswers": [
+      "Content shared far more broadly than intended, which Copilot can then surface"
+    ],
+    "explanation": "Oversharing is a permissions problem that predates Copilot; what Copilot changes is discoverability, because it will open anything the user is permitted to open. Prompt injection is the tempting neighbour and is an attack on the model, whereas oversharing needs no attacker at all — the tenant is already misconfigured.",
+    "skillRef": "d3a9",
     "difficulty": "easy"
   },
   {
@@ -40,53 +48,96 @@
       "Data Storage Protection Mechanism",
       "Directory Security Policy Manager"
     ],
-    "correctAnswers": ["Data Security Posture Management"],
-    "explanation": "DSPM is Data Security Posture Management — Purview's discover/protect/monitor capability for sensitive data, with a dedicated 'for AI' view.",
+    "correctAnswers": [
+      "Data Security Posture Management"
+    ],
+    "explanation": "DSPM is Data Security Posture Management — Purview's discover, protect and monitor capability for sensitive data, with a dedicated view for AI. The three distractors are plausible only as expansions of the same four letters, whereas none of them names a Microsoft product: reading DSPM as anything provisioning- or directory-related puts it in the wrong portal entirely.",
+    "src": "kb-aisec",
+    "skillRef": "d3a2",
     "difficulty": "easy"
   },
   {
-    "id": "q-o3-1-04",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
-    "type": "single",
-    "prompt": "Which Purview capability is purpose-built to find AI-related data risk, such as SharePoint oversharing, before a Copilot rollout?",
-    "choices": [
+    "id": "q-o3-1-04",
+    "type": "drag-match",
+    "prompt": "Which capability solves which problem? Connect each problem below to the capability that addresses it. Two of the six capabilities address none of these problems.",
+    "sources": [
       "Purview DSPM for AI",
       "Microsoft Defender for AI Services",
       "Microsoft Entra Agent ID",
-      "Azure API Management"
+      "Azure API Management",
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Agent 365"
     ],
-    "correctAnswers": ["Purview DSPM for AI"],
-    "explanation": "DSPM for AI is the data-centric capability that runs risk assessments to find oversharing before Copilot can amplify it. The other options address identity, threat detection on Foundry, or API traffic — not SharePoint data exposure.",
-    "difficulty": "easy"
-  },
-  {
-    "id": "q-o3-1-05",
-    "objectiveId": "o3-1",
-    "type": "single",
-    "prompt": "Before running a DSPM for AI data risk assessment, which prerequisite tasks belong to the 'Get started' checklist?",
-    "choices": [
-      "Enable Audit, install the Purview browser extension, and onboard devices",
-      "Enable the Defender for Servers Plan 2 workload protection plan",
-      "Create a Conditional Access policy scoped to agent identities",
-      "Deploy an Azure Firewall Premium instance with IDPS"
+    "targets": [
+      {
+        "id": "t1",
+        "label": "Find SharePoint and OneDrive content shared far more broadly than intended, before a Copilot rollout",
+        "correctSource": "Purview DSPM for AI"
+      },
+      {
+        "id": "t2",
+        "label": "Detect attacks against Microsoft Foundry and Azure OpenAI deployments while they are running",
+        "correctSource": "Microsoft Defender for AI Services"
+      },
+      {
+        "id": "t3",
+        "label": "Give an AI agent a governed identity that Conditional Access and risk policies can target",
+        "correctSource": "Microsoft Entra Agent ID"
+      },
+      {
+        "id": "t4",
+        "label": "Enforce Microsoft Entra authentication and token-based rate limits in front of a model endpoint",
+        "correctSource": "Azure API Management"
+      }
     ],
-    "correctAnswers": ["Enable Audit, install the Purview browser extension, and onboard devices"],
-    "explanation": "DSPM for AI's Get started tasks are enabling Audit, installing the Purview browser extension, and onboarding devices — these give visibility before a risk assessment can run. The other options are unrelated Defender for Cloud, Entra, or network controls.",
+    "explanation": "The split that matters is data-centric versus threat-centric: DSPM for AI looks at what data AI can reach, whereas Defender for AI Services looks at attacks against the AI workload itself. Confusing those two is the most common error in this objective. The two unused capabilities are real and belong elsewhere: Defender for Cloud Apps protects Copilot Studio agents at runtime, and Agent 365 is the management plane for deployed agents.",
+    "skillRef": "d3a1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-06",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-05",
+    "type": "build-list",
+    "prompt": "Build the 'Get started' sequence that must be completed before a Purview DSPM for AI data risk assessment can report meaningfully. Not every task in the pool belongs in the answer.",
+    "poolItems": [
+      "Turn on auditing in the Microsoft Purview portal",
+      "Install the Purview browser extension in the users' browsers",
+      "Onboard the devices that will be in scope for the assessment",
+      "Run the data risk assessment against the high-risk sites",
+      "Enable the Defender for Servers Plan 2 workload protection plan",
+      "Create a Conditional Access policy scoped to agent identities",
+      "Deploy an Azure Firewall Premium instance with IDPS enabled"
+    ],
+    "correctOrder": [
+      "Turn on auditing in the Microsoft Purview portal",
+      "Install the Purview browser extension in the users' browsers",
+      "Onboard the devices that will be in scope for the assessment",
+      "Run the data risk assessment against the high-risk sites"
+    ],
+    "explanation": "The assessment reads signals it cannot produce itself, so auditing, the browser extension and device onboarding all have to be in place before it runs — an assessment executed first returns a clean report that means nothing. The three excluded tasks are tempting because each is a real security control, whereas none of them feeds Purview: two are network and server protection, and the third governs agent sign-ins rather than data discovery.",
+    "skillRef": "d3a4",
+    "difficulty": "medium"
+  },
+  {
+    "src": "kb-aisec",
+    "objectiveId": "o3-1",
+    "id": "q-o3-1-06",
     "type": "single",
     "prompt": "What does a DSPM for AI data risk assessment specifically look for on SharePoint/OneDrive sites?",
     "choices": [
-      "Sites or items shared far more broadly than intended, such as 'everyone except external' or anonymous links",
-      "Sites consuming the most storage capacity",
-      "Sites missing a retention label",
-      "Sites without a custom branding theme applied"
+      "Sites or items shared far more broadly than intended",
+      "Sites consuming the most storage capacity in the tenant",
+      "Sites that are missing a retention label of any kind",
+      "Sites without a custom branding theme applied anywhere in the tenant"
     ],
-    "correctAnswers": ["Sites or items shared far more broadly than intended, such as 'everyone except external' or anonymous links"],
-    "explanation": "The assessment targets oversharing patterns like 'everyone except external' or anonymous links, which is exactly the exposure Copilot could otherwise amplify. Storage size, retention labels, and branding are unrelated to this specific risk.",
+    "correctAnswers": [
+      "Sites or items shared far more broadly than intended"
+    ],
+    "explanation": "The assessment surfaces broad sharing — \"everyone except external\" scopes and anonymous links — because that is what makes content reachable by Copilot on a user's behalf. The retention-label option is the tempting one since it is also a Purview finding, whereas a missing label affects how long content is kept rather than who can open it.",
+    "skillRef": "d3a1",
     "difficulty": "medium"
   },
   {
@@ -100,8 +151,12 @@
       "Block anonymous sharing links tenant-wide",
       "Rotate Key Vault secrets automatically"
     ],
-    "correctAnswers": ["Detect sensitive information pasted into AI sites"],
-    "explanation": "DSPM for AI's one-click policies include capturing Copilot prompts/responses, detecting sensitive information pasted into AI sites, and detecting risky AI usage. MFA enforcement, link blocking, and key rotation are handled by other services.",
+    "correctAnswers": [
+      "Detect sensitive information pasted into AI sites"
+    ],
+    "explanation": "DSPM for AI's one-click policies capture Copilot prompts and responses, detect sensitive information pasted into AI sites, and detect risky AI usage. Enforcing MFA and blocking anonymous links are tempting because both are real hardening steps before a Copilot rollout, whereas they belong to Conditional Access and SharePoint sharing settings rather than to DSPM.",
+    "src": "kb-aisec",
+    "skillRef": "d3a2",
     "difficulty": "medium"
   },
   {
@@ -115,203 +170,296 @@
       "Azure Monitor Workbooks exclusively",
       "Defender for Cloud regulatory compliance dashboard"
     ],
-    "correctAnswers": ["Reports and Activity explorer ▸ AI activities"],
+    "correctAnswers": [
+      "Reports and Activity explorer ▸ AI activities"
+    ],
     "explanation": "DSPM for AI surfaces its findings in the Purview Reports view and Activity explorer's AI activities tab. Sentinel, Monitor Workbooks, and the compliance dashboard are not where this data-specific view lives.",
+    "src": "kb-aisec",
+    "skillRef": "d3a2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-09",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-09",
     "type": "single",
     "prompt": "Which license is required to use Purview DSPM for AI?",
     "choices": [
-      "Purview / Microsoft 365 E5",
-      "Defender for Cloud CSPM (free tier)",
-      "Microsoft Entra ID P1",
-      "Azure Firewall Premium"
+      "Purview or Microsoft 365 E5",
+      "Defender for Cloud CSPM, free tier",
+      "Microsoft Entra ID P1 only",
+      "Azure Firewall Premium tier"
     ],
-    "correctAnswers": ["Purview / Microsoft 365 E5"],
-    "explanation": "DSPM for AI requires a Purview or Microsoft 365 E5 license. The other listed licenses cover cloud posture, identity, or network security, not Purview's AI data capability.",
+    "correctAnswers": [
+      "Purview or Microsoft 365 E5"
+    ],
+    "explanation": "DSPM for AI is a Purview capability, so it is licensed through Purview or Microsoft 365 E5 rather than through any Azure plan. The free Defender for Cloud CSPM tier is the tempting answer because posture management sounds like the same category, whereas it covers Azure resource posture and never Microsoft 365 content.",
+    "skillRef": "d3a2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-10",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
-    "type": "single",
-    "prompt": "A colleague says Purview DSPM for AI and Microsoft Defender for AI Services are the same product. What is the key distinction?",
-    "choices": [
-      "DSPM for AI is data-centric (oversharing, sensitive data exposure to AI), while Defender for AI Services is threat-centric (detects attacks against Foundry/Azure OpenAI)",
-      "They are identical products marketed under two names",
-      "DSPM for AI only works with Azure OpenAI; Defender for AI Services only works with Copilot",
-      "Defender for AI Services requires no license, while DSPM for AI does not exist as a product"
+    "id": "q-o3-1-10",
+    "type": "dropdown-sentence",
+    "prompt": "Complete the sentence that distinguishes Purview DSPM for AI from Microsoft Defender for AI Services.",
+    "template": "DSPM for AI is [[b1]], while Defender for AI Services is [[b2]], raising alerts on [[b3]].",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "data-centric — it finds oversharing and sensitive data exposed to AI",
+          "threat-centric — it detects live attacks on model endpoints",
+          "network-centric — it filters traffic reaching model endpoints",
+          "identity-centric — it issues governed identities to AI agents"
+        ],
+        "correctValue": "data-centric — it finds oversharing and sensitive data exposed to AI"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "threat-centric — it detects attacks against AI workloads at runtime",
+          "a posture assessment run on demand against SharePoint sites",
+          "a gateway placed in front of a model endpoint",
+          "a management plane for registering deployed agents"
+        ],
+        "correctValue": "threat-centric — it detects attacks against AI workloads at runtime"
+      },
+      {
+        "id": "b3",
+        "options": [
+          "Microsoft Foundry and Azure OpenAI deployments",
+          "Microsoft 365 Copilot chat transcripts",
+          "SharePoint sites carrying anonymous sharing links",
+          "Copilot Studio agents at runtime"
+        ],
+        "correctValue": "Microsoft Foundry and Azure OpenAI deployments"
+      }
     ],
-    "correctAnswers": ["DSPM for AI is data-centric (oversharing, sensitive data exposure to AI), while Defender for AI Services is threat-centric (detects attacks against Foundry/Azure OpenAI)"],
-    "explanation": "DSPM for AI answers 'what sensitive data can AI touch,' while Defender for AI Services answers 'is someone attacking my AI deployment.' They are separate products with separate licenses and scopes, not interchangeable coverage areas.",
+    "explanation": "The two are complementary and neither replaces the other: one asks what data AI can reach, the other asks who is attacking the AI. The third blank is where the products are most often confused — SharePoint oversharing is a DSPM finding, and Copilot Studio agents are covered by Defender for Cloud Apps rather than by Defender for AI Services.",
+    "skillRef": "d3a1",
     "difficulty": "hard"
   },
   {
-    "id": "q-o3-1-11",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-11",
     "type": "single",
     "prompt": "What does Microsoft Entra Agent ID provide?",
     "choices": [
-      "A governed, first-class identity for AI agents so Conditional Access and risk-based policies can apply to them like human users",
-      "A dedicated virtual network reserved exclusively for agent traffic",
+      "A governed, first-class identity for AI agents that policy can target",
+      "A dedicated virtual network reserved exclusively for agent traffic only",
       "A content filter that screens agent responses for harmful content",
-      "A billing meter that tracks agent token consumption"
+      "A billing meter that tracks the token consumption of each agent"
     ],
-    "correctAnswers": ["A governed, first-class identity for AI agents so Conditional Access and risk-based policies can apply to them like human users"],
-    "explanation": "Entra Agent ID extends Entra identity concepts to agents so they can be governed the same way as human identities. Content filtering, dedicated networking, and billing are separate concerns handled by other tools.",
+    "correctAnswers": [
+      "A governed, first-class identity for AI agents that policy can target"
+    ],
+    "explanation": "Making the agent a first-class identity is what lets Conditional Access, risk evaluation and access reviews treat it like any other principal. The content-filter option is the tempting one because it is also an AI safety control, whereas that is a Foundry guardrail and governs what the agent SAYS rather than what it may reach.",
+    "skillRef": "d3a9",
     "difficulty": "easy"
   },
   {
-    "id": "q-o3-1-12",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-12",
     "type": "single",
     "prompt": "Microsoft Entra Agent ID is described as the identity foundation of which broader initiative?",
     "choices": [
       "Microsoft Agent 365",
       "Microsoft Defender XDR",
-      "Microsoft Purview Information Protection",
+      "Microsoft Purview",
       "Azure Virtual Desktop"
     ],
-    "correctAnswers": ["Microsoft Agent 365"],
-    "explanation": "Entra Agent ID underpins Microsoft Agent 365, the broader platform for managing AI agents as first-class digital workers. Defender XDR, Purview Information Protection, and AVD address different problem spaces.",
+    "correctAnswers": [
+      "Microsoft Agent 365"
+    ],
+    "explanation": "Agent 365 is the management plane for deployed agents, and Agent ID supplies the identities it registers and governs — one is the foundation of the other rather than an alternative to it. Defender XDR is the tempting answer because it is where agent incidents surface, whereas it consumes those signals instead of issuing the identity.",
+    "skillRef": "d3a6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-13",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-13",
     "type": "single",
     "prompt": "What is an 'agent identity' in the Entra Agent ID model?",
     "choices": [
-      "The non-human identity that an agent uses to authenticate and carry out its tasks",
-      "A human administrator who manually approves every agent action",
-      "A network security group applied to agent traffic",
-      "A Key Vault secret used exclusively for agent logging"
+      "The non-human identity an agent uses to authenticate and do its work",
+      "A human administrator who manually approves every individual agent action",
+      "A network security group that is applied to all agent traffic",
+      "A Key Vault secret used exclusively for storing agent log data"
     ],
-    "correctAnswers": ["The non-human identity that an agent uses to authenticate and carry out its tasks"],
-    "explanation": "The agent identity is the non-human principal the agent runs as — the direct analog of a user account for a human. The other options describe unrelated networking, human-approval, or secrets concepts.",
+    "correctAnswers": [
+      "The non-human identity an agent uses to authenticate and do its work"
+    ],
+    "explanation": "The agent identity is the principal the agent authenticates as, which is what makes it governable at all. The human-approver option is tempting because approval gates do exist around agents, whereas those are policies applied TO the identity rather than the identity itself — and an agent that needed a human for every action would not be autonomous.",
+    "skillRef": "d3a6",
     "difficulty": "easy"
   },
   {
-    "id": "q-o3-1-14",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-14",
     "type": "single",
     "prompt": "What is an agent's 'user account' used for?",
     "choices": [
-      "Giving the agent its own mailbox and group memberships for 'digital colleague' scenarios",
-      "Storing the agent's model weights and training data",
-      "Encrypting the agent's prompt and response logs",
-      "Defining which Conditional Access policies are excluded from evaluation"
+      "Giving the agent a mailbox and group memberships as a digital colleague",
+      "Storing the model weights and training data belonging to the agent",
+      "Encrypting the prompt and response logs that the agent produces",
+      "Defining which Conditional Access policies are excluded from being evaluated"
     ],
-    "correctAnswers": ["Giving the agent its own mailbox and group memberships for 'digital colleague' scenarios"],
-    "explanation": "The agent's linked user account lets it act like a 'digital colleague' with its own mailbox and group memberships, separate from its core agent identity. Model storage, log encryption, and CA exclusions are unrelated concepts.",
+    "correctAnswers": [
+      "Giving the agent a mailbox and group memberships as a digital colleague"
+    ],
+    "explanation": "The user account exists so an agent can hold the things a colleague holds — a mailbox, group memberships, a place in a workflow. The Conditional Access option is the trap and inverts the relationship: the linked user account is a SEPARATE policy scope that must be configured on its own, rather than an exclusion from policy.",
+    "skillRef": "d3a6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-15",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-15",
     "type": "single",
     "prompt": "What is an 'agent identity blueprint'?",
     "choices": [
-      "A template that creates agent identities consistently; the blueprint itself cannot access resources",
-      "A signed container image used to run agent runtimes",
-      "A Defender for Cloud recommendation category",
-      "A Key Vault access policy template applied to secrets"
+      "A template that creates agent identities consistently and holds no access",
+      "A signed container image used to run the agent runtime in production clusters",
+      "A category of recommendation raised by Microsoft Defender for Cloud",
+      "A Key Vault access policy template that is applied to stored secrets"
     ],
-    "correctAnswers": ["A template that creates agent identities consistently; the blueprint itself cannot access resources"],
-    "explanation": "A blueprint is a parent template used to stamp out child agent identities consistently; it has no direct resource access itself. The other options describe container images, Defender recommendations, or Key Vault access policies, which are unrelated.",
+    "correctAnswers": [
+      "A template that creates agent identities consistently and holds no access"
+    ],
+    "explanation": "A blueprint is a factory, not a principal: it produces identities with a consistent shape and can itself reach nothing, which is why granting it access is meaningless. The container-image option is tempting because both are called templates in ordinary use, whereas one describes what the agent RUNS and the other what it IS.",
+    "skillRef": "d3a6",
     "difficulty": "hard"
   },
   {
-    "id": "q-o3-1-16",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-16",
     "type": "single",
     "prompt": "How can custom security attributes be used with AI agents?",
     "choices": [
-      "As labels (e.g. AgentApprovalStatus=IT_Approved) that Conditional Access policies can target to scope rules automatically",
-      "As encryption keys protecting agent secrets in Key Vault",
-      "As DNS labels used by private endpoints for agent traffic",
-      "As custom RBAC role definitions granted to agents"
+      "Labels that Conditional Access policies can target to scope rules",
+      "Encryption keys that protect the secrets an agent holds in Key Vault",
+      "DNS labels used by private endpoints carrying agent traffic",
+      "Custom RBAC role definitions granted directly to an agent identity"
     ],
-    "correctAnswers": ["As labels (e.g. AgentApprovalStatus=IT_Approved) that Conditional Access policies can target to scope rules automatically"],
-    "explanation": "Custom security attributes are business labels an admin sets on agents, which Conditional Access can then target so matching rules apply automatically. They are not encryption keys, DNS labels, or RBAC role definitions.",
+    "correctAnswers": [
+      "Labels that Conditional Access policies can target to scope rules"
+    ],
+    "explanation": "An attribute such as AgentApprovalStatus=IT_Approved lets one policy cover every approved agent automatically, so no policy has to be edited when an agent is added. The custom RBAC option is the tempting one because both are ways of describing what an agent may do, whereas a role grants permissions directly and an attribute only describes the agent so a policy can find it.",
+    "skillRef": "d3a6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-17",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-17",
     "type": "single",
     "prompt": "In the Entra admin center, which Conditional Access assignment type targets AI agent identities?",
     "choices": [
-      "Agents (Preview) / workload identities",
-      "Directory roles",
-      "Named locations",
-      "Terms of use"
+      "Agents (Preview), the workload identity type",
+      "Named locations, defined by trusted IP ranges",
+      "Directory roles currently held in the tenant",
+      "Terms of use acceptance records"
     ],
-    "correctAnswers": ["Agents (Preview) / workload identities"],
-    "explanation": "Conditional Access policies for agents are scoped under the Agents (Preview) / workload identities assignment type. Directory roles, named locations, and terms of use are different assignment/condition types used for other scenarios.",
+    "correctAnswers": [
+      "Agents (Preview), the workload identity type"
+    ],
+    "explanation": "Agents are assigned as a workload identity type, which is why the policy can never be found under Users. Named locations is the tempting pick because it appears on the same policy blade, whereas it is a CONDITION describing where a sign-in comes from rather than an assignment naming who the policy is about.",
+    "skillRef": "d3a4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-18",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-18",
     "type": "single",
     "prompt": "Which Conditional Access condition can automatically flag and gate a risky AI agent?",
     "choices": [
-      "Agent risk (Preview) = High",
-      "Sign-in risk = Medium",
+      "Agent risk (Preview) set to High",
+      "Sign-in risk set to Medium",
       "Device compliance = Noncompliant",
       "Client app = Legacy authentication"
     ],
-    "correctAnswers": ["Agent risk (Preview) = High"],
-    "explanation": "Agent risk (Preview) is the AI-specific risk condition used to gate agent identities. Sign-in risk, device compliance, and client app conditions are used for human/device-centric scenarios, not agent risk.",
+    "correctAnswers": [
+      "Agent risk (Preview) set to High"
+    ],
+    "explanation": "Agent risk is the condition scoped to agent identities, so a high-risk agent is gated with no human in the loop. Sign-in risk is the closest miss and evaluates a user authentication attempt, whereas device compliance cannot apply at all — an agent has no device to be compliant.",
+    "skillRef": "d3a4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-19",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-19",
     "type": "single",
     "prompt": "What is the recommended rollout approach for a new Conditional Access policy targeting agents?",
     "choices": [
-      "Start the policy in Report-only mode, validate its impact, then switch it to enforce",
-      "Enable Block access in production immediately with no testing",
-      "Skip testing entirely, since agent sign-ins cannot be logged",
-      "Apply the policy only to break-glass accounts first"
+      "Start in Report-only mode, validate the impact, then switch to enforce",
+      "Enable Block access in production immediately, with no testing whatsoever",
+      "Skip testing entirely, since agent sign-ins are not logged anywhere",
+      "Apply the policy to the break-glass accounts first, and only those"
     ],
-    "correctAnswers": ["Start the policy in Report-only mode, validate its impact, then switch it to enforce"],
-    "explanation": "Report-only lets you validate real-world impact before enforcing a new policy, the same safe rollout pattern used for human-targeted Conditional Access policies. Immediate enforcement or skipping testing risks unexpectedly blocking legitimate agent activity.",
+    "correctAnswers": [
+      "Start in Report-only mode, validate the impact, then switch to enforce"
+    ],
+    "explanation": "Report-only evaluates the policy against real sign-ins and records what it would have done, which is how an over-broad agent policy is caught before it stops a production workflow. The break-glass option is the tempting inversion: those accounts are the ones to EXCLUDE from a policy, never the pilot group to test it on.",
+    "skillRef": "d3a4",
     "difficulty": "easy"
   },
   {
-    "id": "q-o3-1-20",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
-    "type": "single",
-    "prompt": "A Conditional Access policy blocks an agent identity when its risk is High. Does this policy also block sign-ins from the agent's linked user account?",
-    "choices": [
-      "No — the agent identity and its linked user account are separate Conditional Access scopes that must be configured independently",
-      "Yes, they always share the exact same policy scope automatically",
-      "Only if multifactor authentication is also required in the same policy",
-      "Only while the policy remains in Report-only mode"
+    "id": "q-o3-1-20",
+    "type": "statement-grid",
+    "prompt": "For each statement about Conditional Access and AI agents, select Yes if it is true.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "A policy targeting an agent identity also covers sign-ins by the agent's linked user account.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s2",
+        "text": "Agent risk is available as a Conditional Access condition, so a high-risk agent can be gated automatically.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s3",
+        "text": "When an agent calls a backend API with a raw API key, Conditional Access still evaluates the call.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s4",
+        "text": "A policy left in Report-only mode logs what it would have done without blocking anything.",
+        "correctValue": "Yes"
+      }
     ],
-    "correctAnswers": ["No — the agent identity and its linked user account are separate Conditional Access scopes that must be configured independently"],
-    "explanation": "Agent identity and 'agent acting as a user' are separate CA scopes — protecting one does not automatically protect the other, so both need dedicated policies if both paths must be covered. This is unrelated to whether MFA is required or whether the policy is in Report-only.",
+    "explanation": "The two false statements are the two ways agent coverage is over-estimated. The agent identity and its linked user account are separate scopes, so a policy on one does not reach the other. And a raw API key bypasses Entra ID entirely — no token is requested, so there is no sign-in for Conditional Access to evaluate, which is why an AI gateway enforcing Entra authentication is what closes that path.",
+    "skillRef": "d3a4",
     "difficulty": "hard"
   },
   {
-    "id": "q-o3-1-21",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-21",
     "type": "single",
     "prompt": "An agent calls a backend API using a raw API key instead of Microsoft Entra authentication. What is the security implication?",
     "choices": [
-      "Conditional Access does not apply, because the API key path bypasses Entra ID entirely",
-      "Conditional Access still fully applies because the agent itself has an Entra identity",
-      "The API key is automatically rotated and secured by Entra ID",
+      "Conditional Access does not apply, because the key path bypasses Entra",
+      "Conditional Access still fully applies, because the agent has an Entra identity",
+      "The API key is rotated and secured automatically by Microsoft Entra ID",
       "Microsoft Defender for AI Services blocks the call automatically in all cases"
     ],
-    "correctAnswers": ["Conditional Access does not apply, because the API key path bypasses Entra ID entirely"],
-    "explanation": "Conditional Access only governs resources secured by Entra ID; a raw API key authenticates outside of Entra, so CA policies on the agent identity never get evaluated for that call. Having an Entra identity for the agent elsewhere doesn't change this specific call path.",
+    "correctAnswers": [
+      "Conditional Access does not apply, because the key path bypasses Entra"
+    ],
+    "explanation": "Conditional Access evaluates token issuance, so a call that never asks Entra for a token is never evaluated — having an Entra identity is not the same as using it. That is the tempting answer here, and it is why the remedy is architectural: put an AI gateway in front of the endpoint so Entra authentication is the only accepted path.",
+    "skillRef": "d3a4",
     "difficulty": "hard"
   },
   {
@@ -325,53 +473,69 @@
       "A static bearer token embedded in the agent's source code",
       "IP allow-listing as the sole control"
     ],
-    "correctAnswers": ["Microsoft Entra ID-based authentication"],
+    "correctAnswers": [
+      "Microsoft Entra ID-based authentication"
+    ],
     "explanation": "Using Entra-based auth keeps the call inside Entra's governance, so Conditional Access and risk policies actually apply. Shared passwords, embedded static tokens, and IP allow-listing alone don't provide identity-based governance.",
+    "src": "kb-aisec",
+    "skillRef": "d3a7",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-23",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-23",
     "type": "single",
     "prompt": "After Entra flags an agent as high-risk, which tool should you use to assess its blast radius (what resources/data/identities it could reach)?",
     "choices": [
       "Microsoft Defender XDR",
+      "Purview Compliance Manager",
       "Azure Cost Management",
-      "Microsoft Purview Compliance Manager",
-      "Azure Advisor"
+      "Azure Advisor recommendations"
     ],
-    "correctAnswers": ["Microsoft Defender XDR"],
-    "explanation": "Defender XDR correlates identity, endpoint, and resource signals to analyze what a compromised or risky agent could reach, informing containment. Cost Management, Compliance Manager, and Advisor address cost, compliance mapping, and recommendations, not incident blast-radius analysis.",
+    "correctAnswers": [
+      "Microsoft Defender XDR"
+    ],
+    "explanation": "Defender XDR correlates the agent with the identities, devices and data it touched, which is what a blast-radius question actually asks. Compliance Manager is the tempting neighbour because it is also an assessment tool, whereas it scores your control posture against a regulation rather than tracing one identity's reach.",
+    "skillRef": "d3a5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-24",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-24",
     "type": "single",
     "prompt": "Which service manages the ongoing lifecycle (review, approve, remove) of an agent's access?",
     "choices": [
-      "Microsoft Entra ID Governance and Agent 365",
-      "Azure Policy",
-      "Microsoft Sentinel automation rules",
-      "Azure Backup"
+      "Microsoft Entra ID Governance with Agent 365",
+      "Microsoft Sentinel automation rules and playbooks",
+      "Azure Policy assignments at scope",
+      "Azure Backup with recovery vaults"
     ],
-    "correctAnswers": ["Microsoft Entra ID Governance and Agent 365"],
-    "explanation": "Entra ID Governance, paired with Agent 365, provides the access review/approve/remove lifecycle for agent identities. Azure Policy governs resource configuration, Sentinel automation handles incident response playbooks, and Backup protects data — none manage agent access lifecycle.",
+    "correctAnswers": [
+      "Microsoft Entra ID Governance with Agent 365"
+    ],
+    "explanation": "Access reviews, approval workflows and removal are ID Governance functions, and Agent 365 is where they are exercised for agents specifically. Sentinel playbooks are the tempting answer because automation sounds like lifecycle management, whereas a playbook reacts to an incident rather than periodically recertifying whether access is still needed.",
+    "skillRef": "d3a6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-25",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-25",
     "type": "single",
     "prompt": "What does Microsoft Defender for AI Services monitor?",
     "choices": [
-      "Microsoft Foundry and Azure OpenAI deployments for AI-specific threats",
-      "Only on-premises file shares for malware",
-      "Network traffic between virtual networks",
-      "Azure DevOps pipeline definitions"
+      "Microsoft Foundry and Azure OpenAI deployments, for AI-specific threats",
+      "On-premises file shares only, scanning each of them for malware signatures",
+      "Network traffic passing between two peered virtual networks",
+      "Azure DevOps pipeline definitions and their service connections"
     ],
-    "correctAnswers": ["Microsoft Foundry and Azure OpenAI deployments for AI-specific threats"],
-    "explanation": "Defender for AI Services is a Defender for Cloud plan focused specifically on Foundry/Azure OpenAI threats. File shares, VNet traffic, and DevOps pipelines are covered by other Defender plans or services entirely.",
+    "correctAnswers": [
+      "Microsoft Foundry and Azure OpenAI deployments, for AI-specific threats"
+    ],
+    "explanation": "The plan watches the model-serving resources themselves and raises AI-specific alerts such as jailbreak attempts and wallet attacks. Each distractor names a real Defender or Azure capability, which is what makes the list plausible, whereas none of them is scoped to an AI workload.",
+    "skillRef": "d3a8",
     "difficulty": "easy"
   },
   {
@@ -385,99 +549,150 @@
       "Microsoft Defender for Endpoint EDR sensors",
       "Azure DDoS Protection Standard"
     ],
-    "correctAnswers": ["Azure AI Content Safety Prompt Shields"],
+    "correctAnswers": [
+      "Azure AI Content Safety Prompt Shields"
+    ],
     "explanation": "Prompt Shields, part of Azure AI Content Safety, is the underlying technology that detects jailbreak and injection attempts feeding Defender for AI Services alerts. Firewall IDPS, EDR sensors, and DDoS Protection target network- or endpoint-layer threats, not model prompts.",
+    "src": "kb-aisec",
+    "skillRef": "d3a9",
     "difficulty": "hard"
   },
   {
-    "id": "q-o3-1-27",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-27",
     "type": "single",
     "prompt": "What does a 'wallet attack' alert in Defender for AI Services indicate?",
     "choices": [
       "Abuse designed to drive up cost by forcing excessive model usage",
-      "A stolen Key Vault secret used to access a storage account",
-      "A phishing email specifically targeting finance staff",
-      "A denial-of-service attack against a storage account"
+      "A stolen Key Vault secret being used to reach a storage account",
+      "A phishing campaign aimed specifically at the finance department",
+      "A denial-of-service attack directed at a storage account endpoint"
     ],
-    "correctAnswers": ["Abuse designed to drive up cost by forcing excessive model usage"],
-    "explanation": "A wallet attack is cost-abuse — an attacker triggers excessive, expensive model calls to run up the victim's bill. It's distinct from credential theft, phishing, or a classic DoS against storage.",
+    "correctAnswers": [
+      "Abuse designed to drive up cost by forcing excessive model usage"
+    ],
+    "explanation": "The target is the bill rather than the data: an attacker drives token consumption until the cost becomes the damage. The finance-phishing option is tempting because of the word wallet, whereas the attack has nothing to do with people or payments — which is why the defence is a token-based rate limit at the gateway.",
+    "skillRef": "d3a8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-28",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-28",
     "type": "single",
     "prompt": "Where do you enable the Defender for AI Services plan?",
     "choices": [
-      "Microsoft Defender for Cloud ▸ Environment settings ▸ Defender plans",
-      "Microsoft Entra admin center ▸ Conditional Access",
-      "Microsoft Purview portal ▸ DSPM for AI",
-      "Azure API Management ▸ Products"
+      "Defender for Cloud ▸ Environment settings ▸ Defender plans",
+      "Entra admin center ▸ Protection ▸ Conditional Access ▸ Policies",
+      "Microsoft Purview portal ▸ DSPM for AI ▸ Recommendations",
+      "Azure API Management ▸ Products ▸ Policies"
     ],
-    "correctAnswers": ["Microsoft Defender for Cloud ▸ Environment settings ▸ Defender plans"],
-    "explanation": "Defender for AI Services is toggled on per-subscription under Defender for Cloud's Environment settings ▸ Defender plans. The Entra admin center, Purview portal, and APIM are used for identity, data, and API-gateway concerns respectively, not for enabling this Defender plan.",
+    "correctAnswers": [
+      "Defender for Cloud ▸ Environment settings ▸ Defender plans"
+    ],
+    "explanation": "Every Defender plan is switched on per environment under Environment settings, which is the one location worth memorising because it is the same for Storage, Servers and AI Services alike. The Purview route is the tempting miss and leads to the data-centric product instead — different portal, different question.",
+    "skillRef": "d3a8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-29",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
-    "type": "multiple",
-    "prompt": "Which two are components of the Microsoft Entra Agent ID identity model? (Choose two.)",
-    "choices": [
+    "id": "q-o3-1-29",
+    "type": "drag-match",
+    "prompt": "Each row below describes one object in the Entra Agent ID model. Identify it. Two entries in the list describe no row.",
+    "sources": [
       "Agent identity",
+      "Agent user account",
       "Agent identity blueprint",
-      "Azure Bastion",
+      "Custom security attribute",
+      "Azure Bastion host",
       "Just-in-time VM access"
     ],
-    "correctAnswers": ["Agent identity", "Agent identity blueprint"],
-    "explanation": "Agent identity and agent identity blueprint are both Entra Agent ID concepts. Bastion and JIT VM access are unrelated VM-management controls covered in a different objective.",
+    "targets": [
+      {
+        "id": "t1",
+        "label": "The non-human identity the agent authenticates and acts as",
+        "correctSource": "Agent identity"
+      },
+      {
+        "id": "t2",
+        "label": "Gives the agent a mailbox and group memberships, as a digital colleague",
+        "correctSource": "Agent user account"
+      },
+      {
+        "id": "t3",
+        "label": "A template that creates agent identities consistently and can itself reach nothing",
+        "correctSource": "Agent identity blueprint"
+      },
+      {
+        "id": "t4",
+        "label": "A label such as AgentApprovalStatus=IT_Approved that a Conditional Access policy can target",
+        "correctSource": "Custom security attribute"
+      }
+    ],
+    "explanation": "The blueprint is the one most often misread as a principal: it produces identities and holds no access of its own, whereas the agent identity is what actually authenticates. The two unused entries are ordinary Azure VM controls with no place in the agent identity model, and both are tempting only because they are familiar Azure nouns.",
+    "skillRef": "d3a6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-30",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-30",
     "type": "multiple",
     "prompt": "Which two capabilities are part of Microsoft Foundry guardrails? (Choose two.)",
     "choices": [
-      "Prompt Shields blocking jailbreak and injection attempts",
+      "Prompt Shields, which block jailbreak and injection attempts",
       "Content filters with severity thresholds for harmful categories",
-      "Azure Disk Encryption for VM volumes",
-      "Network Security Group rules for subnets"
+      "Azure Disk Encryption applied to the VM volumes hosting the model",
+      "Network security group rules applied to the model subnet"
     ],
-    "correctAnswers": ["Prompt Shields blocking jailbreak and injection attempts", "Content filters with severity thresholds for harmful categories"],
-    "explanation": "Prompt Shields and content filters are both Foundry guardrail controls applied to model input/output. Disk encryption and NSG rules are VM/network controls, not AI guardrails.",
+    "correctAnswers": [
+      "Prompt Shields, which block jailbreak and injection attempts",
+      "Content filters with severity thresholds for harmful categories"
+    ],
+    "explanation": "Guardrails act on the content flowing through the model — what comes in, and what goes out. The two distractors are genuine Azure controls protecting the infrastructure the model runs on, which is a different layer: neither can see a prompt, whereas neither guardrail protects a disk.",
+    "skillRef": "d3a9",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-31",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-31",
     "type": "multiple",
     "prompt": "Which two benefits does placing Azure API Management in front of model endpoints (as an AI gateway) provide? (Choose two.)",
     "choices": [
       "Microsoft Entra ID authentication instead of raw API keys",
       "Token-based rate limiting that defends against wallet attacks",
-      "Automatic fine-tuning of the underlying model",
-      "Encryption at host for the VM disks hosting the model"
+      "Automatic fine-tuning of the underlying model on the request data",
+      "Encryption at host for the virtual machines hosting the model"
     ],
-    "correctAnswers": ["Microsoft Entra ID authentication instead of raw API keys", "Token-based rate limiting that defends against wallet attacks"],
-    "explanation": "An AI gateway built on APIM swaps API keys for Entra auth and applies token-based rate limiting/quotas to blunt cost-abuse attacks. Model fine-tuning and disk-level VM encryption are unrelated to what a gateway in front of the endpoint does.",
+    "correctAnswers": [
+      "Microsoft Entra ID authentication instead of raw API keys",
+      "Token-based rate limiting that defends against wallet attacks"
+    ],
+    "explanation": "The gateway changes how the endpoint is reached: Entra authentication brings Conditional Access back into a path an API key would have bypassed, and a token quota caps the cost an attacker can inflict. Fine-tuning is the tempting distractor because it is a real model operation, whereas a gateway never modifies the model.",
+    "skillRef": "d3a7",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-32",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-32",
     "type": "case-study",
     "caseStudyId": "cs-litware-ai",
     "prompt": "Referring to requirement 1 (find SharePoint sites shared far too broadly before enabling Copilot tenant-wide), which action should the security team take first?",
     "choices": [
-      "Run a Purview DSPM for AI data risk assessment against high-risk SharePoint sites",
+      "Run a Purview DSPM for AI data risk assessment on high-risk sites",
       "Enable Microsoft Defender for AI Services on the Foundry resource",
-      "Create a Conditional Access policy blocking high-risk agents",
-      "Disable the admin account on Azure Container Registry"
+      "Create a Conditional Access policy blocking any high-risk agent",
+      "Disable the admin account on the Azure Container Registry instance"
     ],
-    "correctAnswers": ["Run a Purview DSPM for AI data risk assessment against high-risk SharePoint sites"],
-    "explanation": "DSPM for AI's data risk assessment is specifically designed to surface SharePoint oversharing before Copilot amplifies it. Defender for AI Services addresses threats against Foundry/Azure OpenAI, not SharePoint permissions, and the other two options are unrelated to data exposure.",
+    "correctAnswers": [
+      "Run a Purview DSPM for AI data risk assessment on high-risk sites"
+    ],
+    "explanation": "The requirement is about data exposure before rollout, which is exactly what the DSPM assessment reports. Defender for AI Services is the tempting alternative because it is the other AI security product, whereas it watches for attacks on the Foundry workload and would report nothing at all about SharePoint sharing.",
+    "skillRef": "d3a1",
     "difficulty": "medium"
   },
   {
@@ -492,40 +707,52 @@
       "Grant the agent Global Administrator so it is never inadvertently blocked",
       "Rely solely on the agent's API key rotation schedule for governance"
     ],
-    "correctAnswers": ["Provision the agent with a Microsoft Entra Agent ID identity"],
-    "explanation": "An Entra Agent ID identity is exactly the governed, first-class identity that lets Conditional Access and Identity Protection risk apply to the agent like a human user. A shared password, excessive standing privilege, and key rotation alone provide no equivalent governance.",
+    "correctAnswers": [
+      "Provision the agent with a Microsoft Entra Agent ID identity"
+    ],
+    "explanation": "An Entra Agent ID identity is the governed, first-class identity that lets Conditional Access and Identity Protection risk apply to the agent as they would to a person. Granting Global Administrator so the agent is never blocked is the tempting shortcut and is the opposite of the requirement: it removes the governance being asked for rather than supplying it.",
+    "src": "kb-aisec",
+    "skillRef": "d3a4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-34",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-34",
     "type": "case-study",
     "caseStudyId": "cs-litware-ai",
     "prompt": "Referring to requirement 3 (the agent must be blocked automatically if Microsoft Entra flags it as high-risk, without a human needing to notice first), which configuration is correct?",
     "choices": [
-      "An enforced Conditional Access policy targeting the agent identity with Agent risk = High and Grant = Block access",
-      "A daily manual review of Microsoft Defender XDR incidents by the SOC",
+      "An enforced CA policy on the agent identity: Agent risk High, Block access",
+      "A daily manual review of Microsoft Defender XDR incidents by the SOC team on rotation",
       "A Report-only Conditional Access policy that only logs matching sign-ins",
-      "An Azure Policy Audit effect applied to the Foundry resource"
+      "An Azure Policy Audit effect applied to the Foundry resource in scope"
     ],
-    "correctAnswers": ["An enforced Conditional Access policy targeting the agent identity with Agent risk = High and Grant = Block access"],
-    "explanation": "Only an enforced (not Report-only) Conditional Access policy on Agent risk = High actually blocks access automatically. Manual review and Report-only both still require a human to notice and act, and Azure Policy Audit only logs non-compliance without blocking anything.",
+    "correctAnswers": [
+      "An enforced CA policy on the agent identity: Agent risk High, Block access"
+    ],
+    "explanation": "The words \"automatically\" and \"without a human noticing\" rule out three of the four options at once. Report-only is the closest miss and is otherwise the right policy — it simply does not block, so it satisfies the detection half and fails the enforcement half, which is the distinction the requirement is built around.",
+    "skillRef": "d3a4",
     "difficulty": "hard"
   },
   {
-    "id": "q-o3-1-35",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-35",
     "type": "case-study",
     "caseStudyId": "cs-litware-ai",
     "prompt": "Referring to requirement 4 (model endpoints behind the support agent must enforce Microsoft Entra authentication instead of API keys, and apply token-based rate limits against wallet attacks), which configuration is correct?",
     "choices": [
-      "Deploy Azure API Management in front of the model endpoints as an AI gateway, enforcing Entra auth and token-based rate-limit policies",
-      "Rotate the model endpoint's API keys on a weekly schedule",
-      "Add an NSG rule restricting the model endpoint to a single subnet",
-      "Enable Azure Disk Encryption on the compute hosting the Foundry deployment"
+      "Azure API Management as an AI gateway, with Entra auth and token limits",
+      "Enable Azure Disk Encryption on the compute hosting the Foundry deployment",
+      "Rotate the model endpoint's API keys on a weekly schedule instead",
+      "Add an NSG rule restricting the model endpoint to a single subnet"
     ],
-    "correctAnswers": ["Deploy Azure API Management in front of the model endpoints as an AI gateway, enforcing Entra auth and token-based rate-limit policies"],
-    "explanation": "An APIM-based AI gateway is the only option here that both replaces API keys with Entra auth and enforces token-based rate limiting against wallet abuse. Key rotation still uses keys, an NSG rule doesn't add authentication or token quotas, and disk encryption addresses an unrelated threat.",
+    "correctAnswers": [
+      "Azure API Management as an AI gateway, with Entra auth and token limits"
+    ],
+    "explanation": "Both halves of the requirement are gateway functions, and only a gateway can enforce them at the endpoint. Weekly key rotation is the tempting compromise because it does reduce the window of a leaked key, whereas the requirement is to stop using keys at all — rotation keeps the path that bypasses Conditional Access.",
+    "skillRef": "d3a7",
     "difficulty": "medium"
   },
   {
@@ -534,9 +761,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o3-1",
     "prompt": "Proposed solution: Enable Microsoft 365 Copilot tenant-wide first, then review Copilot usage reports weekly to spot oversharing after the fact. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "The goal requires finding oversharing before Copilot rollout; reviewing usage reports afterward means Copilot may already have surfaced overshared content to the wrong users.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "The goal is to find oversharing BEFORE the rollout, and reviewing usage reports weekly only reveals it after Copilot has already surfaced the content to the wrong people. The solution is tempting because the reports genuinely do show the exposure, whereas by then the disclosure has happened and cannot be undone.",
+    "src": "kb-aisec",
+    "skillRef": "d3a1",
     "difficulty": "medium"
   },
   {
@@ -544,22 +778,36 @@
     "objectiveId": "o3-1",
     "type": "solution-goal",
     "caseStudyId": "sg-o3-1",
-    "prompt": "Proposed solution: Run a Purview DSPM for AI data risk assessment against SharePoint sites before enabling Copilot tenant-wide, and remediate any flagged overexposed sites. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "This is exactly the intended workflow: discover oversharing via the assessment and fix it before Copilot can amplify the exposure.",
-    "difficulty": "easy"
+    "prompt": "Proposed solution: Enable Microsoft Defender for AI Services on the Azure OpenAI resource before the Copilot rollout. Does this solution meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "Defender for AI Services detects threats against Foundry/Azure OpenAI deployments (jailbreak, data leakage, wallet attacks) — it does not discover SharePoint/OneDrive oversharing, so it does not meet this specific goal.",
+    "src": "kb-aisec",
+    "skillRef": "d3a9",
+    "difficulty": "medium"
   },
   {
     "id": "q-o3-1-38",
     "objectiveId": "o3-1",
     "type": "solution-goal",
     "caseStudyId": "sg-o3-1",
-    "prompt": "Proposed solution: Enable Microsoft Defender for AI Services on the Azure OpenAI resource before the Copilot rollout. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "Defender for AI Services detects threats against Foundry/Azure OpenAI deployments (jailbreak, data leakage, wallet attacks) — it does not discover SharePoint/OneDrive oversharing, so it does not meet this specific goal.",
-    "difficulty": "medium"
+    "prompt": "Proposed solution: Run a Purview DSPM for AI data risk assessment against SharePoint sites before enabling Copilot tenant-wide, and remediate any flagged overexposed sites. Does this solution meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "This is the intended workflow: the assessment discovers broad sharing, remediation fixes it, and only then does Copilot get the chance to surface anything. Note the prerequisite it assumes rather than states — auditing, the browser extension and device onboarding must already be in place, otherwise the assessment reports a clean tenant it never actually inspected.",
+    "src": "kb-aisec",
+    "skillRef": "d3a1",
+    "difficulty": "easy"
   },
   {
     "id": "q-o3-1-39",
@@ -573,7 +821,9 @@
       "Turn on one-click policies (prompt capture, sensitive-info detection, risky AI usage)",
       "Review findings in Reports and Activity explorer ▸ AI activities"
     ],
-    "explanation": "DSPM for AI requires the Get started prerequisites before an assessment can run, followed by turning on the one-click policies, and finally reviewing the resulting reports/activity data.",
+    "explanation": "The Get started prerequisites come before the assessment, the one-click policies before the reports, and the review last. Running the assessment first is the ordering mistake that matters most, because it does not fail — it returns findings from signals that were never collected, which reads as a clean tenant rather than an incomplete scan.",
+    "src": "kb-aisec",
+    "skillRef": "d3a1",
     "difficulty": "medium"
   },
   {
@@ -588,7 +838,9 @@
       "Under Grant, select Block access, and enable the policy in Report-only mode",
       "Review the Report-only results, then switch the policy to On to enforce"
     ],
-    "explanation": "The policy is built by defining assignment and resource scope, adding the Agent risk condition, choosing the Block access grant, and validating in Report-only before enforcing — the same safe-rollout pattern used for human-targeted CA policies.",
+    "explanation": "Assignment and resource scope first, then the Agent risk condition, then the Block grant, and Report-only before enforcement. Switching straight to On is the ordering mistake, and its consequence is specific to agents rather than to people: an over-broad block stops an automated workflow with no human present to notice it has stopped.",
+    "src": "kb-aisec",
+    "skillRef": "d3a4",
     "difficulty": "medium"
   },
   {
@@ -598,42 +850,90 @@
     "prompt": "Configure this simplified Conditional Access screen so a high-risk AI agent identity is blocked automatically, without requiring a human to notice first.",
     "screenTitle": "Conditional Access policy for agents (simulated)",
     "fields": [
-      { "id": "assignment", "label": "Assignment target", "kind": "select", "options": ["All users", "Directory roles", "Agents (Preview) - all agent identities", "Named locations"], "correctValue": "Agents (Preview) - all agent identities" },
-      { "id": "agentRisk", "label": "Agent risk condition", "kind": "select", "options": ["Not configured", "Low and above", "Medium and above", "High"], "correctValue": "High" },
-      { "id": "grantControl", "label": "Grant control", "kind": "select", "options": ["Require MFA", "Require compliant device", "Block access", "Allow access, no controls required"], "correctValue": "Block access" },
-      { "id": "policyState", "label": "Policy enabled (enforced, not report-only)", "kind": "toggle", "correctValue": "On" }
+      {
+        "id": "assignment",
+        "label": "Assignment target",
+        "kind": "select",
+        "options": [
+          "All users",
+          "Directory roles",
+          "Agents (Preview) - all agent identities",
+          "Named locations"
+        ],
+        "correctValue": "Agents (Preview) - all agent identities"
+      },
+      {
+        "id": "agentRisk",
+        "label": "Agent risk condition",
+        "kind": "select",
+        "options": [
+          "Not configured",
+          "Low and above",
+          "Medium and above",
+          "High"
+        ],
+        "correctValue": "High"
+      },
+      {
+        "id": "grantControl",
+        "label": "Grant control",
+        "kind": "select",
+        "options": [
+          "Require MFA",
+          "Require compliant device",
+          "Block access",
+          "Allow access, no controls required"
+        ],
+        "correctValue": "Block access"
+      },
+      {
+        "id": "policyState",
+        "label": "Policy enabled (enforced, not report-only)",
+        "kind": "toggle",
+        "correctValue": "On"
+      }
     ],
     "explanation": "Targeting all agent identities, setting Agent risk to High, granting Block access, and enforcing (not Report-only) together produce an automatic block with no human intervention required — matching the stated requirement.",
+    "src": "kb-aisec",
+    "skillRef": "d3a4",
     "difficulty": "hard"
   },
   {
-    "id": "q-o3-1-42",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-42",
     "type": "single",
     "prompt": "Which capability provides real-time runtime protection specifically for agents built in Copilot Studio, surfacing their inventory and alerts in Microsoft Defender XDR?",
     "choices": [
-      "Microsoft Defender for Cloud Apps (Settings for AI)",
-      "Microsoft Defender for AI Services",
-      "Microsoft Purview DSPM for AI",
-      "Microsoft Entra Agent ID"
+      "Microsoft Defender for Cloud Apps, Settings for AI",
+      "Microsoft Purview DSPM for AI, risk assessments view",
+      "Microsoft Defender for AI Services threat plan",
+      "Microsoft Entra Agent ID with identity blueprints"
     ],
-    "correctAnswers": ["Microsoft Defender for Cloud Apps (Settings for AI)"],
-    "explanation": "Defender for Cloud Apps is the product that provides real-time runtime protection for Copilot Studio agents specifically. Defender for AI Services targets Foundry/Azure OpenAI workloads, DSPM for AI is data-centric, and Entra Agent ID is the identity layer, not runtime protection.",
+    "correctAnswers": [
+      "Microsoft Defender for Cloud Apps, Settings for AI"
+    ],
+    "explanation": "Copilot Studio agents are covered by Defender for Cloud Apps, which is the answer most people miss because the name says nothing about AI. Defender for AI Services is the tempting pick and covers Foundry and Azure OpenAI instead — same Defender family, different workload, and choosing by name rather than by workload is the error.",
+    "skillRef": "d3a3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-43",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-43",
     "type": "single",
     "prompt": "You enable Copilot Studio agent protection in Microsoft Defender for Cloud Apps, but no agents appear in Defender XDR's Advanced Hunting data. What is the most likely missing step?",
     "choices": [
       "Coordinating with Power Platform admins to configure the agent's App ID",
-      "Enabling Microsoft Entra ID P2",
-      "Disabling Shared Key authorization on the storage account",
-      "Adding a Conditional Access policy for the agent's linked user account"
+      "Adding a Conditional Access policy for the agent's linked user account first",
+      "Enabling Microsoft Entra ID P2 licensing across the tenant",
+      "Disabling Shared Key authorization on the storage account"
     ],
-    "correctAnswers": ["Coordinating with Power Platform admins to configure the agent's App ID"],
-    "explanation": "Enabling the Defender for Cloud Apps setting alone isn't enough — the agent's App ID must be correctly configured with Power Platform admins for the agent to be recognized and its inventory/alerts to surface in Defender XDR.",
+    "correctAnswers": [
+      "Coordinating with Power Platform admins to configure the agent's App ID"
+    ],
+    "explanation": "Copilot Studio agents live in Power Platform, so the App ID has to be configured there before Defender can associate telemetry with an agent — which makes this a cross-team dependency rather than a Defender setting. The Conditional Access option is tempting because it also concerns the agent, whereas a policy governs sign-ins and would not create a single hunting record.",
+    "skillRef": "d3a3",
     "difficulty": "medium"
   },
   {
@@ -647,41 +947,51 @@
       "Microsoft Foundry",
       "Azure API Management"
     ],
-    "correctAnswers": ["Microsoft Agent 365"],
+    "correctAnswers": [
+      "Microsoft Agent 365"
+    ],
     "explanation": "Microsoft Agent 365 is the governance and lifecycle management plane for deployed agents — registering them, applying access controls, and monitoring usage. Entra Agent ID is the identity layer agents authenticate with, not the governance plane.",
+    "src": "kb-aisec",
+    "skillRef": "d3a6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-45",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-45",
     "type": "multiple",
     "prompt": "Which two statements correctly distinguish Microsoft Entra Agent ID from Microsoft Agent 365? (Choose two.)",
     "choices": [
-      "Entra Agent ID provides the underlying non-human identity an agent authenticates and acts as",
-      "Agent 365 is the management plane for registering, approving, and monitoring the usage of deployed agents",
-      "They are simply two marketing names for the exact same product",
-      "Agent 365 replaces the need to configure Entra Agent ID entirely"
+      "Entra Agent ID provides the non-human identity an agent acts as",
+      "Agent 365 is the management plane for registering and monitoring agents",
+      "They are simply two marketing names for the exact same single product",
+      "Agent 365 removes any need to configure Entra Agent ID at all, in any tenant"
     ],
     "correctAnswers": [
-      "Entra Agent ID provides the underlying non-human identity an agent authenticates and acts as",
-      "Agent 365 is the management plane for registering, approving, and monitoring the usage of deployed agents"
+      "Entra Agent ID provides the non-human identity an agent acts as",
+      "Agent 365 is the management plane for registering and monitoring agents"
     ],
-    "explanation": "Entra Agent ID is the identity layer; Agent 365 is a distinct governance/lifecycle layer built on top of that identity, not a replacement for it or a rebrand of the same product.",
+    "explanation": "One issues the identity, the other manages the fleet — they are layers of the same story rather than competitors. Both false statements make the same mistake from opposite directions: they collapse the two into one product, whereas Agent 365 depends on Agent ID and cannot replace it.",
+    "skillRef": "d3a6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-1-46",
+    "src": "kb-aisec",
     "objectiveId": "o3-1",
+    "id": "q-o3-1-46",
     "type": "single",
     "prompt": "Which Defender for Cloud capability combines CSPM posture findings and Defender for AI Services runtime alerts specifically for AI resources behind a single enablement toggle, with combined insights in the Data and AI security dashboard?",
     "choices": [
       "The AI workloads plan in Microsoft Defender for Cloud",
-      "Microsoft Defender for Storage",
-      "Azure Policy regulatory compliance initiatives",
-      "Microsoft Sentinel automation rules"
+      "Azure Policy regulatory compliance initiatives, assigned",
+      "Microsoft Defender for Storage, malware scanning",
+      "Microsoft Sentinel automation rules and playbooks"
     ],
-    "correctAnswers": ["The AI workloads plan in Microsoft Defender for Cloud"],
-    "explanation": "The AI workloads plan bundles CSPM and CWP for AI resources under one toggle, with results correlated in the Data and AI security dashboard. The other options are unrelated posture/SIEM features.",
+    "correctAnswers": [
+      "The AI workloads plan in Microsoft Defender for Cloud"
+    ],
+    "explanation": "The AI workloads plan is the single toggle that brings posture and runtime findings for AI resources together on one dashboard. Azure Policy regulatory compliance is the tempting neighbour because it also aggregates posture, whereas it reports configuration against a standard and carries no runtime alerts at all.",
+    "skillRef": "d3a10",
     "difficulty": "medium"
   },
   {
@@ -695,7 +1005,216 @@
       "Confirm the agent appears in the Defender XDR agent inventory",
       "Review alerts and Advanced Hunting data for the agent in Defender XDR"
     ],
-    "explanation": "Protection must first be enabled in Defender for Cloud Apps, then the agent's App ID configured with Power Platform admins so it's recognized, before inventory and then alerts/hunting data become available in Defender XDR.",
+    "explanation": "Protection is enabled in Defender for Cloud Apps first, but nothing appears until Power Platform admins configure the App ID — which is why the inventory check belongs before the hunting step rather than after it. Expecting telemetry straight after enabling the setting is the assumption that makes this look broken when it is merely incomplete.",
+    "src": "kb-aisec",
+    "skillRef": "d3a3",
     "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-1-48",
+    "objectiveId": "o3-1",
+    "type": "single",
+    "prompt": "Across the tenant, business users have published dozens of Copilot agents. An administrator must see the full inventory, review who published each one, and block a specific agent from being used. Where is that agent lifecycle managed?",
+    "choices": [
+      "The Microsoft 365 admin center, which holds the tenant-wide agent inventory and the controls to review and block individual agents",
+      "Microsoft Defender for Cloud, on the Data and AI security dashboard alongside the other AI posture and alert findings for the tenant",
+      "Microsoft Foundry, in the guardrails configuration where content filters and Prompt Shields are defined",
+      "Microsoft Entra, under the Agent ID blade where each agent's directory identity and its access are managed"
+    ],
+    "correctAnswers": [
+      "The Microsoft 365 admin center, which holds the tenant-wide agent inventory and the controls to review and block individual agents"
+    ],
+    "explanation": "Agent lifecycle — inventory, publisher, and availability — is a Microsoft 365 admin center task, and this portal split is itself examinable. The Entra Agent ID blade is the closest miss: it governs an agent's identity and what that identity may reach, not whether the agent is published to users. Defender for Cloud reports posture and Foundry constrains model behaviour; neither one lists or blocks a published agent.",
+    "src": "kb-aisec",
+    "skillRef": "d3a11",
+    "outdated": 2,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-1-49",
+    "objectiveId": "o3-1",
+    "type": "statement-grid",
+    "prompt": "AI security controls for SC-500 are spread across four portals. For each of the following statements, select Yes if the statement is true, or No if it is not.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "Blocking an agent in the Microsoft 365 admin center also deletes its Microsoft Entra Agent ID identity.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s2",
+        "text": "The tenant-wide inventory of published Copilot agents is reviewed in the Microsoft 365 admin center.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s3",
+        "text": "Prompt Shields and content filters are configured from the Microsoft 365 admin center alongside the agent inventory.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s4",
+        "text": "The Data and AI security dashboard in Defender for Cloud is where AI workload posture and alerts are monitored.",
+        "correctValue": "Yes"
+      }
+    ],
+    "explanation": "Four surfaces, four jobs: M365 admin center for agent lifecycle, Entra for agent identity and access, Defender for Cloud for posture and alerting, Foundry for model-side guardrails. The two No rows are the ones candidates get wrong by assuming one portal does everything — blocking an agent stops it being offered but leaves its directory identity intact, and guardrails are never configured outside Foundry.",
+    "src": "kb-aisec",
+    "skillRef": "d3a11",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-1-50",
+    "objectiveId": "o3-1",
+    "type": "dropdown-sentence",
+    "prompt": "A security engineer is assigning AI security tasks to the right portal. Complete the statement.",
+    "template": "To retire an agent a departing employee published, work in [[b1]]. To stop that agent reaching a sensitive SharePoint site while it remains published, work in [[b2]]. To confirm the tenant has no remaining high-risk AI exposure afterwards, review [[b3]].",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "the Microsoft 365 admin center",
+          "Microsoft Foundry",
+          "Microsoft Purview DSPM for AI",
+          "Microsoft Defender for Cloud"
+        ],
+        "correctValue": "the Microsoft 365 admin center"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "Microsoft Entra Agent ID access management",
+          "the Microsoft 365 admin center agent inventory",
+          "a Foundry content filter blocklist",
+          "an Azure Firewall application rule"
+        ],
+        "correctValue": "Microsoft Entra Agent ID access management"
+      },
+      {
+        "id": "b3",
+        "options": [
+          "the Data and AI security dashboard in Defender for Cloud",
+          "the Microsoft 365 admin center agent inventory",
+          "the Azure Policy compliance dashboard",
+          "the Entra sign-in logs for agent identities"
+        ],
+        "correctValue": "the Data and AI security dashboard in Defender for Cloud"
+      }
+    ],
+    "explanation": "Retiring is lifecycle, restricting reach is identity, and confirming exposure is posture — three different portals for three different verbs. A Foundry blocklist is the tempting answer for the middle blank because it also restricts behaviour, but it filters content the model produces rather than the resources the agent's identity can open, so a blocked term does nothing about SharePoint access.",
+    "src": "kb-aisec",
+    "skillRef": "d3a11",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-1-51",
+    "objectiveId": "o3-1",
+    "type": "single",
+    "prompt": "An agent with a Microsoft Entra Agent ID is suspected of being compromised. Before deciding whether to revoke its access, the security team must establish what the agent could have reached. Which Defender XDR capability answers that question?",
+    "choices": [
+      "Blast radius analysis for the agent identity, which enumerates the resources and data that identity can reach",
+      "Advanced hunting over the agent's sign-in table, which lists every resource that identity has actually authenticated to",
+      "The Data and AI security dashboard in Defender for Cloud, which scores the tenant's overall AI posture",
+      "A Conditional Access policy in report-only mode, which logs what the agent would have been allowed to do"
+    ],
+    "correctAnswers": [
+      "Blast radius analysis for the agent identity, which enumerates the resources and data that identity can reach"
+    ],
+    "explanation": "Blast radius is a question about potential impact, not about history, and that distinction is the item. Hunting the sign-in records tells you where the agent has already been, which understates the exposure — anything it had permission to open but never opened is missed. The dashboard reports posture at tenant level rather than for one identity, and report-only Conditional Access is a rollout technique for a policy that does not exist yet.",
+    "src": "kb-aisec",
+    "skillRef": "d3a5",
+    "outdated": 3,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-1-52",
+    "objectiveId": "o3-1",
+    "type": "statement-grid",
+    "prompt": "An incident involves a Microsoft Entra Agent ID. For each of the following statements about assessing and containing it, select Yes if the statement is true, or No if it is not.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "Blast radius analysis reports what the agent identity is permitted to reach, not only what it has already accessed.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s2",
+        "text": "Because agents hold first-class directory identities, their access can be revoked the same way a user's is.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s3",
+        "text": "Removing the agent from the Microsoft 365 admin center inventory also strips the permissions its Agent ID holds.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s4",
+        "text": "An agent running on a shared service principal has a smaller blast radius than one with its own Agent ID.",
+        "correctValue": "No"
+      }
+    ],
+    "explanation": "Agent ID exists so that an agent is governable like any other principal — inventoried, assessed, revoked. The two No rows are the misconceptions worth breaking. Blocking an agent in the admin center stops it being offered to users but leaves its identity and grants intact, so containment needs both surfaces. And a shared service principal is strictly worse, not better: every agent on it inherits the union of the permissions, so the blast radius grows with each one added.",
+    "src": "kb-aisec",
+    "skillRef": "d3a5",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-1-53",
+    "objectiveId": "o3-1",
+    "type": "single",
+    "prompt": "A CISO wants one place in Defender for Cloud that shows which AI workloads are deployed, how they are exposed, and which alerts they have raised, across every connected subscription. Where should they look?",
+    "choices": [
+      "The Data and AI security dashboard, which consolidates AI workload inventory, exposure and alerts",
+      "Microsoft Purview DSPM for AI, which assesses how much sensitive content Copilot users are able to reach",
+      "The Microsoft 365 admin center, which lists the agents that have been published in the tenant",
+      "The Foundry guardrails blade, which shows which content filters and blocklists are configured"
+    ],
+    "correctAnswers": [
+      "The Data and AI security dashboard, which consolidates AI workload inventory, exposure and alerts"
+    ],
+    "explanation": "Each surface answers a different question and the portal split is examinable. The dashboard is the cross-subscription posture and alerting view, which is what a tenant-wide picture requires. Purview DSPM for AI is the tempting alternative because it also reports on AI risk, but its subject is the data users can reach rather than the workloads themselves. The admin center covers agent lifecycle and Foundry covers model-side controls; neither aggregates alerts.",
+    "src": "kb-aisec",
+    "skillRef": "d3a10",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-1-54",
+    "objectiveId": "o3-1",
+    "type": "drag-match",
+    "prompt": "Drag each Microsoft surface onto the AI security question it answers. Not every surface in the pool is used.",
+    "sources": [
+      "Data and AI security dashboard in Defender for Cloud",
+      "Microsoft Purview DSPM for AI",
+      "Microsoft 365 admin center",
+      "Microsoft Foundry guardrails",
+      "Microsoft Entra Agent ID",
+      "Azure API Management AI gateway",
+      "Microsoft Sentinel content hub"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "label": "Which AI workloads exist across my subscriptions, how exposed are they, and what have they alerted on?",
+        "correctSource": "Data and AI security dashboard in Defender for Cloud"
+      },
+      {
+        "id": "t2",
+        "label": "How much sensitive content can Copilot surface to users who should not see it?",
+        "correctSource": "Microsoft Purview DSPM for AI"
+      },
+      {
+        "id": "t3",
+        "label": "Which agents have been published in this tenant, by whom, and can I stop one being offered?",
+        "correctSource": "Microsoft 365 admin center"
+      },
+      {
+        "id": "t4",
+        "label": "What must the model refuse to produce, and which prompts must be shielded?",
+        "correctSource": "Microsoft Foundry guardrails"
+      }
+    ],
+    "explanation": "Four questions, four portals — posture, data exposure, agent lifecycle, and model behaviour. Getting this wrong is the most common AI-security mistake on this objective, because every surface plausibly relates to AI. Entra Agent ID and the API Management gateway are the sharpest distractors: both are real AI controls, but one governs an agent's identity and the other the traffic to a model endpoint, and neither answers any of the four questions above.",
+    "src": "kb-aisec",
+    "skillRef": "d3a10",
+    "difficulty": "hard"
   }
 ]

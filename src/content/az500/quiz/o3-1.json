@@ -5,13 +5,15 @@
     "type": "single",
     "prompt": "What does Azure Bastion provide?",
     "choices": [
-      "Browser-based RDP/SSH to VMs over TLS, with no public IP required on the VM",
+      "Browser-based RDP and SSH, no public IP",
       "An encrypted site-to-site tunnel to on-premises",
-      "A managed Kubernetes control plane",
-      "A private DNS resolver for VM names"
+      "A private DNS resolver for the VM names",
+      "A managed Kubernetes control plane"
     ],
-    "correctAnswers": ["Browser-based RDP/SSH to VMs over TLS, with no public IP required on the VM"],
-    "explanation": "Bastion offers portal-based RDP/SSH over TLS, removing the need for a public IP or exposed 3389/22 on the VM.",
+    "correctAnswers": [
+      "Browser-based RDP and SSH, no public IP"
+    ],
+    "explanation": "Bastion gives browser-based RDP and SSH over TLS, so the VM needs no public IP and no open 3389 or 22. A site-to-site tunnel is the tempting answer because it also removes internet exposure, however it connects networks rather than giving an administrator a session.",
     "difficulty": "easy"
   },
   {
@@ -20,13 +22,15 @@
     "type": "single",
     "prompt": "How does just-in-time (JIT) VM access work?",
     "choices": [
-      "Management ports stay closed and open only on request, for a specific source and limited time",
-      "It permanently opens management ports for convenience",
+      "Ports stay closed, opening only on request",
+      "It permanently opens the management ports for convenience",
       "It replaces the need for any NSG on the VM",
-      "It encrypts the VM's OS disk"
+      "It encrypts the VM's operating system disk"
     ],
-    "correctAnswers": ["Management ports stay closed and open only on request, for a specific source and limited time"],
-    "explanation": "JIT keeps ports closed until an explicit, time-bound, source-restricted request, then auto-closes them.",
+    "correctAnswers": [
+      "Ports stay closed, opening only on request"
+    ],
+    "explanation": "JIT keeps management ports closed and opens them only on an approved, time-bound, source-restricted request, then closes them again. It does not replace the NSG — it works by writing temporary rules into one, so a VM with no NSG cannot be protected by it at all.",
     "difficulty": "easy"
   },
   {
@@ -36,12 +40,14 @@
     "prompt": "In which product is just-in-time VM access configured?",
     "choices": [
       "Microsoft Defender for Cloud",
-      "Azure Bastion",
-      "Azure Firewall Manager",
-      "Microsoft Entra PIM"
+      "Azure Firewall Manager policies",
+      "Microsoft Entra PIM settings",
+      "Azure Bastion host settings"
     ],
-    "correctAnswers": ["Microsoft Defender for Cloud"],
-    "explanation": "JIT VM access is a Defender for Cloud workload-protection feature (Workload protections ▸ Just-in-time VM access).",
+    "correctAnswers": [
+      "Microsoft Defender for Cloud"
+    ],
+    "explanation": "JIT VM access lives in Defender for Cloud, under workload protections, and requires the paid Defender for Servers plan. Azure Bastion is the tempting answer because the two are used together, but Bastion removes the public IP whereas JIT time-boxes the port.",
     "difficulty": "medium"
   },
   {
@@ -50,13 +56,15 @@
     "type": "single",
     "prompt": "Bastion and JIT are best described as which of the following?",
     "choices": [
-      "Complementary controls to combine, eliminating standing exposure of management ports",
-      "Alternatives where you pick exactly one",
-      "Two names for the same feature",
-      "Features that conflict and cannot be used together"
+      "Complementary controls, best combined",
+      "Features that conflict and cannot be used together",
+      "Alternatives, where you pick exactly one",
+      "Two names for the same platform feature"
     ],
-    "correctAnswers": ["Complementary controls to combine, eliminating standing exposure of management ports"],
-    "explanation": "Bastion removes the need for a public IP/exposed RDP-SSH; JIT keeps any management ports closed until requested. Together: no standing open management ports.",
+    "correctAnswers": [
+      "Complementary controls, best combined"
+    ],
+    "explanation": "They solve overlapping problems from different angles and are meant to be combined: Bastion removes the need for a public IP, JIT keeps any remaining management port shut until requested. Treating them as alternatives is the trap, because picking one leaves either standing exposure or an unaudited open port.",
     "difficulty": "medium"
   },
   {
@@ -65,13 +73,15 @@
     "type": "single",
     "prompt": "What does an AKS 'private cluster' change?",
     "choices": [
-      "The Kubernetes API server has no public endpoint",
-      "All container images must be private",
-      "Pods lose all network connectivity",
-      "The cluster can only be managed via Bastion"
+      "The API server has no public endpoint",
+      "The cluster can only be managed through Bastion",
+      "All of the container images must be private",
+      "Pods lose all of their network connectivity"
     ],
-    "correctAnswers": ["The Kubernetes API server has no public endpoint"],
-    "explanation": "A private cluster removes the API server's public endpoint, requiring network-level access to manage it.",
+    "correctAnswers": [
+      "The API server has no public endpoint"
+    ],
+    "explanation": "A private cluster removes the Kubernetes API server’s public endpoint, so managing it requires network-level access through the VNet, a VPN or a jump host. It says nothing about images or pod networking, which is the usual over-reading: pods keep communicating exactly as before, whereas only the control-plane reachability changes.",
     "difficulty": "medium"
   },
   {
@@ -80,13 +90,15 @@
     "type": "single",
     "prompt": "What is the purpose of Kubernetes network policies in AKS?",
     "choices": [
-      "To control pod-to-pod traffic within the cluster",
-      "To encrypt data on the worker nodes",
-      "To schedule node OS patching",
-      "To autoscale the node pools"
+      "To control pod-to-pod traffic in the cluster",
+      "To encrypt the data held on the worker node disks",
+      "To schedule the node OS patching windows",
+      "To autoscale the cluster node pools"
     ],
-    "correctAnswers": ["To control pod-to-pod traffic within the cluster"],
-    "explanation": "Network policies (Azure Network Policy or Calico) restrict which pods can communicate.",
+    "correctAnswers": [
+      "To control pod-to-pod traffic in the cluster"
+    ],
+    "explanation": "Network policies restrict which pods may talk to which, inside the cluster. This is the gap NSGs cannot fill: an NSG works at subnet and NIC level, so it never sees pod-to-pod traffic within a node.",
     "difficulty": "medium"
   },
   {
@@ -95,13 +107,15 @@
     "type": "single",
     "prompt": "What is the recommended way to authenticate and authorize users to an AKS cluster?",
     "choices": [
-      "Microsoft Entra integration with Azure RBAC for Kubernetes",
-      "A shared local cluster-admin kubeconfig",
+      "Entra integration with Azure RBAC",
+      "Client certificates issued manually per user",
       "The Azure Container Registry admin account",
-      "Client certificates issued manually per user"
+      "A shared local cluster-admin kubeconfig"
     ],
-    "correctAnswers": ["Microsoft Entra integration with Azure RBAC for Kubernetes"],
-    "explanation": "Entra integration with Azure RBAC for Kubernetes replaces static kubeconfig/local admin access with governable identities.",
+    "correctAnswers": [
+      "Entra integration with Azure RBAC"
+    ],
+    "explanation": "Entra integration with Azure RBAC for Kubernetes replaces static credentials with governable per-user identities that can be reviewed and revoked. A shared cluster-admin kubeconfig is the tempting shortcut and it is the practice this replaces: it is not attributable, and it cannot be revoked for one person.",
     "difficulty": "easy"
   },
   {
@@ -111,12 +125,14 @@
     "prompt": "Which Defender plan scans container images and monitors AKS runtime behavior?",
     "choices": [
       "Microsoft Defender for Containers",
+      "Microsoft Defender for Key Vault plans",
       "Microsoft Defender for Servers",
-      "Microsoft Defender for Storage",
-      "Microsoft Defender for Key Vault"
+      "Microsoft Defender for Storage"
     ],
-    "correctAnswers": ["Microsoft Defender for Containers"],
-    "explanation": "Defender for Containers covers image scanning and Kubernetes runtime protection.",
+    "correctAnswers": [
+      "Microsoft Defender for Containers"
+    ],
+    "explanation": "Defender for Containers covers registry image scanning, Kubernetes posture and runtime threat detection. Defender for Servers is the closest miss because AKS nodes are virtual machines, however the plan follows the container workload rather than the host.",
     "difficulty": "easy"
   },
   {
@@ -125,13 +141,15 @@
     "type": "single",
     "prompt": "Which is a recommended security practice for Azure Container Registry (ACR)?",
     "choices": [
-      "Disable the admin account and use Azure RBAC or repository-scoped tokens",
-      "Enable the admin account and share its password with the team",
-      "Make the registry publicly readable",
-      "Allow anonymous image pulls from anywhere"
+      "Disable the admin account, use RBAC",
+      "Enable the admin account and share its password",
+      "Allow anonymous image pulls from anywhere",
+      "Make the registry publicly readable"
     ],
-    "correctAnswers": ["Disable the admin account and use Azure RBAC or repository-scoped tokens"],
-    "explanation": "The admin account is a shared, non-attributable credential; disable it and use governed RBAC/token access.",
+    "correctAnswers": [
+      "Disable the admin account, use RBAC"
+    ],
+    "explanation": "The ACR admin account is a single shared credential with no per-user attribution, so the recommended practice is to disable it and use Entra RBAC or repository-scoped tokens. Rotating its password is the tempting middle ground, but rotation does not make a shared credential attributable.",
     "difficulty": "easy"
   },
   {
@@ -141,12 +159,14 @@
     "prompt": "How do you remove public network exposure from an Azure Container Registry?",
     "choices": [
       "Add a private endpoint to the registry",
-      "Enable the admin account",
-      "Disable image scanning",
-      "Assign the registry a managed identity"
+      "Assign the registry a user-assigned identity",
+      "Disable image vulnerability scanning",
+      "Enable the registry admin account"
     ],
-    "correctAnswers": ["Add a private endpoint to the registry"],
-    "explanation": "A private endpoint gives the registry a private IP in your VNet and removes public exposure.",
+    "correctAnswers": [
+      "Add a private endpoint to the registry"
+    ],
+    "explanation": "A private endpoint gives the registry a private IP in your VNet and removes the public endpoint. Assigning the registry a managed identity is the tempting answer because it also concerns identity, however a managed identity is how the registry authenticates outward and changes no network exposure.",
     "difficulty": "medium"
   },
   {
@@ -155,13 +175,15 @@
     "type": "single",
     "prompt": "How does Azure Disk Encryption (ADE) work?",
     "choices": [
-      "It encrypts OS/data volumes inside the guest using BitLocker or DM-Crypt, with keys in Key Vault",
-      "It encrypts data at the VM host, including temp disks, with no in-guest agent",
+      "In-guest BitLocker or DM-Crypt, keys in Key Vault",
+      "At the VM host, including temp disks, with no in-guest agent",
       "It binds the OS disk key to the VM's hardware TEE",
       "It replaces the default platform encryption at rest"
     ],
-    "correctAnswers": ["It encrypts OS/data volumes inside the guest using BitLocker or DM-Crypt, with keys in Key Vault"],
-    "explanation": "ADE is in-guest encryption. Host-level coverage of temp disks is 'encryption at host'; TEE binding is confidential disk encryption.",
+    "correctAnswers": [
+      "In-guest BitLocker or DM-Crypt, keys in Key Vault"
+    ],
+    "explanation": "ADE encrypts OS and data volumes inside the guest using BitLocker or DM-Crypt, with keys in Key Vault, so it needs an in-guest component. Host-level coverage of temp disks is encryption at host, whereas TEE binding is confidential disk encryption — three distinct mechanisms the exam deliberately puts side by side.",
     "difficulty": "medium"
   },
   {
@@ -175,8 +197,10 @@
       "Confidential disk encryption",
       "Transparent Data Encryption"
     ],
-    "correctAnswers": ["Encryption at host"],
-    "explanation": "Encryption at host operates at the VM host level, covering temp disks/caches, and needs no in-guest agent.",
+    "correctAnswers": [
+      "Encryption at host"
+    ],
+    "explanation": "Encryption at host operates at the VM host, covering temp disks and caches with nothing installed in the guest. ADE is the tempting answer because it is the better-known option, but it is in-guest by construction and never covers the temp disk the same way.",
     "difficulty": "medium"
   },
   {
@@ -185,13 +209,15 @@
     "type": "single",
     "prompt": "Confidential disk encryption binds the OS disk key to what?",
     "choices": [
-      "The VM's hardware-based trusted execution environment (TEE), on confidential VMs",
-      "A software key stored in the guest OS",
+      "The VM's hardware-based TEE",
       "The storage account's infrastructure key",
+      "A software key stored in the guest OS",
       "The subscription's tenant root key"
     ],
-    "correctAnswers": ["The VM's hardware-based trusted execution environment (TEE), on confidential VMs"],
-    "explanation": "Confidential disk encryption is specific to confidential VMs, binding the key to the hardware TEE.",
+    "correctAnswers": [
+      "The VM's hardware-based TEE"
+    ],
+    "explanation": "Confidential disk encryption binds the OS disk key to the VM's hardware trusted execution environment, and it exists only on confidential VMs. A software key in the guest is the tempting simplification, and it is exactly what the hardware binding is designed to avoid.",
     "difficulty": "medium"
   },
   {
@@ -200,13 +226,15 @@
     "type": "single",
     "prompt": "Which statement about Azure managed disk encryption is correct?",
     "choices": [
-      "Managed disks are always encrypted at rest with platform-managed keys by default; ADE/host/confidential add layers on top",
+      "Always encrypted by default; the rest add layers",
+      "Encryption at host disables the default platform encryption",
       "Managed disks are unencrypted until you enable ADE",
-      "Only confidential VMs encrypt managed disks at rest",
-      "Encryption at host disables the default platform encryption"
+      "Only confidential VMs encrypt managed disks at rest"
     ],
-    "correctAnswers": ["Managed disks are always encrypted at rest with platform-managed keys by default; ADE/host/confidential add layers on top"],
-    "explanation": "Default platform encryption at rest is always on; the three approaches layer additional protection.",
+    "correctAnswers": [
+      "Always encrypted by default; the rest add layers"
+    ],
+    "explanation": "Managed disks are always encrypted at rest with platform-managed keys, with nothing to enable, whereas the three other mechanisms layer on top of that baseline. Believing disks are unencrypted until you enable ADE is the misconception worth correcting, because it leads teams to deploy ADE for a property they already had.",
     "difficulty": "medium"
   },
   {
@@ -215,13 +243,15 @@
     "type": "single",
     "prompt": "What does deploying Azure API Management in 'internal' VNet mode mean?",
     "choices": [
-      "The API Management gateway has no public endpoint at all",
+      "The gateway has no public endpoint at all",
       "Only the developer portal is public; the gateway is private",
-      "It is identical to external mode but with a WAF",
-      "It disables subscription keys"
+      "It is identical to external mode, but with a WAF",
+      "It disables the subscription keys on every product"
     ],
-    "correctAnswers": ["The API Management gateway has no public endpoint at all"],
-    "explanation": "Internal mode removes the public endpoint entirely; public access must come through a fronting service like Application Gateway/Front Door.",
+    "correctAnswers": [
+      "The gateway has no public endpoint at all"
+    ],
+    "explanation": "Internal VNet mode removes the API Management gateway’s public endpoint entirely, so public reach must come through a fronting service. Expecting only the developer portal to become private is the partial reading: in internal mode the gateway itself cannot be reached from the internet.",
     "difficulty": "hard"
   },
   {
@@ -230,13 +260,15 @@
     "type": "single",
     "prompt": "A partner must call your API through API Management. Which control ensures they can't call it without an issued key?",
     "choices": [
-      "Require a subscription key on the product (avoid 'open' products)",
-      "Assign the API a managed identity",
-      "Enable dynamic data masking",
-      "Add a UDR to the API's subnet"
+      "Require a subscription key on the product",
+      "Assign the API a system-assigned managed identity",
+      "Add a user-defined route to the subnet",
+      "Enable dynamic data masking on it"
     ],
-    "correctAnswers": ["Require a subscription key on the product (avoid 'open' products)"],
-    "explanation": "Requiring subscription keys on products gates client access; open products allow calls without a key.",
+    "correctAnswers": [
+      "Require a subscription key on the product"
+    ],
+    "explanation": "Requiring a subscription key on the product gates who may call the API, whereas an open product accepts calls with no key at all. Assigning the API a managed identity is the tempting answer but points the wrong way: a managed identity is how APIM authenticates to a backend, not how a caller proves who they are.",
     "difficulty": "medium"
   },
   {
@@ -245,13 +277,15 @@
     "type": "single",
     "prompt": "How can API Management authenticate to a protected backend service without a shared secret?",
     "choices": [
-      "Use its managed identity (or a client certificate / mutual TLS) to the backend",
+      "Its managed identity, or mutual TLS",
       "Embed the backend password in a named value in plaintext",
-      "Disable TLS between APIM and the backend",
-      "Rely on the caller's subscription key being forwarded"
+      "Rely on the caller's subscription key being forwarded",
+      "Disable TLS between APIM and the backend"
     ],
-    "correctAnswers": ["Use its managed identity (or a client certificate / mutual TLS) to the backend"],
-    "explanation": "APIM can present a managed identity or client certificate (mutual TLS) to secure the APIM-to-backend leg.",
+    "correctAnswers": [
+      "Its managed identity, or mutual TLS"
+    ],
+    "explanation": "APIM can present its managed identity, or a client certificate for mutual TLS, on the leg to the backend. Forwarding the caller's subscription key is the tempting shortcut and it is not authentication of APIM at all — the backend would be trusting a value the caller supplied.",
     "difficulty": "medium"
   },
   {
@@ -260,13 +294,15 @@
     "type": "single",
     "prompt": "A scenario requires an API to be publicly reachable AND fully network-isolated behind a WAF. Which design fits?",
     "choices": [
-      "API Management in internal VNet mode behind Application Gateway (WAF) / Front Door",
-      "API Management in external mode alone",
+      "Internal mode behind a WAF gateway",
+      "A private endpoint on APIM with public access enabled",
       "API Management with only subscription keys, no VNet",
-      "A private endpoint on API Management with public access enabled"
+      "API Management in external mode, alone"
     ],
-    "correctAnswers": ["API Management in internal VNet mode behind Application Gateway (WAF) / Front Door"],
-    "explanation": "Internal-mode APIM (no public endpoint) fronted by App Gateway/Front Door with a WAF provides public reach plus isolation and web protection.",
+    "correctAnswers": [
+      "Internal mode behind a WAF gateway"
+    ],
+    "explanation": "Public reach plus full network isolation means internal-mode APIM, which has no public endpoint, fronted by Application Gateway or Front Door with a WAF. External mode alone is the closest miss: it is reachable publicly, so the isolation half of the requirement fails.",
     "difficulty": "hard"
   },
   {
@@ -275,13 +311,15 @@
     "type": "single",
     "prompt": "Which client-to-API-Management authentication methods does APIM support?",
     "choices": [
-      "Subscription keys, OAuth 2.0 / OpenID Connect, and client certificates (mutual TLS)",
-      "Only subscription keys",
-      "Only IP allow-lists",
-      "Only Azure RBAC data roles"
+      "Subscription keys, OAuth/OIDC, and mutual TLS",
+      "Only Azure RBAC data roles on the API resource itself",
+      "Only subscription keys per product",
+      "Only IP allow-lists on the gateway"
     ],
-    "correctAnswers": ["Subscription keys, OAuth 2.0 / OpenID Connect, and client certificates (mutual TLS)"],
-    "explanation": "APIM supports subscription keys, OAuth2/OIDC, and client-certificate/mutual-TLS on the client-facing side.",
+    "correctAnswers": [
+      "Subscription keys, OAuth/OIDC, and mutual TLS"
+    ],
+    "explanation": "On the client-facing side APIM supports subscription keys, OAuth 2.0 and OpenID Connect, and client certificates for mutual TLS. Answering \"only subscription keys\" is the dated reading, and it matters because a key is a shared secret whereas OAuth carries an identity.",
     "difficulty": "medium"
   },
   {
@@ -290,13 +328,15 @@
     "type": "single",
     "prompt": "Which combination best removes standing exposure of a management VM's RDP port?",
     "choices": [
-      "Azure Bastion (no public IP) plus JIT (port closed until requested)",
+      "Bastion for the path, plus JIT for the port",
       "A public IP with a strong NSG allow rule for RDP",
-      "A shared local admin password rotated weekly",
+      "A shared local admin password, rotated weekly",
       "Dynamic data masking on the VM disk"
     ],
-    "correctAnswers": ["Azure Bastion (no public IP) plus JIT (port closed until requested)"],
-    "explanation": "Bastion removes the public IP; JIT ensures the RDP port is closed until a time-bound request opens it.",
+    "correctAnswers": [
+      "Bastion for the path, plus JIT for the port"
+    ],
+    "explanation": "Bastion removes the public IP and JIT keeps the port closed until a time-bound request opens it — together there is no standing exposure. A public IP with a tight NSG rule is the tempting compromise, but the port is then permanently open to whatever that rule allows.",
     "difficulty": "medium"
   },
   {
@@ -305,13 +345,15 @@
     "type": "single",
     "prompt": "Which practice most directly reduces the risk of deploying a container image with known vulnerabilities from ACR?",
     "choices": [
-      "Enable image vulnerability scanning and block/flag vulnerable images",
-      "Enable the ACR admin account",
-      "Make the registry public to speed pulls",
-      "Store images unsigned"
+      "Scan images and block vulnerable ones",
+      "Make the registry public, to speed up the pulls",
+      "Enable the ACR admin account for it",
+      "Store the images without signing them"
     ],
-    "correctAnswers": ["Enable image vulnerability scanning and block/flag vulnerable images"],
-    "explanation": "Vulnerability scanning of pushed images (via Defender for Containers) surfaces and helps gate vulnerable images.",
+    "correctAnswers": [
+      "Scan images and block vulnerable ones"
+    ],
+    "explanation": "Image vulnerability scanning through Defender for Containers surfaces vulnerable images and lets you gate them before they are pulled. Enabling the ACR admin account is the opposite of a control, and it is listed because it is what teams reach for when a pull fails.",
     "difficulty": "medium"
   },
   {
@@ -320,13 +362,15 @@
     "type": "single",
     "prompt": "How should security monitoring for Azure Container Instances (ACI) and Azure Container Apps (ACA) be handled?",
     "choices": [
-      "With Microsoft Defender for Cloud and Azure Monitor",
-      "By installing the Log Analytics agent (MMA) in each container",
-      "Only through NSG flow logs",
-      "They cannot be monitored"
+      "Defender for Cloud with Azure Monitor",
+      "By installing the Log Analytics agent in each container",
+      "Only through the NSG flow logs on the subnet",
+      "They cannot be monitored in any way at all"
     ],
-    "correctAnswers": ["With Microsoft Defender for Cloud and Azure Monitor"],
-    "explanation": "ACI/ACA are monitored with Defender for Cloud and Azure Monitor; the legacy MMA agent is retired.",
+    "correctAnswers": [
+      "Defender for Cloud with Azure Monitor"
+    ],
+    "explanation": "Container Instances and Container Apps are monitored through Defender for Cloud and Azure Monitor. Installing the legacy Log Analytics agent in each container is the tempting habit from the VM world, however that agent is retired and containers are not where you install agents.",
     "difficulty": "medium"
   },
   {
@@ -336,12 +380,14 @@
     "prompt": "A compliance rule requires in-guest BitLocker encryption with keys the customer holds in Key Vault. Which option satisfies it?",
     "choices": [
       "Azure Disk Encryption (ADE)",
-      "Encryption at host",
+      "The default platform-managed encryption",
       "Confidential disk encryption",
-      "The default platform-managed encryption alone"
+      "Encryption at the VM host only"
     ],
-    "correctAnswers": ["Azure Disk Encryption (ADE)"],
-    "explanation": "ADE performs in-guest BitLocker/DM-Crypt encryption with keys stored in Key Vault, matching the requirement.",
+    "correctAnswers": [
+      "Azure Disk Encryption (ADE)"
+    ],
+    "explanation": "A requirement naming in-guest BitLocker with customer-held keys describes ADE, which encrypts inside the guest with keys in Key Vault. Encryption at host is the tempting alternative because it is the more modern option, but it is host-level and therefore cannot satisfy an in-guest requirement.",
     "difficulty": "medium"
   },
   {
@@ -350,13 +396,15 @@
     "type": "single",
     "prompt": "Which disk-encryption option should you choose when the requirement is specifically to protect temp disks and caches without deploying any in-guest agent?",
     "choices": [
-      "Encryption at host",
-      "Azure Disk Encryption (ADE)",
+      "Encryption at the VM host",
+      "Infrastructure double encryption",
       "Confidential disk encryption",
-      "Infrastructure double encryption on storage"
+      "Azure Disk Encryption (ADE)"
     ],
-    "correctAnswers": ["Encryption at host"],
-    "explanation": "Encryption at host covers temp disks/caches at the host level with no in-guest agent.",
+    "correctAnswers": [
+      "Encryption at the VM host"
+    ],
+    "explanation": "When the requirement names temp disks and caches with no in-guest agent, that is encryption at host. ADE is the tempting answer for anyone reaching for the familiar option, however it requires an in-guest component and so fails the stated constraint.",
     "difficulty": "medium"
   },
   {
@@ -365,16 +413,16 @@
     "type": "multiple",
     "prompt": "Which two statements about Azure disk encryption are correct? (Choose two.)",
     "choices": [
-      "Platform-managed encryption at rest is always enabled on managed disks by default",
-      "Encryption at host covers temporary disks and caches",
+      "Platform-managed encryption is always on",
+      "Encryption at host covers temp disks and caches",
       "Azure Disk Encryption requires no in-guest component",
       "Confidential disk encryption is identical to ADE"
     ],
     "correctAnswers": [
-      "Platform-managed encryption at rest is always enabled on managed disks by default",
-      "Encryption at host covers temporary disks and caches"
+      "Platform-managed encryption is always on",
+      "Encryption at host covers temp disks and caches"
     ],
-    "explanation": "ADE actually uses in-guest BitLocker/DM-Crypt, and confidential disk encryption is a distinct hardware-bound mechanism — those two are the false options.",
+    "explanation": "Platform-managed encryption at rest is always on, and encryption at host is what extends coverage to temp disks and caches. Neither distractor holds: ADE does need an in-guest component, and confidential disk encryption is a distinct hardware-bound mechanism rather than another name for ADE.",
     "difficulty": "hard"
   },
   {
@@ -383,14 +431,14 @@
     "type": "multiple",
     "prompt": "Which two are correct API Management security practices? (Choose two.)",
     "choices": [
-      "Require subscription keys on every product",
-      "Use mutual TLS for client and/or backend authentication",
-      "Deploy only in external mode to guarantee isolation",
-      "Disable OAuth 2.0 to simplify access"
+      "Require subscription keys on products",
+      "Use mutual TLS for client or backend auth",
+      "Deploy only in external mode, to guarantee isolation",
+      "Disable OAuth 2.0 to simplify the access"
     ],
     "correctAnswers": [
-      "Require subscription keys on every product",
-      "Use mutual TLS for client and/or backend authentication"
+      "Require subscription keys on products",
+      "Use mutual TLS for client or backend auth"
     ],
     "explanation": "Internal (not external) mode provides network isolation, and OAuth 2.0 strengthens rather than weakens access control — so those two are wrong.",
     "difficulty": "medium"
@@ -401,16 +449,16 @@
     "type": "multiple",
     "prompt": "Which two are recommended AKS security configurations? (Choose two.)",
     "choices": [
-      "Microsoft Entra integration with Azure RBAC for Kubernetes",
-      "Private cluster and Kubernetes network policies",
-      "A single shared cluster-admin kubeconfig for the team",
-      "Enabling the ACR admin account for cluster pulls"
+      "Entra integration with Azure RBAC",
+      "Private cluster and network policies",
+      "A single shared cluster-admin kubeconfig",
+      "Enabling the ACR admin account for pulls"
     ],
     "correctAnswers": [
-      "Microsoft Entra integration with Azure RBAC for Kubernetes",
-      "Private cluster and Kubernetes network policies"
+      "Entra integration with Azure RBAC",
+      "Private cluster and network policies"
     ],
-    "explanation": "Shared kubeconfig and the ACR admin account are anti-patterns; Entra RBAC and private cluster/network policies are the recommended controls.",
+    "explanation": "Entra integration with Azure RBAC, and a private cluster with network policies, are the recommended pair. A shared kubeconfig and the ACR admin account are the two anti-patterns here, and both are tempting for the same reason — they make access work immediately, at the cost of attribution.",
     "difficulty": "medium"
   },
   {
@@ -420,13 +468,15 @@
     "caseStudyId": "cs-northwind-compute",
     "prompt": "Referring to requirement 1 (RDP into management VMs with no public IP, access only on request for a limited time), which combination is correct?",
     "choices": [
-      "Azure Bastion for portal RDP, plus JIT VM access to gate when the port is open",
+      "Bastion for RDP, plus JIT to gate the port",
+      "Azure Firewall DNAT, with no Bastion or JIT at all",
       "A public IP on each VM with a tight NSG rule",
-      "A private endpoint on each VM",
-      "Azure Firewall DNAT with no Bastion or JIT"
+      "A private endpoint on each of the VMs"
     ],
-    "correctAnswers": ["Azure Bastion for portal RDP, plus JIT VM access to gate when the port is open"],
-    "explanation": "Bastion removes the public IP; JIT keeps the RDP port closed until a time-limited request — the two are meant to combine.",
+    "correctAnswers": [
+      "Bastion for RDP, plus JIT to gate the port"
+    ],
+    "explanation": "Bastion removes the public IP and JIT gates when the port is open, which is why the requirement needs both. A public IP with a tight NSG rule is the tempting single control, but it leaves the port permanently reachable from whatever range the rule allows.",
     "difficulty": "medium"
   },
   {
@@ -436,13 +486,15 @@
     "caseStudyId": "cs-northwind-compute",
     "prompt": "Referring to requirement 2 (AKS users must authenticate with corporate identities, not static kubeconfig credentials), what should be configured?",
     "choices": [
-      "Microsoft Entra integration with Azure RBAC for Kubernetes",
+      "Entra integration with Azure RBAC",
       "A shared kubeconfig distributed to all admins",
-      "The ACR admin account",
-      "A single local Kubernetes admin account"
+      "A single local Kubernetes admin account",
+      "The container registry admin account"
     ],
-    "correctAnswers": ["Microsoft Entra integration with Azure RBAC for Kubernetes"],
-    "explanation": "This is the recommended replacement for static kubeconfig-based cluster access.",
+    "correctAnswers": [
+      "Entra integration with Azure RBAC"
+    ],
+    "explanation": "Authenticating AKS users with corporate identities is Entra integration with Azure RBAC for Kubernetes. A shared kubeconfig is the practice being replaced: it authenticates the file rather than the person, so it cannot be tied to a corporate identity or revoked individually.",
     "difficulty": "easy"
   },
   {
@@ -452,13 +504,15 @@
     "caseStudyId": "cs-northwind-compute",
     "prompt": "Northwind stores container images in ACR and wants to stop developers from using a single shared credential to push/pull. What should they do?",
     "choices": [
-      "Disable the ACR admin account and grant access via Azure RBAC or repository-scoped tokens",
-      "Enable the ACR admin account and rotate its password monthly",
+      "Disable the admin account, grant RBAC",
+      "Enable the ACR admin account and rotate its password",
       "Make the registry anonymous-pull for the dev team",
-      "Move images to a public Docker Hub repository"
+      "Move the images to a public Docker Hub repo"
     ],
-    "correctAnswers": ["Disable the ACR admin account and grant access via Azure RBAC or repository-scoped tokens"],
-    "explanation": "Disabling the shared admin account and using per-identity RBAC/tokens gives attributable, least-privilege access.",
+    "correctAnswers": [
+      "Disable the admin account, grant RBAC"
+    ],
+    "explanation": "Disabling the ACR admin account and granting access through Entra RBAC or repository-scoped tokens makes every pull attributable to an identity. Rotating the admin password monthly is the tempting compromise and it changes nothing structural — the credential stays shared.",
     "difficulty": "medium"
   },
   {
@@ -472,7 +526,7 @@
       "The administrator requests access for a limited time and source IP",
       "Connect to the VM through Bastion during the approved window"
     ],
-    "explanation": "Bastion and JIT must both be set up before a time-bound request can be made and used to connect.",
+    "explanation": "Bastion and JIT must both be in place before a time-bound request can be made and used, so the request comes after the setup. Requesting access first is the ordering mistake, because with no JIT configuration there is nothing to approve and the port simply cannot open.",
     "difficulty": "medium"
   },
   {
@@ -486,7 +540,7 @@
       "Add a private endpoint to remove public exposure",
       "Enable vulnerability scanning on pushed images"
     ],
-    "explanation": "Remove the shared credential first, replace it with governed access, then close network exposure and add ongoing scanning.",
+    "explanation": "Remove the shared credential first, replace it with governed access, then close the network exposure and add ongoing scanning. Closing the network before replacing the credential is the tempting order and it breaks the pipeline that was using the admin account, with no working alternative in place yet.",
     "difficulty": "medium"
   },
   {
@@ -496,10 +550,28 @@
     "prompt": "Configure this simplified AKS cluster creation screen for a cluster whose users must authenticate with corporate identities, not static credentials, and whose API server must not be internet-reachable.",
     "screenTitle": "Create AKS cluster (simulated)",
     "fields": [
-      { "id": "authMode", "label": "Authentication and authorization", "kind": "select", "options": ["Local accounts", "Microsoft Entra ID with Azure RBAC"], "correctValue": "Microsoft Entra ID with Azure RBAC" },
-      { "id": "apiAccess", "label": "API server access", "kind": "select", "options": ["Public", "Private"], "correctValue": "Private" }
+      {
+        "id": "authMode",
+        "label": "Authentication and authorization",
+        "kind": "select",
+        "options": [
+          "Local accounts",
+          "Microsoft Entra ID with Azure RBAC"
+        ],
+        "correctValue": "Microsoft Entra ID with Azure RBAC"
+      },
+      {
+        "id": "apiAccess",
+        "label": "API server access",
+        "kind": "select",
+        "options": [
+          "Public",
+          "Private"
+        ],
+        "correctValue": "Private"
+      }
     ],
-    "explanation": "Entra integration with Azure RBAC replaces static credentials, and a private API server has no public endpoint.",
+    "explanation": "Entra integration with Azure RBAC replaces static credentials, and a private API server has no public endpoint — both are needed for the stated goal. Leaving the API server public is the trap in this screen, because the cluster still authenticates correctly and only the exposure remains.",
     "difficulty": "medium"
   },
   {
@@ -508,9 +580,14 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o3-1",
     "prompt": "Proposed solution: Enable Azure Disk Encryption (ADE) with BitLocker inside the guest. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "ADE encrypts in-guest and requires an in-guest agent/BitLocker — the goal specifically requires no in-guest agent.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "ADE encrypts inside the guest and needs BitLocker or DM-Crypt running there, whereas the goal explicitly requires no in-guest agent. It is the tempting answer because it is the encryption option most people name first.",
     "difficulty": "medium"
   },
   {
@@ -518,10 +595,15 @@
     "objectiveId": "o3-1",
     "type": "solution-goal",
     "caseStudyId": "sg-o3-1",
-    "prompt": "Proposed solution: Enable encryption at host on the VM. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "Encryption at host works at the VM host level, covering temp disks/caches, with no in-guest agent required.",
+    "prompt": "Proposed solution: Enable confidential disk encryption on a standard (non-confidential) VM. Does this solution meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "Confidential disk encryption requires a confidential VM with a hardware trusted execution environment — it isn't available on a standard VM.",
     "difficulty": "medium"
   },
   {
@@ -529,70 +611,135 @@
     "objectiveId": "o3-1",
     "type": "solution-goal",
     "caseStudyId": "sg-o3-1",
-    "prompt": "Proposed solution: Enable confidential disk encryption on a standard (non-confidential) VM. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "Confidential disk encryption requires a confidential VM with a hardware trusted execution environment — it isn't available on a standard VM.",
+    "prompt": "Proposed solution: Enable encryption at host on the VM. Does this solution meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "Encryption at host works at the VM host level, covering temp disks and caches with no in-guest agent, which is exactly the constraint. Note what it does not give you: keys bound to hardware, which would need a confidential VM.",
     "difficulty": "medium"
   },
   {
     "id": "q-o3-1-37",
     "objectiveId": "o3-1",
-    "type": "single",
-    "prompt": "Which command enables Azure Disk Encryption (ADE) on VM1 with keys in Key Vault KV1?",
-    "choices": [
-      "az vm encryption enable --name VM1 --resource-group RG1 --disk-encryption-keyvault KV1",
-      "az vm update --name VM1 --resource-group RG1 --encryption-at-host true",
-      "az disk update --name VM1-osdisk --encryption ADE --vault KV1",
-      "az keyvault key encrypt --vault-name KV1 --vm VM1"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the command that encrypts both the OS and data disks of VM1 with Azure Disk Encryption, using keys held in Key Vault KV1.",
+    "template": "az vm encryption enable --name VM1 --resource-group RG1 [[b1]] --volume-type [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "--disk-encryption-keyvault KV1",
+          "--key-vault KV1",
+          "--vault-name KV1",
+          "--encryption-at-host true"
+        ],
+        "correctValue": "--disk-encryption-keyvault KV1"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "All",
+          "OS",
+          "Data",
+          "Temp"
+        ],
+        "correctValue": "All"
+      }
     ],
-    "correctAnswers": ["az vm encryption enable --name VM1 --resource-group RG1 --disk-encryption-keyvault KV1"],
-    "explanation": "ADE is enabled with `az vm encryption enable` pointing at the Key Vault. --encryption-at-host is the different, host-level feature; the other two commands are invented.",
+    "explanation": "ADE needs the vault named by `--disk-encryption-keyvault`, and `--volume-type All` covers OS and data disks together — OS or Data alone would leave half the requirement unmet. Temp is not a valid value, and that is the point worth remembering: ADE never covers the temporary disk or the host caches. `--encryption-at-host true` is the tempting option because it does cover them, whereas it is a different feature set on the VM rather than a parameter of this command.",
     "difficulty": "medium"
   },
   {
     "id": "q-o3-1-38",
     "objectiveId": "o3-1",
     "type": "single",
-    "prompt": "Which parameter creates a VM with host-level encryption covering temp disks and caches?",
+    "prompt": "Which `az vm create` parameter turns on host-level encryption, covering the temp disk and the host caches?",
     "choices": [
-      "az vm create ... --encryption-at-host true",
-      "az vm create ... --disk-encryption-keyvault KV1",
-      "az vm create ... --confidential-disk true",
-      "az vm create ... --enable-tde true"
+      "--encryption-at-host true",
+      "--disk-encryption-keyvault KV1",
+      "--security-type TrustedLaunch",
+      "--confidential-disk true"
     ],
-    "correctAnswers": ["az vm create ... --encryption-at-host true"],
-    "explanation": "--encryption-at-host enables the host-level layer (temp disks/caches, no agent). --disk-encryption-keyvault relates to ADE; TDE is a SQL feature; --confidential-disk isn't the real parameter.",
+    "correctAnswers": [
+      "--encryption-at-host true"
+    ],
+    "explanation": "Encryption at host is performed by the Azure host, which is why its coverage extends to the temp disk and the caches that Azure Disk Encryption cannot reach. `--disk-encryption-keyvault` is the tempting answer because it is the encryption parameter people know, whereas it selects ADE and therefore stops at the OS and data disks. Trusted launch protects the boot chain rather than encrypting anything.",
     "difficulty": "medium"
   },
   {
     "id": "q-o3-1-39",
     "objectiveId": "o3-1",
-    "type": "single",
-    "prompt": "Which command creates an AKS cluster with Entra ID authentication, Azure RBAC authorization, and a private API server?",
-    "choices": [
-      "az aks create --name AKS1 --resource-group RG1 --enable-aad --enable-azure-rbac --enable-private-cluster",
-      "az aks create --name AKS1 --resource-group RG1 --auth entra --rbac k8s --no-public-api",
-      "az aks update --name AKS1 --kubeconfig-mode entra",
-      "az aks create --name AKS1 --resource-group RG1 --admin-account disabled"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the command that creates an AKS cluster using Microsoft Entra ID for authentication, Azure RBAC for Kubernetes authorization, and an API server with no public endpoint.",
+    "template": "az aks create --name AKS1 --resource-group RG1 [[b1]] [[b2]] [[b3]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "--enable-aad",
+          "--auth entra",
+          "--enable-entra-id",
+          "--aad-auth Enabled"
+        ],
+        "correctValue": "--enable-aad"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "--enable-azure-rbac",
+          "--enable-rbac",
+          "--rbac azure",
+          "--enable-k8s-rbac"
+        ],
+        "correctValue": "--enable-azure-rbac"
+      },
+      {
+        "id": "b3",
+        "options": [
+          "--enable-private-cluster",
+          "--api-server-authorized-ip-ranges 203.0.113.0/24",
+          "--disable-public-fqdn",
+          "--no-public-api"
+        ],
+        "correctValue": "--enable-private-cluster"
+      }
     ],
-    "correctAnswers": ["az aks create --name AKS1 --resource-group RG1 --enable-aad --enable-azure-rbac --enable-private-cluster"],
-    "explanation": "--enable-aad, --enable-azure-rbac and --enable-private-cluster are the real flags for these three configurations. The other parameter sets don't exist.",
-    "difficulty": "medium"
+    "explanation": "The trap is the middle blank: `--enable-rbac` is Kubernetes RBAC, on by default, and it authorizes using Kubernetes role bindings — whereas `--enable-azure-rbac` moves that decision to Azure role assignments, which is what \"Azure RBAC for authorization\" means. For the API server, authorized IP ranges narrow who may reach a still-public endpoint, so only `--enable-private-cluster` removes the public endpoint. `--disable-public-fqdn` is a modifier for a private cluster rather than a substitute for one.",
+    "difficulty": "hard"
   },
   {
     "id": "q-o3-1-40",
     "objectiveId": "o3-1",
-    "type": "single",
-    "prompt": "Which command disables ACR's shared admin account?",
-    "choices": [
-      "az acr update --name acr1 --admin-enabled false",
-      "az acr credential delete --name acr1 --admin",
-      "az acr config set --name acr1 --disable-admin",
-      "az acr identity remove --name acr1 --admin-account"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the two-part change that removes a container registry's shared admin account without breaking image pulls from an Azure-hosted workload.",
+    "template": "az acr update --name acr1 --admin-enabled [[b1]] — then assign the workload's managed identity the [[b2]] role on acr1",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "false",
+          "true",
+          "disabled",
+          "0"
+        ],
+        "correctValue": "false"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "AcrPull",
+          "AcrPush",
+          "Reader",
+          "Contributor"
+        ],
+        "correctValue": "AcrPull"
+      }
     ],
-    "correctAnswers": ["az acr update --name acr1 --admin-enabled false"],
-    "explanation": "The admin account is a registry property toggled via `az acr update --admin-enabled false`. The other subcommands don't exist.",
+    "explanation": "The admin account is a single shared username and password that no individual can be held to, so disabling it is the least-privilege move — but pulls break unless something replaces it, which is why the two halves are one change. AcrPull is the data-plane role that authorizes pulling images. Reader is the trap: it grants the registry's control-plane metadata and cannot pull a single layer, so the workload sees the registry and still fails.",
     "difficulty": "medium"
   },
   {
@@ -602,11 +749,13 @@
     "prompt": "Which PowerShell cmdlet enables ADE on a VM?",
     "choices": [
       "Set-AzVMDiskEncryptionExtension",
-      "Set-AzDiskEncryption",
+      "Set-AzVMDiskEncryptionExtensionStatus",
       "Enable-AzVMEncryptionAtHost",
-      "New-AzDiskEncryptionSet"
+      "New-AzDiskEncryptionSetConfig"
     ],
-    "correctAnswers": ["Set-AzVMDiskEncryptionExtension"],
+    "correctAnswers": [
+      "Set-AzVMDiskEncryptionExtension"
+    ],
     "explanation": "ADE is deployed as a VM extension via Set-AzVMDiskEncryptionExtension. New-AzDiskEncryptionSet relates to customer-managed keys for managed disks (a different feature); the other two don't exist.",
     "difficulty": "hard"
   }

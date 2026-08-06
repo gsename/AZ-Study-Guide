@@ -2,515 +2,754 @@
   {
     "id": "q-o4-2-01",
     "objectiveId": "o4-2",
-    "type": "single",
-    "prompt": "What does the 'SIEM' half of Microsoft Sentinel provide?",
-    "choices": [
-      "Collecting, storing, correlating, and alerting on security logs from many sources",
-      "Automatically executing response actions like isolating a device",
-      "Provisioning Security Compute Units",
-      "Encrypting data at rest with customer-managed keys"
+    "type": "dropdown-sentence",
+    "prompt": "Microsoft Sentinel is described as both a SIEM and a SOAR platform. Complete the statement that separates the two halves.",
+    "template": "Its [[b1]] half is responsible for [[b2]], and it depends on a Log Analytics workspace to do so. Its [[b3]] half is responsible for [[b4]].",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "SIEM",
+          "SOAR",
+          "XDR",
+          "CSPM"
+        ],
+        "correctValue": "SIEM"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "collecting, storing, correlating and alerting on logs from many sources",
+          "isolating a compromised device and opening a ticket without an analyst",
+          "provisioning the compute capacity that natural-language queries consume",
+          "encrypting the workspace at rest with a customer-managed key"
+        ],
+        "correctValue": "collecting, storing, correlating and alerting on logs from many sources"
+      },
+      {
+        "id": "b3",
+        "options": [
+          "SOAR",
+          "SIEM",
+          "XDR",
+          "CSPM"
+        ],
+        "correctValue": "SOAR"
+      },
+      {
+        "id": "b4",
+        "options": [
+          "orchestrating response actions automatically once something triggers",
+          "retaining raw log data for a fixed ninety-day window",
+          "running the KQL a hunter types in the logs blade",
+          "detecting configuration drift across connected subscriptions"
+        ],
+        "correctValue": "orchestrating response actions automatically once something triggers"
+      }
     ],
-    "correctAnswers": ["Collecting, storing, correlating, and alerting on security logs from many sources"],
-    "explanation": "SIEM means collect/store/correlate/alert; automated response is the SOAR half, SCU provisioning is a Security Copilot concept, and CMK encryption is unrelated.",
+    "explanation": "The split is between knowing and doing. SIEM is the ingest-and-detect side, which is why the workspace — and its retention and cost model — belongs to it. SOAR is the act side: automation rules and playbooks. Retention and KQL hunting are tempting answers for the SOAR blank because both feel operational, but neither performs an action; they are SIEM capabilities. Provisioning compute for natural-language queries is Security Copilot, not Sentinel at all.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b1",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-2-02",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
-    "type": "single",
-    "prompt": "What does the 'SOAR' half of Microsoft Sentinel provide?",
-    "choices": [
-      "Automatically orchestrating response actions, such as playbooks, when something triggers",
-      "Storing raw logs for 90 days",
-      "Running KQL queries in Log Analytics",
-      "Detecting anomalous configuration changes"
-    ],
-    "correctAnswers": ["Automatically orchestrating response actions, such as playbooks, when something triggers"],
-    "explanation": "SOAR is the automated orchestration/response layer (playbooks); the others describe SIEM's storage/query/detection functions.",
-    "difficulty": "easy"
-  },
-  {
     "id": "q-o4-2-03",
-    "objectiveId": "o4-2",
     "type": "single",
     "prompt": "What underlying Azure resource is Microsoft Sentinel enabled on top of?",
     "choices": [
       "A Log Analytics workspace",
-      "A Key Vault",
-      "An Azure Firewall policy",
-      "A Recovery Services vault"
+      "A Recovery Services vault for backups",
+      "An Azure Firewall policy object",
+      "A Key Vault instance for secrets"
     ],
-    "correctAnswers": ["A Log Analytics workspace"],
-    "explanation": "Sentinel is layered onto a Log Analytics workspace, which is also its storage/query boundary — the others are unrelated resource types.",
+    "correctAnswers": [
+      "A Log Analytics workspace"
+    ],
+    "explanation": "Sentinel is a solution layered onto a workspace, which is why the workspace is created first and why retention, ingestion cost and KQL all belong to it rather than to Sentinel. Expecting a standalone Sentinel resource is the common assumption, whereas onboarding is literally a state recorded against the workspace.",
+    "skillRef": "d4b1",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-2-04",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-04",
     "type": "single",
     "prompt": "What query language is used to search data in a Sentinel-enabled Log Analytics workspace?",
     "choices": [
-      "KQL (Kusto Query Language)",
-      "SQL Server T-SQL",
-      "PromQL",
-      "GraphQL"
+      "KQL, the Kusto Query Language",
+      "T-SQL, as used by SQL Server",
+      "PromQL, as used by Prometheus",
+      "GraphQL, over an HTTP endpoint"
     ],
-    "correctAnswers": ["KQL (Kusto Query Language)"],
-    "explanation": "Sentinel/Log Analytics uses KQL, a read-only query language; T-SQL, PromQL, and GraphQL are query languages for other systems.",
+    "correctAnswers": [
+      "KQL, the Kusto Query Language"
+    ],
+    "explanation": "KQL is the language of the whole Azure Monitor and Defender data estate, which is why one query language spans Sentinel, Defender XDR advanced hunting and workbooks. T-SQL is the tempting answer because the data looks tabular, whereas the store is not a relational database and joins behave differently.",
+    "skillRef": "d4b1",
     "difficulty": "easy"
   },
   {
+    "src": "kb-sentinel",
+    "objectiveId": "o4-2",
     "id": "q-o4-2-05",
-    "objectiveId": "o4-2",
-    "type": "single",
-    "prompt": "Which Sentinel role can view data and incidents but cannot change incident status or create detections?",
-    "choices": [
-      "Reader",
-      "Responder",
-      "Contributor",
-      "Playbook Operator"
+    "type": "drag-match",
+    "prompt": "Four things an analyst might need to do. Assign the least-privileged Sentinel role that allows each; two entries in the list are not the answer to any of them.",
+    "sources": [
+      "Sentinel Reader",
+      "Sentinel Responder",
+      "Sentinel Contributor",
+      "Playbook Operator",
+      "Global Administrator",
+      "Subscription Owner"
     ],
-    "correctAnswers": ["Reader"],
-    "explanation": "Reader is view-only; Responder adds incident management, Contributor adds authoring rights, and Playbook Operator is scoped to running/attaching playbooks.",
-    "difficulty": "easy"
+    "targets": [
+      {
+        "id": "t1",
+        "label": "View data, incidents and workbooks, while changing nothing at all",
+        "correctSource": "Sentinel Reader"
+      },
+      {
+        "id": "t2",
+        "label": "Assign an incident, change its status, and add a comment to it",
+        "correctSource": "Sentinel Responder"
+      },
+      {
+        "id": "t3",
+        "label": "Create and edit analytics rules, workbooks and playbooks",
+        "correctSource": "Sentinel Contributor"
+      },
+      {
+        "id": "t4",
+        "label": "Run and attach an existing playbook, without gaining any authoring rights",
+        "correctSource": "Playbook Operator"
+      }
+    ],
+    "explanation": "The first three are a ladder — read, then act on incidents, then author content — and Playbook Operator sits beside it rather than on it, which is the point: running a playbook is not the same privilege as writing one, so an operator does not need Contributor. The two unused entries would each satisfy every row and are the answer to none, because the question asks for the LEAST privilege that works.",
+    "skillRef": "d4b2",
+    "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-06",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-06",
     "type": "single",
     "prompt": "Which Sentinel role adds the ability to assign, change status, and comment on incidents, beyond Reader?",
     "choices": [
-      "Responder",
-      "Reader",
-      "Contributor",
+      "Sentinel Responder",
+      "Sentinel Contributor",
+      "Sentinel Reader",
       "Global Administrator"
     ],
-    "correctAnswers": ["Responder"],
-    "explanation": "Responder is Reader plus incident triage actions; Contributor goes further into authoring, and Global Administrator is a directory role, not the Sentinel-specific triage role.",
+    "correctAnswers": [
+      "Sentinel Responder"
+    ],
+    "explanation": "Responder is the incident-handling step of the ladder: it acts on incidents without being able to author detections. Contributor is the tempting answer because it can obviously do the same things, whereas it also grants authoring rights the requirement never asked for — which is the least-privilege distinction being tested.",
+    "skillRef": "d4b2",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-2-07",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-07",
     "type": "single",
     "prompt": "Which Sentinel role is required to create or edit analytics rules, workbooks, and playbooks?",
     "choices": [
-      "Contributor",
-      "Reader",
-      "Responder",
-      "Playbook Operator alone"
+      "Sentinel Contributor",
+      "Playbook Operator alone",
+      "Sentinel Responder",
+      "Sentinel Reader"
     ],
-    "correctAnswers": ["Contributor"],
-    "explanation": "Contributor is Responder plus authoring rights over analytics rules/workbooks/playbooks; Playbook Operator alone only runs/attaches existing playbooks, it doesn't author rules.",
+    "correctAnswers": [
+      "Sentinel Contributor"
+    ],
+    "explanation": "Authoring content is a Contributor privilege. Playbook Operator alone is the closest miss and is deliberately narrower: it runs and attaches playbooks that already exist, whereas creating one requires Contributor — the split exists so a SOC can let analysts act without letting them change detections.",
+    "skillRef": "d4b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-08",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-08",
     "type": "single",
     "prompt": "A user needs to run and attach existing playbooks to incidents but should not receive full Contributor rights. What should they be assigned?",
     "choices": [
-      "The Playbook Operator role (plus the needed Logic App permissions)",
-      "Reader only",
-      "Global Administrator",
-      "Owner on the subscription"
+      "The Playbook Operator role, plus the Logic App permissions",
+      "Global Administrator on the tenant directory, granting everything",
+      "Owner on the subscription that holds the workspace",
+      "Sentinel Reader, with no additional assignment"
     ],
-    "correctAnswers": ["The Playbook Operator role (plus the needed Logic App permissions)"],
-    "explanation": "Playbook Operator, combined with the underlying Logic App run permission, covers exactly this need without granting the full authoring rights Contributor would provide.",
+    "correctAnswers": [
+      "The Playbook Operator role, plus the Logic App permissions"
+    ],
+    "explanation": "Playbook Operator is the role built for exactly this, and it needs the Logic App permissions alongside it because a playbook IS a Logic App. Sentinel Reader is the tempting minimum and cannot run anything, whereas the two broad roles would work and grant far more than the requirement allows.",
+    "skillRef": "d4b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-09",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-09",
     "type": "single",
     "prompt": "What is the Content hub in Microsoft Sentinel?",
     "choices": [
-      "A marketplace of bundled solutions — connectors, analytics rules, workbooks, hunting queries, and playbooks — for a given product",
-      "The default landing page listing all incidents",
-      "The billing and cost-management blade",
-      "The place where retention tiers are configured"
+      "A marketplace of bundled solutions for a given product",
+      "The billing and cost-management blade for the workspace",
+      "The default landing page listing every open incident",
+      "The place where the retention tiers are configured"
     ],
-    "correctAnswers": ["A marketplace of bundled solutions — connectors, analytics rules, workbooks, hunting queries, and playbooks — for a given product"],
-    "explanation": "Content hub packages ready-made solution bundles per product/vendor; incidents, billing, and retention are managed elsewhere.",
+    "correctAnswers": [
+      "A marketplace of bundled solutions for a given product"
+    ],
+    "explanation": "A Content hub solution installs the whole set at once — connector, analytics rules, workbooks, hunting queries and playbooks — which is why onboarding a product starts there rather than with a bare connector. The retention option is the tempting neighbour and belongs to the workspace, since retention is a Log Analytics setting rather than a Sentinel one.",
+    "skillRef": "d4b3",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-2-10",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-10",
     "type": "single",
     "prompt": "What is a data connector in Microsoft Sentinel?",
     "choices": [
       "The plumbing that brings a source's logs into the workspace",
-      "A saved KQL query for hunting",
-      "An automation rule condition",
-      "A Defender for Cloud workload protection plan"
+      "A saved KQL query used for interactive threat hunting sessions",
+      "A condition evaluated inside an automation rule",
+      "A Defender for Cloud workload protection plan toggle"
     ],
-    "correctAnswers": ["The plumbing that brings a source's logs into the workspace"],
-    "explanation": "Data connectors are the ingestion mechanism; hunting queries, automation conditions, and Defender plans are different Sentinel/Defender concepts.",
+    "correctAnswers": [
+      "The plumbing that brings a source's logs into the workspace"
+    ],
+    "explanation": "A connector only moves data; it raises no alert and creates no incident. That is worth separating clearly, because a connector working perfectly and no analytics rule enabled produces a workspace full of logs and an empty incident queue — which looks like a broken Sentinel and is a missing detection rather than a broken pipeline.",
+    "skillRef": "d4b4",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-2-11",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-11",
     "type": "single",
     "prompt": "How are logs from Microsoft cloud sources like Microsoft Entra ID or Microsoft 365 typically ingested into Sentinel?",
     "choices": [
-      "Via native, agentless data connectors requiring only a few clicks",
-      "Only via a CEF/Syslog forwarder",
-      "Only via a custom Logs Ingestion API script",
-      "They cannot be ingested into Sentinel"
+      "Native, agentless data connectors requiring only a few clicks",
+      "They cannot be ingested into Sentinel at all, by any route whatsoever",
+      "Only through a CEF or Syslog forwarder appliance",
+      "Only through a custom Logs Ingestion API script"
     ],
-    "correctAnswers": ["Via native, agentless data connectors requiring only a few clicks"],
-    "explanation": "Microsoft cloud sources use native connectors with minimal setup and no agent; CEF/Syslog and custom API ingestion are used for on-prem/appliance/custom sources instead.",
+    "correctAnswers": [
+      "Native, agentless data connectors requiring only a few clicks"
+    ],
+    "explanation": "Microsoft cloud sources have first-party connectors with nothing to deploy — the tenant is already in the same identity boundary. The CEF and Syslog options are tempting because that is how everything else arrives, whereas those paths exist precisely for sources that have no native connector.",
+    "skillRef": "d4b5",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-2-12",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
-    "type": "single",
-    "prompt": "What is required to collect Windows Security events from Azure VMs into Sentinel today?",
-    "choices": [
-      "The Azure Monitor Agent (AMA) plus a Data Collection Rule (DCR) selecting the event set",
-      "The legacy Log Analytics agent (MMA)",
-      "A CEF forwarder",
-      "A Sentinel playbook"
+    "id": "q-o4-2-12",
+    "type": "dropdown-sentence",
+    "prompt": "Complete the statement describing how Windows Security events are collected from an Azure VM into Sentinel today.",
+    "template": "Collection needs [[b1]], configured through [[b2]], where the chosen event set decides [[b3]].",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "the Azure Monitor Agent",
+          "the legacy Log Analytics agent",
+          "a CEF forwarder appliance",
+          "a Sentinel playbook"
+        ],
+        "correctValue": "the Azure Monitor Agent"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "a Data Collection Rule associated with the VM",
+          "an analytics rule with a scheduled query",
+          "an automation rule on the incident",
+          "a Logic App connector"
+        ],
+        "correctValue": "a Data Collection Rule associated with the VM"
+      },
+      {
+        "id": "b3",
+        "options": [
+          "which categories of Security event are collected",
+          "how long the events are retained",
+          "which role may read the events",
+          "which playbook responds to them"
+        ],
+        "correctValue": "which categories of Security event are collected"
+      }
     ],
-    "correctAnswers": ["The Azure Monitor Agent (AMA) plus a Data Collection Rule (DCR) selecting the event set"],
-    "explanation": "AMA + DCR is the current supported method for Windows Security events; MMA is retired, CEF forwarders are for Syslog/appliance sources, and playbooks are for response, not collection.",
+    "explanation": "The Azure Monitor Agent replaced the Log Analytics agent, which is retired, and the DCR is what makes the agent collect anything — an agent installed with no rule associated to it sends nothing. The event set is a collection filter and not a retention or access control, which is the confusion in the third blank: choosing Minimal to save money reduces what is collected rather than how long it is kept.",
+    "skillRef": "d4b5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-13",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-13",
     "type": "single",
     "prompt": "When creating a Data Collection Rule for Windows Security events, what does the event set (e.g. All/Common/Minimal/Custom) control?",
     "choices": [
       "Which categories of Windows Security events are collected",
-      "Which Sentinel role can view the events",
-      "How long the events are retained",
-      "Which playbook responds to the events"
+      "Which Sentinel role is allowed to view and query those events",
+      "How long the collected events are retained for",
+      "Which playbook is invoked in response to the events"
     ],
-    "correctAnswers": ["Which categories of Windows Security events are collected"],
-    "explanation": "The event set selects the scope of Windows Security events collected; role access, retention, and playbook response are configured separately.",
+    "correctAnswers": [
+      "Which categories of Windows Security events are collected"
+    ],
+    "explanation": "The event set is a collection filter, so it decides what enters the workspace and therefore what you pay to ingest. The retention option is the tempting one because both affect cost, whereas retention is set per table on the workspace — narrowing the event set reduces what arrives, while retention governs what stays.",
+    "skillRef": "d4b2",
     "difficulty": "medium"
   },
   {
+    "src": "kb-sentinel",
+    "objectiveId": "o4-2",
     "id": "q-o4-2-14",
-    "objectiveId": "o4-2",
-    "type": "single",
-    "prompt": "How are logs from an on-premises firewall appliance typically ingested into Sentinel?",
-    "choices": [
-      "Via Syslog or CEF through an AMA-based Linux forwarder/collector",
-      "Via a native, agentless connector identical to Entra ID's",
-      "They cannot be ingested — only Microsoft-native sources are supported",
-      "Via a Sentinel automation rule"
+    "type": "drag-match",
+    "prompt": "Four log sources, four ingestion paths. Assign the path each source uses; two entries in the list are not ingestion paths at all.",
+    "sources": [
+      "A native, agentless data connector",
+      "Syslog or CEF via an AMA-based Linux collector",
+      "The Azure Monitor Agent with a Data Collection Rule",
+      "A custom log table via the Logs Ingestion API",
+      "A Sentinel automation rule",
+      "A saved hunting query"
     ],
-    "correctAnswers": ["Via Syslog or CEF through an AMA-based Linux forwarder/collector"],
-    "explanation": "Firewall/appliance logs use the Syslog/CEF path through an AMA-based Linux collector — this differs from the clicks-only native connectors for Microsoft cloud sources, and automation rules are unrelated to ingestion.",
+    "targets": [
+      {
+        "id": "t1",
+        "label": "Microsoft Entra ID sign-in logs",
+        "correctSource": "A native, agentless data connector"
+      },
+      {
+        "id": "t2",
+        "label": "An on-premises firewall appliance",
+        "correctSource": "Syslog or CEF via an AMA-based Linux collector"
+      },
+      {
+        "id": "t3",
+        "label": "Windows Security events from an Azure virtual machine",
+        "correctSource": "The Azure Monitor Agent with a Data Collection Rule"
+      },
+      {
+        "id": "t4",
+        "label": "A bespoke line-of-business application with no built-in connector",
+        "correctSource": "A custom log table via the Logs Ingestion API"
+      }
+    ],
+    "explanation": "The path is decided by what the source can speak: Microsoft cloud services have first-party connectors, network appliances speak Syslog or CEF and therefore need a collector, Windows machines need the agent plus a rule, and anything bespoke needs a custom table. The two unused entries operate on data that has already arrived, whereas none of them can bring anything into the workspace.",
+    "skillRef": "d4b5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-15",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-15",
     "type": "single",
     "prompt": "What mechanism ingests fully custom application logs into Sentinel when no built-in connector exists?",
     "choices": [
-      "Custom log tables via the Logs Ingestion API/DCR, or the Codeless Connector Platform",
-      "The legacy Log Analytics agent",
-      "A Sentinel analytics rule",
-      "Windows Event Forwarding only"
+      "Custom log tables via the Logs Ingestion API and a DCR",
+      "The legacy Log Analytics agent, which is still supported",
+      "A Sentinel analytics rule with a custom query",
+      "Windows Event Forwarding, and nothing else at all"
     ],
-    "correctAnswers": ["Custom log tables via the Logs Ingestion API/DCR, or the Codeless Connector Platform"],
-    "explanation": "Custom sources go through the Logs Ingestion API/DCR or the Codeless Connector Platform; the legacy agent is retired, analytics rules detect rather than ingest, and WEF specifically forwards Windows events, not arbitrary app logs.",
+    "correctAnswers": [
+      "Custom log tables via the Logs Ingestion API and a DCR"
+    ],
+    "explanation": "A custom table plus the Logs Ingestion API, or the Codeless Connector Platform, is how a source with no connector gets in. The analytics rule option is the tempting one and inverts the pipeline: a rule queries data that has already arrived, whereas nothing has arrived yet.",
+    "skillRef": "d4b7",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-16",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-16",
     "type": "single",
     "prompt": "What does Windows Event Forwarding (WEF) do in a Sentinel collection pipeline?",
     "choices": [
-      "Lets Windows machines forward events to a collector, which an agent then ships to Sentinel",
-      "Replaces the need for a Log Analytics workspace",
-      "Automatically creates Sentinel incidents",
-      "Encrypts events in transit using customer-managed keys"
+      "Windows machines forward events to a collector for an agent to ship",
+      "Removes the need for a Log Analytics workspace of any kind whatsoever",
+      "Creates Sentinel incidents automatically from the events",
+      "Encrypts events in transit with a customer-managed key"
     ],
-    "correctAnswers": ["Lets Windows machines forward events to a collector, which an agent then ships to Sentinel"],
-    "explanation": "WEF centralizes event forwarding to a collector machine, from which an agent (e.g., AMA) sends the data onward to Sentinel — it doesn't replace the workspace, create incidents, or handle encryption directly.",
+    "correctAnswers": [
+      "Windows machines forward events to a collector for an agent to ship"
+    ],
+    "explanation": "WEF concentrates events onto a collector so only that machine needs the agent, which is what makes it useful where installing an agent everywhere is impractical. The incident-creation option is the tempting shortcut and skips two stages: forwarding delivers data, whereas an analytics rule is what turns any of it into an incident.",
+    "skillRef": "d4b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-17",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-17",
     "type": "single",
     "prompt": "What raises alerts that are then grouped into incidents in Sentinel?",
     "choices": [
       "Analytics rules",
       "Data connectors",
-      "Playbooks",
-      "Automation rules"
+      "Automation rules",
+      "Playbook actions"
     ],
-    "correctAnswers": ["Analytics rules"],
-    "explanation": "Analytics rules (scheduled KQL, Microsoft-security, and ML rules) detect threats and raise alerts, which Sentinel groups into incidents; connectors ingest, playbooks/automation rules respond.",
+    "correctAnswers": [
+      "Analytics rules"
+    ],
+    "explanation": "Analytics rules run the detection query and raise the alert; everything else in the list sits either upstream or downstream of that step. Data connectors are the tempting answer because they are what you configured most recently, whereas a connector only delivers logs and raises nothing.",
+    "skillRef": "d4b4",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-2-18",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-18",
     "type": "single",
     "prompt": "What is the primary purpose of a Sentinel automation rule?",
     "choices": [
-      "Lightweight if/then logic on an incident — e.g. set severity, assign an owner, close noise, or invoke a playbook",
-      "Ingesting logs from a new data source",
-      "Running the actual external remediation action, like disabling a user",
-      "Defining which KQL query detects a threat"
+      "Lightweight if/then logic on an incident: severity, owner, or playbook",
+      "Running the external remediation action itself, such as disabling a user",
+      "Ingesting the logs arriving from a newly connected data source",
+      "Defining the KQL query that detects the threat in the first place"
     ],
-    "correctAnswers": ["Lightweight if/then logic on an incident — e.g. set severity, assign an owner, close noise, or invoke a playbook"],
-    "explanation": "Automation rules are the trigger/condition layer over incidents; the heavy external action (e.g., disabling a user) is performed by a playbook (Logic App), and detection logic lives in analytics rules.",
+    "correctAnswers": [
+      "Lightweight if/then logic on an incident: severity, owner, or playbook"
+    ],
+    "explanation": "An automation rule decides what should happen to an incident and can call a playbook to do it, without performing any external action itself. Running the remediation is the tempting answer and is the playbook's job — keeping the two apart is what lets one rule route many incidents to the right response.",
+    "skillRef": "d4b8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-19",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-19",
     "type": "single",
     "prompt": "What is a Sentinel playbook?",
     "choices": [
-      "An Azure Logic App that executes real actions, such as posting to Teams or disabling a user in Entra",
-      "A saved KQL hunting query",
-      "A Sentinel RBAC role",
-      "A retention policy applied to a table"
+      "A Logic App that performs real actions, such as disabling a user",
+      "A retention policy applied to individual workspace tables one by one",
+      "A saved KQL hunting query, stored in the workspace",
+      "A Sentinel RBAC role granted to an operator"
     ],
-    "correctAnswers": ["An Azure Logic App that executes real actions, such as posting to Teams or disabling a user in Entra"],
-    "explanation": "Playbooks are Logic Apps carrying out concrete response actions; hunting queries, RBAC roles, and retention policies are separate Sentinel concepts.",
+    "correctAnswers": [
+      "A Logic App that performs real actions, such as disabling a user"
+    ],
+    "explanation": "A playbook is a Logic App, which is why it needs Logic App permissions and why Playbook Operator exists as a separate role. The hunting-query option is the tempting one because both are things an analyst runs, whereas a query only reads data and a playbook changes the world outside Sentinel.",
+    "skillRef": "d4b9",
     "difficulty": "easy"
   },
   {
-    "id": "q-o4-2-20",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
-    "type": "single",
-    "prompt": "Which statement correctly distinguishes an automation rule from a playbook?",
-    "choices": [
-      "The automation rule is the trigger/condition layer that can invoke a playbook; the playbook performs the external action",
-      "They are the same object with two names",
-      "The playbook decides which incidents to create; the automation rule executes the action",
-      "Automation rules can only be used with Defender for Cloud alerts, never Sentinel incidents"
+    "id": "q-o4-2-20",
+    "type": "build-list",
+    "prompt": "Build the chain from a detection firing to an external action being taken. Not every step in the pool belongs in the answer.",
+    "poolItems": [
+      "An analytics rule runs its KQL query and raises an alert",
+      "Sentinel groups related alerts into an incident",
+      "An automation rule matches the incident and decides what to do",
+      "The playbook it invokes performs the external action",
+      "A playbook detects the threat by running its own KQL query",
+      "An automation rule performs the external remediation itself",
+      "A hunting query closes the incident automatically"
     ],
-    "correctAnswers": ["The automation rule is the trigger/condition layer that can invoke a playbook; the playbook performs the external action"],
-    "explanation": "Automation rules react to Sentinel incidents and can change incident properties or call a playbook; playbooks (Logic Apps) execute the actual response — the reversed description and the 'same object' claim are both wrong.",
+    "correctOrder": [
+      "An analytics rule runs its KQL query and raises an alert",
+      "Sentinel groups related alerts into an incident",
+      "An automation rule matches the incident and decides what to do",
+      "The playbook it invokes performs the external action"
+    ],
+    "explanation": "Each stage hands off to the next and none can be skipped: detection produces an alert, alerts become an incident, the automation rule reacts to the incident, and the playbook is the only component that touches anything outside Sentinel. The three excluded steps each collapse two stages into one — a playbook does not detect, an automation rule does not remediate, and a hunting query changes no incident state at all.",
+    "skillRef": "d4b8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-21",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-21",
     "type": "single",
     "prompt": "What does a Microsoft Sentinel 'SOC optimization' recommendation indicate?",
     "choices": [
-      "A suggestion for where to add detection coverage or trim costly, low-value data — not a detection itself",
-      "A confirmed security incident requiring immediate triage",
-      "A new Defender for Cloud alert",
-      "An automatic playbook execution"
+      "A suggestion for adding detection coverage or trimming costly data",
+      "A confirmed security incident that requires immediate triage by the SOC",
+      "An automatic playbook execution recorded on an incident",
+      "A new alert raised by Microsoft Defender for Cloud"
     ],
-    "correctAnswers": ["A suggestion for where to add detection coverage or trim costly, low-value data — not a detection itself"],
-    "explanation": "SOC optimization recommendations are advisory (coverage gaps, cost/value tuning) rather than alerts or incidents themselves, and they don't run playbooks on their own.",
+    "correctAnswers": [
+      "A suggestion for adding detection coverage or trimming costly data"
+    ],
+    "explanation": "SOC optimizations are advice about the deployment rather than findings about the environment — where coverage is thin, and which expensive tables earn nothing. Reading one as an incident is the trap and wastes triage effort, since nothing has happened: it is a recommendation about tomorrow, not a report about today.",
+    "skillRef": "d4b8",
     "difficulty": "medium"
   },
   {
+    "src": "kb-sentinel",
+    "objectiveId": "o4-2",
     "id": "q-o4-2-22",
-    "objectiveId": "o4-2",
-    "type": "single",
-    "prompt": "What is 'interactive' (analytics) retention in a Sentinel-enabled Log Analytics workspace best suited for?",
-    "choices": [
-      "Fast querying for active detections and hunting, typically up to 2 years with the first 90 days free",
-      "Cheap storage of rarely queried, multi-year compliance data",
-      "Storing Security Copilot promptbooks",
-      "Configuring Defender for Cloud workload protection plans"
+    "type": "statement-grid",
+    "prompt": "For each statement about Sentinel data retention, select Yes if it is true.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "Long-term archive retention costs more per gigabyte than interactive retention.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s2",
+        "text": "Data in long-term retention is deleted as soon as the interactive period ends.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s3",
+        "text": "Interactive analytics retention is intended for fast querying by active detections and hunting.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s4",
+        "text": "The first 90 days of interactive retention are included at no additional cost.",
+        "correctValue": "Yes"
+      }
     ],
-    "correctAnswers": ["Fast querying for active detections and hunting, typically up to 2 years with the first 90 days free"],
-    "explanation": "Interactive/analytics retention is the fast, full-price tier meant for active detection/hunting; cheap rarely-queried compliance data belongs in long-term/archive retention instead.",
+    "explanation": "The two tiers trade price against query speed in the direction you would expect: interactive is fast and dearer, long-term is cheap and slower to search, so the first statement inverts it. The third is the more consequential error — long-term retention is where data goes when the interactive window ends rather than the moment it is destroyed, which is exactly what makes seven-year compliance retention affordable.",
+    "skillRef": "d4b9",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-23",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-23",
     "type": "single",
     "prompt": "A compliance requirement mandates keeping certain logs for 7 years, but they are queried only a few times a year. Which retention approach fits best?",
     "choices": [
-      "Long-term/archive retention, which is far cheaper than interactive analytics retention",
-      "Interactive analytics retention for the full 7 years",
-      "Deleting the logs after 90 days to save cost",
-      "Duplicating the logs into a separate Defender CSPM export"
+      "Long-term archive retention, far cheaper than interactive",
+      "Interactive analytics retention for the whole of the seven years",
+      "Duplicating the logs into a separate Defender CSPM export",
+      "Deleting the logs after ninety days to save on cost"
     ],
-    "correctAnswers": ["Long-term/archive retention, which is far cheaper than interactive analytics retention"],
-    "explanation": "Long-term/archive retention is the cheapest option built for compliance data that's rarely queried; keeping 7 years at full interactive/analytics pricing is needlessly expensive, and deleting the logs would violate the requirement.",
+    "correctAnswers": [
+      "Long-term archive retention, far cheaper than interactive"
+    ],
+    "explanation": "Rare querying is exactly the profile long-term retention is priced for, and the data remains searchable when an audit asks. Keeping seven years interactive is the tempting safe answer because everything stays fast, whereas the cost is multiples of the archive tier for a query pattern of a few times a year.",
+    "skillRef": "d4b9",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-24",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-24",
     "type": "single",
     "prompt": "Since Microsoft Sentinel moved into the unified Microsoft Defender portal, what changed for its incidents?",
     "choices": [
-      "Sentinel incidents merge with Defender XDR incidents into a single investigation queue",
-      "Sentinel incidents are no longer created",
-      "Sentinel lost its automation rule capability",
-      "Sentinel incidents can only be viewed in the classic Azure portal now"
+      "Sentinel incidents merge with Defender XDR into one queue",
+      "Sentinel incidents are visible only in the classic Azure portal",
+      "Sentinel lost its automation rule capability entirely",
+      "Sentinel incidents are no longer created at all"
     ],
-    "correctAnswers": ["Sentinel incidents merge with Defender XDR incidents into a single investigation queue"],
-    "explanation": "The unified portal merges Sentinel and Defender XDR incidents into one queue with cross-product advanced hunting — nothing about incident creation or automation was removed, and the classic Azure portal is not the required surface.",
+    "correctAnswers": [
+      "Sentinel incidents merge with Defender XDR into one queue"
+    ],
+    "explanation": "One investigation queue is the point of the unification: an analyst sees Sentinel and Defender XDR incidents together rather than switching portals. The classic-portal-only option is the exact inversion of what happened, and it matters operationally because a team that believes it will keep working in the Azure portal misses the correlation the merge provides.",
+    "skillRef": "d4b8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-25",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-25",
     "type": "single",
     "prompt": "What additional capability does the unified Microsoft Defender portal enable across Sentinel and Defender XDR data?",
     "choices": [
-      "Advanced hunting with KQL spanning both Sentinel and Defender XDR data",
-      "Automatic Secure Score calculation",
-      "Rotation of Key Vault secrets",
-      "Provisioning of Security Compute Units"
+      "Advanced hunting with KQL spanning Sentinel and Defender XDR data",
+      "Automatic calculation of the Secure Score across the entire tenant estate",
+      "Provisioning of Security Compute Units for Copilot",
+      "Rotation of the secrets held in Azure Key Vault"
     ],
-    "correctAnswers": ["Advanced hunting with KQL spanning both Sentinel and Defender XDR data"],
-    "explanation": "The unified portal's advanced hunting lets analysts run KQL across both Sentinel and Defender XDR data in one place — Secure Score, Key Vault rotation, and SCU provisioning are unrelated features from other products.",
+    "correctAnswers": [
+      "Advanced hunting with KQL spanning Sentinel and Defender XDR data"
+    ],
+    "explanation": "A single hunting surface over both datasets is what removes the join people used to do by hand across two portals. Secure Score is the tempting answer because it is also an aggregate view, whereas it belongs to Defender for Cloud and measures posture rather than letting you query telemetry.",
+    "skillRef": "d4b10",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-26",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-26",
     "type": "single",
     "prompt": "Which logs also surface in the unified Microsoft Defender portal for investigation alongside Sentinel/Defender XDR data?",
     "choices": [
       "Microsoft Purview Audit logs",
-      "On-premises Active Directory backup logs only",
-      "Azure Policy compliance state only",
-      "Security Copilot promptbook history only"
+      "On-premises Active Directory backup logs",
+      "Security Copilot promptbook history",
+      "Azure Policy compliance state only"
     ],
-    "correctAnswers": ["Microsoft Purview Audit logs"],
-    "explanation": "Purview Audit logs are called out as surfacing in the unified portal for investigation; the other options aren't part of that unified investigation surface as described.",
+    "correctAnswers": [
+      "Microsoft Purview Audit logs"
+    ],
+    "explanation": "Purview Audit records who did what across Microsoft 365, which is why it belongs beside the security telemetry during an investigation. The Azure Policy option is the tempting one because compliance state is also a Microsoft signal, whereas it describes configuration rather than activity and answers no investigative question about a user.",
+    "skillRef": "d4b10",
     "difficulty": "medium"
   },
   {
+    "src": "kb-sentinel",
+    "objectiveId": "o4-2",
     "id": "q-o4-2-27",
-    "objectiveId": "o4-2",
     "type": "single",
-    "prompt": "A SOC wants a Logic App to open a ticket automatically the moment Microsoft Defender for Cloud raises a high-severity alert, independent of whether a Sentinel incident is created. What should they configure?",
+    "prompt": "A Sentinel automation rule is configured to run a playbook, but the playbook never executes even though Defender for Cloud alerts are arriving in the workspace. Nothing is wrong with the playbook itself. What explains this?",
     "choices": [
-      "Defender for Cloud workflow automation, triggered directly by the alert",
-      "A Sentinel automation rule triggered by incident creation",
-      "A Sentinel analytics rule",
-      "A Data Collection Rule"
+      "No analytics rule turns those alerts into incidents to fire on",
+      "Automation rules cannot invoke playbooks, so a Logic App trigger is needed",
+      "Alerts forwarded by a data connector are exempt from automation by design",
+      "A playbook must hold the Sentinel Contributor role before being called"
     ],
-    "correctAnswers": ["Defender for Cloud workflow automation, triggered directly by the alert"],
-    "explanation": "Workflow automation reacts directly to Defender for Cloud alerts/recommendations without requiring a Sentinel incident; a Sentinel automation rule only fires once an incident already exists, and analytics rules/DCRs are unrelated to this trigger.",
-    "difficulty": "medium"
+    "correctAnswers": [
+      "No analytics rule turns those alerts into incidents to fire on"
+    ],
+    "explanation": "An automation rule triggers on an INCIDENT, and alerts do not become incidents by themselves — a Microsoft-security analytics rule has to be enabled to create them. The claim that automation rules cannot invoke playbooks is the tempting alternative and is simply false, which is what makes this failure so puzzling in practice: every component works and one link in the chain was never created.",
+    "skillRef": "d4b8",
+    "difficulty": "hard"
   },
   {
-    "id": "q-o4-2-28",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-28",
     "type": "multiple",
     "prompt": "Which two are Sentinel RBAC roles that build toward increasing privilege? (Choose two.)",
     "choices": [
-      "Reader",
-      "Responder",
+      "Sentinel Reader role",
+      "Sentinel Responder role",
       "Azure Policy Contributor",
-      "Global Reader"
+      "Entra ID Global Reader"
     ],
-    "correctAnswers": ["Reader", "Responder"],
-    "explanation": "Reader and Responder are Sentinel-specific roles that build toward Contributor; Azure Policy Contributor and Global Reader are different RBAC/Entra roles unrelated to the Sentinel role ladder.",
+    "correctAnswers": [
+      "Sentinel Reader role",
+      "Sentinel Responder role"
+    ],
+    "explanation": "Reader and Responder are the first two rungs of the Sentinel ladder, each a superset of the one below. Entra ID Global Reader is the tempting distractor because the name suggests the same read-only idea, whereas it is a directory role and grants nothing in a Log Analytics workspace.",
+    "skillRef": "d4b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-29",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-29",
     "type": "multiple",
     "prompt": "Which two statements about analytics rules, incidents, automation rules, and playbooks are correct? (Choose two.)",
     "choices": [
       "Analytics rules raise alerts that group into incidents",
-      "Automation rules can invoke a playbook in response to an incident",
-      "Playbooks detect threats using KQL",
-      "Automation rules ingest raw logs from data connectors"
+      "Automation rules can invoke a playbook for an incident",
+      "Playbooks detect threats by running KQL queries themselves",
+      "Automation rules ingest the raw logs from data connectors"
     ],
-    "correctAnswers": ["Analytics rules raise alerts that group into incidents", "Automation rules can invoke a playbook in response to an incident"],
-    "explanation": "These two correctly describe the detection-to-response chain; playbooks execute actions rather than detecting threats, and automation rules react to incidents rather than ingesting raw logs.",
+    "correctAnswers": [
+      "Analytics rules raise alerts that group into incidents",
+      "Automation rules can invoke a playbook for an incident"
+    ],
+    "explanation": "Detection and orchestration are separate stages: the analytics rule finds something, the automation rule decides what to do about it. Both false statements move a job to the wrong component — a playbook acts rather than detects, whereas ingestion belongs to a connector and to nothing downstream of it.",
+    "skillRef": "d4b4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-30",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-30",
     "type": "multiple",
     "prompt": "Which two are true about ingesting CEF/Syslog data from network appliances into Sentinel? (Choose two.)",
     "choices": [
-      "It typically uses an AMA-based Linux forwarder/collector",
-      "A Data Collection Rule governs what is collected",
-      "It uses the same one-click native connector as Microsoft Entra ID",
-      "It requires no Log Analytics workspace"
+      "It typically uses an AMA-based Linux forwarder or collector",
+      "A Data Collection Rule governs what is actually collected",
+      "It uses the same one-click native connector as Entra ID does",
+      "It requires no Log Analytics workspace of any kind"
     ],
-    "correctAnswers": ["It typically uses an AMA-based Linux forwarder/collector", "A Data Collection Rule governs what is collected"],
-    "explanation": "CEF/Syslog ingestion runs through an AMA-based collector governed by a DCR — it is not the same one-click native path as Entra ID, and a Log Analytics workspace is still required underneath Sentinel.",
+    "correctAnswers": [
+      "It typically uses an AMA-based Linux forwarder or collector",
+      "A Data Collection Rule governs what is actually collected"
+    ],
+    "explanation": "A network appliance speaks Syslog and nothing more, so something has to receive and forward it — the collector plus a DCR is that something. The one-click-connector option is the tempting shortcut and is why teams underestimate this work: native connectors exist for Microsoft cloud sources, whereas an appliance always needs infrastructure of its own.",
+    "skillRef": "d4b5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-31",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-31",
     "type": "case-study",
     "caseStudyId": "cs-relecloud-posture",
     "prompt": "Referring to requirement 4 (incidents auto-created when suspicious Entra sign-in patterns are detected, correlated across multiple log sources, investigable with one query language), what should Relecloud configure?",
     "choices": [
-      "Sentinel data connectors to ingest the sources plus analytics rules that correlate and raise incidents",
-      "Defender for Cloud workflow automation alone",
-      "A Key Vault access policy",
-      "An Azure Firewall threat-intelligence rule"
+      "Data connectors for the sources, plus analytics rules that correlate",
+      "Defender for Cloud workflow automation on its own, with nothing added",
+      "An Azure Firewall threat-intelligence filtering rule",
+      "A Key Vault access policy for the workspace identity"
     ],
-    "correctAnswers": ["Sentinel data connectors to ingest the sources plus analytics rules that correlate and raise incidents"],
-    "explanation": "Correlating multiple ingested sources into an incident, queried with a single KQL, is exactly the Sentinel connectors + analytics rules pattern; workflow automation only reacts to Defender for Cloud alerts, and Key Vault/firewall options are unrelated controls.",
+    "correctAnswers": [
+      "Data connectors for the sources, plus analytics rules that correlate"
+    ],
+    "explanation": "Both halves are required and this is the pairing to remember: connectors bring the data, analytics rules correlate it and create the incidents. Defender for Cloud workflow automation is the tempting alternative because it also reacts automatically, whereas it fires on a Defender alert and correlates nothing across sources.",
+    "skillRef": "d4b4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-32",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-32",
     "type": "case-study",
     "caseStudyId": "cs-relecloud-posture",
     "prompt": "Referring to requirement 5 (a branch-office firewall must forward its logs into the same central platform used for the cloud logs), which ingestion path fits?",
     "choices": [
-      "CEF/Syslog via an AMA-based Linux forwarder into the same Log Analytics workspace",
-      "A native one-click connector identical to Entra ID's",
-      "Windows Event Forwarding directly into Defender for Cloud",
-      "A Sentinel playbook that polls the firewall API"
+      "CEF or Syslog via an AMA-based Linux forwarder, same workspace",
+      "A Sentinel playbook that polls the firewall management API on a timer",
+      "A native one-click connector, identical to the one Entra ID provides",
+      "Windows Event Forwarding straight into Defender for Cloud"
     ],
-    "correctAnswers": ["CEF/Syslog via an AMA-based Linux forwarder into the same Log Analytics workspace"],
-    "explanation": "Firewall appliances feed Sentinel via a Syslog/CEF collector based on AMA, landing in the same workspace as the cloud connectors; native one-click connectors are for Microsoft cloud sources, WEF forwards Windows events (not applicable to a firewall), and playbooks are for response, not ingestion.",
+    "correctAnswers": [
+      "CEF or Syslog via an AMA-based Linux forwarder, same workspace"
+    ],
+    "explanation": "A firewall appliance emits Syslog or CEF, so a collector receives it and ships it into the same workspace the cloud logs land in — which is what satisfies \"the same central platform\". The native connector is the tempting answer and does not exist for a third-party appliance, whereas Windows Event Forwarding applies to Windows hosts and Defender for Cloud is not a log destination.",
+    "skillRef": "d4b5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-33",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-33",
     "type": "case-study",
     "caseStudyId": "cs-relecloud-posture",
     "prompt": "Referring to requirement 6 (a Logic App must open a ticket the moment Defender for Cloud raises a high-severity alert, independent of whether a Sentinel incident is created), what should Relecloud configure?",
     "choices": [
       "Defender for Cloud workflow automation, triggered by the alert",
-      "A Sentinel automation rule triggered by incident creation",
-      "A Sentinel analytics rule",
-      "A Data Collection Rule"
+      "A Sentinel automation rule triggered when an incident is created",
+      "A Sentinel analytics rule with a scheduled KQL query",
+      "A Data Collection Rule scoped to the alert source"
     ],
-    "correctAnswers": ["Defender for Cloud workflow automation, triggered by the alert"],
-    "explanation": "Workflow automation fires directly off Defender for Cloud alerts without depending on a Sentinel incident; a Sentinel automation rule needs an incident to exist first, and analytics rules/DCRs don't drive this kind of external ticketing action.",
+    "correctAnswers": [
+      "Defender for Cloud workflow automation, triggered by the alert"
+    ],
+    "explanation": "The phrase \"independent of whether a Sentinel incident is created\" is the whole requirement: workflow automation fires on the alert itself, in Defender for Cloud. The Sentinel automation rule is the closest miss and depends on an incident existing, so it would do nothing until an analytics rule created one — which is exactly the dependency the requirement excludes.",
+    "skillRef": "d4b8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o4-2-34",
+    "src": "kb-sentinel",
     "objectiveId": "o4-2",
+    "id": "q-o4-2-34",
     "type": "case-study",
     "caseStudyId": "cs-relecloud-posture",
     "prompt": "Referring to requirement 8 (logs needed for 7-year regulatory retention, queried only a few times a year, must be stored as cheaply as possible), what should Relecloud configure?",
     "choices": [
-      "Long-term/archive retention on the workspace tables holding those logs",
-      "Interactive analytics retention for the full 7 years",
-      "Deletion of the logs after the free 90-day period",
-      "Duplicating the logs into a second, higher-cost workspace"
+      "Long-term archive retention on the tables holding those logs",
+      "Interactive analytics retention for the whole of the seven years",
+      "Duplicating the logs into a second, higher-cost workspace",
+      "Deletion of the logs once the free ninety days expire"
     ],
-    "correctAnswers": ["Long-term/archive retention on the workspace tables holding those logs"],
-    "explanation": "Long-term/archive retention is purpose-built for cheap, rarely queried, multi-year compliance data — interactive retention for 7 years is far more expensive, deleting the logs breaks the retention requirement, and duplicating into another workspace adds cost with no benefit.",
+    "correctAnswers": [
+      "Long-term archive retention on the tables holding those logs"
+    ],
+    "explanation": "Retention is configured per table, so only the tables the regulation names need the seven-year setting — which keeps the cost proportionate. Deleting after the free ninety days is the tempting cheapest option and fails the requirement outright, since the obligation is to keep the data rather than to minimise spend alone.",
+    "skillRef": "d4b9",
     "difficulty": "medium"
   },
   {
@@ -519,9 +758,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o4-2",
     "prompt": "Proposed solution: Configure a Sentinel data connector for Microsoft Entra sign-in logs plus a scheduled analytics rule that correlates the sign-in data with other ingested sources, raising alerts that group into one incident. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "This is exactly the ingest-then-correlate pattern that produces a single, cross-source incident from a suspicious sign-in pattern.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "This is the ingest-then-correlate pattern: the connector brings the sign-in data in, and the scheduled analytics rule joins it to the other sources and raises the alerts that group into one incident. Note the prerequisite it accepts rather than states — the other sources must already be ingested, since a correlation rule cannot join a table that does not exist.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b3",
     "difficulty": "easy"
   },
   {
@@ -530,9 +776,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o4-2",
     "prompt": "Proposed solution: Configure Defender for Cloud workflow automation to open a ticket whenever an Entra sign-in risk alert fires. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
     "explanation": "Workflow automation reacts to Defender for Cloud alerts and only opens a ticket — it does not correlate multiple log sources into a single Sentinel incident, which the goal specifically requires.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b3",
     "difficulty": "medium"
   },
   {
@@ -541,9 +794,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o4-2",
     "prompt": "Proposed solution: Create a Sentinel automation rule with the trigger 'When incident is created,' without configuring any analytics rule. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "Automation rules only act on incidents that already exist; without an analytics rule to detect and correlate the sign-in pattern into an incident in the first place, no incident is ever created for the automation rule to act on.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "Automation rules act only on incidents that already exist, and nothing creates one here. The solution is tempting because the trigger is named exactly after what is wanted, whereas \"when incident is created\" is a subscription to an event rather than a way of producing it.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b3",
     "difficulty": "medium"
   },
   {
@@ -558,7 +818,9 @@
       "Open the Windows Security Events via AMA connector page and create a data collection rule targeting the machines",
       "Verify ingestion with a KQL query against the SecurityEvent table"
     ],
-    "explanation": "The workspace must exist before Sentinel is added; the solution and its connector/DCR come next, and confirming ingestion with KQL is the final verification step.",
+    "explanation": "The workspace exists before Sentinel is added to it, the Content hub solution before its connector, and the DCR before any event arrives — with the KQL check last, because that is the only step that proves the rest worked. Creating the DCR before installing the solution is the tempting shortcut, whereas the connector page that offers it does not exist until the solution is installed.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b3",
     "difficulty": "medium"
   },
   {
@@ -573,7 +835,9 @@
       "Add a Run playbook action and select the Logic App",
       "Grant Sentinel permission on the playbook's resource group if prompted, then apply the rule"
     ],
-    "explanation": "You start by creating the rule, define its trigger/conditions, add incident-property actions, attach the playbook, then grant the needed permission before applying.",
+    "explanation": "The rule is created, its trigger and conditions defined, then incident-property actions, then the playbook. The permission grant belongs immediately before applying: Sentinel needs rights on the playbook's resource group, and skipping it produces a rule that saves cleanly and never manages to run the Logic App.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b8",
     "difficulty": "medium"
   },
   {
@@ -583,12 +847,205 @@
     "prompt": "Configure this simplified Sentinel automation rule screen so that only high-severity incidents are automatically assigned to Tier-2 and a playbook runs, without the rule changing the incident's severity.",
     "screenTitle": "Automation rule (simulated)",
     "fields": [
-      { "id": "trigger", "label": "Trigger", "kind": "select", "options": ["When incident is created", "When incident is updated", "When alert is created (Defender for Cloud)"], "correctValue": "When incident is created" },
-      { "id": "severityCondition", "label": "Condition: Severity", "kind": "select", "options": ["Any severity", "Severity equals High", "Severity equals Low"], "correctValue": "Severity equals High" },
-      { "id": "changeSeverity", "label": "Action: Change severity", "kind": "toggle", "correctValue": "Off" },
-      { "id": "runPlaybook", "label": "Action: Run playbook", "kind": "toggle", "correctValue": "On" }
+      {
+        "id": "trigger",
+        "label": "Trigger",
+        "kind": "select",
+        "options": [
+          "When incident is created",
+          "When incident is updated",
+          "When alert is created (Defender for Cloud)"
+        ],
+        "correctValue": "When incident is created"
+      },
+      {
+        "id": "severityCondition",
+        "label": "Condition: Severity",
+        "kind": "select",
+        "options": [
+          "Any severity",
+          "Severity equals High",
+          "Severity equals Low"
+        ],
+        "correctValue": "Severity equals High"
+      },
+      {
+        "id": "changeSeverity",
+        "label": "Action: Change severity",
+        "kind": "toggle",
+        "correctValue": "Off"
+      },
+      {
+        "id": "runPlaybook",
+        "label": "Action: Run playbook",
+        "kind": "toggle",
+        "correctValue": "On"
+      }
     ],
     "explanation": "The rule must trigger on Sentinel incident creation (not a Defender for Cloud alert), filter to High severity only, leave severity unchanged as required, and run the playbook to complete the automated action.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b8",
     "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-2-41",
+    "objectiveId": "o4-2",
+    "type": "build-list",
+    "prompt": "Build the sequence to collect Windows Security events from 400 Azure and Arc-enabled servers into a Sentinel workspace. Not every action belongs in the answer.",
+    "poolItems": [
+      "Install the Azure Monitor Agent on the in-scope servers",
+      "Create a data collection rule selecting the Windows Security event log",
+      "Choose the event set to collect, such as Common rather than All",
+      "Associate the data collection rule with the servers as its resource scope",
+      "Install the legacy Log Analytics agent alongside the Azure Monitor Agent",
+      "Enable a Defender for Servers workload protection plan on the subscription",
+      "Deploy a Linux collector virtual machine to receive the events",
+      "Create a custom log table to hold the Windows Security events"
+    ],
+    "correctOrder": [
+      "Install the Azure Monitor Agent on the in-scope servers",
+      "Create a data collection rule selecting the Windows Security event log",
+      "Choose the event set to collect, such as Common rather than All",
+      "Associate the data collection rule with the servers as its resource scope"
+    ],
+    "explanation": "Collection is agent, rule, filter, association — and the association is the step teams forget, which leaves a correct rule collecting from nothing. The distractors are each wrong for a different reason worth knowing: the Log Analytics agent is the superseded predecessor and running both duplicates ingestion and cost, a Linux collector is the CEF and syslog path rather than the Windows one, Windows Security events already land in the built-in SecurityEvent table so no custom table is needed, and a Defender plan is protection rather than collection.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b6",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-2-42",
+    "objectiveId": "o4-2",
+    "type": "single",
+    "prompt": "Several thousand workstations in an isolated network segment cannot each reach Azure, but their Security events must reach the Sentinel workspace. What is the supported approach?",
+    "choices": [
+      "Forward the events to a Windows Event Collector server with Windows Event Forwarding, and run the Azure Monitor Agent on that collector",
+      "Install the Azure Monitor Agent on every workstation and allow outbound access through a forward proxy for each one",
+      "Deploy a Linux collector running the Azure Monitor Agent and have the workstations forward their Windows Security events to it as syslog messages",
+      "Export the Security event logs to a storage account on a schedule and ingest the files with a data collection rule"
+    ],
+    "correctAnswers": [
+      "Forward the events to a Windows Event Collector server with Windows Event Forwarding, and run the Azure Monitor Agent on that collector"
+    ],
+    "explanation": "Windows Event Forwarding concentrates events onto a collector, and only that collector needs the agent and a path to Azure — which is exactly why the objective names WEF alongside data collection rules. Proxying every workstation is the brute-force alternative and multiplies the agents to manage. The Linux collector belongs to the CEF and syslog path, not the Windows event log, and scheduled file export is neither a supported nor a near-real-time route for this data.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b6",
+    "outdated": 1,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-2-43",
+    "objectiveId": "o4-2",
+    "type": "dropdown-sentence",
+    "prompt": "A SOC is tuning Windows Security event collection because ingestion cost has doubled. Complete the statement.",
+    "template": "What is collected is controlled by [[b1]], and narrowing it from All events to [[b2]] is the usual first reduction. For a specific event ID that no preset includes, the rule can instead use [[b3]].",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "a data collection rule associated with the servers",
+          "an analytics rule in Microsoft Sentinel",
+          "the workspace's retention configuration",
+          "an Azure Policy assignment on the subscription"
+        ],
+        "correctValue": "a data collection rule associated with the servers"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "the Common event set",
+          "the Verbose event set",
+          "the archive tier",
+          "a thirty-day retention window"
+        ],
+        "correctValue": "the Common event set"
+      },
+      {
+        "id": "b3",
+        "options": [
+          "a custom XPath query",
+          "a KQL filter applied at query time",
+          "a Logic App that discards unwanted rows",
+          "a summary rule over the SecurityEvent table"
+        ],
+        "correctValue": "a custom XPath query"
+      }
+    ],
+    "explanation": "Cost is decided at ingestion, so every answer here has to act before the data lands. The data collection rule is where the event set and any XPath filter live. The tempting wrong answers all act too late: a KQL filter runs on data already ingested and paid for, retention and the archive tier change what you keep rather than what arrives, and a Logic App discarding rows would run after ingestion as well.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b6",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-2-44",
+    "objectiveId": "o4-2",
+    "type": "single",
+    "prompt": "A bespoke internal application emits JSON audit records that match no built-in table. They must be queryable in the Sentinel workspace alongside other data. What is required?",
+    "choices": [
+      "A custom table in the workspace, populated through a data collection rule that maps the incoming fields to its columns",
+      "A separate Log Analytics workspace dedicated to the application, cross-queried from the Sentinel workspace at query time",
+      "A CEF collector that reformats the records so they land in the CommonSecurityLog table",
+      "A summary rule that projects the records into an existing table at query time"
+    ],
+    "correctAnswers": [
+      "A custom table in the workspace, populated through a data collection rule that maps the incoming fields to its columns"
+    ],
+    "explanation": "Data with no built-in schema needs a table created for it, and the data collection rule is what transforms and routes the incoming records into that table's columns. Reformatting to CEF is the tempting reuse of an existing path, but it forces bespoke fields into a schema built for network security appliances and loses them. A second workspace fragments queries and RBAC, and a summary rule aggregates data that is already stored rather than admitting new data.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b7",
+    "outdated": 2,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-2-45",
+    "objectiveId": "o4-2",
+    "type": "statement-grid",
+    "prompt": "For each of the following statements about custom tables and table plans in a Sentinel workspace, select Yes if the statement is true, or No if it is not.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "A data collection rule can transform incoming records before they are written to a custom table.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s2",
+        "text": "High-volume, low-value logs can be sent to a cheaper table plan with reduced query features rather than the analytics plan.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s3",
+        "text": "Choosing a cheaper table plan is a retention setting, so it can be changed retroactively for data already ingested.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s4",
+        "text": "Custom tables must be created before Microsoft Sentinel is enabled on the workspace.",
+        "correctValue": "No"
+      }
+    ],
+    "explanation": "The lever that matters is where a decision takes effect. Transformation and table plan are ingestion-time choices, which is why they control cost; retention is a separate setting applied to data already stored. The two No rows are the traps: conflating plan with retention leads teams to expect a retroactive saving that does not exist, and there is no ordering requirement between enabling Sentinel and creating tables.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b7",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-2-46",
+    "objectiveId": "o4-2",
+    "type": "single",
+    "prompt": "An investigator must establish which administrator changed a SharePoint site's sharing settings three weeks ago, and correlate that with device signals already in Defender XDR. Where should they query?",
+    "choices": [
+      "Microsoft Purview Audit from the Defender portal, so the audit records can be correlated with the XDR tables in one hunting experience",
+      "The Microsoft Entra sign-in logs, filtered to that administrator's account across the three-week window in which the sharing change was made",
+      "The Azure Activity log for the subscription that contains the SharePoint resources and their storage",
+      "A Sentinel custom table populated from a nightly scheduled export of the SharePoint configuration"
+    ],
+    "correctAnswers": [
+      "Microsoft Purview Audit from the Defender portal, so the audit records can be correlated with the XDR tables in one hunting experience"
+    ],
+    "explanation": "Purview Audit holds the Microsoft 365 activity record, and querying it from the Defender portal is what lets it be joined to endpoint and identity tables without exporting anything. Entra sign-in logs are the tempting answer because the actor is an administrator, but they record authentication rather than what was then changed. The Azure Activity log covers Azure resources and never sees SharePoint, and a scheduled export would capture state rather than the action.",
+    "src": "kb-sentinel",
+    "skillRef": "d4b10",
+    "outdated": 3,
+    "difficulty": "hard"
   }
 ]

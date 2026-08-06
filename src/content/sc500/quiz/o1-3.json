@@ -10,368 +10,550 @@
       "Storage accounts, disks, and snapshots",
       "Policies, initiatives, and exemptions"
     ],
-    "correctAnswers": ["Keys, secrets, and certificates"],
-    "explanation": "Key Vault's three object types are keys, secrets, and certificates. The other lists belong to Entra ID, Azure Storage, and Azure Policy respectively.",
+    "correctAnswers": [
+      "Keys, secrets, and certificates"
+    ],
+    "explanation": "Key Vault holds exactly three object types: keys, secrets and certificates. The other three lists belong to Entra ID, Azure Storage and Azure Policy, and each is tempting because it is a real trio of Azure objects — whereas none of them is something a vault can store.",
+    "src": "kb-kv",
+    "skillRef": "d1b5",
     "difficulty": "easy"
   },
   {
-    "id": "q-o1-3-02",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-02",
     "type": "single",
     "prompt": "What is the primary purpose of a 'key' object stored in Key Vault?",
     "choices": [
-      "Cryptographic operations such as encrypting, decrypting, or signing data",
-      "Storing a plaintext password for an application",
-      "Storing an X.509 certificate for TLS",
-      "Storing a database connection string"
+      "Cryptographic operations: encrypting, decrypting, or signing data",
+      "Storing a plaintext password that an application will read at startup",
+      "Storing an X.509 certificate for a TLS binding on a web app",
+      "Storing a database connection string for an application tier"
     ],
-    "correctAnswers": ["Cryptographic operations such as encrypting, decrypting, or signing data"],
-    "explanation": "Keys exist for cryptographic operations. Plaintext passwords and connection strings belong in secrets, and TLS certificates belong in the certificates object type.",
+    "correctAnswers": [
+      "Cryptographic operations: encrypting, decrypting, or signing data"
+    ],
+    "explanation": "A key is used rather than read: the operation happens inside the vault and the key material never leaves it. The password option is the tempting one and describes a SECRET, whose whole purpose is that the value comes back to the caller.",
+    "skillRef": "d1b5",
     "difficulty": "easy"
   },
   {
+    "src": "kb-kv",
+    "objectiveId": "o1-3",
     "id": "q-o1-3-03",
-    "objectiveId": "o1-3",
-    "type": "single",
-    "prompt": "Which Key Vault object type is best suited to storing a database connection string?",
-    "choices": [
-      "Secret",
-      "Key",
-      "Certificate",
-      "Managed identity"
+    "type": "drag-match",
+    "prompt": "Four things a team needs to store or manage. Assign the Key Vault object type for each; two entries in the list are not object types.",
+    "sources": [
+      "A secret",
+      "A key",
+      "A certificate",
+      "A managed identity",
+      "A vault access policy",
+      "A private endpoint"
     ],
-    "correctAnswers": ["Secret"],
-    "explanation": "Connection strings, passwords, and tokens are secrets. Keys are for cryptographic operations, certificates hold X.509 material, and a managed identity isn't a Key Vault object at all.",
-    "difficulty": "easy"
+    "targets": [
+      {
+        "id": "t1",
+        "label": "A database connection string that an application reads at startup",
+        "correctSource": "A secret"
+      },
+      {
+        "id": "t2",
+        "label": "Material used to encrypt, decrypt or sign without ever leaving the vault",
+        "correctSource": "A key"
+      },
+      {
+        "id": "t3",
+        "label": "A TLS binding that must renew itself through an integrated authority",
+        "correctSource": "A certificate"
+      },
+      {
+        "id": "t4",
+        "label": "The identity a virtual machine presents in order to read from the vault",
+        "correctSource": "A managed identity"
+      }
+    ],
+    "explanation": "The three object types differ by what leaves the vault: a secret value is returned, a key never is, and a certificate is a managed lifecycle around a key plus its public part. The fourth row is deliberately not an object type at all — a managed identity is how a caller authenticates rather than something the vault stores, which is the confusion these questions keep probing. The two unused entries are authorization and networking controls.",
+    "skillRef": "d1b5",
+    "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-04",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-04",
     "type": "single",
     "prompt": "Which Key Vault capability allows a certificate to renew automatically before expiry through an integrated certificate authority?",
     "choices": [
-      "Certificate object lifecycle management with integrated CA partners",
-      "Purge protection",
-      "Vault access policies",
-      "Customer-managed keys"
+      "Certificate lifecycle management with integrated CA partners",
+      "Purge protection on the vault and its objects, blocking early deletion",
+      "Vault access policies granting per-principal operation lists",
+      "Customer-managed keys held in the vault for other services"
     ],
-    "correctAnswers": ["Certificate object lifecycle management with integrated CA partners"],
-    "explanation": "Certificate lifecycle management with integrated CAs enables auto-renewal. Purge protection, access policies, and CMK address unrelated concerns.",
+    "correctAnswers": [
+      "Certificate lifecycle management with integrated CA partners"
+    ],
+    "explanation": "The certificate object is a managed lifecycle, which is what lets the vault request renewal from the CA before expiry with nobody watching a calendar. The other three are real Key Vault features and none of them touches expiry, which is what makes the list plausible rather than obviously wrong.",
+    "skillRef": "d1b5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-05",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-05",
     "type": "single",
     "prompt": "What best describes Azure Key Vault Managed HSM?",
     "choices": [
-      "A single-tenant, FIPS 140-2 Level 3 validated hardware security module offering, separate from a shared vault's HSM-protected keys",
-      "A free tier of Key Vault with no cryptographic operations",
-      "A feature that converts vault access policies into RBAC automatically",
-      "A network security group applied to Key Vault"
+      "A single-tenant, FIPS 140-2 Level 3 validated HSM offering",
+      "A free tier of Key Vault that performs no cryptographic operations at all",
+      "A feature that converts vault access policies into Azure RBAC automatically",
+      "A network security group that can be applied directly to a Key Vault"
     ],
-    "correctAnswers": ["A single-tenant, FIPS 140-2 Level 3 validated hardware security module offering, separate from a shared vault's HSM-protected keys"],
-    "explanation": "Managed HSM is a dedicated, single-tenant offering distinct from Premium-tier HSM-protected keys in a shared vault. It isn't free, doesn't auto-migrate access policies, and isn't an NSG.",
+    "correctAnswers": [
+      "A single-tenant, FIPS 140-2 Level 3 validated HSM offering"
+    ],
+    "explanation": "Managed HSM is a dedicated, single-tenant HSM pool, distinct from the HSM-protected keys a Premium vault offers on shared hardware. The NSG option is tempting because Key Vault does have network controls, whereas those are its own firewall and private endpoints rather than an NSG.",
+    "skillRef": "d1b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-06",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-06",
     "type": "single",
     "prompt": "Which Key Vault pricing tier is required to create HSM-protected keys inside a standard (non-Managed HSM) vault?",
     "choices": [
-      "Premium",
-      "Standard",
-      "Free",
-      "Basic"
+      "The Premium tier",
+      "The Standard tier",
+      "Any tier, at no cost",
+      "The Basic tier only"
     ],
-    "correctAnswers": ["Premium"],
-    "explanation": "Premium tier enables HSM-backed keys within a normal vault. Standard tier only supports software-protected keys, and Key Vault has no 'Free' or 'Basic' tier.",
+    "correctAnswers": [
+      "The Premium tier"
+    ],
+    "explanation": "Premium is what adds HSM-protected keys to an ordinary vault; Standard offers software-protected keys only. Assuming Standard suffices is the tempting default and produces a design that fails a compliance requirement written in terms of hardware protection, whereas nothing about the vault otherwise looks different.",
+    "skillRef": "d1b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-07",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-07",
     "type": "single",
     "prompt": "Which authorization model for Key Vault is recommended for new deployments because it is centrally governed and consistent with the rest of Azure RBAC?",
     "choices": [
-      "Azure role-based access control (RBAC)",
-      "Vault access policy",
-      "Network security group rules",
+      "Azure role-based access control",
+      "The legacy vault access policy model",
+      "Network security group rules on the vault",
       "Conditional Access for workload identities"
     ],
-    "correctAnswers": ["Azure role-based access control (RBAC)"],
-    "explanation": "RBAC is the recommended, centrally governed model. Access policies are legacy and vault-scoped; NSGs and Workload Identity CA are unrelated authorization mechanisms.",
+    "correctAnswers": [
+      "Azure role-based access control"
+    ],
+    "explanation": "RBAC is assignable above the vault, auditable like every other Azure assignment, and works with PIM. Vault access policies are the closest miss and remain functional, whereas they are vault-level only and sit outside the governance everything else in Azure uses.",
+    "skillRef": "d1b1",
     "difficulty": "easy"
   },
   {
-    "id": "q-o1-3-08",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-08",
     "type": "single",
     "prompt": "Which statement correctly describes the legacy vault access policy authorization model?",
     "choices": [
-      "It grants per-principal, per-object-type operation lists (e.g., get, list, set) and can only be configured at the vault level",
-      "It can be assigned at management group, subscription, resource group, or vault scope, just like Azure RBAC",
-      "It supports Privileged Identity Management eligible assignments",
-      "It is the only authorization model available for Managed HSM"
+      "Per-principal operation lists, configurable only at the vault level",
+      "Assignable at management group, subscription, resource group or vault scope",
+      "It supports Privileged Identity Management eligible assignments for access",
+      "It is the only authorization model available for Managed HSM vaults"
     ],
-    "correctAnswers": ["It grants per-principal, per-object-type operation lists (e.g., get, list, set) and can only be configured at the vault level"],
-    "explanation": "Access policies are scoped strictly to the vault and don't support PIM. Broader scopes and PIM compatibility are RBAC features, and Managed HSM has its own local RBAC model.",
+    "correctAnswers": [
+      "Per-principal operation lists, configurable only at the vault level"
+    ],
+    "explanation": "An access policy names a principal and lists the operations it may perform, and it exists only on the vault itself. The scope option is the tempting one because that IS how RBAC behaves — mixing up which model can be assigned above the vault is the single most common error in this objective.",
+    "skillRef": "d1b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-09",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-09",
     "type": "single",
     "prompt": "Which built-in role grants a principal permission to read secret values from a Key Vault but not to manage the vault's access policies or delete the vault?",
     "choices": [
       "Key Vault Secrets User",
       "Key Vault Administrator",
-      "Owner",
-      "Contributor"
+      "Key Vault Reader on the vault",
+      "Contributor on the resource group"
     ],
-    "correctAnswers": ["Key Vault Secrets User"],
-    "explanation": "Key Vault Secrets User is scoped to reading secrets. Administrator, Owner, and Contributor all grant broader management capability than needed.",
+    "correctAnswers": [
+      "Key Vault Secrets User"
+    ],
+    "explanation": "Secrets User reads secret VALUES and nothing else. Key Vault Reader is the trap and reads only metadata, so a workload assigned it lists the secret and cannot retrieve it — Contributor is the opposite failure, managing the vault while granting no data-plane read at all.",
+    "skillRef": "d1b3",
     "difficulty": "medium"
   },
   {
+    "src": "kb-kv",
+    "objectiveId": "o1-3",
     "id": "q-o1-3-10",
-    "objectiveId": "o1-3",
-    "type": "single",
-    "prompt": "Which role grants full management of a Key Vault's access policy/RBAC assignments and all data-plane operations, typically reserved for a small number of trusted administrators?",
-    "choices": [
-      "Key Vault Administrator",
+    "type": "drag-match",
+    "prompt": "Four principals with four different needs. Assign the least-privileged built-in role for each; two roles in the list are not the right answer for any of them.",
+    "sources": [
       "Key Vault Secrets User",
-      "Reader",
-      "Key Vault Certificates Officer"
+      "Key Vault Administrator",
+      "Key Vault Certificates Officer",
+      "Key Vault Reader",
+      "Owner on the subscription",
+      "Contributor on the resource group"
     ],
-    "correctAnswers": ["Key Vault Administrator"],
-    "explanation": "Key Vault Administrator has full data-plane and access-management control. Secrets User and Certificates Officer are narrower; Reader grants no data-plane rights at all.",
+    "targets": [
+      {
+        "id": "t1",
+        "label": "A workload that must retrieve secret values and do nothing else",
+        "correctSource": "Key Vault Secrets User"
+      },
+      {
+        "id": "t2",
+        "label": "A small team that must manage role assignments and all data-plane operations",
+        "correctSource": "Key Vault Administrator"
+      },
+      {
+        "id": "t3",
+        "label": "A platform team that issues and renews certificates in the vault",
+        "correctSource": "Key Vault Certificates Officer"
+      },
+      {
+        "id": "t4",
+        "label": "An auditor who must see which objects exist, without reading any value",
+        "correctSource": "Key Vault Reader"
+      }
+    ],
+    "explanation": "The data-plane roles are split by object type and by whether values are readable, which is what makes least privilege expressible at all. The pair most often confused is Secrets User and Reader: metadata versus value, and a workload given Reader authenticates successfully and still fails every retrieval. The two unused roles are management-plane and grant no data access, which is the mirror-image mistake.",
+    "skillRef": "d1b5",
     "difficulty": "medium"
   },
   {
+    "src": "kb-kv",
+    "objectiveId": "o1-3",
     "id": "q-o1-3-11",
-    "objectiveId": "o1-3",
-    "type": "single",
-    "prompt": "Which statement correctly distinguishes RBAC-based Key Vault authorization from vault access policies in terms of assignment scope?",
-    "choices": [
-      "RBAC can be assigned at management group, subscription, resource group, or vault scope; access policies apply only at the vault level",
-      "Access policies can be assigned above the vault, but RBAC cannot",
-      "Both models are restricted strictly to the vault level",
-      "RBAC assignments only apply to Managed HSM, never to standard vaults"
+    "type": "statement-grid",
+    "prompt": "For each statement about Key Vault authorization models, select Yes if it is true.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "Azure RBAC assignments for Key Vault can be made at subscription or resource group scope.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s2",
+        "text": "Vault access policies can be assigned at a scope above the vault, such as a resource group.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s3",
+        "text": "Azure RBAC is the model Microsoft recommends for new Key Vault deployments.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s4",
+        "text": "Vault access policies integrate with Privileged Identity Management for time-bound access.",
+        "correctValue": "No"
+      }
     ],
-    "correctAnswers": ["RBAC can be assigned at management group, subscription, resource group, or vault scope; access policies apply only at the vault level"],
-    "explanation": "RBAC's broader scope flexibility is one of its main advantages over vault-only access policies, and RBAC applies to standard vaults as well as Managed HSM.",
+    "explanation": "Everything that makes RBAC preferable follows from one fact: it is ordinary Azure RBAC, so it inherits scope, PIM and the same audit trail as every other assignment. Access policies do none of that and live on the vault alone — the first statement is the inversion that leads teams to plan a governance model access policies cannot deliver, whereas the third is what rules them out wherever just-in-time access is required.",
+    "skillRef": "d1b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-12",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-12",
     "type": "single",
     "prompt": "Which authorization model integrates with Privileged Identity Management for time-bound, approval-gated access to Key Vault data?",
     "choices": [
-      "Azure RBAC",
-      "Vault access policy",
-      "Neither model supports PIM",
-      "Only Managed HSM local RBAC supports PIM"
+      "Azure role-based access control",
+      "The legacy vault access policy model",
+      "Neither model supports PIM at all",
+      "Only Managed HSM local RBAC supports it"
     ],
-    "correctAnswers": ["Azure RBAC"],
-    "explanation": "RBAC role assignments, unlike vault access policies, can be made PIM-eligible for just-in-time activation.",
+    "correctAnswers": [
+      "Azure role-based access control"
+    ],
+    "explanation": "Because Key Vault RBAC is ordinary Azure RBAC, PIM can make a data-plane role eligible rather than standing. Access policies are the tempting answer for anyone still using them, whereas they have no eligibility concept — which means a vault on access policies cannot express just-in-time secret access at all.",
+    "skillRef": "d1b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-13",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-13",
     "type": "single",
     "prompt": "When creating a new Key Vault, which access configuration setting should be selected to use the centrally governed, recommended authorization model?",
     "choices": [
       "Azure role-based access control",
-      "Vault access policy",
-      "Disable all data-plane access",
-      "Legacy access policies with inheritance"
+      "Vault access policy, the legacy option",
+      "Disable all data-plane access to the vault",
+      "Legacy access policies, with inheritance"
     ],
-    "correctAnswers": ["Azure role-based access control"],
-    "explanation": "Selecting Azure role-based access control at creation time is how you opt into the recommended model instead of the legacy vault access policy option.",
+    "correctAnswers": [
+      "Azure role-based access control"
+    ],
+    "explanation": "The access configuration is chosen at creation and switching later re-authorizes every caller, so getting it right first is worth more than it looks. Access policies \"with inheritance\" is the tempting invented option, whereas inheritance is exactly what access policies do not have.",
+    "skillRef": "d1b1",
     "difficulty": "easy"
   },
   {
-    "id": "q-o1-3-14",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-14",
     "type": "single",
     "prompt": "By default, when a secret is deleted from a Key Vault with soft-delete enabled, what happens?",
     "choices": [
-      "It becomes recoverable for a configurable retention period (7-90 days) instead of being immediately erased",
-      "It is permanently and immediately erased with no recovery option",
-      "It is automatically moved to a Managed HSM",
-      "It is converted into a certificate object"
+      "It stays recoverable for a configurable retention period of 7 to 90 days",
+      "It is permanently and immediately erased, with no possibility of recovery",
+      "It is moved automatically into a Managed HSM for safekeeping instead",
+      "It is converted into a certificate object on the same vault"
     ],
-    "correctAnswers": ["It becomes recoverable for a configurable retention period (7-90 days) instead of being immediately erased"],
-    "explanation": "Soft-delete keeps the object recoverable for its retention window. It does not immediately erase the object, migrate it to Managed HSM, or change its object type.",
+    "correctAnswers": [
+      "It stays recoverable for a configurable retention period of 7 to 90 days"
+    ],
+    "explanation": "Soft delete gives you a window in which the object can be recovered, and it cannot be turned off. Expecting immediate erasure is the tempting assumption and matters in both directions: it makes accidental deletion look catastrophic when it is not, whereas it also hides the fact that a \"deleted\" secret still exists and can still be purged by someone.",
+    "skillRef": "d1b5",
     "difficulty": "medium"
   },
   {
+    "src": "kb-kv",
+    "objectiveId": "o1-3",
     "id": "q-o1-3-15",
-    "objectiveId": "o1-3",
-    "type": "single",
-    "prompt": "What does enabling purge protection on a Key Vault add on top of soft-delete?",
-    "choices": [
-      "It prevents anyone, including a subscription owner, from permanently purging the vault or its objects before the retention period ends",
-      "It disables soft-delete entirely",
-      "It grants automatic RBAC access to all administrators",
-      "It shortens the soft-delete retention period to zero"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the statement distinguishing soft delete from purge protection on a Key Vault.",
+    "template": "Soft delete makes a deleted object [[b1]], and purge protection additionally [[b2]].",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "recoverable for the configured retention period",
+          "erased immediately with no recovery window",
+          "moved to a Managed HSM automatically",
+          "converted into a certificate object"
+        ],
+        "correctValue": "recoverable for the configured retention period"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "stops anyone, even a subscription owner, purging it before that period ends",
+          "shortens the retention period to zero for faster clean-up",
+          "grants every administrator automatic RBAC access to the vault",
+          "disables soft delete once the vault is in production"
+        ],
+        "correctValue": "stops anyone, even a subscription owner, purging it before that period ends"
+      }
     ],
-    "correctAnswers": ["It prevents anyone, including a subscription owner, from permanently purging the vault or its objects before the retention period ends"],
-    "explanation": "Purge protection closes the loophole where an Owner could otherwise force-purge a soft-deleted object early. It complements, rather than disables, soft-delete.",
+    "explanation": "Soft delete creates the window; purge protection makes it inviolable, which is what defends against a malicious or mistaken owner rather than an ordinary accident. The operational cost is worth knowing before enabling it: purge protection cannot be turned off, so a vault name stays reserved for the whole retention period.",
+    "skillRef": "d1b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-16",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-16",
     "type": "single",
     "prompt": "Which networking configuration most tightly restricts access to a Key Vault from the public internet?",
     "choices": [
-      "Public network access set to Disabled, with a private endpoint for approved virtual networks",
-      "Public network access set to Enabled with no firewall rules",
-      "A Conditional Access policy blocking the Azure portal",
-      "An Azure Policy Audit effect on the vault"
+      "Public network access Disabled, with a private endpoint for the VNet",
+      "Public network access Enabled, with no firewall rules configured at all",
+      "A Conditional Access policy blocking access to the Azure portal",
+      "An Azure Policy Audit effect applied to the vault resource"
     ],
-    "correctAnswers": ["Public network access set to Disabled, with a private endpoint for approved virtual networks"],
-    "explanation": "Disabling public access and requiring a private endpoint removes internet exposure entirely. The other options don't restrict network reachability at all.",
+    "correctAnswers": [
+      "Public network access Disabled, with a private endpoint for the VNet"
+    ],
+    "explanation": "Both halves are needed: the private endpoint provides a path in and Disabled takes the public one away. The Conditional Access option is the tempting neighbour and governs interactive sign-ins, whereas a workload calling the vault data plane never passes through it.",
+    "skillRef": "d1b4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-17",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-17",
     "type": "single",
     "prompt": "A Key Vault's firewall is configured to allow only two specific virtual networks. What happens to a request originating from an IP address not in that allow-list?",
     "choices": [
-      "It is blocked at the network layer before authorization is even evaluated",
-      "It is allowed but logged as suspicious by Defender for Key Vault",
-      "It is allowed only if the caller has the Key Vault Administrator role",
-      "It is redirected automatically to the paired region's vault"
+      "It is blocked at the network layer, before authorization is evaluated",
+      "It is allowed, but logged as suspicious by Microsoft Defender for Key Vault",
+      "It is allowed only if the caller holds the Key Vault Administrator role",
+      "It is redirected automatically to the paired region for that vault"
     ],
-    "correctAnswers": ["It is blocked at the network layer before authorization is even evaluated"],
-    "explanation": "The firewall is a network-layer gate that blocks disallowed traffic outright, regardless of any RBAC role the caller might hold.",
+    "correctAnswers": [
+      "It is blocked at the network layer, before authorization is evaluated"
+    ],
+    "explanation": "The network check happens first, so a perfectly authorized principal on the wrong network is refused without RBAC ever being consulted. The Administrator-role option is the tempting exception and does not exist — no data-plane role overrides the firewall, which is why a blocked call produces a confusing forbidden response rather than an access-denied one.",
+    "skillRef": "d1b7",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-18",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-18",
     "type": "single",
     "prompt": "Why would you enable 'Allow trusted Microsoft services to bypass this firewall' on a Key Vault?",
     "choices": [
-      "So first-party services like Azure Backup or Azure Disk Encryption can still reach the vault even when public network access is restricted",
-      "To allow any third-party SaaS application unrestricted access",
-      "To disable RBAC checks for Microsoft support engineers",
-      "To automatically grant admin consent to Microsoft first-party apps"
+      "So Azure Backup or Disk Encryption can still reach a restricted vault",
+      "To allow any third-party SaaS application unrestricted access to the vault",
+      "To automatically grant admin consent to Microsoft first-party applications",
+      "To disable RBAC checks for Microsoft support engineers on the vault"
     ],
-    "correctAnswers": ["So first-party services like Azure Backup or Azure Disk Encryption can still reach the vault even when public network access is restricted"],
-    "explanation": "This bypass is scoped narrowly to trusted first-party Azure services, not arbitrary third parties, and it doesn't touch RBAC or consent.",
+    "correctAnswers": [
+      "So Azure Backup or Disk Encryption can still reach a restricted vault"
+    ],
+    "explanation": "First-party services arrive from Azure address space that no virtual network rule covers, so without the bypass they break the moment the firewall is closed. Note what the bypass does not do: it exempts nothing from RBAC, so a trusted service still needs its own role assignment.",
+    "skillRef": "d1b4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-19",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-19",
     "type": "single",
     "prompt": "A managed identity has been granted the Key Vault Secrets User role, but the vault's firewall blocks the identity's originating network. What is the result?",
     "choices": [
-      "Access is denied — network restrictions and RBAC/access-policy authorization are both enforced, and both must pass",
-      "Access is granted because RBAC always overrides network restrictions",
-      "Access is granted because Key Vault ignores firewall rules for managed identities",
-      "The firewall setting is automatically bypassed for any Azure-native identity"
+      "Access is denied, because network rules and RBAC must both permit it",
+      "Access is granted, because Key Vault ignores firewall rules for managed identities",
+      "The firewall setting is bypassed automatically for any Azure-native identity",
+      "Access is granted, because RBAC always overrides network restrictions"
     ],
-    "correctAnswers": ["Access is denied — network restrictions and RBAC/access-policy authorization are both enforced, and both must pass"],
-    "explanation": "The network gate and the authorization gate are independent; passing one does not exempt a caller from the other, including managed identities.",
+    "correctAnswers": [
+      "Access is denied, because network rules and RBAC must both permit it"
+    ],
+    "explanation": "The two controls are independent gates and both must pass, which is why \"the role is assigned\" is never a complete answer to a Key Vault access failure. Believing a managed identity is exempt is the tempting shortcut and would make the firewall unenforceable, since almost every Azure caller is one.",
+    "skillRef": "d1b4",
     "difficulty": "hard"
   },
   {
-    "id": "q-o1-3-20",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-20",
     "type": "single",
     "prompt": "What is Microsoft Defender for Key Vault primarily designed to do?",
     "choices": [
-      "Detect anomalous data-plane access to the vault at runtime, such as unusual identities, high-volume access, or connections from Tor exit nodes",
+      "Detect anomalous data-plane access to the vault as it happens",
       "Scan source code repositories for hardcoded secrets before deployment",
-      "Automatically rotate every secret in the vault every 30 days",
-      "Enforce Azure Policy Deny effects on vault creation"
+      "Rotate every secret in the vault automatically on a thirty-day cycle",
+      "Enforce Azure Policy Deny effects when a new vault is created"
     ],
-    "correctAnswers": ["Detect anomalous data-plane access to the vault at runtime, such as unusual identities, high-volume access, or connections from Tor exit nodes"],
-    "explanation": "Defender for Key Vault is runtime threat detection on the vault's own data plane. Scanning repositories is a Defender CSPM secret scanning function, and it does not perform rotation or enforce Policy effects.",
+    "correctAnswers": [
+      "Detect anomalous data-plane access to the vault as it happens"
+    ],
+    "explanation": "Defender for Key Vault watches the vault's runtime traffic — unfamiliar identities, unusual volumes, connections from Tor exit nodes. Scanning repositories for hardcoded secrets is the tempting neighbour and is Defender CSPM secret scanning instead, which looks for secrets that never reached a vault at all.",
+    "skillRef": "d1b6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-21",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-21",
     "type": "single",
     "prompt": "Which of the following would most likely trigger a Defender for Key Vault alert?",
     "choices": [
-      "An unusual, high-volume secret retrieval pattern from an identity that has never accessed the vault before",
-      "A scheduled Azure Policy compliance scan",
-      "A routine RBAC role assignment made through the Azure portal",
-      "A resource lock being applied to the vault's resource group"
+      "High-volume secret retrieval by an identity that has never accessed the vault",
+      "A routine Azure RBAC role assignment made through the Azure portal by an admin",
+      "A resource lock being applied to the resource group holding the vault",
+      "A scheduled Azure Policy compliance scan across the subscription"
     ],
-    "correctAnswers": ["An unusual, high-volume secret retrieval pattern from an identity that has never accessed the vault before"],
-    "explanation": "Anomalous access volume from an unfamiliar identity is exactly the pattern Defender for Key Vault looks for. The other events are routine governance actions, not runtime threats.",
+    "correctAnswers": [
+      "High-volume secret retrieval by an identity that has never accessed the vault"
+    ],
+    "explanation": "Two anomalies compound here: an unfamiliar principal, and a volume unlike any normal pattern. The other three are management-plane or governance events, which Defender for Key Vault does not watch — it looks at data-plane behaviour rather than at configuration changes.",
+    "skillRef": "d1b7",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-22",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-22",
     "type": "single",
     "prompt": "What does Defender CSPM secret scanning do that Defender for Key Vault does not?",
     "choices": [
-      "Discovers plaintext secrets exposed outside the vault, such as on VM disks, in source code, or in environment variables, without watching the vault's runtime traffic",
-      "Monitors the vault's data-plane API calls in real time for anomalies",
-      "Blocks all vault deletions until an administrator manually approves them",
-      "Replaces the need for RBAC role assignments on the vault"
+      "Find plaintext secrets outside the vault: on disks, in code, in variables",
+      "Monitor the vault data-plane API calls in real time for anomalous behaviour",
+      "Block every vault deletion until an administrator approves it manually",
+      "Replace the need for RBAC role assignments on the vault entirely"
     ],
-    "correctAnswers": ["Discovers plaintext secrets exposed outside the vault, such as on VM disks, in source code, or in environment variables, without watching the vault's runtime traffic"],
-    "explanation": "Secret scanning is a posture capability finding secrets that shouldn't exist outside the vault at all. Real-time API monitoring is Defender for Key Vault's job, not CSPM's.",
+    "correctAnswers": [
+      "Find plaintext secrets outside the vault: on disks, in code, in variables"
+    ],
+    "explanation": "Secret scanning is a posture capability and looks everywhere a secret should not be. Real-time data-plane monitoring is the tempting answer and is precisely what Defender for Key Vault does, which makes the two complementary: one finds the secrets nobody vaulted, the other watches the vault itself.",
+    "skillRef": "d1b6",
     "difficulty": "medium"
   },
   {
+    "src": "kb-kv",
+    "objectiveId": "o1-3",
     "id": "q-o1-3-23",
-    "objectiveId": "o1-3",
-    "type": "single",
-    "prompt": "Which statement correctly separates the two Defender capabilities relevant to secrets?",
-    "choices": [
-      "Defender for Key Vault is runtime threat detection on the vault itself; Defender CSPM secret scanning is a posture capability that finds exposed secrets elsewhere",
-      "Both capabilities perform the exact same function and are interchangeable",
-      "Defender CSPM secret scanning requires an agent installed inside the Key Vault",
-      "Defender for Key Vault only works with Managed HSM, never with standard vaults"
+    "type": "statement-grid",
+    "prompt": "For each statement about the two Defender capabilities relevant to secrets, select Yes if it is true.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "Defender for Key Vault performs runtime threat detection on the vault itself.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s2",
+        "text": "Defender CSPM secret scanning requires an agent installed inside the Key Vault.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s3",
+        "text": "The two capabilities perform the same function and are interchangeable.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s4",
+        "text": "Defender CSPM secret scanning finds plaintext secrets held outside any vault.",
+        "correctValue": "Yes"
+      }
     ],
-    "correctAnswers": ["Defender for Key Vault is runtime threat detection on the vault itself; Defender CSPM secret scanning is a posture capability that finds exposed secrets elsewhere"],
-    "explanation": "The two answer different questions: one watches the vault's own traffic, the other hunts for secrets that never should have left it. Secret scanning is agentless, and Defender for Key Vault covers standard vaults too.",
+    "explanation": "One is runtime and one is posture, and they look in opposite places: at the vault, and everywhere but the vault. Treating them as interchangeable is the error that leaves a real gap — enabling only Defender for Key Vault means a credential pasted into a startup script is never found, whereas enabling only secret scanning means nobody notices an unfamiliar identity draining the vault.",
+    "skillRef": "d1b6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-24",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-24",
     "type": "single",
     "prompt": "What is a customer-managed key (CMK) used for?",
     "choices": [
-      "Letting the customer control the encryption key (stored in Key Vault) used to protect data at rest in services like storage accounts, managed disks, or SQL TDE",
-      "Authenticating a user during multifactor authentication",
-      "Encrypting Conditional Access policy definitions",
-      "Replacing the need for Azure RBAC role assignments"
+      "Controlling the key that protects data at rest in another service",
+      "Authenticating a user during a multifactor authentication challenge",
+      "Encrypting the Conditional Access policy definitions in a tenant",
+      "Replacing the need for Azure RBAC role assignments on a resource"
     ],
-    "correctAnswers": ["Letting the customer control the encryption key (stored in Key Vault) used to protect data at rest in services like storage accounts, managed disks, or SQL TDE"],
-    "explanation": "CMK lets the customer, rather than Microsoft alone, control the key protecting data at rest. It has no relationship to MFA, Conditional Access policy storage, or RBAC.",
+    "correctAnswers": [
+      "Controlling the key that protects data at rest in another service"
+    ],
+    "explanation": "A CMK moves key lifecycle — rotation, revocation, and the ability to make data unreadable — into a vault the customer controls, for storage accounts, managed disks or SQL TDE. The MFA option is tempting because both involve cryptography, whereas a CMK never participates in authenticating anyone.",
+    "skillRef": "d1b5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-25",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-25",
     "type": "single",
     "prompt": "What does Bring Your Own Key (BYOK) allow an organization to do?",
     "choices": [
-      "Generate or hold a key outside Azure and import it into Key Vault (or Managed HSM) for use as a customer-managed key",
-      "Bypass Key Vault entirely by storing keys in application code",
-      "Use a key generated by Azure without ever storing it in Key Vault",
-      "Automatically synchronize keys between unrelated tenants"
+      "Generate a key outside Azure and import it into the vault for use as a CMK",
+      "Use a key generated by Azure without ever storing it in a Key Vault anywhere",
+      "Bypass Key Vault entirely by holding keys inside the application code",
+      "Synchronize keys automatically between two unrelated Entra tenants"
     ],
-    "correctAnswers": ["Generate or hold a key outside Azure and import it into Key Vault (or Managed HSM) for use as a customer-managed key"],
-    "explanation": "BYOK is about importing an externally generated/held key into Key Vault, not bypassing it or synchronizing across tenants.",
+    "correctAnswers": [
+      "Generate a key outside Azure and import it into the vault for use as a CMK"
+    ],
+    "explanation": "BYOK is about provenance: the key is created on your own HSM and imported, so Azure never generated it. The \"no vault at all\" option is the tempting reading of \"your own key\", whereas the key still has to live in a vault or Managed HSM for any service to use it.",
+    "skillRef": "d1b5",
     "difficulty": "medium"
   },
   {
@@ -385,131 +567,170 @@
       "Owner at the subscription scope",
       "Contributor on the resource group"
     ],
-    "correctAnswers": ["Key Vault Secrets User"],
-    "explanation": "Key Vault Secrets User is the narrowest role that satisfies read-only secret access. The other three all grant significantly more than required.",
+    "correctAnswers": [
+      "Key Vault Secrets User"
+    ],
+    "explanation": "Key Vault Secrets User is the narrowest role that returns secret values, which is what least privilege means here. Key Vault Administrator is the tempting answer because it obviously works, whereas it also grants role management and deletion — and Owner or Contributor grant management-plane control without necessarily granting the data-plane read at all.",
+    "src": "kb-kv",
+    "skillRef": "d1b3",
     "difficulty": "easy"
   },
   {
-    "id": "q-o1-3-27",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-27",
     "type": "single",
     "prompt": "A team wants HSM-protected keys but does not need a dedicated single-tenant HSM. Which option is most appropriate?",
     "choices": [
       "A Premium-tier Key Vault with HSM-protected keys",
-      "Azure Key Vault Managed HSM",
-      "A Standard-tier Key Vault with software-protected keys",
-      "Defender for Key Vault"
+      "A Standard-tier Key Vault with software-protected keys instead",
+      "Azure Key Vault Managed HSM, single-tenant",
+      "Microsoft Defender for Key Vault on the vault"
     ],
-    "correctAnswers": ["A Premium-tier Key Vault with HSM-protected keys"],
-    "explanation": "Premium tier offers HSM-backed keys inside a normal (multi-tenant) vault; Managed HSM is reserved for organizations needing dedicated, single-tenant HSM isolation, which isn't required here.",
+    "correctAnswers": [
+      "A Premium-tier Key Vault with HSM-protected keys"
+    ],
+    "explanation": "Premium gives HSM protection on shared hardware, which is what the requirement asks for once single tenancy is explicitly not needed. Managed HSM is the tempting upgrade and is the answer to a different question: it is single-tenant and priced accordingly, so choosing it here buys isolation nobody asked for.",
+    "skillRef": "d1b7",
     "difficulty": "hard"
   },
   {
-    "id": "q-o1-3-28",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-28",
     "type": "single",
     "prompt": "Which statement about combining network restrictions with authorization on Key Vault is correct?",
     "choices": [
-      "Both the network rule (firewall/private endpoint) and the data-plane authorization (RBAC or access policy) must independently permit the request",
-      "Passing the network rule alone is sufficient for data-plane access",
-      "Passing RBAC authorization alone bypasses any firewall restriction",
-      "Network restrictions apply only to management-plane operations, never to data-plane secret retrieval"
+      "The network rule and the data-plane authorization must both permit it",
+      "Network restrictions apply only to management-plane operations on the vault",
+      "Passing RBAC authorization alone bypasses any firewall restriction set",
+      "Passing the network rule alone is sufficient for data-plane access"
     ],
-    "correctAnswers": ["Both the network rule (firewall/private endpoint) and the data-plane authorization (RBAC or access policy) must independently permit the request"],
-    "explanation": "Neither gate substitutes for the other, and network restrictions do apply to data-plane secret retrieval, not just management operations.",
+    "correctAnswers": [
+      "The network rule and the data-plane authorization must both permit it"
+    ],
+    "explanation": "The two gates are independent, so debugging a Key Vault failure means checking both rather than confirming one. The management-plane-only claim is the most consequential error: it leads teams to believe secret retrieval is unaffected by the firewall, whereas the data plane is exactly what the firewall governs.",
+    "skillRef": "d1b4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-29",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-29",
     "type": "multiple",
     "prompt": "Which two object types can Azure Key Vault store? (Choose two.)",
     "choices": [
-      "Keys",
-      "Certificates",
-      "Network security groups",
-      "Resource locks"
+      "Keys used for cryptographic operations",
+      "Certificates with a managed lifecycle",
+      "Network security groups for a whole subnet",
+      "Resource locks on the vault itself"
     ],
-    "correctAnswers": ["Keys", "Certificates"],
-    "explanation": "Keys and certificates (along with secrets) are Key Vault's object types. NSGs and resource locks are unrelated Azure governance constructs.",
+    "correctAnswers": [
+      "Keys used for cryptographic operations",
+      "Certificates with a managed lifecycle"
+    ],
+    "explanation": "Key Vault holds keys, secrets and certificates — three object types and no others. The two distractors are genuine Azure resources that live elsewhere, and the resource-lock option is the more tempting of them because a lock really can be applied TO a vault, whereas it is never stored IN one.",
+    "skillRef": "d1b5",
     "difficulty": "easy"
   },
   {
-    "id": "q-o1-3-30",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-30",
     "type": "multiple",
     "prompt": "Which two statements correctly describe Azure RBAC authorization for Key Vault? (Choose two.)",
     "choices": [
-      "It can be assigned at scopes above the vault, such as a resource group or subscription",
+      "It can be assigned above the vault, at resource group or subscription",
       "It supports Privileged Identity Management for time-bound activation",
-      "It can only be configured at the vault level",
-      "It is the legacy model being phased out in favor of vault access policies"
+      "It is the legacy model being phased out in favour of vault access policies",
+      "It can only be configured at the level of the individual vault"
     ],
-    "correctAnswers": ["It can be assigned at scopes above the vault, such as a resource group or subscription", "It supports Privileged Identity Management for time-bound activation"],
-    "explanation": "Vault-level-only scoping describes access policies, and RBAC is the recommended forward-looking model, not the legacy one being phased out.",
+    "correctAnswers": [
+      "It can be assigned above the vault, at resource group or subscription",
+      "It supports Privileged Identity Management for time-bound activation"
+    ],
+    "explanation": "Both true statements follow from RBAC being ordinary Azure RBAC. The legacy claim is the tempting inversion and gets the direction of travel exactly backwards: access policies are the older model, whereas RBAC is what Microsoft recommends for anything new.",
+    "skillRef": "d1b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-31",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-31",
     "type": "multiple",
     "prompt": "Which two are true about Defender for Key Vault and Defender CSPM secret scanning? (Choose two.)",
     "choices": [
       "Defender for Key Vault detects anomalous runtime access to the vault",
-      "Defender CSPM secret scanning finds plaintext secrets outside the vault",
-      "They are the exact same feature under two names",
-      "Defender CSPM secret scanning requires enabling the vault's firewall bypass setting"
+      "Secret scanning finds plaintext secrets held outside the vault",
+      "Secret scanning requires the vault firewall bypass setting to be enabled",
+      "They are the exact same feature marketed under two different names"
     ],
-    "correctAnswers": ["Defender for Key Vault detects anomalous runtime access to the vault", "Defender CSPM secret scanning finds plaintext secrets outside the vault"],
-    "explanation": "The two capabilities are distinct and address different problems; secret scanning is agentless and unrelated to the vault's own firewall bypass setting.",
+    "correctAnswers": [
+      "Defender for Key Vault detects anomalous runtime access to the vault",
+      "Secret scanning finds plaintext secrets held outside the vault"
+    ],
+    "explanation": "Runtime detection at the vault and posture discovery away from it are the two halves, and neither substitutes for the other. The firewall-bypass claim is the more plausible of the false pair because secret scanning does need access to something, whereas what it inspects is disks and repositories rather than the vault itself.",
+    "skillRef": "d1b6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-32",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-32",
     "type": "case-study",
     "caseStudyId": "cs-tailspin-identity",
     "prompt": "Referring to requirement 3 (the deployment pipeline on an Azure VM must retrieve a database connection string from Key Vault with no client secret stored on the VM or in code), which Key Vault-side configuration completes this design?",
     "choices": [
-      "Grant the VM's managed identity the Key Vault Secrets User role on the vault",
-      "Store the connection string as a certificate instead of a secret",
-      "Create a vault access policy granting 'all users' get/list on secrets",
-      "Disable soft-delete so the pipeline can retrieve secrets faster"
+      "Grant the VM's managed identity the Key Vault Secrets User role",
+      "Create a vault access policy granting 'all users' get and list on secrets",
+      "Store the connection string as a certificate object instead of a secret",
+      "Disable soft delete so the pipeline can retrieve its secrets faster"
     ],
-    "correctAnswers": ["Grant the VM's managed identity the Key Vault Secrets User role on the vault"],
-    "explanation": "With the VM's managed identity already established, the vault-side piece is a narrowly scoped RBAC role for secret retrieval; a permissive access policy and disabling soft-delete don't address the credential-free goal, and connection strings belong in secrets, not certificates.",
+    "correctAnswers": [
+      "Grant the VM's managed identity the Key Vault Secrets User role"
+    ],
+    "explanation": "The managed identity handles authentication and the data-plane role handles authorization, which is the vault-side half of the design. The \"all users\" access policy is the tempting shortcut and would work, whereas it grants every principal in the tenant read access to every secret — solving the requirement by abandoning least privilege.",
+    "skillRef": "d1b5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-33",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-33",
     "type": "case-study",
     "caseStudyId": "cs-tailspin-identity",
     "prompt": "Referring to requirement 4 (a new Key Vault must default to a centrally governed, granular access model without vault access policies, with public access disabled and a private endpoint), which vault configuration is correct?",
     "choices": [
-      "Access configuration set to Azure role-based access control, Public network access Disabled, and a private endpoint deployed for approved virtual networks",
-      "Access configuration set to Vault access policy, Public network access Enabled with IP firewall rules only",
-      "Access configuration set to Azure role-based access control, Public network access Enabled with no restrictions",
-      "Access configuration set to Vault access policy, with a private endpoint but no firewall changes"
+      "Azure RBAC, public access Disabled, and a private endpoint for the VNet",
+      "Vault access policy, with public access Enabled and IP firewall rules only",
+      "Azure RBAC, with public network access left Enabled and no restrictions",
+      "Vault access policy, with a private endpoint but no firewall changes"
     ],
-    "correctAnswers": ["Access configuration set to Azure role-based access control, Public network access Disabled, and a private endpoint deployed for approved virtual networks"],
-    "explanation": "This is the only option that satisfies all three parts of the requirement at once: RBAC (not access policies), public access disabled, and a private endpoint.",
+    "correctAnswers": [
+      "Azure RBAC, public access Disabled, and a private endpoint for the VNet"
+    ],
+    "explanation": "Three clauses, three settings, and only one option satisfies all of them. The RBAC-with-public-access option is the closest miss and gets the authorization model right while leaving the network wide open — which is why counting the clauses off is faster here than reasoning about the products.",
+    "skillRef": "d1b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-34",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-34",
     "type": "case-study",
     "caseStudyId": "cs-tailspin-identity",
     "prompt": "Referring to requirement 4, why does the requirement specifically rule out vault access policies as the authorization model?",
     "choices": [
-      "Vault access policies are managed only at the vault level and don't provide the centrally governed, granular model the requirement calls for",
-      "Vault access policies cannot be configured on a newly created vault",
-      "Vault access policies are being retired and no longer function",
-      "Vault access policies require a Premium-tier vault"
+      "They are vault-level only, so they cannot be governed centrally",
+      "They cannot be configured at all on a newly created Key Vault instance",
+      "They are being retired and no longer function on any vault",
+      "They require a Premium-tier vault in order to be used"
     ],
-    "correctAnswers": ["Vault access policies are managed only at the vault level and don't provide the centrally governed, granular model the requirement calls for"],
-    "explanation": "Access policies remain functional and available on new vaults, but their vault-only scope is exactly why RBAC is called for when central governance is required.",
+    "correctAnswers": [
+      "They are vault-level only, so they cannot be governed centrally"
+    ],
+    "explanation": "The requirement asks for central governance and granularity, and access policies offer neither: no scope above the vault, and no PIM. The claim that they no longer function is the tempting overstatement — they still work perfectly well, which is precisely why a requirement has to rule them out explicitly.",
+    "skillRef": "d1b3",
     "difficulty": "medium"
   },
   {
@@ -518,9 +739,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o1-3",
     "prompt": "Proposed solution: Create a service principal, generate a client secret, and store the secret in an environment variable on the VM so the pipeline can authenticate to Key Vault. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "This stores a client secret on the VM, exactly what the goal prohibits.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "The solution stores a client secret on the VM, which is exactly what the goal prohibits. It is tempting because it works — the pipeline does reach Key Vault — whereas working was never the constraint; not holding a credential was.",
+    "src": "kb-kv",
+    "skillRef": "d1b3",
     "difficulty": "medium"
   },
   {
@@ -529,9 +757,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o1-3",
     "prompt": "Proposed solution: Enable a system-assigned managed identity on the VM and grant it the Key Vault Secrets User role on the vault; the pipeline retrieves the secret using the managed identity's token endpoint. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "This achieves credential-free authentication with no client secret stored anywhere, satisfying the stated goal.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "The managed identity supplies credential-free authentication and Key Vault Secrets User supplies the authorization, so nothing is stored on the VM or in code. Note the prerequisite this accepts rather than states: the role must be assigned before the first retrieval, otherwise the pipeline authenticates and is refused.",
+    "src": "kb-kv",
+    "skillRef": "d1b3",
     "difficulty": "medium"
   },
   {
@@ -540,9 +775,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o1-3",
     "prompt": "Proposed solution: Hardcode the secret value directly into the pipeline's source code repository so no runtime call to Key Vault is needed. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "This bypasses Key Vault entirely and embeds the secret in code — the opposite of the intended credential-free, centrally managed design.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "Hardcoding the value bypasses Key Vault entirely, so the secret now lives in source control where it cannot be rotated or revoked. It is tempting because it removes a runtime dependency, whereas the dependency was the point — central management is what makes rotation possible at all.",
+    "src": "kb-kv",
+    "skillRef": "d1b3",
     "difficulty": "medium"
   },
   {
@@ -557,7 +799,9 @@
       "Deploy a private endpoint connecting the vault to the approved virtual network",
       "Assign the appropriate RBAC role (e.g., Key Vault Secrets User) to the consuming identity"
     ],
-    "explanation": "The vault must exist before its access model and networking can be configured, and role assignment is the final step that actually grants a consumer access.",
+    "explanation": "The vault must exist before its access model or networking can be set, and the role assignment comes last because it is what finally grants a consumer access. Assigning the role before switching to RBAC is the ordering mistake, whereas the assignment would simply be ignored by a vault still using access policies.",
+    "src": "kb-kv",
+    "skillRef": "d1b1",
     "difficulty": "medium"
   },
   {
@@ -572,7 +816,9 @@
       "Use the vault's recover operation to restore the deleted secret within the retention window",
       "Document the retention period for the compliance team"
     ],
-    "explanation": "Soft-delete and purge protection must be in place before testing deletion behavior, and recovery is demonstrated before the process is documented.",
+    "explanation": "Soft delete and purge protection must both be in place before the deletion test, since the test is what proves them. Testing first is the tempting order and proves nothing: a deletion on a vault without purge protection is still recoverable, so the test passes whether or not the control you meant to verify is on.",
+    "src": "kb-kv",
+    "skillRef": "d1b2",
     "difficulty": "medium"
   },
   {
@@ -582,11 +828,32 @@
     "prompt": "Configure this simplified Key Vault creation screen so the vault uses the centrally governed authorization model, blocks all public network access, and retains deleted objects for recovery.",
     "screenTitle": "Create Key Vault (simulated)",
     "fields": [
-      { "id": "authModel", "label": "Permission model", "kind": "select", "options": ["Vault access policy", "Azure role-based access control"], "correctValue": "Azure role-based access control" },
-      { "id": "publicAccess", "label": "Public network access", "kind": "toggle", "correctValue": "Off" },
-      { "id": "softDelete", "label": "Soft delete", "kind": "toggle", "correctValue": "On" }
+      {
+        "id": "authModel",
+        "label": "Permission model",
+        "kind": "select",
+        "options": [
+          "Vault access policy",
+          "Azure role-based access control"
+        ],
+        "correctValue": "Azure role-based access control"
+      },
+      {
+        "id": "publicAccess",
+        "label": "Public network access",
+        "kind": "toggle",
+        "correctValue": "Off"
+      },
+      {
+        "id": "softDelete",
+        "label": "Soft delete",
+        "kind": "toggle",
+        "correctValue": "On"
+      }
     ],
-    "explanation": "RBAC is the centrally governed model, disabling public network access blocks internet exposure (paired with a private endpoint), and soft-delete (on by default) retains deleted objects for recovery.",
+    "explanation": "RBAC is the centrally governed model, disabling public network access closes internet exposure, and soft delete retains deleted objects. Note what this screen does not do: disabling public access without a private endpoint leaves the vault unreachable, so the two are one decision rather than two.",
+    "src": "kb-kv",
+    "skillRef": "d1b1",
     "difficulty": "medium"
   },
   {
@@ -600,53 +867,75 @@
       "A resource lock on the key",
       "A stored access policy"
     ],
-    "correctAnswers": ["A key rotation policy"],
-    "explanation": "A rotation policy automates the creation of a new key version on a schedule or before a configured expiry threshold. Access policies and resource locks control authorization/deletion, not rotation; stored access policies are a storage SAS concept, not a Key Vault feature.",
-    "difficulty": "medium"
-  },
-  {
-    "id": "q-o1-3-42",
-    "objectiveId": "o1-3",
-    "type": "single",
-    "prompt": "You must rotate a secret used by multiple applications with zero downtime — no application should ever fail to find a valid credential during the change. Which approach achieves this?",
-    "choices": [
-      "Overwrite the existing secret value in place with the new value",
-      "Create a new secret version while the old version remains valid, migrate consumers, then retire the old version",
-      "Delete the secret and immediately recreate it with the new value",
-      "Disable soft-delete before rotating the secret"
+    "correctAnswers": [
+      "A key rotation policy"
     ],
-    "correctAnswers": ["Create a new secret version while the old version remains valid, migrate consumers, then retire the old version"],
-    "explanation": "The dual-credential pattern keeps the old version valid until every consumer has migrated to the new version, avoiding any window with no valid credential. Overwriting in place or deleting/recreating both create an outage window.",
+    "explanation": "A rotation policy automates the creation of a new key version on a schedule or before a configured expiry threshold. Access policies and resource locks control authorization/deletion, not rotation; stored access policies are a storage SAS concept, not a Key Vault feature.",
+    "src": "kb-kv",
+    "skillRef": "d1b5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-43",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-42",
+    "type": "build-list",
+    "prompt": "Build the sequence that rotates a shared secret with no application ever failing to find a valid credential. Not every action in the pool belongs in the answer.",
+    "poolItems": [
+      "Create a new version of the secret, leaving the previous version enabled",
+      "Update each consuming application to read the new version",
+      "Confirm every consumer is authenticating with the new version",
+      "Disable the previous version once nothing is using it",
+      "Overwrite the existing secret value in place with the new value",
+      "Delete the secret and immediately recreate it with the new value",
+      "Disable soft delete on the vault before starting the rotation"
+    ],
+    "correctOrder": [
+      "Create a new version of the secret, leaving the previous version enabled",
+      "Update each consuming application to read the new version",
+      "Confirm every consumer is authenticating with the new version",
+      "Disable the previous version once nothing is using it"
+    ],
+    "explanation": "Both versions have to be valid at once, which is what removes the window in which an application holds a credential that no longer works. The first two excluded actions each create exactly that window — overwriting in place and delete-then-recreate both invalidate the old value the instant they run — whereas disabling soft delete does not affect rotation and merely removes your ability to recover from a mistake.",
+    "skillRef": "d1b5",
+    "difficulty": "medium"
+  },
+  {
+    "src": "kb-kv",
+    "objectiveId": "o1-3",
+    "id": "q-o1-3-43",
     "type": "single",
     "prompt": "You want a Logic App to automatically trigger and renew a certificate a few days before it expires in Key Vault. Which integration enables near-real-time reaction to this lifecycle event?",
     "choices": [
-      "Azure Event Grid",
-      "Defender for Key Vault",
-      "A vault access policy",
+      "Azure Event Grid notifications",
+      "Microsoft Defender for Key Vault",
+      "A vault access policy entry",
       "Azure Policy DeployIfNotExists"
     ],
-    "correctAnswers": ["Azure Event Grid"],
-    "explanation": "Key Vault publishes lifecycle events (such as a certificate nearing expiry or a new secret version created) to Azure Event Grid, which can trigger a Logic App or Function in near real time. Defender for Key Vault is threat detection, not lifecycle automation.",
+    "correctAnswers": [
+      "Azure Event Grid notifications"
+    ],
+    "explanation": "Key Vault publishes lifecycle events — near-expiry, new version, expired — to Event Grid, which a Logic App subscribes to. Defender for Key Vault is the tempting neighbour because it also produces signals, whereas its signals are security alerts about access rather than lifecycle notifications about an object.",
+    "skillRef": "d1b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o1-3-44",
+    "src": "kb-kv",
     "objectiveId": "o1-3",
+    "id": "q-o1-3-44",
     "type": "single",
     "prompt": "You need to be alerted whenever an unusually high volume of secret-retrieval operations occurs on a vault, based on the vault's own operation logs rather than Defender's built-in threat detection. What do you configure?",
     "choices": [
-      "Diagnostic logging to a Log Analytics workspace with a log-based alert rule",
-      "Purge protection",
-      "A private endpoint",
-      "Bring Your Own Key (BYOK)"
+      "Diagnostic logging to a workspace, with a log-based alert rule",
+      "Purge protection on the vault and all of its stored objects",
+      "A private endpoint for the vault in the approved virtual network",
+      "Bring Your Own Key for the keys the vault holds"
     ],
-    "correctAnswers": ["Diagnostic logging to a Log Analytics workspace with a log-based alert rule"],
-    "explanation": "Diagnostic logging (AuditEvent category) sent to Log Analytics, combined with a log-based alert rule, lets you build custom alerting on the vault's own operation logs — complementary to, but distinct from, Defender for Key Vault's built-in runtime alerts.",
+    "correctAnswers": [
+      "Diagnostic logging to a workspace, with a log-based alert rule"
+    ],
+    "explanation": "The requirement explicitly excludes Defender, so the answer is the vault's own diagnostic logs plus a KQL alert rule you write. The two networking and key options are tempting only as familiar Key Vault settings, whereas neither produces an alert of any kind.",
+    "skillRef": "d1b7",
     "difficulty": "medium"
   }
 ]

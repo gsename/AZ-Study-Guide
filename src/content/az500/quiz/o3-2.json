@@ -6,12 +6,14 @@
     "prompt": "Which method of authorizing access to a storage account is the most secure?",
     "choices": [
       "Microsoft Entra ID with Azure RBAC data roles",
-      "The account's shared access keys",
-      "A shared access signature (SAS)",
-      "Anonymous public read access"
+      "The account's shared access keys, held in a vault",
+      "A shared access signature (SAS) token",
+      "Anonymous public read access on the container"
     ],
-    "correctAnswers": ["Microsoft Entra ID with Azure RBAC data roles"],
-    "explanation": "Entra + RBAC is identity-based with no keys to manage — the most secure option.",
+    "correctAnswers": [
+      "Microsoft Entra ID with Azure RBAC data roles"
+    ],
+    "explanation": "Entra ID with Azure RBAC data roles is identity-based, so there is no key to leak, rotate or hand over. A SAS is the tempting runner-up because it is scoped and time-limited, however it is still a bearer token: whoever holds it is the caller, and nothing ties it to a person.",
     "difficulty": "easy"
   },
   {
@@ -20,13 +22,15 @@
     "type": "single",
     "prompt": "What is a shared access signature (SAS)?",
     "choices": [
-      "A scoped, time-limited, revocable token granting specific rights",
-      "A permanent account-level password",
-      "A certificate used only for TLS",
+      "A scoped, time-limited, revocable token",
+      "A permanent account-level password for the account",
+      "A certificate used only for TLS termination",
       "A managed identity for the storage account"
     ],
-    "correctAnswers": ["A scoped, time-limited, revocable token granting specific rights"],
-    "explanation": "A SAS grants narrow, time-bound access without sharing the full account key.",
+    "correctAnswers": [
+      "A scoped, time-limited, revocable token"
+    ],
+    "explanation": "A SAS is a scoped, time-limited token granting specific rights, issued without sharing the account key. It is not a password, which is the mental model to avoid — a SAS cannot be changed after issue, so revoking one means either a stored access policy or rotating the signing key.",
     "difficulty": "easy"
   },
   {
@@ -35,13 +39,15 @@
     "type": "single",
     "prompt": "Rank the storage authorization methods from most to least secure.",
     "choices": [
-      "Entra ID + RBAC > user-delegation SAS > account-key SAS > shared account key",
-      "Shared account key > account-key SAS > user-delegation SAS > Entra ID + RBAC",
-      "Account-key SAS > Entra ID + RBAC > shared account key > user-delegation SAS",
-      "All four are equally secure"
+      "Entra ID + RBAC > user-delegation SAS > account-key SAS > shared key",
+      "Shared account key > account-key SAS > user-delegation SAS > Entra ID",
+      "Account-key SAS > Entra ID + RBAC > shared key > user-delegation SAS",
+      "All four options are equally secure in practice"
     ],
-    "correctAnswers": ["Entra ID + RBAC > user-delegation SAS > account-key SAS > shared account key"],
-    "explanation": "Identity-based is strongest; a user-delegation SAS (signed with Entra creds) beats an account-key SAS, which beats the raw shared key.",
+    "correctAnswers": [
+      "Entra ID + RBAC > user-delegation SAS > account-key SAS > shared key"
+    ],
+    "explanation": "Identity-based access is strongest, then a user-delegation SAS signed with Entra credentials, then an account-key SAS, with the bare shared key weakest. The ranking follows one question rather than feature count: what has to be shared, and can it be revoked without breaking everything else.",
     "difficulty": "medium"
   },
   {
@@ -51,12 +57,14 @@
     "prompt": "You must give a partner time-limited read access to a single blob without sharing the account keys. What should you issue?",
     "choices": [
       "A user-delegation SAS scoped to that blob",
-      "The primary account access key",
-      "A Reader RBAC role at the subscription",
+      "A Reader RBAC role at the subscription scope",
+      "The primary account access key, shared",
       "A managed identity for the partner"
     ],
-    "correctAnswers": ["A user-delegation SAS scoped to that blob"],
-    "explanation": "A SAS (ideally user-delegation, signed with Entra credentials) grants scoped, time-bound access to specific resources without exposing account keys.",
+    "correctAnswers": [
+      "A user-delegation SAS scoped to that blob"
+    ],
+    "explanation": "A user-delegation SAS scoped to the single blob gives time-bound read access without exposing the account key, and it can be revoked through Entra. A subscription-level Reader role is the tempting answer because it sounds narrow, however it is a control-plane role and grants no data access at all.",
     "difficulty": "medium"
   },
   {
@@ -65,12 +73,14 @@
     "type": "single",
     "prompt": "What is the strongest way to prevent shared-key access to a storage account entirely?",
     "choices": [
-      "Disable shared-key authorization so only Entra-based access works",
-      "Rotate the keys weekly",
-      "Store the keys in Key Vault",
-      "Set a resource lock on the account"
+      "Disable shared-key authorization on the account",
+      "Set a read-only resource lock on the storage account",
+      "Store the account keys in Azure Key Vault",
+      "Rotate both account keys every week"
     ],
-    "correctAnswers": ["Disable shared-key authorization so only Entra-based access works"],
+    "correctAnswers": [
+      "Disable shared-key authorization on the account"
+    ],
     "explanation": "Disabling shared-key access forces all requests through Microsoft Entra authorization. Rotation and vaulting reduce but don't eliminate key use.",
     "difficulty": "medium"
   },
@@ -80,13 +90,15 @@
     "type": "single",
     "prompt": "Which identity sources can be used for Azure Files identity-based authentication over SMB?",
     "choices": [
-      "On-premises AD DS, Microsoft Entra Domain Services, or Microsoft Entra Kerberos",
-      "Only on-premises AD DS",
-      "Only app registrations",
-      "Only local accounts on each client"
+      "On-premises AD DS, Entra DS, or Entra Kerberos",
+      "Only local user accounts created on each client machine",
+      "Only an on-premises AD DS domain, and nothing else",
+      "Only Entra application registrations for the share"
     ],
-    "correctAnswers": ["On-premises AD DS, Microsoft Entra Domain Services, or Microsoft Entra Kerberos"],
-    "explanation": "Azure Files supports exactly these three identity sources for Kerberos-based SMB authentication.",
+    "correctAnswers": [
+      "On-premises AD DS, Entra DS, or Entra Kerberos"
+    ],
+    "explanation": "Azure Files supports on-premises AD DS, Entra Domain Services, and Entra Kerberos for SMB authentication. Answering “only on-premises AD DS” is the dated reading, and it is what pushes teams into deploying a domain controller they cannot justify any more.",
     "difficulty": "medium"
   },
   {
@@ -95,12 +107,14 @@
     "type": "single",
     "prompt": "How many identity sources for Azure Files identity-based authentication can be enabled on ONE storage account?",
     "choices": [
-      "Exactly one",
-      "Two — one for SMB and one for NFS",
+      "Exactly one at a time",
+      "Two — one for SMB, one for NFS",
       "Unlimited, mixed per share",
-      "Zero — Azure Files doesn't support identity-based auth"
+      "Zero — it is not supported"
     ],
-    "correctAnswers": ["Exactly one"],
+    "correctAnswers": [
+      "Exactly one at a time"
+    ],
     "explanation": "Only one identity source can be enabled per storage account; you can't mix AD DS and Entra Kerberos on the same account.",
     "difficulty": "hard"
   },
@@ -110,13 +124,15 @@
     "type": "single",
     "prompt": "After share-level access is granted on an Azure Files share, what provides fine-grained control over individual files and folders?",
     "choices": [
-      "Windows ACLs / NTFS permissions",
-      "SAS tokens per file",
-      "Per-file Azure RBAC data roles",
-      "Blob versioning"
+      "Windows ACLs, or NTFS permissions",
+      "Per-file Azure RBAC data roles on the share",
+      "A SAS token issued per file",
+      "Blob versioning on the share"
     ],
-    "correctAnswers": ["Windows ACLs / NTFS permissions"],
-    "explanation": "Once the share is accessible, standard NTFS ACLs on files/folders apply, just like an on-premises SMB share.",
+    "correctAnswers": [
+      "Windows ACLs, or NTFS permissions"
+    ],
+    "explanation": "Once share-level access is granted, ordinary Windows NTFS ACLs govern individual files and folders, exactly as on-premises. Per-file Azure RBAC is the tempting answer because RBAC is everywhere else in Azure, but it operates at share level whereas the file-level decision stays with NTFS.",
     "difficulty": "medium"
   },
   {
@@ -126,12 +142,14 @@
     "prompt": "Which Azure Files identity source requires NO on-premises domain controller?",
     "choices": [
       "Microsoft Entra Kerberos",
-      "On-premises AD DS",
+      "A read-only domain controller",
       "A gMSA on a member server",
-      "A read-only domain controller in Azure"
+      "An on-premises AD DS domain"
     ],
-    "correctAnswers": ["Microsoft Entra Kerberos"],
-    "explanation": "Microsoft Entra Kerberos is the cloud-only option, letting Entra users access shares without a domain controller.",
+    "correctAnswers": [
+      "Microsoft Entra Kerberos"
+    ],
+    "explanation": "Entra Kerberos is the cloud-only identity source, letting Entra users reach shares with no domain controller anywhere. Deploying a read-only domain controller in Azure is the tempting lift-and-shift instinct, however it reintroduces exactly the infrastructure Entra Kerberos removes.",
     "difficulty": "medium"
   },
   {
@@ -140,13 +158,15 @@
     "type": "single",
     "prompt": "What does soft delete protect against in Azure Storage?",
     "choices": [
-      "Accidental or malicious deletion, recoverable within a retention window",
-      "Unauthorized read access to data",
-      "Weak TLS negotiation",
-      "Slow performance under load"
+      "Accidental or malicious deletion, within a window",
+      "Unauthorized read access to the stored data by anyone",
+      "Weak TLS versions being negotiated",
+      "Slow performance under a heavy load"
     ],
-    "correctAnswers": ["Accidental or malicious deletion, recoverable within a retention window"],
-    "explanation": "Soft delete lets you recover deleted blobs/containers/file shares within a configured retention period.",
+    "correctAnswers": [
+      "Accidental or malicious deletion, within a window"
+    ],
+    "explanation": "Soft delete makes deleted blobs, containers and shares recoverable within a retention window, so it defends against accidental and malicious deletion. It is not an access control, which is the confusion worth naming: it changes what you can undo rather than who can read.",
     "difficulty": "easy"
   },
   {
@@ -155,13 +175,15 @@
     "type": "single",
     "prompt": "What does blob versioning provide?",
     "choices": [
-      "A history of previous versions of a blob after it is overwritten",
-      "Encryption of blob contents",
-      "Automatic geo-replication",
-      "Access control per blob version only"
+      "A history of previous versions after an overwrite",
+      "Access control applied per blob version only, not per blob",
+      "Encryption of the blob contents at rest",
+      "Automatic geo-replication of the blob"
     ],
-    "correctAnswers": ["A history of previous versions of a blob after it is overwritten"],
-    "explanation": "Versioning preserves prior states of a blob whenever it is modified or overwritten.",
+    "correctAnswers": [
+      "A history of previous versions after an overwrite"
+    ],
+    "explanation": "Versioning preserves the previous state of a blob each time it is overwritten, so you can go back to what it was. It does not encrypt anything, which is the misreading — the protection is against losing content, never against someone reading it.",
     "difficulty": "easy"
   },
   {
@@ -170,13 +192,15 @@
     "type": "single",
     "prompt": "What distinguishes immutable storage (WORM) from soft delete and versioning?",
     "choices": [
-      "It actively prevents modification/deletion during the retention period, even by an admin",
-      "It only recovers deleted data, like soft delete",
-      "It only preserves overwrite history, like versioning",
-      "It is a form of encryption"
+      "It prevents modification or deletion during retention",
+      "It only preserves the overwrite history, like versioning",
+      "It only recovers deleted data, exactly like soft delete",
+      "It is a form of encryption applied at rest"
     ],
-    "correctAnswers": ["It actively prevents modification/deletion during the retention period, even by an admin"],
-    "explanation": "Immutable storage enforces WORM (time-based or legal hold), blocking change/deletion regardless of privilege — unlike the recover-after-the-fact features.",
+    "correctAnswers": [
+      "It prevents modification or deletion during retention"
+    ],
+    "explanation": "Secure transfer required forces every request onto HTTPS. Minimum TLS version is the closest miss and a separate setting: it pins which protocol versions are acceptable once HTTPS is already in use, whereas this one is what rejects plaintext HTTP at all.",
     "difficulty": "medium"
   },
   {
@@ -185,12 +209,14 @@
     "type": "single",
     "prompt": "A compliance mandate requires that financial records cannot be altered or deleted for 7 years, even by an owner. Which feature meets this?",
     "choices": [
-      "A time-based immutability (WORM) policy, set to Locked",
-      "Soft delete with a 7-year retention",
-      "Blob versioning",
-      "A read-only resource lock on the storage account"
+      "A time-based immutability (WORM) policy, Locked",
+      "A read-only resource lock on the storage account",
+      "Soft delete with a seven-year retention window",
+      "Blob versioning on the affected container"
     ],
-    "correctAnswers": ["A time-based immutability (WORM) policy, set to Locked"],
+    "correctAnswers": [
+      "A time-based immutability (WORM) policy, Locked"
+    ],
     "explanation": "Only a locked WORM policy guarantees data cannot be modified or deleted during the retention period, even by privileged users.",
     "difficulty": "hard"
   },
@@ -202,11 +228,13 @@
     "choices": [
       "All connections must use HTTPS",
       "A client certificate on every request",
-      "Customer-managed keys",
-      "Soft delete"
+      "Customer-managed keys for the account",
+      "Soft delete on every container"
     ],
-    "correctAnswers": ["All connections must use HTTPS"],
-    "explanation": "Secure transfer required forces encrypted transport (HTTPS) for all requests.",
+    "correctAnswers": [
+      "All connections must use HTTPS"
+    ],
+    "explanation": "Secure transfer required forces all connections onto HTTPS, rejecting plaintext HTTP. It does not demand a client certificate, which is the over-reading — transport is encrypted, whereas the caller still authenticates by key, SAS or identity as before.",
     "difficulty": "easy"
   },
   {
@@ -215,13 +243,15 @@
     "type": "single",
     "prompt": "What does Bring Your Own Key (BYOK) mean for Azure Storage encryption?",
     "choices": [
-      "You supply a customer-managed key stored in Key Vault instead of the Microsoft-managed key",
-      "You manage encryption entirely outside Azure",
-      "You disable encryption at rest",
-      "You share the storage account key with clients"
+      "You supply a customer-managed key from Key Vault",
+      "You manage the encryption entirely outside Azure",
+      "You share the storage account key with the clients",
+      "You disable encryption at rest for the account"
     ],
-    "correctAnswers": ["You supply a customer-managed key stored in Key Vault instead of the Microsoft-managed key"],
-    "explanation": "BYOK gives you control of the encryption key via Key Vault; encryption at rest remains on regardless.",
+    "correctAnswers": [
+      "You supply a customer-managed key from Key Vault"
+    ],
+    "explanation": "BYOK means you supply a customer-managed key held in Key Vault instead of the Microsoft-managed one, so you control its rotation and revocation. Encryption at rest stays on regardless, which is the point people miss: BYOK changes who holds the key rather than whether encryption happens.",
     "difficulty": "easy"
   },
   {
@@ -230,13 +260,15 @@
     "type": "single",
     "prompt": "What does infrastructure (double) encryption add on top of the standard service-level encryption?",
     "choices": [
-      "A second, independent layer of encryption at the platform level",
-      "A faster encryption algorithm",
-      "Replacement of Microsoft keys with customer keys",
-      "Encryption only for data in transit"
+      "A second, independent layer at the platform level",
+      "Replacement of the Microsoft keys with customer keys",
+      "Encryption applied only to the data in transit",
+      "A faster encryption algorithm for the account"
     ],
-    "correctAnswers": ["A second, independent layer of encryption at the platform level"],
-    "explanation": "Double encryption stacks a second independent encryption layer for the highest-confidentiality needs.",
+    "correctAnswers": [
+      "A second, independent layer at the platform level"
+    ],
+    "explanation": "Infrastructure encryption adds a second, independent layer of platform encryption for the highest-confidentiality cases. It must be chosen when the account is created and cannot be added later, which is the constraint that decides the design rather than the feature itself.",
     "difficulty": "medium"
   },
   {
@@ -245,13 +277,15 @@
     "type": "single",
     "prompt": "How do BYOK (customer-managed keys) and infrastructure double encryption differ?",
     "choices": [
-      "BYOK is about WHO controls the key; double encryption is about HOW MANY independent layers apply",
-      "They are the same feature",
-      "BYOK adds a second layer; double encryption changes the key owner",
-      "Both only apply to data in transit"
+      "BYOK is about WHO holds the key; double is HOW MANY layers",
+      "BYOK adds a second layer; double encryption changes the owner",
+      "Both of them apply only to the data in transit",
+      "They are the same feature under two names"
     ],
-    "correctAnswers": ["BYOK is about WHO controls the key; double encryption is about HOW MANY independent layers apply"],
-    "explanation": "They are orthogonal and stackable: key ownership vs number of encryption layers.",
+    "correctAnswers": [
+      "BYOK is about WHO holds the key; double is HOW MANY layers"
+    ],
+    "explanation": "They are orthogonal and stack: BYOK is about who controls the key, whereas double encryption is about how many layers there are. Treating them as the same feature is the trap, since you can have either, both, or neither.",
     "difficulty": "hard"
   },
   {
@@ -260,13 +294,15 @@
     "type": "single",
     "prompt": "Which access-control layer does Azure Blob Storage NOT have that Azure Files (with identity-based auth) does?",
     "choices": [
-      "NTFS-style ACLs on individual files/folders after share access is granted",
-      "Azure RBAC data roles",
-      "SAS tokens",
-      "Account access keys"
+      "NTFS-style ACLs on individual files",
+      "Azure RBAC data roles on the container",
+      "Account access keys for the account",
+      "SAS tokens scoped to a single blob"
     ],
-    "correctAnswers": ["NTFS-style ACLs on individual files/folders after share access is granted"],
-    "explanation": "Blob relies on RBAC/SAS/keys; Azure Files adds Windows NTFS ACLs on top of share-level access.",
+    "correctAnswers": [
+      "NTFS-style ACLs on individual files"
+    ],
+    "explanation": "Blob storage has no NTFS-style ACLs on individual files — that layer is what Azure Files adds on top of share-level access. RBAC data roles, SAS and account keys all exist for blob too, whereas the NTFS layer is the one genuinely missing.",
     "difficulty": "medium"
   },
   {
@@ -275,12 +311,14 @@
     "type": "single",
     "prompt": "A compromised admin account deletes a critical container. Which pre-configured feature would have allowed recovery within the retention window?",
     "choices": [
-      "Soft delete for containers/blobs",
-      "Dynamic data masking",
-      "A minimum TLS version",
-      "Infrastructure double encryption"
+      "Soft delete for containers and blobs",
+      "Infrastructure double encryption at rest",
+      "A minimum TLS version setting",
+      "Dynamic data masking on columns"
     ],
-    "correctAnswers": ["Soft delete for containers/blobs"],
+    "correctAnswers": [
+      "Soft delete for containers and blobs"
+    ],
     "explanation": "Soft delete makes deleted containers/blobs recoverable during the retention window. The others don't address deletion recovery.",
     "difficulty": "medium"
   },
@@ -290,13 +328,15 @@
     "type": "single",
     "prompt": "Why should account access keys, if used at all, be stored in Key Vault and rotated regularly?",
     "choices": [
-      "They grant full, root-like access to the account and are high-value if leaked",
-      "They only work when stored in Key Vault",
+      "They grant full, root-like access and are high-value",
       "Rotation is required for encryption at rest to function",
-      "Key Vault is the only place a SAS can be generated"
+      "Key Vault is the only place a SAS can be generated",
+      "They only work when they are stored in Key Vault"
     ],
-    "correctAnswers": ["They grant full, root-like access to the account and are high-value if leaked"],
-    "explanation": "Account keys are powerful, root-equivalent credentials; vaulting and rotating them limits exposure if compromised.",
+    "correctAnswers": [
+      "They grant full, root-like access and are high-value"
+    ],
+    "explanation": "Account keys are root-equivalent credentials for the whole account with no built-in expiry, so vaulting and rotating them limits the damage of a leak. Better still is not using them: disabling shared-key authorization removes the credential class entirely rather than managing it.",
     "difficulty": "medium"
   },
   {
@@ -305,13 +345,15 @@
     "type": "single",
     "prompt": "Which recovery feature preserves the state of a blob BEFORE it is overwritten by a new upload?",
     "choices": [
-      "Versioning",
-      "Soft delete",
+      "Blob versioning",
+      "Point-in-time restore",
       "Immutable storage",
-      "Point-in-time restore only"
+      "Soft delete only"
     ],
-    "correctAnswers": ["Versioning"],
-    "explanation": "Versioning captures the prior version on each overwrite. Soft delete recovers deletions; immutability blocks changes entirely.",
+    "correctAnswers": [
+      "Blob versioning"
+    ],
+    "explanation": "Versioning captures the prior version on each overwrite, which is the only one of these that preserves a state that was replaced. Soft delete is the tempting neighbour, however it recovers deletions whereas an overwrite is not a deletion — the old bytes are simply gone without versioning.",
     "difficulty": "medium"
   },
   {
@@ -320,13 +362,15 @@
     "type": "single",
     "prompt": "Which choice best forces all applications to use identity-based access to a storage account?",
     "choices": [
-      "Disable shared-key authorization and assign Azure RBAC data roles",
-      "Rotate the account keys daily",
-      "Issue long-lived SAS tokens to every app",
-      "Enable anonymous read for internal apps"
+      "Disable shared-key auth and assign RBAC data roles",
+      "Issue long-lived SAS tokens to every application involved",
+      "Enable anonymous read access for internal apps",
+      "Rotate the account access keys every day"
     ],
-    "correctAnswers": ["Disable shared-key authorization and assign Azure RBAC data roles"],
-    "explanation": "Disabling shared-key access and using RBAC data roles enforces Entra-based access for all apps.",
+    "correctAnswers": [
+      "Disable shared-key auth and assign RBAC data roles"
+    ],
+    "explanation": "Disabling shared-key authorization is what actually forces every caller onto Entra, because RBAC roles alone leave the key path open. Rotating keys daily is the tempting hygiene answer and changes nothing structural: the key still works, just a newer one.",
     "difficulty": "medium"
   },
   {
@@ -335,13 +379,15 @@
     "type": "single",
     "prompt": "A user-delegation SAS is considered more secure than an account-key SAS because it is:",
     "choices": [
-      "Signed with Microsoft Entra credentials rather than the account key",
-      "Valid indefinitely",
-      "Encrypted at rest in Key Vault",
-      "Scoped to the whole subscription"
+      "Signed with Entra credentials, not the account key",
+      "Encrypted at rest inside an Azure Key Vault instance",
+      "Scoped to the whole subscription at once",
+      "Valid indefinitely, with no expiry at all"
     ],
-    "correctAnswers": ["Signed with Microsoft Entra credentials rather than the account key"],
-    "explanation": "A user-delegation SAS is signed with Entra credentials, so it doesn't depend on (or expose) the powerful account key.",
+    "correctAnswers": [
+      "Signed with Entra credentials, not the account key"
+    ],
+    "explanation": "A user-delegation SAS is signed with Entra credentials rather than the account key, so revoking it does not require rotating that key and breaking every other token. It is not indefinite — its lifetime is bounded by the delegation key, which is part of why it is the safer choice.",
     "difficulty": "medium"
   },
   {
@@ -351,12 +397,14 @@
     "prompt": "For a lift-and-shift Windows file server to Azure Files with existing NTFS permissions and no domain controller in Azure, which identity source should you enable?",
     "choices": [
       "Microsoft Entra Kerberos",
-      "On-premises AD DS with a DC deployed in Azure",
-      "SAS tokens per user",
-      "Azure RBAC data roles only"
+      "On-premises AD DS, with a DC in Azure",
+      "Azure RBAC data roles only",
+      "A SAS token issued per user"
     ],
-    "correctAnswers": ["Microsoft Entra Kerberos"],
-    "explanation": "Entra Kerberos is the cloud-only identity source needing no domain controller, while still supporting NTFS ACLs on folders.",
+    "correctAnswers": [
+      "Microsoft Entra Kerberos"
+    ],
+    "explanation": "Entra Kerberos needs no domain controller while still honouring NTFS ACLs, which is what a lift-and-shift with existing permissions requires. Deploying a DC in Azure is the tempting familiar path, but it carries the infrastructure the cloud option exists to retire.",
     "difficulty": "medium"
   },
   {
@@ -365,13 +413,13 @@
     "type": "multiple",
     "prompt": "Which two statements about Azure Storage data-protection features are correct? (Choose two.)",
     "choices": [
-      "Soft delete undoes accidental deletion within a retention window",
+      "Soft delete undoes accidental deletion within a window",
       "Versioning preserves the history of blob overwrites",
       "Immutable storage can be bypassed by an owner during retention",
       "BYOK removes the need for encryption at rest"
     ],
     "correctAnswers": [
-      "Soft delete undoes accidental deletion within a retention window",
+      "Soft delete undoes accidental deletion within a window",
       "Versioning preserves the history of blob overwrites"
     ],
     "explanation": "Immutable storage specifically cannot be bypassed during retention, and BYOK changes key ownership, not whether encryption exists.",
@@ -392,7 +440,7 @@
       "Only one identity source can be enabled per storage account",
       "Microsoft Entra Kerberos requires no on-premises domain controller"
     ],
-    "explanation": "One source per account is a hard limit, and Entra Kerberos is the DC-free option; NTFS ACLs remain fully relevant.",
+    "explanation": "One identity source per storage account is a hard limit, and Entra Kerberos is the domain-controller-free option. Neither distractor holds: sources cannot be mixed across shares of one account, whereas NTFS ACLs keep applying exactly as before.",
     "difficulty": "hard"
   },
   {
@@ -401,16 +449,16 @@
     "type": "multiple",
     "prompt": "Which two are ways to authorize access to a storage account? (Choose two.)",
     "choices": [
-      "Microsoft Entra ID with Azure RBAC data roles",
-      "Shared access signatures (SAS)",
-      "A user-defined route",
-      "A network security group"
+      "Entra ID with Azure RBAC data roles",
+      "Shared access signature tokens",
+      "A network security group rule",
+      "A user-defined route on the VNet subnet"
     ],
     "correctAnswers": [
-      "Microsoft Entra ID with Azure RBAC data roles",
-      "Shared access signatures (SAS)"
+      "Entra ID with Azure RBAC data roles",
+      "Shared access signature tokens"
     ],
-    "explanation": "Entra RBAC and SAS (and shared keys) authorize access; UDRs and NSGs are network controls, not authorization methods.",
+    "explanation": "Entra RBAC data roles and shared access signatures both authorize access, alongside shared keys. User-defined routes and network security groups are tempting because they also gate traffic, however they control the path rather than the permission — passing an NSG is not authorization.",
     "difficulty": "medium"
   },
   {
@@ -420,13 +468,15 @@
     "caseStudyId": "cs-northwind-compute",
     "prompt": "Referring to requirement 3 (migrate a Windows file server to Azure Files, keep NTFS permissions, no domain controller in Azure), which configuration fits?",
     "choices": [
-      "Enable Microsoft Entra Kerberos and apply NTFS permissions on the folders",
+      "Enable Entra Kerberos and apply NTFS permissions",
       "Enable on-premises AD DS and deploy a DC in Azure",
-      "Use SAS tokens for each user's folder",
-      "Use Azure RBAC data roles only, without NTFS"
+      "Use Azure RBAC data roles only, without NTFS",
+      "Use SAS tokens for each user's own folder"
     ],
-    "correctAnswers": ["Enable Microsoft Entra Kerberos and apply NTFS permissions on the folders"],
-    "explanation": "Entra Kerberos needs no domain controller and still supports NTFS ACLs on folders.",
+    "correctAnswers": [
+      "Enable Entra Kerberos and apply NTFS permissions"
+    ],
+    "explanation": "Entra Kerberos requires no domain controller and still supports NTFS permissions on folders, which is exactly the requirement. SAS tokens per user are the tempting alternative and would not preserve the existing folder ACLs at all.",
     "difficulty": "medium"
   },
   {
@@ -436,13 +486,15 @@
     "caseStudyId": "cs-northwind-compute",
     "prompt": "Referring to requirement 4 (blob backups protected so even a compromised admin cannot delete or shorten retention during the retention period), which feature applies?",
     "choices": [
-      "A time-based immutable storage (WORM) policy set to Locked",
-      "Soft delete alone",
-      "Blob versioning alone",
-      "A read-only SAS token"
+      "A time-based immutable policy, Locked",
+      "Blob versioning on the container, on its own",
+      "A read-only SAS token for the container",
+      "Soft delete on its own, with nothing else"
     ],
-    "correctAnswers": ["A time-based immutable storage (WORM) policy set to Locked"],
-    "explanation": "Only a locked WORM policy prevents deletion or retention-shortening during the period, regardless of privilege.",
+    "correctAnswers": [
+      "A time-based immutable policy, Locked"
+    ],
+    "explanation": "Only a time-based immutable policy set to Locked prevents deletion and prevents the retention period being shortened, whatever privileges the attacker holds. Soft delete alone is the tempting half-measure, since it is reversible by the very administrator you are defending against.",
     "difficulty": "medium"
   },
   {
@@ -452,13 +504,15 @@
     "caseStudyId": "cs-northwind-compute",
     "prompt": "Northwind wants the strongest, key-free way for its applications (running on Azure VMs) to read from blob storage. What should they adopt?",
     "choices": [
-      "Managed identities on the VMs with Azure RBAC data roles on the storage account, and disable shared-key access",
-      "Distribute the account access key to each application",
+      "Managed identities with RBAC data roles, shared key off",
       "Generate long-lived account-key SAS tokens per application",
+      "Distribute the account access key to each application",
       "Enable anonymous read access on the containers"
     ],
-    "correctAnswers": ["Managed identities on the VMs with Azure RBAC data roles on the storage account, and disable shared-key access"],
-    "explanation": "Managed identities + RBAC data roles give credential-free, identity-based access; disabling shared-key access enforces it.",
+    "correctAnswers": [
+      "Managed identities with RBAC data roles, shared key off"
+    ],
+    "explanation": "Managed identities on the VMs with RBAC data roles give credential-free, identity-based access, and pairing that with disabled shared-key authorization closes the key path. Long-lived SAS tokens per application are the tempting middle ground, but they are bearer secrets that expire and need reissuing.",
     "difficulty": "medium"
   },
   {
@@ -472,7 +526,7 @@
       "Assign Azure RBAC data roles for share-level access",
       "Apply NTFS permissions on individual folders"
     ],
-    "explanation": "The share and identity source must exist before share-level RBAC is assigned, with fine-grained NTFS permissions applied last.",
+    "explanation": "The share and its identity source must exist before share-level RBAC can be assigned, whereas NTFS permissions come last because they sit inside the mounted share. Applying NTFS first is the ordering mistake: nothing is mounted yet, so those permissions cannot be set at all.",
     "difficulty": "medium"
   },
   {
@@ -486,7 +540,7 @@
       "Lock the immutability policy",
       "Confirm that deletion attempts are blocked during the retention period"
     ],
-    "explanation": "The policy and its retention period must be set before locking it irreversibly, with verification last.",
+    "explanation": "The immutability policy and its retention period must be set before the policy is locked, because locking is irreversible. Locking first is the mistake that cannot be undone, whereas verification belongs last — once locked, a wrong retention period is permanent.",
     "difficulty": "medium"
   },
   {
@@ -496,11 +550,31 @@
     "prompt": "Configure this simplified storage account security screen to force identity-based access only, restricted to selected networks.",
     "screenTitle": "Storage account security (simulated)",
     "fields": [
-      { "id": "sharedKey", "label": "Allow storage account key access", "kind": "toggle", "correctValue": "Off" },
-      { "id": "secureTransfer", "label": "Secure transfer required", "kind": "toggle", "correctValue": "On" },
-      { "id": "publicAccess", "label": "Public network access", "kind": "select", "options": ["Enabled from all networks", "Disabled", "Enabled from selected virtual networks"], "correctValue": "Enabled from selected virtual networks" }
+      {
+        "id": "sharedKey",
+        "label": "Allow storage account key access",
+        "kind": "toggle",
+        "correctValue": "Off"
+      },
+      {
+        "id": "secureTransfer",
+        "label": "Secure transfer required",
+        "kind": "toggle",
+        "correctValue": "On"
+      },
+      {
+        "id": "publicAccess",
+        "label": "Public network access",
+        "kind": "select",
+        "options": [
+          "Enabled from all networks",
+          "Disabled",
+          "Enabled from selected virtual networks"
+        ],
+        "correctValue": "Enabled from selected virtual networks"
+      }
     ],
-    "explanation": "Disabling shared-key access forces Entra-based access, secure transfer enforces HTTPS, and selected-networks access matches the 'restricted' requirement.",
+    "explanation": "Disabling shared-key access forces Entra-based access, secure transfer enforces HTTPS, and selected networks closes the account to the open internet — three settings answering three different exposures. Leaving shared-key enabled is the trap here, since the other two look like a hardened account while the key path stays open.",
     "difficulty": "medium"
   },
   {
@@ -509,9 +583,14 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o3-2",
     "prompt": "Proposed solution: Share the storage account's primary access key with the partner. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "The account key grants broad, root-like access to the whole account — the opposite of scoped, read-only, time-limited access.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "The account key grants broad, root-like access to the entire account with no expiry, which is the opposite of scoped and time-limited. It is tempting because it is the fastest thing to send, and that speed is exactly what makes it the wrong answer.",
     "difficulty": "medium"
   },
   {
@@ -520,9 +599,14 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o3-2",
     "prompt": "Proposed solution: Issue a user-delegation SAS scoped to that blob with read-only rights and an expiry. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "A user-delegation SAS is scoped, time-limited, and revocable, and it doesn't require sharing the account keys.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "A user-delegation SAS is scoped, time-limited and revocable through Entra, whereas the account key would be none of those. Note the operational cost it accepts: the partner must be re-issued a token when it expires, which is the price of it expiring at all.",
     "difficulty": "medium"
   },
   {
@@ -531,84 +615,161 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o3-2",
     "prompt": "Proposed solution: Make the blob container public for anonymous read access. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "This exposes the data to anyone, not just the partner, and isn't time-limited — it fails the scoped-access requirement.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "Anonymous public read exposes the blob to everyone rather than to the partner, and it carries no expiry. It is tempting because it makes the immediate problem disappear, however it fails both halves of the requirement — scoped and time-limited.",
     "difficulty": "medium"
   },
   {
     "id": "q-o3-2-37",
     "objectiveId": "o3-2",
-    "type": "single",
-    "prompt": "Which command forces all connections to a storage account to use HTTPS with at least TLS 1.2?",
-    "choices": [
-      "az storage account update --name stg1 --resource-group RG1 --https-only true --min-tls-version TLS1_2",
-      "az storage account update --name stg1 --resource-group RG1 --secure-transfer on --tls 1.2",
-      "az storage account tls set --name stg1 --minimum 1.2",
-      "az storage container update --name docs --https true"
+    "type": "dropdown-sentence",
+    "prompt": "A storage account must refuse plaintext HTTP as well as any TLS version below 1.2. Fill in the two settings.",
+    "template": "az storage account update --name stg1 --resource-group RG1 [[b1]] --min-tls-version [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "--https-only true",
+          "--secure-transfer on",
+          "--require-https true",
+          "--enable-https true"
+        ],
+        "correctValue": "--https-only true"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "TLS1_2",
+          "1.2",
+          "TLSv1.2",
+          "TLS_1_2"
+        ],
+        "correctValue": "TLS1_2"
+      }
     ],
-    "correctAnswers": ["az storage account update --name stg1 --resource-group RG1 --https-only true --min-tls-version TLS1_2"],
-    "explanation": "--https-only and --min-tls-version (format TLS1_2) are the real parameters on `az storage account update`. The other syntaxes don't exist.",
+    "explanation": "Two separate controls are needed and neither implies the other: HTTPS-only rejects unencrypted requests, while the minimum version rejects encrypted ones that negotiate a deprecated protocol. Note the value format, because it is not the one App Service uses: storage takes `TLS1_2`, whereas a web app takes `1.2`. Copying the working value from one service into the other is a common and confusing failure.",
     "difficulty": "medium"
   },
   {
     "id": "q-o3-2-38",
     "objectiveId": "o3-2",
-    "type": "single",
-    "prompt": "Which command blocks all shared-key authorization on a storage account, forcing Entra-based access?",
-    "choices": [
-      "az storage account update --name stg1 --resource-group RG1 --allow-shared-key-access false",
-      "az storage account keys delete --account-name stg1 --all",
-      "az storage account update --name stg1 --resource-group RG1 --default-action Deny",
-      "az storage account revoke-delegation-keys --name stg1"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the command that stops the storage account accepting shared-key and SAS authorization altogether, forcing every caller to authenticate with Microsoft Entra ID.",
+    "template": "az storage account update --name stg1 --resource-group RG1 [[b1]] [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "--allow-shared-key-access",
+          "--allow-blob-public-access",
+          "--default-action",
+          "--public-network-access"
+        ],
+        "correctValue": "--allow-shared-key-access"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "false",
+          "Deny",
+          "Disabled",
+          "true"
+        ],
+        "correctValue": "false"
+      }
     ],
-    "correctAnswers": ["az storage account update --name stg1 --resource-group RG1 --allow-shared-key-access false"],
-    "explanation": "--allow-shared-key-access false disables key-based authorization. You can't delete account keys; --default-action Deny is a NETWORK control, not an authorization one; revoke-delegation-keys revokes user-delegation SAS.",
+    "explanation": "Blocking shared-key access also invalidates every account-key-signed SAS, because those tokens are signed with the key being refused — which is why this switch is what makes Entra authorization mandatory rather than merely available. The three other parameters are the neighbouring toggles that get reached for instead, and each takes a different value vocabulary: `--default-action Deny` and `--public-network-access Disabled` govern network reach, whereas `--allow-blob-public-access false` governs anonymous container access.",
     "difficulty": "hard"
   },
   {
     "id": "q-o3-2-39",
     "objectiveId": "o3-2",
-    "type": "single",
-    "prompt": "Which command generates a user-delegation SAS (signed with Entra credentials, not the account key) for one blob?",
-    "choices": [
-      "az storage blob generate-sas --account-name stg1 --container-name docs --name file.pdf --permissions r --expiry 2026-08-01 --auth-mode login --as-user",
-      "az storage blob generate-sas --account-name stg1 --container-name docs --name file.pdf --permissions r --account-key <key>",
-      "az storage account generate-sas --permissions r --services b",
-      "az storage blob sign --name file.pdf --entra"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the command so that it issues a user delegation SAS for one blob — a token signed with the caller's Entra identity rather than with the account key.",
+    "template": "az storage blob generate-sas --account-name stg1 --container-name docs --name file.pdf --permissions r --expiry 2026-08-01 [[b1]] [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "--auth-mode login",
+          "--auth-mode key",
+          "--account-key <key>",
+          "--auth-mode entra"
+        ],
+        "correctValue": "--auth-mode login"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "--as-user",
+          "--as-principal",
+          "--user-delegation",
+          "--use-identity"
+        ],
+        "correctValue": "--as-user"
+      }
     ],
-    "correctAnswers": ["az storage blob generate-sas --account-name stg1 --container-name docs --name file.pdf --permissions r --expiry 2026-08-01 --auth-mode login --as-user"],
-    "explanation": "--auth-mode login --as-user produces the user-delegation SAS. Passing --account-key signs with the account key (account-key SAS); `az storage account generate-sas` is account-level; `blob sign` doesn't exist.",
+    "explanation": "Both parameters are required and neither works alone: `--auth-mode login` authenticates the CLI as the signed-in principal, and `--as-user` is what makes the resulting token a user delegation SAS. `--auth-mode key` is the tempting choice because it is the default, and it produces an account-key-signed token — one that cannot be revoked without rotating the key, and that stops working the moment shared-key access is disabled.",
     "difficulty": "hard"
   },
   {
     "id": "q-o3-2-40",
     "objectiveId": "o3-2",
-    "type": "single",
-    "prompt": "Which pair of commands sets the storage firewall to deny by default, then allows only Subnet1 of VNet1?",
-    "choices": [
-      "az storage account update --default-action Deny ; az storage account network-rule add --vnet-name VNet1 --subnet Subnet1",
-      "az storage account update --public-network-access Disabled ; az storage account network-rule add --subnet Subnet1",
-      "az network nsg rule create --destination stg1 --source Subnet1",
-      "az storage firewall set --mode Deny --allow VNet1/Subnet1"
+    "type": "build-list",
+    "prompt": "Build the sequence that restricts a storage account to Subnet1 of VNet1 without cutting off access mid-change. Not every action in the pool belongs in the answer.",
+    "poolItems": [
+      "Enable the Microsoft.Storage service endpoint on Subnet1",
+      "Add a virtual network rule on the storage account for VNet1/Subnet1",
+      "Set the storage account firewall's default action to Deny",
+      "Confirm from a VM in Subnet1 that access still works",
+      "Disable public network access on the storage account entirely",
+      "Add the office public IP range to the firewall's IP rules",
+      "Grant the Storage Blob Data Reader role to the subnet"
     ],
-    "correctAnswers": ["az storage account update --default-action Deny ; az storage account network-rule add --vnet-name VNet1 --subnet Subnet1"],
-    "explanation": "Default-action Deny + network-rule add is the selected-networks pattern. public-network-access Disabled would shut the public endpoint entirely, making the subnet rule pointless; NSGs don't govern the storage service side.",
+    "correctOrder": [
+      "Enable the Microsoft.Storage service endpoint on Subnet1",
+      "Add a virtual network rule on the storage account for VNet1/Subnet1",
+      "Set the storage account firewall's default action to Deny",
+      "Confirm from a VM in Subnet1 that access still works"
+    ],
+    "explanation": "A virtual network rule requires the subnet to carry the Microsoft.Storage service endpoint first, so the order is a genuine prerequisite and not a preference — and Deny comes last, because setting it before the allow rule exists cuts off every caller including yourself. The distractors are the plausible over-corrections: disabling public network access removes the endpoint the virtual network rule depends on, an office IP rule grants exactly the public access being removed, and a role cannot be assigned to a subnet because a subnet is not a security principal.",
     "difficulty": "hard"
   },
   {
     "id": "q-o3-2-41",
     "objectiveId": "o3-2",
-    "type": "single",
-    "prompt": "Which command enables blob soft delete with a 14-day retention?",
-    "choices": [
-      "az storage account blob-service-properties update --account-name stg1 --resource-group RG1 --enable-delete-retention true --delete-retention-days 14",
-      "az storage account update --name stg1 --soft-delete 14",
-      "az storage blob undelete-policy set --days 14",
-      "az storage container immutability-policy create --period 14"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the command that lets a deleted BLOB be recovered for 14 days. Container-level and versioning settings are configured separately and must not be used here.",
+    "template": "az storage account blob-service-properties update --account-name stg1 --resource-group RG1 [[b1]] [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "--enable-delete-retention true",
+          "--enable-container-delete-retention true",
+          "--enable-versioning true",
+          "--enable-restore-policy true"
+        ],
+        "correctValue": "--enable-delete-retention true"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "--delete-retention-days 14",
+          "--container-delete-retention-days 14",
+          "--restore-days 14",
+          "--retention-days 14"
+        ],
+        "correctValue": "--delete-retention-days 14"
+      }
     ],
-    "correctAnswers": ["az storage account blob-service-properties update --account-name stg1 --resource-group RG1 --enable-delete-retention true --delete-retention-days 14"],
-    "explanation": "Blob soft delete is a blob-service property (--enable-delete-retention). The immutability-policy command configures WORM (a different feature); the other two don't exist.",
+    "explanation": "Blob soft delete and container soft delete are two independent settings with two independent day counters, and enabling the container one does not protect a blob deleted inside a container that still exists. Versioning keeps previous versions of a blob that is overwritten rather than recovering one that is deleted, and a restore policy is point-in-time restore, which depends on versioning and change feed instead of standing alone.",
     "difficulty": "medium"
   }
 ]

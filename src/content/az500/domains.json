@@ -5,31 +5,49 @@
     "certification": "Microsoft Certified: Azure Security Engineer Associate",
     "skillsMeasuredAsOf": "2026-01-22",
     "retirementDate": "2026-08-31T23:59:00-06:00",
+    "retirementSource": "Microsoft, verbatim: \"This certification, related exam, and renewal assessments will retire on August 31, 2026. You will no longer be able to earn or renew this certification after this date.\" Verified 2026-08-04 on https://learn.microsoft.com/en-us/credentials/certifications/azure-security-engineer/",
     "passingScore": 700,
     "scoreMax": 1000,
     "durationMinutes": 100,
-    "questionCountRange": "40-60"
+    "questionCountRange": "40-60",
+    "bankStatus": {
+      "referentialVerified": false,
+      "freeScorePercent": 2.8,
+      "measuredOn": "2026-08-06"
+    }
   },
   "domains": [
     {
       "id": "d1",
       "name": "Secure identity and access",
-      "weightPercent": { "min": 15, "max": 20 }
+      "weightPercent": {
+        "min": 15,
+        "max": 20
+      }
     },
     {
       "id": "d2",
       "name": "Secure networking",
-      "weightPercent": { "min": 20, "max": 25 }
+      "weightPercent": {
+        "min": 20,
+        "max": 25
+      }
     },
     {
       "id": "d3",
       "name": "Secure compute, storage, and databases",
-      "weightPercent": { "min": 20, "max": 25 }
+      "weightPercent": {
+        "min": 20,
+        "max": 25
+      }
     },
     {
       "id": "d4",
       "name": "Secure Azure using Microsoft Defender for Cloud and Microsoft Sentinel",
-      "weightPercent": { "min": 30, "max": 35 }
+      "weightPercent": {
+        "min": 30,
+        "max": 35
+      }
     }
   ],
   "objectives": [

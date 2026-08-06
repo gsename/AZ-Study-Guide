@@ -1,7 +1,10 @@
 [
   {
     "objectiveId": "o1-1",
-    "diagrams": ["pim", "ca-decision"],
+    "diagrams": [
+      "pim",
+      "ca-decision"
+    ],
     "summary": "Microsoft Entra ID is Microsoft's cloud identity provider: it stores users, groups, devices, and application identities, and issues the tokens every sign-in depends on. Privileged Identity Management (PIM) converts standing (always-on) privileged access into eligible, just-in-time access, while Conditional Access (CA) evaluates risk and context signals after the first authentication factor to decide whether to grant, block, or add friction to a sign-in. Authentication methods policy and Authentication strength push the tenant toward phishing-resistant, passwordless sign-in.",
     "keyPoints": [
       "PIM distinguishes **eligible** (allowed to activate, not yet usable) from **active** (currently usable, either standing or a time-bound post-activation window). Without PIM, an admin holds their role as permanent standing access. PIM requires Microsoft Entra ID P2.",
@@ -43,7 +46,11 @@
   },
   {
     "objectiveId": "o1-2",
-    "diagrams": ["app-identity", "managed-identity", "consent-types"],
+    "diagrams": [
+      "app-identity",
+      "managed-identity",
+      "consent-types"
+    ],
     "summary": "Registering an application in Microsoft Entra ID creates two linked objects: an app registration (the global blueprint, defining redirect URIs, secrets/certificates, and requested API permissions) and, in every tenant that uses the app, a service principal managed under Enterprise applications (the local, governable instance that actually receives permissions, sign-in policy, and consent). Managed identities are a special category of service principal whose credentials Azure creates and rotates automatically, eliminating stored secrets entirely.",
     "keyPoints": [
       "**App registration** defines what the app is and can request — redirect URIs, certificates & secrets, and requested API permissions. One app registration produces one **service principal per tenant** that consumes it (a multi-tenant app gets a distinct service principal in every consuming tenant).",
@@ -86,7 +93,10 @@
   },
   {
     "objectiveId": "o1-3",
-    "diagrams": ["rbac", "managed-identity"],
+    "diagrams": [
+      "rbac",
+      "managed-identity"
+    ],
     "summary": "Azure Key Vault centralizes three object types — keys, secrets, and certificates — behind two possible authorization models and an independent network layer. Azure RBAC is the recommended, centrally governed model; vault access policies are a legacy, vault-scoped alternative. Defender for Key Vault and Defender CSPM secret scanning are complementary but distinct: one watches the vault at runtime, the other hunts for secrets exposed elsewhere.",
     "keyPoints": [
       "Key Vault stores **keys** (cryptographic keys for encrypt/sign operations, optionally HSM-backed), **secrets** (passwords, connection strings, tokens), and **certificates** (X.509, with auto-renewal via integrated certificate authorities).",
@@ -143,7 +153,10 @@
   },
   {
     "objectiveId": "o1-4",
-    "diagrams": ["policy-effects", "rbac"],
+    "diagrams": [
+      "policy-effects",
+      "rbac"
+    ],
     "summary": "Azure Policy governs the properties a resource is allowed to have, while Azure RBAC governs the actions a principal may perform — two complementary but distinct control planes. On top of that, resource locks, Azure Backup hardening, regulatory compliance mapping, and pre-deployment Infrastructure as Code scanning round out the governance layer that keeps an environment compliant and resilient against both misconfiguration and compromised administrators.",
     "keyPoints": [
       "Azure Policy evaluates resources against rule definitions and reports or enforces compliance. Unlike RBAC (what a principal **can do**), Policy governs what properties a resource **can have**.",
@@ -157,7 +170,9 @@
       "Defender for Cloud's **Regulatory compliance** dashboard maps the environment against frameworks (Microsoft cloud security benchmark by default, plus PCI-DSS, ISO 27001, NIST, CIS) and tracks pass/fail controls; standards are added or removed under Environment settings ▸ Security policy.",
       "**Infrastructure as Code security** means scanning Bicep/ARM/Terraform templates **before** deployment for misconfigurations (public storage, missing encryption) — 'shift left'. Defender for Cloud's **DevOps security** connects to GitHub/Azure DevOps to surface IaC scan findings and secrets exposed in repositories. The **Microsoft DevOps (MSDO) extension** is the specific Azure DevOps/GitHub Actions extension that runs this IaC and secret scanning as part of a pipeline, feeding results back into Defender for Cloud's DevOps security and a policy-as-code workflow.",
       "**Governance rules** in Defender for Cloud assign **ownership** of a security recommendation to a specific person or team, with a due date and email notifications — driving accountability so recommendations don't sit unassigned indefinitely.",
-      "For a control that legitimately doesn't apply to a given resource, Defender for Cloud supports a structured, documented, time-bound **exemption** at the recommendation or policy level — distinct from the one-click **Fix** action, which applies an available automated remediation directly to a non-compliant resource."
+      "For a control that legitimately doesn't apply to a given resource, Defender for Cloud supports a structured, documented, time-bound **exemption** at the recommendation or policy level — distinct from the one-click **Fix** action, which applies an available automated remediation directly to a non-compliant resource.",
+      "**Evaluating overprivileged access** starts from evidence, not intuition: list the role assignments in scope (`az role assignment list --scope <id> --include-inherited`, which is what surfaces the subscription Owner nobody remembered), then compare each principal's role against the operations it actually performed in the Activity log. A principal holding Owner and only ever reading is the finding; the role name alone is not.",
+      "**Remediating** it is grant-then-remove, in that order: assign the least-privileged built-in role that still covers the observed operations, verify the principal still works, and only then delete the original assignment. Removing first causes an outage in the middle of a privilege-reduction exercise — and the rollback is to re-grant exactly what you were trying to remove. Where the elevated access is genuinely needed occasionally, the answer is **PIM eligibility** rather than a smaller standing role."
     ],
     "commonPitfalls": [
       "Treating Policy and RBAC as interchangeable — Policy governs resource properties/compliance, RBAC governs what a principal can do.",
@@ -167,7 +182,9 @@
       "Relying on soft-delete alone for backup protection when Multi-User Authorization (Resource Guard) isn't configured, leaving a single compromised admin able to disable soft-delete or shorten retention.",
       "Scanning Infrastructure as Code only after deployment instead of pre-deployment, missing the opportunity to block a misconfiguration before it is ever provisioned.",
       "Leaving security recommendations unassigned instead of using governance rules to name an owner and due date — unassigned recommendations tend to stay unresolved indefinitely.",
-      "Confusing an **exemption** (a documented, time-bound waiver for a control that legitimately doesn't apply) with **Fix** (a one-click action that actually remediates a non-compliant resource) — they solve opposite problems."
+      "Confusing an **exemption** (a documented, time-bound waiver for a control that legitimately doesn't apply) with **Fix** (a one-click action that actually remediates a non-compliant resource) — they solve opposite problems.",
+      "Auditing a resource group with `az role assignment list --scope <rg>` and **omitting `--include-inherited`** — the command then reports only assignments made AT that scope, so a subscription Owner with full control of the group is invisible and the group is reported as unprivileged.",
+      "Deleting the principal or its Entra account instead of reducing its role — that destroys the audit history the review depended on, and it is the most common over-correction in a least-privilege exercise."
     ],
     "commands": [
       {
@@ -186,6 +203,11 @@
       {
         "task": "Assign a role at management group scope",
         "cli": "az role assignment create --assignee <principalId> --role Reader --scope /providers/Microsoft.Management/managementGroups/<mgId>"
+      },
+      {
+        "task": "List every role assignment effective on a resource group, including those inherited from the subscription",
+        "cli": "az role assignment list --scope /subscriptions/<subId>/resourceGroups/RG1 --include-inherited --output table",
+        "powershell": "Get-AzRoleAssignment -ResourceGroupName RG1 | Format-Table DisplayName, RoleDefinitionName, Scope"
       }
     ],
     "learnLinks": [

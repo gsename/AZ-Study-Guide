@@ -5,6 +5,7 @@ import DomainsList from './pages/DomainsList'
 import DomainDetail from './pages/DomainDetail'
 import ObjectiveDetail from './pages/ObjectiveDetail'
 import Quiz from './pages/Quiz'
+import Review from './pages/Review'
 import ExamStart from './pages/ExamStart'
 import ExamSession from './pages/ExamSession'
 import ExamResult from './pages/ExamResult'
@@ -22,6 +23,10 @@ function App() {
           <Route path="domains/:domainId" element={<DomainDetail />} />
           <Route path="objectives/:objectiveId" element={<ObjectiveDetail />} />
           <Route path="objectives/:objectiveId/quiz" element={<Quiz />} />
+          <Route path="review" element={<Review />} />
+          {/* Same component: with no `objectiveId` it draws from the review
+              selection instead of an objective's pool. */}
+          <Route path="review/quiz" element={<Quiz />} />
           <Route path="exam" element={<ExamStart />} />
           <Route path="exam/session" element={<ExamSession />} />
           <Route path="exam/results/:resultId" element={<ExamResult />} />

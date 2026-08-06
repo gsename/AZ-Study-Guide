@@ -1,297 +1,457 @@
 [
   {
-    "id": "q-o2-3-01",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-01",
     "type": "single",
     "prompt": "How are rules within a single Network Security Group evaluated?",
     "choices": [
       "By priority, lowest number first; the first match stops evaluation",
-      "By priority, highest number first",
-      "All matching rules are combined and the most restrictive wins",
-      "In the order they were created"
+      "By priority, highest number first, with the first match stopping evaluation",
+      "All matching rules are combined, and the most restrictive one wins",
+      "In the order the rules were created, oldest rule first"
     ],
-    "correctAnswers": ["By priority, lowest number first; the first match stops evaluation"],
-    "explanation": "NSG rules process from the lowest priority number upward, and the first match wins; there's no combination of multiple matching rules.",
+    "correctAnswers": [
+      "By priority, lowest number first; the first match stops evaluation"
+    ],
+    "explanation": "Lowest priority number wins and evaluation stops at the first match, which is why a broad allow at priority 100 makes every specific deny below it unreachable. The \"most restrictive wins\" option is the tempting one because that is how many on-premises firewalls behave, whereas an NSG never combines rules — order alone decides.",
+    "skillRef": "d2c1",
     "difficulty": "easy"
   },
   {
-    "id": "q-o2-3-02",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-02",
     "type": "single",
     "prompt": "A VM's NIC has an NSG and its subnet has a different NSG. For inbound traffic to reach the VM, which must allow it?",
-    "choices": ["Both the subnet NSG and the NIC NSG", "Only the subnet NSG", "Only the NIC NSG", "Either one is sufficient"],
-    "correctAnswers": ["Both the subnet NSG and the NIC NSG"],
-    "explanation": "Inbound traffic is filtered by the subnet NSG first, then the NIC NSG; a deny at either layer blocks it, so neither one alone is sufficient.",
+    "choices": [
+      "Both the subnet NSG and the NIC NSG must allow it",
+      "Only the NSG on the subnet needs to allow it",
+      "Only the NSG on the NIC needs to allow it",
+      "Either one allowing it is sufficient for the traffic"
+    ],
+    "correctAnswers": [
+      "Both the subnet NSG and the NIC NSG must allow it"
+    ],
+    "explanation": "Inbound traffic passes the subnet NSG first and the NIC NSG second, so a deny in either one drops it — the two are sequential filters rather than alternatives. \"Either one is sufficient\" is the trap and inverts the logic: it would make the more permissive NSG decide, whereas the effective result is always the intersection.",
+    "skillRef": "d2c1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-03",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-03",
     "type": "single",
     "prompt": "What is the main benefit of using an Application Security Group (ASG) in NSG rules?",
     "choices": [
       "Rules target VMs by application role instead of brittle IP lists",
-      "It encrypts traffic between the grouped VMs",
-      "It replaces the need for a subnet NSG",
-      "It load-balances traffic across the grouped VMs"
+      "It encrypts the traffic flowing between the VMs that are grouped together",
+      "It removes the need for an NSG on the subnet altogether",
+      "It load-balances traffic across the VMs in the group"
     ],
-    "correctAnswers": ["Rules target VMs by application role instead of brittle IP lists"],
-    "explanation": "ASGs let you reference a logical role (web, db) as source/destination, so rules follow workloads rather than hard-coded IPs. An ASG does not encrypt, load-balance, or replace an NSG on its own.",
-    "difficulty": "easy"
+    "correctAnswers": [
+      "Rules target VMs by application role instead of brittle IP lists"
+    ],
+    "explanation": "An ASG is a named set of NICs, so a rule reads \"web may reach db\" and keeps working when machines are added or re-addressed. The encryption option is tempting because grouping sounds like a security boundary, whereas an ASG changes nothing about the traffic itself — it only changes how the rule names its endpoints.",
+    "skillRef": "d2c1",
+    "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-04",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-04",
     "type": "single",
     "prompt": "At which layers does a Network Security Group primarily operate?",
-    "choices": ["L3-L4 (network/transport)", "L7 (application/HTTP) only", "L2 (data link) only", "L7, but for web traffic specifically"],
-    "correctAnswers": ["L3-L4 (network/transport)"],
-    "explanation": "NSGs match on IP address, port, and protocol — L3/L4 concepts. Deep HTTP inspection is a WAF's job, not an NSG's.",
+    "choices": [
+      "Layers 3 and 4, network and transport",
+      "Layer 7 only, application and HTTP",
+      "Layer 2 only, the data link layer",
+      "Layer 7, but for web traffic specifically"
+    ],
+    "correctAnswers": [
+      "Layers 3 and 4, network and transport"
+    ],
+    "explanation": "An NSG matches on address, port and protocol, which is layers 3 and 4 — it cannot see a URL, a header or a request body. The layer-7 options are tempting because Azure does have layer-7 filtering, whereas that is a WAF or an Azure Firewall application rule and never an NSG.",
+    "skillRef": "d2c1",
     "difficulty": "medium"
   },
   {
+    "src": "kb-network",
+    "objectiveId": "o2-3",
     "id": "q-o2-3-05",
-    "objectiveId": "o2-3",
-    "type": "single",
-    "prompt": "Which control provides centrally managed, stateful L3-L7 network filtering, including FQDN filtering and threat-intelligence-based deny rules?",
-    "choices": ["Azure Firewall", "NSG", "Web Application Firewall (WAF)", "DDoS Protection"],
-    "correctAnswers": ["Azure Firewall"],
-    "explanation": "Azure Firewall is the managed, stateful firewall spanning L3-L7 with FQDN and threat-intelligence filtering. NSGs are simpler L3-L4 rules, WAF is HTTP-only, and DDoS Protection targets volumetric floods.",
+    "type": "drag-match",
+    "prompt": "Woodgrove must pick the right tool for four separate jobs. Attach each control below to the job it is designed for; two of the six fit none of them.",
+    "sources": [
+      "A network security group",
+      "Azure Firewall",
+      "A Web Application Firewall policy",
+      "An Azure DDoS Protection plan",
+      "A private endpoint",
+      "Microsoft Entra Private Access"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "label": "Centrally managed stateful filtering from layer 3 to layer 7, with FQDN and threat-intelligence rules",
+        "correctSource": "Azure Firewall"
+      },
+      {
+        "id": "t2",
+        "label": "Blocking SQL injection and cross-site scripting inside HTTP requests to a public web application",
+        "correctSource": "A Web Application Firewall policy"
+      },
+      {
+        "id": "t3",
+        "label": "Absorbing a large volumetric flood aimed at a public IP address",
+        "correctSource": "An Azure DDoS Protection plan"
+      },
+      {
+        "id": "t4",
+        "label": "Allow and deny rules on address, port and protocol, applied to a subnet or a network interface",
+        "correctSource": "A network security group"
+      }
+    ],
+    "explanation": "The four are distinguished by what they can see: an NSG sees addresses and ports, Azure Firewall also sees FQDNs and threat feeds, a WAF sees inside the HTTP request, and DDoS Protection sees traffic volume. That is why none substitutes for another — a WAF cannot control egress by domain name, whereas a firewall cannot spot injection in a request body. The two unused controls provide private connectivity rather than filtering.",
+    "skillRef": "d2c8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-06",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-06",
     "type": "single",
     "prompt": "What does Azure Firewall Premium add over the Standard tier?",
-    "choices": ["TLS inspection, IDPS, and URL filtering", "Basic FQDN filtering", "DNAT rules", "Stateful packet filtering"],
-    "correctAnswers": ["TLS inspection, IDPS, and URL filtering"],
-    "explanation": "FQDN filtering, DNAT, and stateful filtering are already present in Standard; Premium adds deeper inspection capabilities like TLS inspection, intrusion detection/prevention (IDPS), and URL-level filtering.",
+    "choices": [
+      "TLS inspection, IDPS, and URL filtering",
+      "FQDN filtering in application rules",
+      "Destination NAT rules for inbound flows",
+      "Stateful packet filtering of network flows"
+    ],
+    "correctAnswers": [
+      "TLS inspection, IDPS, and URL filtering"
+    ],
+    "explanation": "Premium is what lets the firewall look inside TLS, run intrusion detection, and filter on a full URL rather than a hostname. The other three are Standard-tier capabilities, and FQDN filtering is the tempting answer because it feels advanced — whereas Standard already does it, which is exactly why it is not the differentiator.",
+    "skillRef": "d2c8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-07",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-07",
     "type": "single",
     "prompt": "Which control specifically protects HTTP(S) applications against OWASP attacks like SQL injection and cross-site scripting?",
-    "choices": ["Web Application Firewall (WAF)", "Azure Firewall", "NSG", "Azure DDoS Protection"],
-    "correctAnswers": ["Web Application Firewall (WAF)"],
-    "explanation": "A WAF is purpose-built for L7 HTTP(S) inspection against OWASP-class attacks; Azure Firewall and NSGs work at more general network layers, and DDoS Protection targets volumetric floods, not application-layer attacks.",
+    "choices": [
+      "A Web Application Firewall policy",
+      "Azure Firewall with IDPS enabled",
+      "A network security group rule on the subnet",
+      "An Azure DDoS Protection plan"
+    ],
+    "correctAnswers": [
+      "A Web Application Firewall policy"
+    ],
+    "explanation": "Only a WAF parses the HTTP request and matches it against the OWASP Core Rule Set. Azure Firewall Premium with IDPS is the closest miss and does inspect traffic deeply, whereas it detects network-level intrusion signatures rather than evaluating an application request against injection rules — the two are complementary and neither replaces the other.",
+    "skillRef": "d2c8",
     "difficulty": "easy"
   },
   {
-    "id": "q-o2-3-08",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-08",
     "type": "single",
     "prompt": "Where is a Web Application Firewall (WAF) deployed in Azure?",
     "choices": [
       "Attached to Application Gateway or Azure Front Door",
       "As a standalone gateway with its own dedicated public IP",
-      "Attached directly to a VM's NIC",
-      "Configured as an NSG rule"
+      "Attached directly to a virtual machine network interface",
+      "Configured as a rule inside a network security group"
     ],
-    "correctAnswers": ["Attached to Application Gateway or Azure Front Door"],
-    "explanation": "WAF is a policy attached to one of these two L7 entry points — it is not a standalone service, a NIC-level control, or an NSG rule type.",
+    "correctAnswers": [
+      "Attached to Application Gateway or Azure Front Door"
+    ],
+    "explanation": "A WAF in Azure is a policy attached to an existing layer-7 entry point and has no existence of its own. Expecting a standalone appliance with its own IP is the on-premises instinct, whereas in Azure there is nothing to deploy — you choose Application Gateway for a regional app or Front Door for a global one, and attach the policy to it.",
+    "skillRef": "d2c1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-09",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-09",
     "type": "single",
     "prompt": "Which control mitigates large-scale volumetric flood attacks against public IPs?",
-    "choices": ["Azure DDoS Protection", "NSG", "WAF in Detection mode", "A private endpoint"],
-    "correctAnswers": ["Azure DDoS Protection"],
-    "explanation": "DDoS Protection is purpose-built for L3-L4 volumetric mitigation. NSGs and WAF operate at different layers/threat types, and a private endpoint removes public exposure rather than mitigating floods against a public IP.",
+    "choices": [
+      "An Azure DDoS Protection plan",
+      "A network security group rule",
+      "A WAF policy left in Detection mode",
+      "A private endpoint on the resource"
+    ],
+    "correctAnswers": [
+      "An Azure DDoS Protection plan"
+    ],
+    "explanation": "Volumetric mitigation happens in the Azure network edge, before the traffic reaches anything you own — which is why no rule you write can substitute for it. The NSG option is the tempting one because it does deny traffic, whereas the flood has already consumed the bandwidth by the time an NSG evaluates it, and a WAF in Detection mode blocks nothing at all.",
+    "skillRef": "d2c6",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-3-10",
     "objectiveId": "o2-3",
     "type": "single",
-    "prompt": "In Azure Firewall Policy, which rule collection type translates inbound public traffic to internal IPs?",
-    "choices": ["DNAT rules", "Network rules", "Application rules", "Threat intelligence rules"],
-    "correctAnswers": ["DNAT rules"],
-    "explanation": "DNAT rules handle inbound destination-NAT translation. Network rules filter by IP/port/protocol, and application rules filter by FQDN/URL — neither performs address translation.",
-    "difficulty": "medium"
+    "prompt": "An Azure Firewall policy contains a DNAT rule, a network rule, and an application rule that could all match the same inbound flow. In which order does Azure Firewall evaluate the collection groups?",
+    "choices": [
+      "DNAT rules, then network rules, then application rules",
+      "Application rules, then network rules, then DNAT rules",
+      "Whichever collection group carries the lowest priority number, regardless of type",
+      "All three are evaluated together and the most restrictive verdict is applied"
+    ],
+    "correctAnswers": [
+      "DNAT rules, then network rules, then application rules"
+    ],
+    "explanation": "Rule collection type takes precedence over priority: DNAT is evaluated first, then network, then application. Priority only orders collections *within* the same type, which is the tempting wrong answer — it is true locally and false across types. A flow allowed by a network rule therefore never reaches application-rule inspection, so FQDN filtering is bypassed if a broad network rule permits the traffic first.",
+    "src": "kb-network",
+    "skillRef": "d2c8",
+    "difficulty": "hard"
   },
   {
     "id": "q-o2-3-11",
     "objectiveId": "o2-3",
-    "type": "single",
-    "prompt": "Which Azure Firewall Policy rule collection type allows or denies traffic by FQDN or URL?",
-    "choices": ["Application rules", "Network rules", "DNAT rules", "NSG rules"],
-    "correctAnswers": ["Application rules"],
-    "explanation": "Application rules operate on FQDN/URL, e.g. allowing only *.windowsupdate.com. Network rules match IP/port/protocol instead, and NSG rules are a separate resource type entirely.",
+    "type": "drag-match",
+    "prompt": "Drag each Azure Firewall policy rule collection type onto what it matches on. Not every entry in the pool is used.",
+    "sources": [
+      "Application rules",
+      "Network rules",
+      "DNAT rules",
+      "Threat intelligence rules",
+      "NSG security rules",
+      "WAF managed rule set"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "label": "Fully qualified domain names and URLs, such as allowing only *.windowsupdate.com",
+        "correctSource": "Application rules"
+      },
+      {
+        "id": "t2",
+        "label": "IP address, port, and protocol — the general-purpose layer 3 and 4 allow or deny",
+        "correctSource": "Network rules"
+      },
+      {
+        "id": "t3",
+        "label": "An inbound public address and port, translated to a private address behind the firewall",
+        "correctSource": "DNAT rules"
+      }
+    ],
+    "explanation": "The three collection types split by what they can see: DNAT rewrites the destination before anything else runs, network rules work on addresses and ports, and only application rules resolve names. NSG security rules and the WAF managed rule set are the plausible distractors precisely because they filter too — but neither is a rule collection inside an Azure Firewall policy, and neither can be authored there.",
+    "src": "kb-network",
+    "skillRef": "d2c8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-12",
+    "src": "kb-network",
     "objectiveId": "o2-3",
-    "type": "single",
-    "prompt": "Which Azure Firewall Policy rule collection type allows or denies traffic by IP address, port, and protocol?",
-    "choices": ["Network rules", "Application rules", "DNAT rules", "WAF rules"],
-    "correctAnswers": ["Network rules"],
-    "explanation": "Network rules are the general-purpose L3/L4 allow/deny collection. Application rules work on FQDN/URL instead, and 'WAF rules' isn't an Azure Firewall Policy rule collection type.",
-    "difficulty": "medium"
-  },
-  {
     "id": "q-o2-3-13",
-    "objectiveId": "o2-3",
     "type": "single",
     "prompt": "What does Azure Firewall's threat-intelligence-based filtering do?",
     "choices": [
-      "Alerts on or blocks traffic to/from known-malicious IP addresses and domains",
-      "Encrypts traffic between VNets",
-      "Scans uploaded blobs for malware",
-      "Masks sensitive query results"
+      "Alerts on or blocks traffic to known-malicious IPs and domains",
+      "Encrypts the traffic flowing between two peered virtual networks",
+      "Scans blobs uploaded to a linked storage account for malware",
+      "Masks sensitive values in query results for less-privileged roles"
     ],
-    "correctAnswers": ["Alerts on or blocks traffic to/from known-malicious IP addresses and domains"],
-    "explanation": "This feature cross-references Microsoft's threat intelligence feed against live traffic. It has no role in encryption, blob scanning, or data masking.",
+    "correctAnswers": [
+      "Alerts on or blocks traffic to known-malicious IPs and domains"
+    ],
+    "explanation": "The feature matches traffic against a Microsoft-maintained feed of known-bad addresses and domains, and can be set to alert only or to alert and deny. Note the mode question it raises: alert-only is the default posture, so switching it on does not by itself block anything — the malware-scanning and masking options belong to Defender for Storage and to SQL, not to a firewall.",
+    "skillRef": "d2c8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-14",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-14",
     "type": "single",
     "prompt": "What is the role of Azure Firewall Manager?",
     "choices": [
-      "Centrally manage firewall policies across multiple firewalls, VNets, and secured virtual hubs",
-      "Replace NSGs entirely across a tenant",
-      "Provide DDoS mitigation for public IPs",
-      "Manage WAF-only policies exclusively"
+      "Centrally manage firewall policies across many firewalls and hubs",
+      "Replace network security groups entirely, across every VNet in a tenant",
+      "Provide DDoS mitigation for the public IPs in a subscription",
+      "Manage Web Application Firewall policies and nothing else"
     ],
-    "correctAnswers": ["Centrally manage firewall policies across multiple firewalls, VNets, and secured virtual hubs"],
-    "explanation": "Firewall Manager centralizes and reuses Azure Firewall policy across many deployments; it does not touch NSGs, DDoS plans, or exclusively manage WAF.",
+    "correctAnswers": [
+      "Centrally manage firewall policies across many firewalls and hubs"
+    ],
+    "explanation": "Firewall Manager holds reusable policy objects that many firewalls and secured virtual hubs reference, so one edit propagates instead of being copied. Reading it as an NSG replacement is the misconception worth removing: the two operate at different points, and a firewall policy never governs traffic between two VMs inside the same subnet.",
+    "skillRef": "d2c3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-15",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-15",
     "type": "single",
     "prompt": "What is a 'secured virtual hub'?",
     "choices": [
-      "An Azure Virtual WAN hub with Azure Firewall (or a partner NVA) integrated for centralized inspection",
-      "A hub VNet with only NSGs applied to its subnets",
-      "A hub containing only a WAF policy",
-      "A hub dedicated solely to VPN Gateways"
+      "A Virtual WAN hub with Azure Firewall integrated for centralized inspection",
+      "A hub virtual network with network security groups on all of its subnets",
+      "A hub that contains only a Web Application Firewall policy, and nothing more",
+      "A hub dedicated solely to VPN gateways and their connections"
     ],
-    "correctAnswers": ["An Azure Virtual WAN hub with Azure Firewall (or a partner NVA) integrated for centralized inspection"],
-    "explanation": "A secured hub embeds a firewall/NVA directly in a Virtual WAN hub for centralized inspection of spoke traffic — an NSG-only hub or a WAF-only hub does not meet that definition.",
+    "correctAnswers": [
+      "A Virtual WAN hub with Azure Firewall integrated for centralized inspection"
+    ],
+    "explanation": "The word \"secured\" specifically means a Virtual WAN hub that has Azure Firewall, or a partner appliance, deployed inside it so that spoke-to-spoke and egress traffic is inspected centrally. A hub VNet with NSGs on its subnets is the tempting answer and is just a hub: NSGs filter per subnet, whereas nothing inspects traffic transiting the hub.",
+    "skillRef": "d2c3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-16",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-16",
     "type": "single",
     "prompt": "A private endpoint provides a target resource with what?",
-    "choices": ["A private IP address inside your VNet", "A public IP restricted by subnet", "An encrypted VPN tunnel", "A load-balanced public front end"],
-    "correctAnswers": ["A private IP address inside your VNet"],
-    "explanation": "A private endpoint is a NIC with a private VNet IP attached to the resource's data plane. A public IP restricted by subnet describes a service endpoint instead.",
+    "choices": [
+      "A private IP address inside your virtual network",
+      "A public IP address restricted by subnet",
+      "An encrypted VPN tunnel to the resource",
+      "A load-balanced public front end for the resource"
+    ],
+    "correctAnswers": [
+      "A private IP address inside your virtual network"
+    ],
+    "explanation": "A private endpoint puts a network interface with a private IP into your subnet, and the service answers on it. A public IP restricted by subnet is the closest miss and describes a service ENDPOINT instead — the difference decides whether you can honestly report no public exposure, because a service endpoint leaves the address publicly resolvable.",
+    "skillRef": "d2c4",
     "difficulty": "easy"
   },
   {
-    "id": "q-o2-3-17",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-17",
     "type": "single",
     "prompt": "What is required for a private endpoint to actually be used by clients instead of the resource's public endpoint?",
     "choices": [
-      "A private DNS zone linked to the VNet, resolving the resource's FQDN to the private endpoint's IP",
-      "A WAF policy attached to the private endpoint",
-      "An NSG explicitly allowing the private endpoint's subnet",
-      "A stored access policy"
+      "A private DNS zone linked to the VNet, resolving the FQDN to the private IP",
+      "A Web Application Firewall policy attached to the private endpoint itself",
+      "A network security group rule explicitly allowing the endpoint subnet inbound",
+      "A stored access policy on the container holding the resource data"
     ],
-    "correctAnswers": ["A private DNS zone linked to the VNet, resolving the resource's FQDN to the private endpoint's IP"],
-    "explanation": "Without correct DNS resolution, clients keep resolving the resource's public FQDN to its public IP and never reach the private endpoint at all.",
+    "correctAnswers": [
+      "A private DNS zone linked to the VNet, resolving the FQDN to the private IP"
+    ],
+    "explanation": "Clients keep using the public hostname, so unless DNS is redirected they resolve the public IP and the private endpoint sits unused. Skipping the zone is the single most common cause of a private endpoint that exists and does nothing — an NSG rule is the tempting alternative and governs whether traffic is permitted rather than where the name points.",
+    "skillRef": "d2c6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-18",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-18",
     "type": "single",
     "prompt": "A team deploys a private endpoint for a storage account, but clients still connect over the public internet. What is the most likely cause?",
     "choices": [
-      "The private DNS zone isn't linked/configured, so the FQDN still resolves to the public IP",
-      "The NSG on the client subnet is denying inbound traffic",
-      "The storage account has infrastructure encryption disabled",
-      "The private endpoint was created in the wrong region"
+      "The private DNS zone isn't linked, so the FQDN still resolves to the public IP",
+      "The network security group on the client subnet is denying the outbound traffic",
+      "The storage account has infrastructure encryption left disabled on it",
+      "The private endpoint was created in a different region from the account"
     ],
-    "correctAnswers": ["The private DNS zone isn't linked/configured, so the FQDN still resolves to the public IP"],
-    "explanation": "This is the classic private endpoint failure mode — DNS resolution, not region or encryption settings, is almost always the culprit when traffic still goes public.",
+    "correctAnswers": [
+      "The private DNS zone isn't linked, so the FQDN still resolves to the public IP"
+    ],
+    "explanation": "Traffic is still flowing, so nothing is being blocked — which rules out the NSG answer immediately and is the reasoning worth practising: a deny would produce a timeout rather than a working public connection. The symptom is name resolution, and an unlinked private DNS zone is what leaves the public IP in the answer.",
+    "skillRef": "d2c6",
     "difficulty": "hard"
   },
   {
-    "id": "q-o2-3-19",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-19",
     "type": "single",
     "prompt": "What is a Private Link service used for?",
     "choices": [
-      "Exposing your own service (behind a Standard Load Balancer) privately to consumers via their own private endpoints",
-      "Consuming a Microsoft PaaS service privately",
-      "Encrypting VNet-to-VNet traffic",
-      "Filtering outbound FQDN traffic"
+      "Publishing your own load-balanced service privately to other tenants",
+      "Consuming a Microsoft PaaS service privately from inside your own VNet",
+      "Encrypting virtual-network-to-virtual-network traffic end to end",
+      "Filtering outbound traffic by fully qualified domain name"
     ],
-    "correctAnswers": ["Exposing your own service (behind a Standard Load Balancer) privately to consumers via their own private endpoints"],
-    "explanation": "A Private Link service is the mirror image of consuming a PaaS resource privately: you publish your own service for others to reach via their private endpoints, not the other way around.",
+    "correctAnswers": [
+      "Publishing your own load-balanced service privately to other tenants"
+    ],
+    "explanation": "A Private Link service is the PROVIDER side: it sits in front of a Standard Load Balancer so that consumers reach the service through their own private endpoints. Consuming a Microsoft PaaS service is the closest miss and is the consumer side — the private endpoint — whereas the two are opposite ends of one connection, configured by different parties.",
+    "skillRef": "d2c7",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-20",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-20",
     "type": "single",
     "prompt": "What does Azure Virtual Network Manager (AVNM) let a central team define across many VNets?",
     "choices": [
       "Network groups, connectivity configurations, and security admin rules",
-      "Individual VM disk encryption keys",
-      "Storage account firewall rules",
-      "SQL Vulnerability Assessment baselines"
+      "Disk encryption keys for the virtual machines in each VNet",
+      "Storage account firewall rules across the subscriptions",
+      "SQL Vulnerability Assessment baselines for every database server in scope"
     ],
-    "correctAnswers": ["Network groups, connectivity configurations, and security admin rules"],
-    "explanation": "AVNM's scope is network topology and security at the VNet level, using its group → configure → deploy workflow — it doesn't manage disk encryption, storage firewalls, or SQL VA.",
+    "correctAnswers": [
+      "Network groups, connectivity configurations, and security admin rules"
+    ],
+    "explanation": "AVNM works on three objects: groups that select VNets, connectivity configurations that build topology between them, and security admin rules that a resource owner cannot override. The other options are tempting because each is a legitimate central-governance task, whereas none of them is network topology or network filtering.",
+    "skillRef": "d2c2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-21",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-21",
     "type": "single",
     "prompt": "An AVNM security admin rule and a subnet NSG rule conflict for the same flow. Which wins?",
     "choices": [
-      "The AVNM security admin rule — it is evaluated before, and takes priority over, NSG rules",
-      "The NSG rule — it is closest to the resource",
-      "Whichever is more permissive",
-      "Whichever was configured most recently"
+      "The AVNM security admin rule — it is evaluated before NSG rules",
+      "The NSG rule, because it sits closest to the resource it protects",
+      "Whichever of the two rules is the more permissive one",
+      "Whichever of the two was configured most recently"
     ],
-    "correctAnswers": ["The AVNM security admin rule — it is evaluated before, and takes priority over, NSG rules"],
-    "explanation": "Security admin rules are enforced ahead of NSGs and override them, letting a central team block traffic regardless of local NSG configuration.",
+    "correctAnswers": [
+      "The AVNM security admin rule — it is evaluated before NSG rules"
+    ],
+    "explanation": "Security admin rules are evaluated first and cannot be overridden locally, which is the entire reason the feature exists — a central team can guarantee a block that no subscription owner can undo. \"Closest to the resource wins\" is the tempting instinct from routing, whereas here proximity is irrelevant and precedence is fixed by the platform.",
+    "skillRef": "d2c2",
     "difficulty": "hard"
   },
   {
-    "id": "q-o2-3-22",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-22",
     "type": "single",
     "prompt": "A central security team must guarantee that a malicious IP range is blocked across all 40 VNets in a tenant, and that no resource owner can override the block. What should they use?",
     "choices": [
-      "An AVNM security admin configuration applied to a network group covering all VNets",
-      "A deny rule added manually to every NSG",
-      "A UDR blackhole route in each VNet",
-      "A DDoS Protection plan on every public IP"
+      "An AVNM security admin configuration on a group covering all VNets",
+      "A deny rule added by hand to every network security group",
+      "A user-defined route sending that range to a blackhole route in each VNet",
+      "A DDoS Protection plan attached to every public IP in the tenant"
     ],
-    "correctAnswers": ["An AVNM security admin configuration applied to a network group covering all VNets"],
-    "explanation": "Only a security admin configuration is both centrally enforced once and non-overridable by resource owners; the other options require per-VNet edits and remain overridable.",
+    "correctAnswers": [
+      "An AVNM security admin configuration on a group covering all VNets"
+    ],
+    "explanation": "The requirement has two halves and only one option meets both: applied everywhere, and not overridable. Hand-editing 40 NSGs is the tempting answer because it does block the range today, whereas any owner can delete the rule tomorrow and nothing reports that they did — which fails the guarantee rather than the coverage.",
+    "skillRef": "d2c2",
     "difficulty": "hard"
   },
   {
-    "id": "q-o2-3-23",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-23",
     "type": "single",
     "prompt": "What connectivity topologies can an AVNM connectivity configuration build across a network group?",
     "choices": [
-      "Mesh (regional or global) and hub-and-spoke",
-      "Only point-to-site VPN meshes",
-      "Only ExpressRoute circuits",
-      "Only single-VNet service endpoints"
+      "Mesh, regional or global, and hub-and-spoke",
+      "Only point-to-site VPN meshes between VNets",
+      "Only ExpressRoute circuits to on-premises",
+      "Only single-VNet service endpoint configurations"
     ],
-    "correctAnswers": ["Mesh (regional or global) and hub-and-spoke"],
-    "explanation": "Connectivity configurations create mesh (regional or global) or hub-and-spoke topologies — they don't manage VPN, ExpressRoute, or service endpoints directly.",
+    "correctAnswers": [
+      "Mesh, regional or global, and hub-and-spoke"
+    ],
+    "explanation": "A connectivity configuration builds either a mesh, within a region or across regions, or a hub-and-spoke topology with a nominated hub. The VPN and ExpressRoute options are tempting because they are also ways to connect networks, whereas they connect Azure to somewhere else — AVNM builds topology BETWEEN the VNets it manages.",
+    "skillRef": "d2c2",
     "difficulty": "medium"
   },
   {
@@ -299,152 +459,250 @@
     "objectiveId": "o2-3",
     "type": "single",
     "prompt": "Which VPN connection type connects an entire on-premises network to Azure?",
-    "choices": ["Site-to-site (S2S)", "Point-to-site (P2S)", "VNet peering", "A private endpoint"],
-    "correctAnswers": ["Site-to-site (S2S)"],
-    "explanation": "Site-to-site connects whole networks via IPsec; point-to-site connects individual client devices, and VNet peering/private endpoints solve different connectivity problems.",
+    "choices": [
+      "Site-to-site (S2S)",
+      "Point-to-site (P2S)",
+      "VNet peering",
+      "A private endpoint"
+    ],
+    "correctAnswers": [
+      "Site-to-site (S2S)"
+    ],
+    "explanation": "Site-to-site joins a whole on-premises network to a VNet through an IPsec tunnel between gateways, so every host behind it is reachable without client software. Point-to-site is the closest miss and terminates on one device instead, whereas peering and private endpoints do not tunnel anything: peering joins two Azure VNets, and a private endpoint exposes a single service.",
+    "src": "kb-network",
+    "skillRef": "d2c4",
     "difficulty": "easy"
   },
   {
-    "id": "q-o2-3-25",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-25",
     "type": "single",
     "prompt": "Which VPN connection type connects individual remote client devices to a VNet?",
-    "choices": ["Point-to-site (P2S)", "Site-to-site (S2S)", "VNet peering", "ExpressRoute"],
-    "correctAnswers": ["Point-to-site (P2S)"],
-    "explanation": "Point-to-site is designed for individual devices, unlike site-to-site (whole networks) or ExpressRoute (a dedicated private circuit, not a VPN).",
+    "choices": [
+      "Point-to-site, or P2S",
+      "Site-to-site, or S2S",
+      "Virtual network peering",
+      "An ExpressRoute circuit"
+    ],
+    "correctAnswers": [
+      "Point-to-site, or P2S"
+    ],
+    "explanation": "Point-to-site terminates on each client device, which is why it is the remote-worker option and why its hardening question is per-user authentication. Site-to-site is the closest miss and joins a whole network through a gateway, so it cannot express per-device identity at all; peering and ExpressRoute connect networks rather than clients.",
+    "skillRef": "d2c4",
     "difficulty": "easy"
   },
   {
-    "id": "q-o2-3-26",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-26",
     "type": "single",
     "prompt": "How should point-to-site VPN authentication be hardened?",
     "choices": [
-      "Use certificate-based or Microsoft Entra ID authentication rather than weaker legacy methods",
-      "Disable IKE/IPsec policies entirely",
-      "Allow anonymous connections for simplicity",
-      "Use only a shared pre-shared key with no per-user identity"
+      "Certificate-based or Microsoft Entra ID authentication",
+      "Disable the IKE and IPsec policies on the gateway entirely",
+      "Allow anonymous connections, for the sake of simplicity",
+      "Use a single shared pre-shared key, with no per-user identity behind it"
     ],
-    "correctAnswers": ["Use certificate-based or Microsoft Entra ID authentication rather than weaker legacy methods"],
-    "explanation": "Strong per-user authentication (certificates or Entra ID) is the hardening step; disabling IPsec or allowing anonymous/shared-secret access would weaken, not strengthen, the connection.",
+    "correctAnswers": [
+      "Certificate-based or Microsoft Entra ID authentication"
+    ],
+    "explanation": "Both options give each client a distinct, revocable identity, and Entra authentication additionally brings Conditional Access into the connection. The shared pre-shared key is the tempting operational shortcut and is the specific weakness being removed: one leaked secret admits everyone, and revoking it disconnects everyone.",
+    "skillRef": "d2c4",
     "difficulty": "medium"
   },
   {
+    "src": "kb-network",
+    "objectiveId": "o2-3",
     "id": "q-o2-3-27",
-    "objectiveId": "o2-3",
-    "type": "single",
-    "prompt": "What is Microsoft Entra Private Access, part of Global Secure Access?",
-    "choices": [
-      "A Security Service Edge capability that publishes private apps to remote users with per-app Conditional Access, as a Zero Trust alternative to legacy VPN",
-      "A replacement for Azure Firewall",
-      "A DDoS mitigation service",
-      "A private endpoint DNS resolver"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the description of Microsoft Entra Private Access, part of Global Secure Access.",
+    "template": "It is a [[b1]] capability that publishes [[b2]], applying [[b3]].",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "Security Service Edge",
+          "Content Delivery Network",
+          "Web Application Firewall",
+          "Privileged Identity Management"
+        ],
+        "correctValue": "Security Service Edge"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "private applications to remote users without a network-level tunnel",
+          "public web applications to the internet through a global edge",
+          "virtual machines to an on-premises data centre over ExpressRoute",
+          "PaaS resources to a virtual network through a private endpoint"
+        ],
+        "correctValue": "private applications to remote users without a network-level tunnel"
+      },
+      {
+        "id": "b3",
+        "options": [
+          "per-application Conditional Access to each connection",
+          "a single network-level grant once the tunnel is up",
+          "a network security group rule per destination subnet",
+          "a DDoS mitigation policy per published public IP"
+        ],
+        "correctValue": "per-application Conditional Access to each connection"
+      }
     ],
-    "correctAnswers": ["A Security Service Edge capability that publishes private apps to remote users with per-app Conditional Access, as a Zero Trust alternative to legacy VPN"],
-    "explanation": "Entra Private Access is an identity-centric remote-access model, distinct from network-layer firewalls, DDoS mitigation, or DNS resolution for private endpoints.",
+    "explanation": "The third blank is where the Zero Trust argument lives: a legacy VPN grants network-level access once, after which the user can reach anything routable, whereas Private Access evaluates Conditional Access per application on every connection. Confusing it with a global edge publishing public sites is the tempting error, and that is Front Door — Private Access publishes PRIVATE apps to remote users instead.",
+    "skillRef": "d2c5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-28",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-28",
     "type": "single",
     "prompt": "Why might an organization replace legacy VPN with Microsoft Entra Private Access for application access?",
     "choices": [
-      "It applies granular, per-app Conditional Access instead of granting broad network-level access once connected",
-      "It's cheaper hardware to deploy on-premises",
-      "It removes the need for Microsoft Entra ID entirely",
-      "It only works for site-to-site scenarios"
+      "It applies per-app Conditional Access instead of one broad network grant",
+      "It is cheaper hardware to deploy in the on-premises data centre than a VPN concentrator",
+      "It removes the need for Microsoft Entra ID in the tenant entirely",
+      "It works only for site-to-site scenarios between two networks"
     ],
-    "correctAnswers": ["It applies granular, per-app Conditional Access instead of granting broad network-level access once connected"],
-    "explanation": "Traditional VPN grants broad network reach once connected; Entra Private Access scopes access per app with Conditional Access, which is the core Zero Trust improvement — and it depends on Entra ID rather than removing it.",
+    "correctAnswers": [
+      "It applies per-app Conditional Access instead of one broad network grant"
+    ],
+    "explanation": "A VPN puts the device on the network, after which everything routable is reachable; Private Access authorizes each application separately, so lateral movement has nothing to move through. The cheaper-hardware option is tempting because it sounds like the usual cloud argument, whereas the service is not on-premises hardware at all and it depends on Entra ID rather than removing it.",
+    "skillRef": "d2c5",
     "difficulty": "medium"
   },
   {
+    "src": "kb-network",
+    "objectiveId": "o2-3",
     "id": "q-o2-3-29",
-    "objectiveId": "o2-3",
-    "type": "multiple",
-    "prompt": "Which two controls filter Layer 3/4 network traffic? (Choose two.)",
-    "choices": ["NSG", "Azure Firewall (network rules)", "Web Application Firewall", "Dynamic Data Masking"],
-    "correctAnswers": ["NSG", "Azure Firewall (network rules)"],
-    "explanation": "NSGs and Azure Firewall network rules both operate at L3/L4. WAF is L7-specific, and DDM is a database masking feature unrelated to networking.",
+    "type": "statement-grid",
+    "prompt": "For each statement about where these controls filter traffic, select Yes if it is true.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "A Web Application Firewall inspects layer 3 and 4 headers rather than HTTP content.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s2",
+        "text": "A network security group filters on source, destination, port and protocol.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s3",
+        "text": "Azure Firewall's network rules filter layer 3 and 4 traffic alongside its application rules.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s4",
+        "text": "Dynamic Data Masking filters network traffic at layer 4.",
+        "correctValue": "No"
+      }
+    ],
+    "explanation": "NSGs and Azure Firewall network rules are the layer 3 and 4 filters; a WAF is the opposite and exists precisely to read HTTP content, so the first statement inverts its purpose. The last is the plausible-sounding category error: Dynamic Data Masking is a SQL display control and never sees a packet.",
+    "skillRef": "d2c8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-30",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-30",
     "type": "multiple",
     "prompt": "Which two statements about AVNM security admin rules are correct? (Choose two.)",
     "choices": [
-      "Evaluated before NSG rules",
-      "Cannot be overridden by a resource owner's NSG",
-      "Are functionally identical to NSG rules",
-      "Only apply within a single VNet"
+      "They are evaluated before network security group rules",
+      "They cannot be overridden by a resource owner's NSG rule",
+      "They are functionally identical to network security group rules",
+      "They only take effect within a single virtual network at a time"
     ],
-    "correctAnswers": ["Evaluated before NSG rules", "Cannot be overridden by a resource owner's NSG"],
-    "explanation": "Security admin rules are enforced ahead of, and cannot be overridden by, NSGs — and they explicitly span multiple VNets via network groups, unlike a single-VNet NSG.",
+    "correctAnswers": [
+      "They are evaluated before network security group rules",
+      "They cannot be overridden by a resource owner's NSG rule"
+    ],
+    "explanation": "Precedence and non-overridability are the two properties that make the feature useful to a central team. Calling them functionally identical to NSG rules is the tempting simplification and misses exactly that: an NSG rule can be edited by whoever owns the subnet, whereas a security admin rule cannot, and it applies across every VNet in the group rather than one.",
+    "skillRef": "d2c2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-31",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-31",
     "type": "multiple",
     "prompt": "Which two statements about private endpoints are correct? (Choose two.)",
     "choices": [
       "They assign a private IP inside the VNet to the target resource",
-      "They require private DNS zone integration to be used transparently",
-      "They keep the resource's public IP but restrict it by subnet",
-      "They always require a WAF policy"
+      "They need private DNS zone integration to be used transparently",
+      "They keep the resource's public IP address but restrict it by subnet",
+      "They always require a Web Application Firewall policy as well"
     ],
-    "correctAnswers": ["They assign a private IP inside the VNet to the target resource", "They require private DNS zone integration to be used transparently"],
-    "explanation": "Keeping a public IP restricted by subnet describes a service endpoint, not a private endpoint, and private endpoints have no dependency on a WAF policy.",
+    "correctAnswers": [
+      "They assign a private IP inside the VNet to the target resource",
+      "They need private DNS zone integration to be used transparently"
+    ],
+    "explanation": "A private endpoint is a private IP plus the DNS redirection that makes clients use it without changing anything. Keeping the public IP restricted by subnet is the trap and describes a service endpoint — the distinction is what decides whether \"no public exposure\" is a true statement or a hopeful one.",
+    "skillRef": "d2c6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-32",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-32",
     "type": "case-study",
     "caseStudyId": "cs-woodgrove-data",
     "prompt": "Referring to requirement 5 (all egress from the 'core-banking' subnet must be inspected by a centrally managed, reusable firewall policy shared across two regional secured hubs), which combination is correct?",
     "choices": [
-      "A UDR forcing 0.0.0.0/0 to Azure Firewall deployed in secured virtual hubs, with the policy managed centrally via Azure Firewall Manager",
-      "An NSG outbound deny-all rule on the subnet",
-      "A WAF policy attached to the subnet",
-      "A DDoS Protection plan on the subnet"
+      "A UDR sending 0.0.0.0/0 to Azure Firewall in secured hubs, via Firewall Manager",
+      "An outbound deny-all rule on the subnet network security group",
+      "A Web Application Firewall policy attached to the core-banking subnet and its NICs",
+      "A DDoS Protection plan applied to the core-banking subnet address range"
     ],
-    "correctAnswers": ["A UDR forcing 0.0.0.0/0 to Azure Firewall deployed in secured virtual hubs, with the policy managed centrally via Azure Firewall Manager"],
-    "explanation": "The UDR forces inspection through the firewall, secured hubs put Azure Firewall centrally in each region, and Firewall Manager is what makes the policy reusable/shared across hubs. A WAF or DDoS plan don't inspect general egress traffic.",
+    "correctAnswers": [
+      "A UDR sending 0.0.0.0/0 to Azure Firewall in secured hubs, via Firewall Manager"
+    ],
+    "explanation": "Three parts are needed and each maps to one clause: the route forces egress through the firewall, secured hubs put the firewall where both regions transit, and Firewall Manager holds the one reusable policy. An outbound deny-all NSG is the tempting minimal answer and inspects nothing — it stops traffic rather than examining it, which is the opposite of what the requirement asks.",
+    "skillRef": "d2c3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-33",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-33",
     "type": "case-study",
     "caseStudyId": "cs-woodgrove-data",
     "prompt": "Referring to requirement 6 (central security must block a known-malicious IP range across all 40 VNets without editing each NSG, and without resource owners overriding it), which feature applies?",
     "choices": [
-      "An AVNM security admin configuration applied to a network group spanning all VNets",
-      "A deny rule copied into every NSG manually",
-      "An Azure Policy Deny effect on NSG resources",
-      "A UDR blackhole route added per subnet"
+      "An AVNM security admin configuration on a group spanning all 40 VNets",
+      "A deny rule copied by hand into every network security group",
+      "An Azure Policy Deny effect targeting network security group resources",
+      "A user-defined blackhole route added to every subnet in every VNet"
     ],
-    "correctAnswers": ["An AVNM security admin configuration applied to a network group spanning all VNets"],
-    "explanation": "Security admin rules are applied once at the network-group level, enforced ahead of every NSG, and cannot be overridden — exactly the centralized, no-per-NSG-edit, override-proof outcome required.",
+    "correctAnswers": [
+      "An AVNM security admin configuration on a group spanning all 40 VNets"
+    ],
+    "explanation": "The Azure Policy option is the interesting distractor here: a Deny effect blocks a non-compliant NSG from being CREATED, whereas it cannot filter a single packet — governance of configuration is not enforcement of traffic. A blackhole route drops the traffic but any subnet owner can replace the route table, so it fails the non-overridable half.",
+    "skillRef": "d2c2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-3-34",
+    "src": "kb-network",
     "objectiveId": "o2-3",
+    "id": "q-o2-3-34",
     "type": "case-study",
     "caseStudyId": "cs-woodgrove-data",
     "prompt": "Referring to requirement 7 (a public loan-application web app must be protected against SQL injection and XSS at a global edge point of presence, since customers connect from multiple continents), which solution is correct?",
     "choices": [
       "Azure Front Door with a Web Application Firewall policy attached",
-      "Application Gateway with a WAF policy attached",
-      "Azure Firewall Premium with IDPS enabled",
-      "NSGs applied to the app's subnet"
+      "Application Gateway with a Web Application Firewall policy attached",
+      "Azure Firewall Premium with IDPS and TLS inspection enabled",
+      "Network security groups applied to the application subnet"
     ],
-    "correctAnswers": ["Azure Front Door with a Web Application Firewall policy attached"],
-    "explanation": "Front Door is the global L7 edge/CDN entry point, satisfying the multi-continent requirement; Application Gateway is regional only, and Azure Firewall/NSGs don't provide OWASP-specific web application protection.",
+    "correctAnswers": [
+      "Azure Front Door with a Web Application Firewall policy attached"
+    ],
+    "explanation": "Both of the first two options carry the same WAF, so the requirement is decided entirely on scope: Front Door is a global edge, whereas Application Gateway is regional and would send every continent through one region. That is the closest miss in the set, and answering on WAF capability rather than on reach is what gets it wrong.",
+    "skillRef": "d2c8",
     "difficulty": "medium"
   },
   {
@@ -453,9 +711,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o2-3",
     "prompt": "Proposed solution: Add a deny rule for the malicious IP range to the NSG of every subnet in every VNet. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
     "explanation": "This blocks the traffic but requires editing every NSG individually, and any NSG owner could still remove or override it later — it is not centrally enforced or override-proof as required.",
+    "src": "kb-network",
+    "skillRef": "d2c1",
     "difficulty": "medium"
   },
   {
@@ -464,9 +729,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o2-3",
     "prompt": "Proposed solution: Create an Azure Virtual Network Manager security admin rule denying that IP range, applied to a network group containing all 40 VNets. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "A single security admin rule applied to a network group spanning all VNets enforces the block centrally, ahead of any NSG, with no per-VNet edits and no possibility of local override.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "One security admin rule on a network group spanning all 40 VNets enforces the block centrally, ahead of every NSG, with no per-VNet edit — which is what satisfies both halves of the goal at once. The reason the alternative solutions fail is not coverage but durability: they can each be undone locally, whereas a security admin rule cannot.",
+    "src": "kb-network",
+    "skillRef": "d2c2",
     "difficulty": "medium"
   },
   {
@@ -475,9 +747,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o2-3",
     "prompt": "Proposed solution: Deploy Azure DDoS Protection on every public IP in the tenant. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
     "explanation": "DDoS Protection mitigates volumetric flood attacks; it has no mechanism for blocking a specific IP range centrally, so it does not meet the stated goal.",
+    "src": "kb-network",
+    "skillRef": "d2c2",
     "difficulty": "medium"
   },
   {
@@ -487,11 +766,13 @@
     "prompt": "Order the steps to enforce an Azure Virtual Network Manager security admin rule across multiple VNets.",
     "reorderItems": [
       "Create a network group and add the target VNets as members",
-      "Create a security admin configuration",
+      "Add a security admin configuration to the Virtual Network Manager instance",
       "Define a security admin rule inside that configuration",
       "Deploy the configuration to the network group's regions"
     ],
-    "explanation": "The group must exist first, then the configuration and its rule are authored, and finally the configuration is deployed to take effect.",
+    "explanation": "The group must exist before a configuration can target it, the rule lives inside the configuration, and the deployment is what pushes it to the regions. Skipping the deployment step is the omission that matters: everything appears configured in the portal, whereas no rule is in force anywhere until the configuration is deployed.",
+    "src": "kb-network",
+    "skillRef": "d2c2",
     "difficulty": "medium"
   },
   {
@@ -505,7 +786,9 @@
       "Link the private DNS zone to the VNet",
       "Disable the resource's public network access"
     ],
-    "explanation": "The endpoint must exist before DNS can point to it, the zone must exist before it can be linked, and public access is only disabled once the private path is confirmed to resolve correctly.",
+    "explanation": "The endpoint must exist before DNS can point at it, the zone must exist before it can be linked, and public access comes last so the private path is proven first. Disabling public access earlier is the ordering mistake that turns a migration into an outage, and skipping the link leaves the zone present but never consulted.",
+    "src": "kb-network",
+    "skillRef": "d2c6",
     "difficulty": "medium"
   },
   {
@@ -515,12 +798,207 @@
     "prompt": "Configure this simplified NSG rule so it allows only the 'web' Application Security Group to reach the 'db' Application Security Group on the SQL port.",
     "screenTitle": "Add inbound security rule (simulated)",
     "fields": [
-      { "id": "priority", "label": "Priority", "kind": "select", "options": ["100", "4096"], "correctValue": "100" },
-      { "id": "source", "label": "Source", "kind": "select", "options": ["Any", "IP Addresses", "Application Security Group"], "correctValue": "Application Security Group" },
-      { "id": "port", "label": "Destination port", "kind": "select", "options": ["22", "443", "1433"], "correctValue": "1433" },
-      { "id": "action", "label": "Action", "kind": "select", "options": ["Allow", "Deny"], "correctValue": "Allow" }
+      {
+        "id": "priority",
+        "label": "Priority",
+        "kind": "select",
+        "options": [
+          "100",
+          "4096"
+        ],
+        "correctValue": "100"
+      },
+      {
+        "id": "source",
+        "label": "Source",
+        "kind": "select",
+        "options": [
+          "Any",
+          "IP Addresses",
+          "Application Security Group"
+        ],
+        "correctValue": "Application Security Group"
+      },
+      {
+        "id": "port",
+        "label": "Destination port",
+        "kind": "select",
+        "options": [
+          "22",
+          "443",
+          "1433"
+        ],
+        "correctValue": "1433"
+      },
+      {
+        "id": "action",
+        "label": "Action",
+        "kind": "select",
+        "options": [
+          "Allow",
+          "Deny"
+        ],
+        "correctValue": "Allow"
+      }
     ],
-    "explanation": "A low priority number ensures this custom rule is evaluated before the default deny; ASG as source targets the 'web' role directly; 1433 is the SQL port; Allow permits the traffic.",
+    "explanation": "A low priority number puts the rule ahead of the default deny; an Application Security Group as source names the web role rather than an address list that drifts; 1433 is the SQL port; Allow permits the flow. The priority field is where this screen catches people: 4096 is a valid priority, whereas the rule would then sit behind anything already written and never be reached.",
+    "src": "kb-network",
+    "skillRef": "d2c1",
     "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-3-41",
+    "objectiveId": "o2-3",
+    "type": "drag-match",
+    "prompt": "Drag the Azure Network Watcher diagnostic onto the symptom it resolves. Not every diagnostic is used.",
+    "sources": [
+      "IP flow verify",
+      "Effective security rules",
+      "Next hop",
+      "Packet capture",
+      "Connection troubleshoot",
+      "NSG flow logs",
+      "Connection monitor"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "label": "A VM cannot reach a PaaS endpoint and you need to know which specific rule allows or denies that one flow",
+        "correctSource": "IP flow verify"
+      },
+      {
+        "id": "t2",
+        "label": "You need the complete rule set applied to a NIC, including Virtual Network Manager security admin rules that sit above the NSG",
+        "correctSource": "Effective security rules"
+      },
+      {
+        "id": "t3",
+        "label": "Outbound internet traffic is disappearing and you suspect a user-defined route is sending it somewhere unexpected",
+        "correctSource": "Next hop"
+      },
+      {
+        "id": "t4",
+        "label": "You need the packet-level contents of a suspicious flow to hand to an offline analysis tool",
+        "correctSource": "Packet capture"
+      }
+    ],
+    "explanation": "Each diagnostic answers a different question: IP flow verify tests one 5-tuple against the applied rules, effective security rules enumerates everything applied to the NIC, next hop resolves routing rather than filtering, and packet capture produces payload. Connection troubleshoot is the tempting wrong answer for the first target — it reports whether a connection succeeds, not which rule decided it, so it tells you the flow failed without naming the cause.",
+    "src": "kb-network",
+    "skillRef": "d2c9",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o2-3-42",
+    "objectiveId": "o2-3",
+    "type": "dropdown-sentence",
+    "prompt": "A central security team applied a Virtual Network Manager rule that a spoke owner's NSG appears to contradict. Complete the statement that describes how to diagnose it.",
+    "template": "To see every rule actually applied to the virtual machine's network interface, including the ones the spoke owner cannot change, use [[b1]]. When the two sources conflict, [[b2]] wins, because [[b3]].",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "Network Watcher effective security rules",
+          "the NSG's inbound security rules blade",
+          "Azure Policy compliance details",
+          "the Azure Firewall policy analytics view"
+        ],
+        "correctValue": "Network Watcher effective security rules"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "the Virtual Network Manager security admin rule",
+          "the spoke owner's network security group rule",
+          "whichever rule has the lower priority number",
+          "whichever rule was created most recently"
+        ],
+        "correctValue": "the Virtual Network Manager security admin rule"
+      },
+      {
+        "id": "b3",
+        "options": [
+          "security admin rules are evaluated before NSGs and cannot be overridden locally",
+          "network security groups are only advisory once a manager is deployed",
+          "priority numbers are compared across both rule collections together",
+          "the most recently deployed configuration always replaces older rules"
+        ],
+        "correctValue": "security admin rules are evaluated before NSGs and cannot be overridden locally"
+      }
+    ],
+    "explanation": "The NSG blade shows only what the spoke owner configured, which is exactly why it misleads here: the rule doing the blocking is not in it. Effective security rules is the view that merges both layers. Priority is the tempting answer for the tie-break, but priorities are only compared within a collection — the layering between security admin rules and NSGs is decided by evaluation order, not by number, which is precisely what lets a central team enforce something a VNet owner cannot undo.",
+    "src": "kb-network",
+    "skillRef": "d2c9",
+    "difficulty": "hard"
+  },
+  {
+    "src": "kb-network",
+    "objectiveId": "o2-3",
+    "id": "q-o2-3-43",
+    "type": "single",
+    "prompt": "A web VM can no longer reach a database VM in a peered virtual network. The NSG on the database subnet appears to contain an allow rule for the web subnet. Which single diagnostic most directly identifies what is dropping the traffic?",
+    "choices": [
+      "Run IP flow verify for the exact source, destination, port and protocol",
+      "Enable NSG flow logs and wait for the next collection interval to analyse them",
+      "Redeploy the network security group from the original ARM template",
+      "Enable the Log Analytics agent on both machines and query VMConnection"
+    ],
+    "correctAnswers": [
+      "Run IP flow verify for the exact source, destination, port and protocol"
+    ],
+    "explanation": "IP flow verify answers the exact question asked — allowed or denied, and by which rule — for one five-tuple, without waiting and without sending traffic. Flow logs are the tempting alternative because they are the other NSG diagnostic, whereas they record what already happened on a collection interval, so the answer arrives minutes later and still has to be searched for.",
+    "skillRef": "d2c9",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-3-44",
+    "objectiveId": "o2-3",
+    "type": "single",
+    "prompt": "An ISV hosts an internal API behind a Standard Load Balancer and must let twenty customer tenants reach it privately, without VNet peering and without the ISV learning the customers' address ranges. What must the ISV deploy?",
+    "choices": [
+      "A Private Link service in front of the load balancer, which customers then consume with their own private endpoints",
+      "A private endpoint in the ISV's virtual network pointing at the load balancer's frontend address",
+      "A Virtual WAN hub with a secured virtual hub, peered to each of the twenty customer networks",
+      "An Azure Firewall with DNAT rules that translate each customer's inbound traffic to the load balancer's private frontend address"
+    ],
+    "correctAnswers": [
+      "A Private Link service in front of the load balancer, which customers then consume with their own private endpoints"
+    ],
+    "explanation": "The two halves of Private Link are frequently swapped, and this scenario is the provider half: a Private Link service publishes your own load-balanced service for others to consume, and each consumer creates a private endpoint on their side. A private endpoint is the consumer half and would let the ISV reach someone else's service, not publish its own. Because the connection is NAT'd through the service, overlapping or unknown customer address space is a non-issue — which is exactly the requirement here, and what peering or a hub could not satisfy.",
+    "src": "kb-network",
+    "skillRef": "d2c7",
+    "outdated": 2,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o2-3-45",
+    "objectiveId": "o2-3",
+    "type": "statement-grid",
+    "prompt": "A team is designing private connectivity with Azure Private Link. For each of the following statements, select Yes if the statement is true, or No if it is not.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "A private endpoint and a Private Link service are two names for the same resource, viewed from either end of the connection.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s2",
+        "text": "A Private Link service publishes your own load-balanced service so that consumers in other tenants can reach it over a private endpoint.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s3",
+        "text": "Traffic to a Private Link service is network-address translated, so the provider does not need to know the consumer's address space.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s4",
+        "text": "A Private Link service requires the consumer and provider virtual networks to be peered first.",
+        "correctValue": "No"
+      }
+    ],
+    "explanation": "Private Link has a provider side and a consumer side, and they are distinct resources: the service publishes, the endpoint consumes. The two No rows are the ones that trip people. Treating them as one resource is the common conflation, and assuming peering is required misses the whole point — the NAT is what removes any address-space dependency, which is why this works across tenants that will never share a network.",
+    "src": "kb-network",
+    "skillRef": "d2c7",
+    "difficulty": "hard"
   }
 ]

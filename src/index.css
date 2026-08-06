@@ -914,3 +914,350 @@ table.scores th {
   font-weight: 800;
   line-height: 1;
 }
+
+/* ---------- Interactive item formats ----------
+   statement-grid, drag-match, dropdown-sentence and build-list. All four reuse
+   the existing tokens and the .choice look, so they inherit light/dark theming
+   and the correct/incorrect states without new colour definitions. */
+
+/* statement-grid — "select Yes if the statement is true" */
+.statement-grid {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.9rem 0;
+}
+.statement-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  padding: 0.7rem 0.9rem;
+  border-radius: 11px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+}
+.statement-row.correct {
+  border-color: var(--good);
+  background: var(--good-soft);
+}
+.statement-row.incorrect {
+  border-color: var(--bad);
+  background: var(--bad-soft);
+}
+.statement-text {
+  flex: 1 1 16rem;
+  min-width: 0;
+  font-size: 0.95rem;
+}
+.statement-answers {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+.statement-pick {
+  min-width: 3.6rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.statement-pick:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+.statement-pick:disabled {
+  cursor: default;
+}
+.statement-pick.picked {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+.statement-expected {
+  flex-basis: 100%;
+  font-size: 0.8rem;
+}
+
+/* drag-match — drag each source onto its target */
+.match-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  margin: 0.9rem 0;
+  border-radius: 11px;
+  border: 1.5px dashed var(--border-strong);
+  background: var(--surface-2);
+}
+.match-source {
+  padding: 0.5rem 0.8rem;
+  border-radius: 9px;
+  border: 1.5px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9rem;
+  cursor: grab;
+  touch-action: none;
+}
+.match-source:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+.match-source.dragging {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  z-index: 10;
+}
+.match-targets {
+  display: grid;
+  gap: 0.5rem;
+}
+.match-target {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  padding: 0.7rem 0.9rem;
+  border-radius: 11px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+}
+.match-target.over {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.match-target.correct {
+  border-color: var(--good);
+  background: var(--good-soft);
+}
+.match-target.incorrect {
+  border-color: var(--bad);
+  background: var(--bad-soft);
+}
+.match-label {
+  flex: 1 1 12rem;
+  min-width: 0;
+  font-size: 0.95rem;
+}
+.match-slot {
+  flex: 0 1 14rem;
+  display: flex;
+  justify-content: flex-end;
+}
+.match-assigned {
+  padding: 0.35rem 0.7rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+.match-assigned:disabled {
+  cursor: default;
+}
+.match-empty {
+  font-size: 0.85rem;
+  font-style: italic;
+}
+.match-expected {
+  flex-basis: 100%;
+  font-size: 0.8rem;
+}
+
+/* dropdown-sentence — inline selects inside prose */
+.sentence-template {
+  font-size: 1rem;
+  line-height: 2.4;
+  margin: 0.9rem 0;
+  padding: 0.9rem 1rem;
+  border-radius: 11px;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+}
+.sentence-blank {
+  display: inline;
+}
+.sentence-select {
+  padding: 0.3rem 0.5rem;
+  margin: 0 0.15rem;
+  max-width: min(100%, 22rem);
+  border-radius: 8px;
+  border: 1.5px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+.sentence-select.correct {
+  border-color: var(--good);
+  background: var(--good-soft);
+}
+.sentence-select.incorrect {
+  border-color: var(--bad);
+  background: var(--bad-soft);
+}
+.sentence-expected {
+  font-size: 0.8rem;
+}
+
+/* build-list — pool on the left, ordered answer on the right */
+.build-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 0.9rem 0;
+}
+.build-col {
+  min-width: 0;
+}
+.build-col-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+}
+.build-available,
+.build-chosen {
+  font-size: 0.9rem;
+}
+.build-chosen {
+  cursor: default;
+}
+.build-grip {
+  flex: 1 1 auto;
+  min-width: 0;
+  cursor: grab;
+  touch-action: none;
+}
+.build-remove {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  border: 1.5px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.build-remove:hover {
+  border-color: var(--bad);
+  color: var(--bad);
+}
+.build-note {
+  flex-basis: 100%;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 620px) {
+  .build-columns {
+    grid-template-columns: 1fr;
+  }
+  .match-slot {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+  }
+  .statement-answers {
+    margin-left: auto;
+  }
+  .sentence-template {
+    line-height: 2.6;
+  }
+}
+
+/* ---------- Review queue ----------
+   Reuses the existing tokens, so light/dark and the good/bad states come for
+   free. The two answer panels are deliberately side by side: seeing what you
+   answered next to what was expected is the whole point of the page. */
+
+.review-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.review-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+  flex: 1 1 16rem;
+}
+.review-filters .sentence-select {
+  max-width: 100%;
+  margin: 0;
+}
+
+.review-answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+  margin: 0.9rem 0;
+}
+.review-answer {
+  min-width: 0;
+  padding: 0.75rem 0.9rem;
+  border-radius: 11px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+}
+.review-answer.bad {
+  border-color: color-mix(in srgb, var(--bad) 45%, transparent);
+  background: var(--bad-soft);
+}
+.review-answer.good {
+  border-color: color-mix(in srgb, var(--good) 45%, transparent);
+  background: var(--good-soft);
+}
+.review-answer ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.92rem;
+}
+.review-answer li {
+  margin-bottom: 0.3rem;
+  overflow-wrap: anywhere;
+}
+.review-answer li:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 620px) {
+  .review-answers {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Exam metadata notices ----------
+   Deliberately not a .card: these must read as an interruption above the page's
+   content, not as one more panel among several. A retirement countdown or an
+   "your practice score is inflated" warning that blends in has failed. */
+
+.notice {
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 11px;
+  border: 1.5px solid var(--border-strong);
+  border-left-width: 5px;
+  background: var(--surface-2);
+  font-size: 0.93rem;
+  line-height: 1.5;
+}
+.notice.bad {
+  border-color: color-mix(in srgb, var(--bad) 45%, transparent);
+  border-left-color: var(--bad);
+  background: var(--bad-soft);
+}
+.notice.warn {
+  border-color: color-mix(in srgb, var(--warn) 45%, transparent);
+  border-left-color: var(--warn);
+  background: var(--warn-soft);
+}
+.notice code {
+  font-size: 0.88em;
+}

@@ -63,6 +63,9 @@ export default function Layout() {
         <NavLink to="domains" className="nav-link">
           Domaines
         </NavLink>
+        <NavLink to="review" className="nav-link">
+          À revoir
+        </NavLink>
         <NavLink to="exam" className="nav-link">
           Examen blanc
         </NavLink>

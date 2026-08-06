@@ -7,3 +7,6 @@ screenshots/
 /test-results/
 /playwright-report/
 *.tsbuildinfo
+
+# Frozen fact sheets distil vendor documentation and are never read at runtime.
+tools/facts-*.md

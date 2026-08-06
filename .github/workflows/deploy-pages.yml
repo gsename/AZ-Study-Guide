@@ -30,6 +30,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # tsc cannot see that a bank leaks its answers through option length, that
+      # a correctAnswers entry is missing from choices, or that a reorder answer
+      # is alphabetical. This step is the only gate that can, so it runs BEFORE
+      # the build rather than after it.
+      - name: Check question banks
+        run: npm run check:banks
+
+      # The exam draw has no other coverage, and its two failure modes are silent:
+      # an allocation tie resolved by sort internals, and case-study questions
+      # scattered so their scenario is re-read a dozen times.
+      - name: Check the exam draw
+        run: npm run verify:exam
+
       - name: Build
         run: npm run build
 

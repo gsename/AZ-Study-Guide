@@ -5,12 +5,14 @@
     "type": "single",
     "prompt": "What happens to a PaaS service's public IP when you configure a service endpoint for it?",
     "choices": [
-      "It keeps its public IP but can be restricted to the selected VNet subnet(s)",
-      "The public IP is removed and replaced by a private IP",
+      "It keeps its public IP, restricted to the subnet",
       "It receives an additional private IP alongside the public one",
+      "The public IP is removed and replaced by a private one",
       "It becomes reachable only through a VPN Gateway"
     ],
-    "correctAnswers": ["It keeps its public IP but can be restricted to the selected VNet subnet(s)"],
+    "correctAnswers": [
+      "It keeps its public IP, restricted to the subnet"
+    ],
     "explanation": "A service endpoint extends your VNet identity over the backbone; the service keeps its public IP but access can be limited to allowed subnets.",
     "difficulty": "easy"
   },
@@ -20,13 +22,15 @@
     "type": "single",
     "prompt": "What does a private endpoint give a PaaS service?",
     "choices": [
-      "A private IP inside your VNet via a dedicated NIC, with no public exposure",
-      "A faster, dedicated public IP",
-      "A restriction of its public IP to your subnet",
-      "An encrypted tunnel from the service to on-premises"
+      "A private IP in your VNet, via a dedicated NIC",
+      "A restriction of its existing public IP to your own subnet",
+      "An encrypted tunnel from the service to on-premises",
+      "A faster, dedicated public IP address"
     ],
-    "correctAnswers": ["A private IP inside your VNet via a dedicated NIC, with no public exposure"],
-    "explanation": "A private endpoint (Azure Private Link) assigns the service a private IP on a NIC in your VNet. Restricting a public IP by subnet is what a service endpoint does.",
+    "correctAnswers": [
+      "A private IP in your VNet, via a dedicated NIC"
+    ],
+    "explanation": "A private endpoint assigns the service a private IP on a NIC inside your VNet, so the public endpoint can be removed entirely. Restricting the public IP to your subnet is the tempting near-answer, however that describes a service endpoint — the address stays public and publicly resolvable.",
     "difficulty": "easy"
   },
   {
@@ -35,13 +39,15 @@
     "type": "single",
     "prompt": "Which requirement is unique to private endpoints (and not to service endpoints) for name resolution to work correctly?",
     "choices": [
-      "Integrating a Private DNS zone so the service name resolves to the private IP",
-      "Adding the Storage service tag to the subnet NSG",
-      "Enabling a VPN Gateway on the VNet",
-      "Assigning a managed identity to the client"
+      "Integrating a Private DNS zone for the name",
+      "Adding the Storage service tag to the subnet NSG rules",
+      "Assigning a managed identity to the client",
+      "Enabling a VPN Gateway on the VNet"
     ],
-    "correctAnswers": ["Integrating a Private DNS zone so the service name resolves to the private IP"],
-    "explanation": "Without Private DNS zone integration, the service's hostname still resolves to its public IP, bypassing the private endpoint.",
+    "correctAnswers": [
+      "Integrating a Private DNS zone for the name"
+    ],
+    "explanation": "Private DNS zone integration is unique to private endpoints: without it the service hostname still resolves to its public IP and the private path is never used. The Storage service tag is the tempting alternative because it also names the service, whereas a tag governs NSG rules rather than name resolution.",
     "difficulty": "medium"
   },
   {
@@ -55,8 +61,10 @@
       "An NSG rule allowing only the on-premises IP range",
       "A shared access signature scoped to the service"
     ],
-    "correctAnswers": ["A private endpoint with public network access disabled"],
-    "explanation": "Only a private endpoint removes public exposure while remaining reachable across peered VNets and on-premises links. Service endpoints keep a public IP.",
+    "correctAnswers": [
+      "A private endpoint with public network access disabled"
+    ],
+    "explanation": "Only a private endpoint with public network access disabled removes public exposure while staying reachable across peering, VPN and ExpressRoute. A service endpoint is the closest miss and leaves the public endpoint in place, so the \"no public exposure\" half of the requirement fails.",
     "difficulty": "medium"
   },
   {
@@ -66,11 +74,13 @@
     "prompt": "After adding a private endpoint to a storage account, what additional setting ensures it can no longer be reached over the public internet?",
     "choices": [
       "Set Public network access to Disabled",
-      "Enable soft delete",
-      "Rotate the account access keys",
-      "Enable blob versioning"
+      "Rotate both of the account access keys",
+      "Enable blob versioning on the account",
+      "Enable soft delete on the containers"
     ],
-    "correctAnswers": ["Set Public network access to Disabled"],
+    "correctAnswers": [
+      "Set Public network access to Disabled"
+    ],
     "explanation": "Adding a private endpoint does not automatically close the public endpoint; you must disable public network access explicitly.",
     "difficulty": "medium"
   },
@@ -80,13 +90,15 @@
     "type": "single",
     "prompt": "What is an Azure Private Link service (as opposed to a private endpoint)?",
     "choices": [
-      "A way to expose YOUR own service (behind a Standard Load Balancer) privately to consumers",
-      "A way to consume a Microsoft PaaS service privately",
+      "A way to publish YOUR service privately",
+      "A way to consume a Microsoft PaaS service privately instead",
       "A managed DNS resolver for private endpoints",
-      "A global CDN entry point"
+      "A global CDN entry point for the web app"
     ],
-    "correctAnswers": ["A way to expose YOUR own service (behind a Standard Load Balancer) privately to consumers"],
-    "explanation": "A Private Link service publishes your own service for others to reach via their own private endpoints — the mirror image of consuming a service privately.",
+    "correctAnswers": [
+      "A way to publish YOUR service privately"
+    ],
+    "explanation": "A Private Link service publishes your own load-balanced service so that others can reach it through their own private endpoints. Consuming a Microsoft PaaS service privately is the other half of Private Link and is the private endpoint, which is why these two are so often swapped — provider side whereas consumer side.",
     "difficulty": "medium"
   },
   {
@@ -100,8 +112,10 @@
       "Encryption of the app's data at rest",
       "A private IP for the app's public endpoint"
     ],
-    "correctAnswers": ["Outbound calls from the app into a VNet"],
-    "explanation": "VNet integration handles outbound connectivity into a VNet; securing inbound access requires a private endpoint or access restrictions.",
+    "correctAnswers": [
+      "Outbound calls from the app into a VNet"
+    ],
+    "explanation": "VNet integration handles outbound calls from the app into a VNet. Securing inbound access is a different mechanism entirely — a private endpoint or access restrictions — whereas expecting VNet integration to do both is the confusion this pair exists to test.",
     "difficulty": "medium"
   },
   {
@@ -110,13 +124,15 @@
     "type": "single",
     "prompt": "An App Service must call an on-premises SQL Server over a site-to-site VPN, while keeping its normal public inbound endpoint. What should you configure?",
     "choices": [
-      "VNet integration on the App Service, connected to the VPN-linked VNet",
-      "A private endpoint on the App Service",
-      "An App Service Environment",
-      "A service endpoint on the App Service"
+      "VNet integration, into the VPN-linked VNet",
+      "A private endpoint on the App Service, for inbound",
+      "A service endpoint on the App Service subnet",
+      "An App Service Environment instead"
     ],
-    "correctAnswers": ["VNet integration on the App Service, connected to the VPN-linked VNet"],
-    "explanation": "VNet integration is the outbound-only mechanism, letting the app reach the on-premises SQL Server without altering its public inbound endpoint.",
+    "correctAnswers": [
+      "VNet integration, into the VPN-linked VNet"
+    ],
+    "explanation": "VNet integration connects the app outbound into the VPN-linked VNet, which is what lets it reach on-premises SQL Server. A private endpoint on the App Service is the tempting answer and points the wrong way: it governs inbound traffic to the app rather than the app's outbound calls.",
     "difficulty": "medium"
   },
   {
@@ -125,13 +141,15 @@
     "type": "single",
     "prompt": "Which App Service networking feature secures INBOUND access to the app?",
     "choices": [
-      "A private endpoint (or access restrictions)",
-      "VNet integration",
-      "A hybrid connection",
-      "A service endpoint on the outbound subnet"
+      "A private endpoint, or access restrictions",
+      "A service endpoint on the outbound subnet only",
+      "VNet integration on the app subnet",
+      "A hybrid connection to on-premises"
     ],
-    "correctAnswers": ["A private endpoint (or access restrictions)"],
-    "explanation": "Inbound protection for App Service comes from a private endpoint or access restrictions; VNet integration only handles outbound traffic.",
+    "correctAnswers": [
+      "A private endpoint, or access restrictions"
+    ],
+    "explanation": "Inbound protection for App Service comes from a private endpoint or from access restrictions. VNet integration is the closest miss because it is the other networking feature on the same blade, whereas it only governs the outbound direction.",
     "difficulty": "medium"
   },
   {
@@ -140,13 +158,15 @@
     "type": "single",
     "prompt": "What is an App Service Environment (ASE)?",
     "choices": [
-      "A fully isolated, single-tenant App Service deployment inside your VNet",
-      "A shared multi-tenant App Service plan with a private endpoint attached",
+      "A single-tenant deployment inside your VNet",
+      "A shared multi-tenant plan with a private endpoint attached",
       "A staging slot for App Service deployments",
       "A managed DNS zone for App Service apps"
     ],
-    "correctAnswers": ["A fully isolated, single-tenant App Service deployment inside your VNet"],
-    "explanation": "An ASE is the single-tenant, fully isolated App Service hosting option, at higher cost/management than multi-tenant App Service.",
+    "correctAnswers": [
+      "A single-tenant deployment inside your VNet"
+    ],
+    "explanation": "An App Service Environment is a single-tenant, fully isolated deployment inside your own VNet, at higher cost and management overhead. It is not multi-tenant App Service with a private endpoint bolted on, which is the cheaper architecture people mistake it for.",
     "difficulty": "easy"
   },
   {
@@ -160,8 +180,10 @@
       "When the app is a simple public website with no isolation needs",
       "When you only need outbound access to a VNet"
     ],
-    "correctAnswers": ["When a hard requirement mandates full single-tenant isolation"],
-    "explanation": "ASE's justification is strict single-tenant isolation. For lower cost/overhead or simple needs, multi-tenant App Service with networking features is preferable.",
+    "correctAnswers": [
+      "When a hard requirement mandates full single-tenant isolation"
+    ],
+    "explanation": "An ASE is justified when a hard requirement mandates full single-tenant isolation, and by little else. Choosing it for lower cost or simpler management is the inversion to avoid, whereas it is in fact more expensive and more work than multi-tenant App Service with private endpoints.",
     "difficulty": "medium"
   },
   {
@@ -170,13 +192,15 @@
     "type": "single",
     "prompt": "How is Azure SQL Managed Instance deployed at the network level?",
     "choices": [
-      "Always into a delegated subnet you secure with NSGs and route tables",
-      "Always with a public endpoint and no network controls",
+      "Into a delegated subnet you secure yourself",
+      "Always with a public endpoint and no controls",
       "Only inside an App Service Environment",
-      "Only reachable through Azure Bastion"
+      "Only reachable through Azure Bastion hosts"
     ],
-    "correctAnswers": ["Always into a delegated subnet you secure with NSGs and route tables"],
-    "explanation": "SQL Managed Instance always lands in a delegated subnet you control; you can also add a private endpoint for cross-VNet/on-prem access.",
+    "correctAnswers": [
+      "Into a delegated subnet you secure yourself"
+    ],
+    "explanation": "SQL Managed Instance always lands in a delegated subnet that you secure with NSGs and route tables, and a private endpoint can be added on top. Believing it comes with a public endpoint and no controls is the misconception — the subnet delegation is not optional.",
     "difficulty": "medium"
   },
   {
@@ -184,9 +208,16 @@
     "objectiveId": "o2-2",
     "type": "single",
     "prompt": "Between service endpoints and private endpoints, which keeps the service's public IP address?",
-    "choices": ["Service endpoint", "Private endpoint", "Both remove the public IP", "Neither uses IP addressing"],
-    "correctAnswers": ["Service endpoint"],
-    "explanation": "Service endpoints restrict a still-public IP to your subnet; private endpoints assign a private IP and remove public exposure.",
+    "choices": [
+      "The service endpoint",
+      "Neither uses IP addressing",
+      "Both remove the public IP",
+      "The private endpoint"
+    ],
+    "correctAnswers": [
+      "The service endpoint"
+    ],
+    "explanation": "A service endpoint keeps the service's public IP and restricts which subnets may use it, whereas a private endpoint assigns a private IP inside your VNet. Answering \"both remove the public IP\" is the belief that leads teams to claim no public exposure when the endpoint is still publicly resolvable.",
     "difficulty": "easy"
   },
   {
@@ -195,12 +226,14 @@
     "type": "single",
     "prompt": "A team enabled a service endpoint for Storage but the account is still reachable from other Azure tenants' subnets. Why?",
     "choices": [
-      "A service endpoint alone doesn't restrict access — you must also set the storage firewall to allow only your subnet",
-      "Service endpoints only work with private DNS zones",
+      "The storage firewall must also allow only your subnet",
+      "Service endpoints require public network access to be disabled first",
       "The account needs a private endpoint before any restriction applies",
-      "Service endpoints require public network access to be disabled first"
+      "Service endpoints only work with a private DNS zone"
     ],
-    "correctAnswers": ["A service endpoint alone doesn't restrict access — you must also set the storage firewall to allow only your subnet"],
+    "correctAnswers": [
+      "The storage firewall must also allow only your subnet"
+    ],
     "explanation": "The service endpoint marks traffic with your subnet identity, but you still configure the storage account firewall to allow only that subnet and deny others.",
     "difficulty": "hard"
   },
@@ -209,9 +242,16 @@
     "objectiveId": "o2-2",
     "type": "single",
     "prompt": "Which sub-resource would you select when creating a private endpoint for a storage account that serves blob data?",
-    "choices": ["blob", "vault", "sqlServer", "registry"],
-    "correctAnswers": ["blob"],
-    "explanation": "Private endpoints are created per sub-resource (target group); for blob data you select the 'blob' sub-resource. Others belong to Key Vault, SQL, or ACR.",
+    "choices": [
+      "blob (for blob data)",
+      "sqlServer (for a database)",
+      "registry (for images)",
+      "vault (for secrets)"
+    ],
+    "correctAnswers": [
+      "blob (for blob data)"
+    ],
+    "explanation": "Private endpoints are created per sub-resource, and for blob data the target group is blob. The other options are sub-resource names of different services — vault for Key Vault, sqlServer for SQL, registry for ACR — whereas picking from the list without checking the service is a real error mode.",
     "difficulty": "medium"
   },
   {
@@ -220,12 +260,14 @@
     "type": "single",
     "prompt": "From on-premises over ExpressRoute private peering, a client resolves a storage account name to its PUBLIC IP even though a private endpoint exists. What is the fix?",
     "choices": [
-      "Configure DNS forwarding/conditional forwarding to the Azure Private DNS zone",
+      "Conditionally forward DNS to the Azure zone",
+      "Enable a service endpoint in addition to the private endpoint",
       "Add the storage service tag to the on-premises firewall",
-      "Recreate the private endpoint with a public IP",
-      "Enable a service endpoint in addition to the private endpoint"
+      "Recreate the private endpoint with a public IP"
     ],
-    "correctAnswers": ["Configure DNS forwarding/conditional forwarding to the Azure Private DNS zone"],
+    "correctAnswers": [
+      "Conditionally forward DNS to the Azure zone"
+    ],
     "explanation": "On-premises resolvers must be pointed at (or forward to) the Private DNS zone so the name resolves to the private endpoint IP rather than the public one.",
     "difficulty": "hard"
   },
@@ -235,13 +277,15 @@
     "type": "single",
     "prompt": "Which statement about a Private Link service versus a private endpoint is correct?",
     "choices": [
-      "A Private Link service is what a provider publishes; a private endpoint is what a consumer creates to reach it",
-      "They are two names for the same object",
-      "A Private Link service consumes a Microsoft PaaS service privately",
-      "A private endpoint requires a Standard Load Balancer on the consumer side"
+      "The provider publishes; the consumer connects",
+      "A private endpoint needs a Standard Load Balancer",
+      "A Private Link service consumes a PaaS service privately",
+      "They are two names for the same single object"
     ],
-    "correctAnswers": ["A Private Link service is what a provider publishes; a private endpoint is what a consumer creates to reach it"],
-    "explanation": "The provider stands up a Private Link service (behind a Standard LB); each consumer connects with a private endpoint on their side.",
+    "correctAnswers": [
+      "The provider publishes; the consumer connects"
+    ],
+    "explanation": "The provider stands up a Private Link service behind a Standard Load Balancer, and each consumer connects with their own private endpoint. Treating them as two names for one object is the trap: they are the two ends of the same connection, configured by different parties.",
     "difficulty": "medium"
   },
   {
@@ -250,13 +294,15 @@
     "type": "single",
     "prompt": "Which two networking directions do VNet integration and a private endpoint respectively cover for App Service?",
     "choices": [
-      "VNet integration = outbound; private endpoint = inbound",
-      "VNet integration = inbound; private endpoint = outbound",
-      "Both cover outbound only",
-      "Both cover inbound only"
+      "Integration outbound; private endpoint inbound",
+      "Integration inbound; private endpoint outbound instead",
+      "Both of them cover the outbound direction only",
+      "Both of them cover the inbound direction only"
     ],
-    "correctAnswers": ["VNet integration = outbound; private endpoint = inbound"],
-    "explanation": "They solve opposite directions and are frequently used together.",
+    "correctAnswers": [
+      "Integration outbound; private endpoint inbound"
+    ],
+    "explanation": "They cover opposite directions — VNet integration outbound, whereas a private endpoint is inbound — which is why they are frequently deployed together. Reading either as covering both leaves one direction wide open while the design looks complete.",
     "difficulty": "medium"
   },
   {
@@ -265,12 +311,14 @@
     "type": "single",
     "prompt": "You want a Key Vault to be reachable only from within a specific VNet, with no public endpoint at all. Which is the most robust option?",
     "choices": [
-      "A private endpoint on the Key Vault with public network access disabled",
-      "A service endpoint plus the vault firewall set to the subnet",
-      "An NSG rule on the vault's subnet",
-      "A Conditional Access policy on the vault"
+      "A private endpoint, public access disabled",
+      "A service endpoint plus the vault firewall rule",
+      "A Conditional Access policy on the vault",
+      "An NSG rule on the vault's delegated subnet"
     ],
-    "correctAnswers": ["A private endpoint on the Key Vault with public network access disabled"],
+    "correctAnswers": [
+      "A private endpoint, public access disabled"
+    ],
     "explanation": "A private endpoint removes public exposure entirely; a service endpoint still leaves the vault's public endpoint reachable (restricted). NSGs/Conditional Access don't gate the vault's public endpoint this way.",
     "difficulty": "medium"
   },
@@ -280,12 +328,14 @@
     "type": "single",
     "prompt": "Which is a genuine advantage of a private endpoint over a service endpoint?",
     "choices": [
-      "It works across peered VNets and on-premises networks, with no public exposure",
+      "It works across peering and on-premises",
+      "It automatically encrypts the data at rest in the service too",
       "It is free, whereas service endpoints are billed per hour",
-      "It requires no DNS configuration",
-      "It automatically encrypts data at rest in the service"
+      "It requires no DNS configuration at all"
     ],
-    "correctAnswers": ["It works across peered VNets and on-premises networks, with no public exposure"],
+    "correctAnswers": [
+      "It works across peering and on-premises"
+    ],
     "explanation": "Private endpoints extend privately across peered/on-prem networks and remove public exposure. They do require Private DNS configuration and are not free.",
     "difficulty": "medium"
   },
@@ -295,12 +345,14 @@
     "type": "single",
     "prompt": "A serverless Function app needs to reach a database that only accepts traffic from within a VNet. Which feature should you enable on the Function app?",
     "choices": [
-      "VNet integration",
-      "A private endpoint on the Function app",
+      "VNet integration on the app",
       "A service endpoint on the database only",
-      "Azure Bastion"
+      "A private endpoint on the Function app",
+      "Azure Bastion for the app"
     ],
-    "correctAnswers": ["VNet integration"],
+    "correctAnswers": [
+      "VNet integration on the app"
+    ],
     "explanation": "The Function app makes an outbound call into the VNet, which is VNet integration's role. A private endpoint on the app would address inbound access instead.",
     "difficulty": "medium"
   },
@@ -310,12 +362,14 @@
     "type": "single",
     "prompt": "Which of these is NOT a valid way to reduce public exposure of an Azure SQL Database (logical server)?",
     "choices": [
-      "Assigning it a system-assigned managed identity",
-      "Adding a private endpoint",
-      "Disabling public network access",
-      "Restricting the server firewall to specific IPs/VNets"
+      "Assigning it a system-assigned identity",
+      "Restricting the server firewall to IPs or VNets",
+      "Disabling public network access on it",
+      "Adding a private endpoint to the server"
     ],
-    "correctAnswers": ["Assigning it a system-assigned managed identity"],
+    "correctAnswers": [
+      "Assigning it a system-assigned identity"
+    ],
     "explanation": "A managed identity is about how the server authenticates outbound (e.g. to Key Vault), not about restricting inbound network exposure. The other three all reduce public reachability.",
     "difficulty": "hard"
   },
@@ -325,13 +379,15 @@
     "type": "single",
     "prompt": "Why is Azure SQL Managed Instance considered network-isolated by design?",
     "choices": [
-      "It is always deployed into a delegated subnet that you control with NSGs and routes",
+      "It always lands in a delegated subnet",
+      "It runs inside a mandatory App Service Environment instead",
       "It is always assigned a private endpoint automatically",
-      "It can only be reached through Azure Bastion",
-      "It runs inside a mandatory App Service Environment"
+      "It can only be reached through Azure Bastion"
     ],
-    "correctAnswers": ["It is always deployed into a delegated subnet that you control with NSGs and routes"],
-    "explanation": "SQL MI is never placed in a shared multi-tenant network; it always lives in a delegated subnet you secure directly.",
+    "correctAnswers": [
+      "It always lands in a delegated subnet"
+    ],
+    "explanation": "SQL Managed Instance is always deployed into a delegated subnet you control with NSGs and route tables, so it is never on a shared multi-tenant network. It is not assigned a private endpoint automatically, which is the over-reading — the isolation comes from the subnet rather than from Private Link.",
     "difficulty": "medium"
   },
   {
@@ -340,13 +396,15 @@
     "type": "single",
     "prompt": "A private endpoint is created but clients inside the VNet still connect to the service's public IP. What is the most likely cause?",
     "choices": [
-      "The Private DNS zone was not linked to the VNet, so the name still resolves publicly",
-      "The private endpoint needs a public IP assigned",
+      "The Private DNS zone was never linked",
+      "The private endpoint needs a public IP assigned to it",
       "Public network access must be re-enabled",
       "The subnet is missing a service endpoint"
     ],
-    "correctAnswers": ["The Private DNS zone was not linked to the VNet, so the name still resolves publicly"],
-    "explanation": "Without the Private DNS zone linked to the VNet, clients resolve the public IP and never use the private endpoint.",
+    "correctAnswers": [
+      "The Private DNS zone was never linked"
+    ],
+    "explanation": "Without the Private DNS zone linked to the VNet, clients resolve the public IP and never use the private endpoint at all. Re-enabling public network access is the tempting \"fix\" because connectivity returns, whereas it confirms the traffic is taking exactly the path you meant to remove.",
     "difficulty": "medium"
   },
   {
@@ -355,13 +413,16 @@
     "type": "multiple",
     "prompt": "Which two options keep traffic to a PaaS service off the public internet? (Choose two.)",
     "choices": [
-      "Service endpoints",
-      "Private endpoints",
-      "Allowing 0.0.0.0/0 on the NSG",
+      "Service endpoints on the subnet",
+      "Private endpoints in the VNet",
+      "Allowing 0.0.0.0/0 on the subnet NSG",
       "Disabling TLS on the service"
     ],
-    "correctAnswers": ["Service endpoints", "Private endpoints"],
-    "explanation": "Both service and private endpoints keep PaaS traffic on the Azure backbone/off the public internet, at different depths.",
+    "correctAnswers": [
+      "Service endpoints on the subnet",
+      "Private endpoints in the VNet"
+    ],
+    "explanation": "Service endpoints and private endpoints both keep PaaS traffic on the Azure backbone rather than the public internet. Allowing 0.0.0.0/0 on the NSG and disabling TLS are tempting only as distractors that sound network-related — both increase exposure rather than reducing it.",
     "difficulty": "medium"
   },
   {
@@ -379,7 +440,7 @@
       "The PaaS service keeps a public IP address",
       "Traffic travels over the Azure backbone"
     ],
-    "explanation": "Service endpoints keep the public IP (restricted by subnet) and route over the backbone; private IPs and Private DNS are private-endpoint concepts.",
+    "explanation": "A service endpoint keeps the service's public IP, restricted by subnet, and routes over the Azure backbone. Neither distractor holds: no private IP is assigned inside the VNet, and no Private DNS zone is needed — those are private-endpoint properties.",
     "difficulty": "medium"
   },
   {
@@ -388,16 +449,16 @@
     "type": "multiple",
     "prompt": "Which two reasons justify an App Service Environment over multi-tenant App Service? (Choose two.)",
     "choices": [
-      "A regulatory requirement for full single-tenant isolation",
+      "A regulatory single-tenant isolation requirement",
       "A need for a dedicated, isolated deployment",
-      "A desire to minimize cost and management overhead",
+      "A wish to minimize cost and management overhead",
       "A simple public marketing site with no isolation need"
     ],
     "correctAnswers": [
-      "A regulatory requirement for full single-tenant isolation",
+      "A regulatory single-tenant isolation requirement",
       "A need for a dedicated, isolated deployment"
     ],
-    "explanation": "ASE is justified by strict isolation needs, not by cost minimization or simple public sites.",
+    "explanation": "An ASE is justified by a regulatory single-tenant isolation requirement or a need for a dedicated isolated deployment. Cost minimisation and a simple public site are the inversions, whereas an ASE is the more expensive and more operationally demanding option.",
     "difficulty": "medium"
   },
   {
@@ -407,13 +468,15 @@
     "caseStudyId": "cs-fabrikam-network",
     "prompt": "Referring to requirement 3 (a backups storage account reachable only from an on-premises network over ExpressRoute, zero public exposure), which configuration is correct?",
     "choices": [
-      "A private endpoint on the storage account with public network access disabled, reached over ExpressRoute private peering",
-      "A service endpoint restricting the public IP to the on-premises range",
-      "A SAS token issued to the on-premises app",
-      "The storage firewall allowing the on-premises public IP"
+      "A private endpoint, public access disabled",
+      "A service endpoint restricting the public IP",
+      "The storage firewall allowing the on-prem IP",
+      "A SAS token issued to the on-premises app"
     ],
-    "correctAnswers": ["A private endpoint on the storage account with public network access disabled, reached over ExpressRoute private peering"],
-    "explanation": "Only a private endpoint with public access disabled removes all public exposure while remaining reachable from an ExpressRoute-connected network.",
+    "correctAnswers": [
+      "A private endpoint, public access disabled"
+    ],
+    "explanation": "Only a private endpoint with public network access disabled removes all public exposure while remaining reachable from on-premises. The storage firewall allowing the on-premises public IP is the tempting alternative and it keeps the endpoint public, merely narrowing who may use it.",
     "difficulty": "medium"
   },
   {
@@ -423,13 +486,15 @@
     "caseStudyId": "cs-fabrikam-network",
     "prompt": "Referring to requirement 4 (App Service must make outbound calls to on-premises SQL over a site-to-site VPN, keeping its public inbound endpoint), what should be configured?",
     "choices": [
-      "VNet integration connected to the VPN-linked VNet, leaving the public inbound endpoint unchanged",
+      "VNet integration to the VPN-linked VNet",
+      "A service endpoint for SQL on the App Service subnet",
       "A private endpoint on the App Service",
-      "An App Service Environment",
-      "A service endpoint for SQL on the App Service"
+      "An App Service Environment instead"
     ],
-    "correctAnswers": ["VNet integration connected to the VPN-linked VNet, leaving the public inbound endpoint unchanged"],
-    "explanation": "VNet integration provides outbound reach into the VPN-connected network without touching the app's public inbound endpoint.",
+    "correctAnswers": [
+      "VNet integration to the VPN-linked VNet"
+    ],
+    "explanation": "VNet integration into the VPN-linked VNet gives the app outbound reach to on-premises without touching its inbound surface. A private endpoint on the App Service is the closest miss and solves the opposite direction, so the outbound call still fails.",
     "difficulty": "medium"
   },
   {
@@ -439,13 +504,15 @@
     "caseStudyId": "cs-fabrikam-network",
     "prompt": "After deploying the private endpoint for the backups storage account, on-premises clients still resolve its public name. What must Fabrikam fix?",
     "choices": [
-      "Point on-premises DNS (conditional forwarding) at the Azure Private DNS zone for the storage endpoint",
-      "Disable the private endpoint and use a service endpoint instead",
-      "Add the Storage service tag to the on-premises firewall",
-      "Enable public network access on the storage account"
+      "Point on-premises DNS at the Azure zone",
+      "Disable the private endpoint, use a service endpoint",
+      "Add the Storage service tag to the firewall",
+      "Enable public network access on the account"
     ],
-    "correctAnswers": ["Point on-premises DNS (conditional forwarding) at the Azure Private DNS zone for the storage endpoint"],
-    "explanation": "On-premises resolvers must forward the storage FQDN to the Azure Private DNS zone so it resolves to the private endpoint IP.",
+    "correctAnswers": [
+      "Point on-premises DNS at the Azure zone"
+    ],
+    "explanation": "On-premises resolvers must conditionally forward the storage FQDN to the Azure Private DNS zone, or the name resolves to the public IP from outside Azure. Re-enabling public access is the tempting workaround, whereas it undoes the isolation the private endpoint was deployed for.",
     "difficulty": "hard"
   },
   {
@@ -459,7 +526,7 @@
       "Verify the storage account's hostname resolves to the private IP from within the VNet",
       "Set Public network access to Disabled"
     ],
-    "explanation": "The endpoint and DNS integration must exist and be verified before it's safe to cut off public access entirely.",
+    "explanation": "The endpoint and its DNS integration must exist and be verified before public access is cut off, otherwise clients lose connectivity with no working path in place. Disabling public access first is the ordering mistake, and it is the one that causes an outage rather than a warning.",
     "difficulty": "medium"
   },
   {
@@ -473,7 +540,7 @@
       "Confirm outbound calls from the app reach the on-premises database",
       "Leave the app's default public inbound endpoint unchanged"
     ],
-    "explanation": "The VPN must exist before VNet integration can use it, and verification follows; the public endpoint is simply left as-is throughout.",
+    "explanation": "The VPN must exist before VNet integration can route through it, with verification following; the app's public endpoint is untouched throughout. Expecting VNet integration to change inbound exposure is the misconception — it never does.",
     "difficulty": "medium"
   },
   {
@@ -483,11 +550,35 @@
     "prompt": "Configure this simplified private endpoint screen for a Key Vault that must have zero public exposure.",
     "screenTitle": "Create private endpoint (simulated)",
     "fields": [
-      { "id": "subResource", "label": "Target sub-resource", "kind": "select", "options": ["vault", "blob", "sqlServer"], "correctValue": "vault" },
-      { "id": "dns", "label": "Integrate with private DNS zone", "kind": "toggle", "correctValue": "On" },
-      { "id": "publicAccess", "label": "Public network access", "kind": "select", "options": ["Enabled", "Disabled"], "correctValue": "Disabled" }
+      {
+        "id": "subResource",
+        "label": "Target sub-resource",
+        "kind": "select",
+        "options": [
+          "vault",
+          "blob",
+          "sqlServer"
+        ],
+        "correctValue": "vault"
+      },
+      {
+        "id": "dns",
+        "label": "Integrate with private DNS zone",
+        "kind": "toggle",
+        "correctValue": "On"
+      },
+      {
+        "id": "publicAccess",
+        "label": "Public network access",
+        "kind": "select",
+        "options": [
+          "Enabled",
+          "Disabled"
+        ],
+        "correctValue": "Disabled"
+      }
     ],
-    "explanation": "Key Vault's private endpoint sub-resource is 'vault'; DNS integration lets clients resolve the private IP; disabling public access removes exposure entirely.",
+    "explanation": "Key Vault's private endpoint sub-resource is vault, and DNS integration is what lets clients resolve the name to the private IP. Skipping the DNS step is the trap in this screen: the endpoint exists and traffic still goes out over the public endpoint.",
     "difficulty": "medium"
   },
   {
@@ -496,8 +587,13 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o2-2",
     "prompt": "Proposed solution: Rely on SQL Managed Instance's default deployment into a delegated subnet secured with NSGs, with ExpressRoute private peering to on-premises. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
     "explanation": "SQL MI is never placed on a public multi-tenant network — its delegated-subnet deployment plus ExpressRoute private peering satisfies both reachability and no public exposure.",
     "difficulty": "medium"
   },
@@ -507,8 +603,13 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o2-2",
     "prompt": "Proposed solution: Enable a public endpoint on the SQL Managed Instance and restrict it with a firewall rule allowing only the on-premises public IP. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
     "explanation": "This still exposes a public endpoint to the internet, even if restricted by IP — it does not meet 'never exposed to the public internet'.",
     "difficulty": "medium"
   },
@@ -518,69 +619,115 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o2-2",
     "prompt": "Proposed solution: Configure a service endpoint for SQL on the on-premises router. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
     "explanation": "Service endpoints extend a VNet's identity to a service over the Azure backbone — they don't apply to on-premises routers, so this misapplies the concept entirely.",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-2-37",
     "objectiveId": "o2-2",
-    "type": "single",
-    "prompt": "Which command creates a private endpoint targeting the blob sub-resource of a storage account?",
-    "choices": [
-      "az network private-endpoint create --name PE1 --resource-group RG1 --vnet-name VNet1 --subnet Subnet1 --private-connection-resource-id <storageId> --group-id blob --connection-name conn1",
-      "az network private-link create --name PE1 --storage stg1 --type blob",
-      "az storage account private-endpoint add --name stg1 --subnet Subnet1",
-      "az network vnet subnet update --name Subnet1 --private-endpoint stg1"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the command that creates a private endpoint for the blob service of a storage account.",
+    "template": "az network private-endpoint create --name PE1 --resource-group RG1 --vnet-name VNet1 --subnet Subnet1 --connection-name conn1 --private-connection-resource-id [[b1]] --group-id [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "<storageAccountId>",
+          "<subnet1Id>",
+          "<vnet1Id>",
+          "<privateDnsZoneId>"
+        ],
+        "correctValue": "<storageAccountId>"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "blob",
+          "vault",
+          "sqlServer",
+          "registry"
+        ],
+        "correctValue": "blob"
+      }
     ],
-    "correctAnswers": ["az network private-endpoint create --name PE1 --resource-group RG1 --vnet-name VNet1 --subnet Subnet1 --private-connection-resource-id <storageId> --group-id blob --connection-name conn1"],
-    "explanation": "`az network private-endpoint create` with --group-id (the sub-resource, here blob) is the real syntax. The other three subcommands don't exist.",
+    "explanation": "The connection resource ID names the service being reached, so it is the storage account — not the VNet or subnet, which are already given by their own parameters. The group ID is the SUB-RESOURCE, and every service has its own set: blob, file, table and queue for storage, vault for Key Vault, sqlServer for SQL, registry for ACR. Picking a name from the wrong service is a real error mode, and it fails at creation rather than silently.",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-2-38",
     "objectiveId": "o2-2",
-    "type": "single",
-    "prompt": "After creating the private endpoint, which command removes ALL public reachability from the storage account?",
-    "choices": [
-      "az storage account update --name stg1 --resource-group RG1 --public-network-access Disabled",
-      "az storage account update --name stg1 --resource-group RG1 --default-action Deny",
-      "az storage account network-rule remove --account-name stg1 --ip-address 0.0.0.0/0",
-      "az network private-endpoint update --name PE1 --disable-public true"
+    "type": "dropdown-sentence",
+    "prompt": "A private endpoint now serves the storage account. Complete the command that removes ALL public reachability from it — not merely narrowing who may use the public endpoint.",
+    "template": "az storage account update --name stg1 --resource-group RG1 [[b1]] [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "--public-network-access",
+          "--default-action",
+          "--allow-blob-public-access",
+          "--allow-shared-key-access"
+        ],
+        "correctValue": "--public-network-access"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "Disabled",
+          "Deny",
+          "false",
+          "Allow"
+        ],
+        "correctValue": "Disabled"
+      }
     ],
-    "correctAnswers": ["az storage account update --name stg1 --resource-group RG1 --public-network-access Disabled"],
-    "explanation": "--public-network-access Disabled shuts the public endpoint entirely. --default-action Deny still allows firewall exceptions (selected networks/IPs); the other commands are invented or incomplete.",
+    "explanation": "`--public-network-access Disabled` removes the public endpoint outright, leaving the private endpoint as the only path in. `--default-action Deny` is the trap and is a perfectly valid pairing that does something weaker: the public endpoint stays up and answers, and only the allow-list decides who gets through. `--allow-blob-public-access false` is narrower still and concerns anonymous container access rather than network reachability.",
     "difficulty": "hard"
   },
   {
     "id": "q-o2-2-39",
     "objectiveId": "o2-2",
-    "type": "single",
-    "prompt": "Which pair of commands makes the storage account's name resolve to its private IP from within the VNet?",
-    "choices": [
-      "az network private-dns zone create --name privatelink.blob.core.windows.net + az network private-dns link vnet create",
-      "az network dns zone create --name blob.core.windows.net + az network dns record-set a add-record",
-      "az network private-endpoint dns update --name PE1 --auto",
-      "az network vnet update --name VNet1 --dns-server 168.63.129.16"
+    "type": "build-list",
+    "prompt": "Build the sequence that makes the storage account's blob hostname resolve to its private IP from inside VNet1. Not every action in the pool belongs in the answer.",
+    "poolItems": [
+      "Create a private DNS zone whose name matches the service exactly: privatelink.blob.core.windows.net",
+      "Link that zone to VNet1 so the VNet resolves against it",
+      "Attach the private endpoint to the zone with a DNS zone group, which creates and maintains the A record",
+      "Create a public DNS zone named blob.core.windows.net and add the A record by hand",
+      "Set VNet1's custom DNS servers to 168.63.129.16",
+      "Re-enable public network access on the storage account so the hostname resolves again",
+      "Add a Storage service tag rule to the subnet's network security group"
     ],
-    "correctAnswers": ["az network private-dns zone create --name privatelink.blob.core.windows.net + az network private-dns link vnet create"],
-    "explanation": "Private endpoints resolve through the privatelink.* Private DNS zone linked to the VNet. A public DNS zone or changing VNet DNS servers doesn't create the privatelink record mapping.",
+    "correctOrder": [
+      "Create a private DNS zone whose name matches the service exactly: privatelink.blob.core.windows.net",
+      "Link that zone to VNet1 so the VNet resolves against it",
+      "Attach the private endpoint to the zone with a DNS zone group, which creates and maintains the A record"
+    ],
+    "explanation": "A private endpoint gives the service a private IP, but the public hostname still resolves publicly until DNS is redirected — so all three steps are needed and the zone must be named privatelink.blob.core.windows.net exactly. The distractors are the four ways teams get this wrong: hand-authoring a public zone works until the IP changes, pointing the VNet at 168.63.129.16 changes nothing because that is already the default resolver, re-enabling public access makes connectivity return by undoing the isolation, and a service tag governs NSG rules rather than name resolution.",
     "difficulty": "hard"
   },
   {
     "id": "q-o2-2-40",
     "objectiveId": "o2-2",
     "type": "single",
-    "prompt": "Which command enables a SERVICE endpoint for Azure Storage on Subnet1 (the service keeps a restricted public IP)?",
+    "prompt": "Which command enables a SERVICE endpoint for Azure Storage on a subnet — the service keeping a restricted public IP?",
     "choices": [
-      "az network vnet subnet update --vnet-name VNet1 --name Subnet1 --resource-group RG1 --service-endpoints Microsoft.Storage",
-      "az network private-endpoint create --subnet Subnet1 --group-id storage",
-      "az storage account update --name stg1 --service-endpoint Subnet1",
-      "az network nsg rule create --nsg-name NSG1 --service-tag Storage"
+      "az network vnet subnet update",
+      "az network private-endpoint create",
+      "az network nsg rule create",
+      "az storage account update"
     ],
-    "correctAnswers": ["az network vnet subnet update --vnet-name VNet1 --name Subnet1 --resource-group RG1 --service-endpoints Microsoft.Storage"],
-    "explanation": "Service endpoints are enabled on the SUBNET via --service-endpoints. A private endpoint is a different feature (private IP); the other two syntaxes are wrong.",
+    "correctAnswers": [
+      "az network vnet subnet update"
+    ],
+    "explanation": "A service endpoint is a property of the subnet, enabled with `--service-endpoints Microsoft.Storage` when updating it. `az network private-endpoint create` is the closest miss and is the other mechanism entirely: it places a NIC with a private IP in the subnet, whereas a service endpoint leaves the service on its public address and merely restricts which subnets may reach it.",
     "difficulty": "medium"
   },
   {
@@ -589,13 +736,15 @@
     "type": "single",
     "prompt": "What distinguishes `--default-action Deny` from `--public-network-access Disabled` on a storage account?",
     "choices": [
-      "Deny keeps the public endpoint but only allows configured exceptions (IPs/subnets); Disabled shuts the public endpoint entirely",
-      "They are strictly equivalent",
-      "Disabled only blocks HTTP, Deny blocks HTTPS too",
-      "Deny applies to blobs only, Disabled to all services"
+      "Deny keeps the endpoint; Disabled removes it",
+      "Deny applies to blobs only; Disabled to all",
+      "Disabled only blocks HTTP, and Deny blocks HTTPS too",
+      "They are strictly equivalent in every way"
     ],
-    "correctAnswers": ["Deny keeps the public endpoint but only allows configured exceptions (IPs/subnets); Disabled shuts the public endpoint entirely"],
-    "explanation": "Default-action Deny is the resource firewall's allow-list mode; public-network-access Disabled removes public reachability completely (private endpoint only).",
+    "correctAnswers": [
+      "Deny keeps the endpoint; Disabled removes it"
+    ],
+    "explanation": "Default-action Deny keeps the public endpoint and allows only configured exceptions, whereas public-network-access Disabled removes the public endpoint outright. Treating them as equivalent is the trap, since the first still answers on a public address.",
     "difficulty": "hard"
   }
 ]

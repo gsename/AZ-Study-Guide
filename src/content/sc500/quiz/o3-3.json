@@ -1,32 +1,40 @@
 [
   {
-    "id": "q-o3-3-01",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-01",
     "type": "single",
     "prompt": "What does Microsoft Defender for Containers detect?",
     "choices": [
-      "Misconfigurations and runtime risk across Kubernetes, including image vulnerabilities and runtime threats",
-      "Only network latency issues within a cluster",
-      "Only billing anomalies for container compute",
-      "Only DNS resolution failures inside pods"
+      "Misconfigurations and runtime risk across Kubernetes clusters",
+      "Only network latency issues arising between pods in a single cluster",
+      "Only billing anomalies for container compute usage",
+      "Only DNS resolution failures occurring inside pods"
     ],
-    "correctAnswers": ["Misconfigurations and runtime risk across Kubernetes, including image vulnerabilities and runtime threats"],
-    "explanation": "Defender for Containers covers image vulnerability scanning, runtime threat detection, and hardening recommendations across Kubernetes. Latency, billing, and DNS troubleshooting are unrelated to this security-focused Defender plan.",
+    "correctAnswers": [
+      "Misconfigurations and runtime risk across Kubernetes clusters"
+    ],
+    "explanation": "The plan spans both halves of container risk: posture findings such as an exposed dashboard or a privileged pod, and runtime detections including image vulnerabilities and in-cluster threats. Each distractor is an operational concern rather than a security one, which is why none of them is what a Defender plan reports.",
+    "skillRef": "d3c1",
     "difficulty": "easy"
   },
   {
-    "id": "q-o3-3-02",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-02",
     "type": "single",
     "prompt": "Which cluster types does Defender for Containers support beyond native AKS?",
     "choices": [
-      "Arc-enabled clusters and other clouds such as EKS/GKE",
-      "Only on-premises bare-metal Kubernetes with no cloud connectivity",
+      "Arc-enabled clusters, and other clouds such as EKS and GKE",
+      "Only on-premises bare-metal Kubernetes, with no cloud connection",
       "Only clusters running exclusively Windows containers",
-      "No clusters other than AKS are supported"
+      "No clusters at all other than native AKS are supported"
     ],
-    "correctAnswers": ["Arc-enabled clusters and other clouds such as EKS/GKE"],
-    "explanation": "Defender for Containers extends to Arc-enabled clusters and other clouds like EKS/GKE, not just native AKS. It isn't limited to disconnected bare-metal clusters or to Windows containers specifically.",
+    "correctAnswers": [
+      "Arc-enabled clusters, and other clouds such as EKS and GKE"
+    ],
+    "explanation": "Arc is the mechanism: once a cluster is Arc-enabled it becomes an Azure resource, whether it runs on-premises or in another cloud. The AKS-only option is the tempting assumption and would make the plan useless in exactly the hybrid estates it was built for.",
+    "skillRef": "d3c1",
     "difficulty": "medium"
   },
   {
@@ -40,8 +48,12 @@
       "The Azure Container Registry admin account",
       "Client certificates issued manually and never rotated"
     ],
-    "correctAnswers": ["Microsoft Entra integration with Azure RBAC for Kubernetes"],
+    "correctAnswers": [
+      "Microsoft Entra integration with Azure RBAC for Kubernetes"
+    ],
     "explanation": "Entra integration with Azure RBAC for Kubernetes replaces static kubeconfig/local admin access with governable, per-user identities. The ACR admin account authenticates to the registry, not the cluster, and manual unmanaged certificates don't scale securely.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c3",
     "difficulty": "easy"
   },
   {
@@ -55,8 +67,12 @@
       "Pods lose all network connectivity to each other",
       "The cluster can only be managed through Azure Bastion"
     ],
-    "correctAnswers": ["The Kubernetes API server has no public endpoint"],
+    "correctAnswers": [
+      "The Kubernetes API server has no public endpoint"
+    ],
     "explanation": "A private cluster removes the API server's public endpoint, requiring network-level access (VNet, VPN, or Bastion tunnel) to manage it. It doesn't dictate image storage location or remove pod-to-pod connectivity.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c3",
     "difficulty": "medium"
   },
   {
@@ -70,98 +86,156 @@
       "To schedule node OS patching windows",
       "To autoscale node pools based on CPU usage"
     ],
-    "correctAnswers": ["To control pod-to-pod traffic within the cluster"],
-    "explanation": "Network policies (Azure Network Policy or Calico) restrict which pods can communicate with each other. Disk encryption, patch scheduling, and autoscaling are handled by different AKS/Azure features entirely.",
+    "correctAnswers": [
+      "To control pod-to-pod traffic within the cluster"
+    ],
+    "explanation": "Network policies, whether Azure Network Policy or Calico, decide which pods may talk to which — east-west traffic inside the cluster, which no network security group can see. Disk encryption, patch windows and autoscaling are each handled by a different AKS feature, whereas none of them is a traffic control at all.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-06",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-06",
     "type": "single",
     "prompt": "What does Azure Policy for AKS (via Gatekeeper) provide?",
     "choices": [
-      "Admission control that enforces policy constraints on Kubernetes resources as they're created",
-      "Automatic image vulnerability remediation without any admin review",
-      "A replacement for Kubernetes RBAC entirely",
-      "Encryption of secrets stored in etcd"
+      "Admission control that enforces constraints as resources are created",
+      "Automatic image vulnerability remediation with no admin review at all",
+      "A complete replacement for Kubernetes RBAC across the cluster",
+      "Encryption of the secrets that are stored in the etcd datastore"
     ],
-    "correctAnswers": ["Admission control that enforces policy constraints on Kubernetes resources as they're created"],
-    "explanation": "Azure Policy for AKS uses the Gatekeeper admission controller to enforce constraints at resource creation time. It doesn't auto-remediate image vulnerabilities, replace Kubernetes RBAC, or handle etcd encryption.",
+    "correctAnswers": [
+      "Admission control that enforces constraints as resources are created"
+    ],
+    "explanation": "Gatekeeper intercepts the API request, so a non-compliant pod is rejected at creation rather than reported afterwards — which is what makes it enforcement rather than audit. The RBAC option is the tempting misread: RBAC decides who may create a resource, whereas admission control decides what the resource may look like, and the two answer different questions.",
+    "skillRef": "d3c2",
     "difficulty": "medium"
   },
   {
+    "src": "kb-appsvc",
+    "objectiveId": "o3-3",
     "id": "q-o3-3-07",
-    "objectiveId": "o3-3",
-    "type": "single",
-    "prompt": "How does an AKS workload retrieve secrets from Key Vault without embedding credentials?",
-    "choices": [
-      "Using workload identity together with the Key Vault CSI driver",
-      "Storing the Key Vault master key inside a Kubernetes ConfigMap",
-      "Hardcoding the secret value in the container image",
-      "Using the ACR admin account credentials"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the design that lets an AKS pod read a Key Vault secret with no credential stored anywhere.",
+    "template": "The pod authenticates with [[b1]], the secret is projected into it by [[b2]], and that identity must first hold [[b3]].",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "a Microsoft Entra Workload ID federated with its Kubernetes service account",
+          "the Key Vault master key stored in a Kubernetes ConfigMap",
+          "a client secret baked into the container image",
+          "the container registry admin credentials"
+        ],
+        "correctValue": "a Microsoft Entra Workload ID federated with its Kubernetes service account"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "the Key Vault Secrets Store CSI driver",
+          "a Kubernetes network policy",
+          "an init container that shells out to the CLI",
+          "the cluster admission controller"
+        ],
+        "correctValue": "the Key Vault Secrets Store CSI driver"
+      },
+      {
+        "id": "b3",
+        "options": [
+          "a Key Vault data-plane role such as Key Vault Secrets User",
+          "the Contributor role on the AKS cluster",
+          "the AcrPull role on the container registry",
+          "Owner on the resource group"
+        ],
+        "correctValue": "a Key Vault data-plane role such as Key Vault Secrets User"
+      }
     ],
-    "correctAnswers": ["Using workload identity together with the Key Vault CSI driver"],
-    "explanation": "Workload identity plus the Key Vault CSI driver lets pods mount secrets from Key Vault without any embedded credentials. Storing a master key in a ConfigMap, hardcoding secrets in an image, or reusing ACR admin credentials are all anti-patterns.",
-    "difficulty": "medium"
+    "explanation": "All three parts are needed and none substitutes for another: federation removes the stored credential, the CSI driver delivers the value into the pod, and the data-plane role is what authorizes the read. The third blank is where designs fail silently: the pod authenticates successfully and every secret read is refused, because Contributor on the cluster grants nothing inside the vault rather than read access to it.",
+    "skillRef": "d3c3",
+    "difficulty": "hard"
   },
   {
-    "id": "q-o3-3-08",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-08",
     "type": "single",
     "prompt": "Which is a recommended security practice for Azure Container Registry (ACR)?",
     "choices": [
-      "Disable the admin account and use Azure RBAC or repository-scoped tokens",
+      "Disable the admin account and use Azure RBAC or scoped tokens",
       "Enable the admin account and share its password with the whole team",
-      "Make the registry publicly readable for convenience",
-      "Allow anonymous image pulls from any client"
+      "Make the registry publicly readable, for convenience",
+      "Allow anonymous image pulls from any client, unauthenticated"
     ],
-    "correctAnswers": ["Disable the admin account and use Azure RBAC or repository-scoped tokens"],
-    "explanation": "The admin account is a shared, non-attributable credential; disabling it in favor of governed RBAC/token access is the recommended hardening step. Public readability and anonymous pulls are the opposite of this practice.",
+    "correctAnswers": [
+      "Disable the admin account and use Azure RBAC or scoped tokens"
+    ],
+    "explanation": "The admin account is one shared username and password that no individual can be held to, so removing it and using per-principal RBAC or repository-scoped tokens is what makes access attributable. Sharing that password is tempting because it is the fastest way to unblock a pipeline, whereas it destroys the audit trail the registry would otherwise produce.",
+    "skillRef": "d3c3",
     "difficulty": "easy"
   },
   {
-    "id": "q-o3-3-09",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-09",
     "type": "single",
     "prompt": "How do you remove public network exposure from an Azure Container Registry?",
     "choices": [
       "Add a private endpoint to the registry",
-      "Enable the admin account",
+      "Enable the registry admin account",
       "Disable vulnerability scanning of images",
       "Assign the registry a managed identity"
     ],
-    "correctAnswers": ["Add a private endpoint to the registry"],
-    "explanation": "A private endpoint gives the registry a private IP in your VNet and removes public exposure. Enabling the admin account, disabling scanning, or assigning a managed identity to the registry don't change its network exposure.",
+    "correctAnswers": [
+      "Add a private endpoint to the registry"
+    ],
+    "explanation": "A private endpoint gives the registry a private IP in your VNet, and with public network access disabled it becomes the only route in. Assigning a managed identity is the tempting answer because it also sounds like tightening access, whereas an identity is how the registry authenticates OUTWARD and changes nothing about who can reach it.",
+    "skillRef": "d3c3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-10",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-10",
     "type": "single",
     "prompt": "What does 'content trust' provide for a container registry?",
     "choices": [
-      "Signature verification of images, confirming they haven't been tampered with",
-      "Automatic vulnerability patching of running containers",
-      "Encryption of image layers at rest",
+      "Signature verification, confirming images haven't been tampered with",
+      "Automatic vulnerability patching of the containers that are already running",
+      "Encryption of the image layers where they sit at rest",
       "A replacement for role-based access control on the registry"
     ],
-    "correctAnswers": ["Signature verification of images, confirming they haven't been tampered with"],
-    "explanation": "Content trust adds image signing/verification so consumers can trust an image's provenance and integrity. It doesn't patch running containers, doesn't itself provide at-rest encryption, and doesn't replace RBAC.",
+    "correctAnswers": [
+      "Signature verification, confirming images haven't been tampered with"
+    ],
+    "explanation": "Content trust answers a provenance question — is this the image the publisher signed — rather than a vulnerability question. The automatic-patching option is the tempting one because both sound like supply-chain hygiene, whereas signing proves nothing about whether the signed image is free of known flaws: a correctly signed vulnerable image verifies perfectly.",
+    "skillRef": "d3c3",
     "difficulty": "hard"
   },
   {
-    "id": "q-o3-3-11",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
-    "type": "single",
-    "prompt": "What happens to an image pushed to an ACR configured with quarantine and vulnerability scanning?",
-    "choices": [
-      "It is held and scanned before being made generally available for pulls",
-      "It is immediately deleted regardless of scan results",
-      "It bypasses all scanning if pushed by an authenticated user",
-      "It is automatically re-signed with the registry's admin credentials"
+    "id": "q-o3-3-11",
+    "type": "build-list",
+    "prompt": "Build the sequence an image follows through a registry configured with quarantine and vulnerability scanning. Not every action in the pool belongs in the answer.",
+    "poolItems": [
+      "The image is pushed to the registry and held in quarantine",
+      "Defender scans the image for known vulnerabilities",
+      "The scan result is evaluated against the acceptance criteria",
+      "The image is released from quarantine and becomes pullable",
+      "The image is deleted, whatever the scan result turned out to be",
+      "The image is re-signed using the registry's admin credentials",
+      "The push bypasses scanning entirely because the pusher authenticated"
     ],
-    "correctAnswers": ["It is held and scanned before being made generally available for pulls"],
-    "explanation": "Quarantine holds a newly pushed image for scanning before it's released for general consumption. It isn't automatically deleted, authenticated pushes still get scanned, and quarantine has nothing to do with re-signing via admin credentials.",
+    "correctOrder": [
+      "The image is pushed to the registry and held in quarantine",
+      "Defender scans the image for known vulnerabilities",
+      "The scan result is evaluated against the acceptance criteria",
+      "The image is released from quarantine and becomes pullable"
+    ],
+    "explanation": "Quarantine is the whole point: the image exists in the registry but cannot be pulled until the scan has run and its result has been judged. The three excluded actions are each a different misconception — deletion regardless of result would make scanning pointless, re-signing with the admin credentials reintroduces the shared account, and letting an authenticated push bypass scanning confuses authentication with trustworthiness.",
+    "skillRef": "d3c3",
     "difficulty": "hard"
   },
   {
@@ -175,23 +249,31 @@
       "Expose ingress to the entire internet on all ports by default",
       "Avoid managed identities in favor of embedded connection strings"
     ],
-    "correctAnswers": ["Deploy into a VNet and use managed identity for registry pulls"],
-    "explanation": "VNet deployment plus managed identity for pulls avoids embedded credentials and limits network exposure. Using the admin account, exposing all ports, or embedding connection strings are the anti-patterns this practice avoids.",
+    "correctAnswers": [
+      "Deploy into a VNet and use managed identity for registry pulls"
+    ],
+    "explanation": "VNet deployment limits who can reach the container, and a managed identity for registry pulls removes the stored credential — the two together address both halves. Using the registry admin account is the tempting shortcut because it works immediately, whereas it hands every container the same shared password and makes a pull unattributable.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c4",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-13",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-13",
     "type": "single",
     "prompt": "What does App Service's built-in authentication ('Easy Auth') with Microsoft Entra provide?",
     "choices": [
-      "Authentication handled by the platform before requests reach the app code",
-      "Automatic encryption of the app's outbound database connections",
-      "A replacement for TLS/HTTPS termination",
-      "Free unlimited compute scaling"
+      "Authentication handled by the platform before requests reach the code",
+      "Automatic encryption of the app's outbound database connections and queries",
+      "A replacement for TLS and HTTPS termination on the app",
+      "Unlimited compute scaling, included at no extra cost"
     ],
-    "correctAnswers": ["Authentication handled by the platform before requests reach the app code"],
-    "explanation": "Easy Auth offloads authentication to the App Service platform itself, before any request reaches application code. It doesn't handle database connection encryption, isn't a TLS termination feature, and has nothing to do with scaling.",
+    "correctAnswers": [
+      "Authentication handled by the platform before requests reach the code"
+    ],
+    "explanation": "Easy Auth sits in front of the application, so an unauthenticated request is rejected before any of your code runs and the app itself needs no authentication library. The TLS option is the tempting neighbour because both are platform features on the same blade, whereas TLS protects the transport and says nothing about who the caller is.",
+    "skillRef": "d3c7",
     "difficulty": "medium"
   },
   {
@@ -205,8 +287,12 @@
       "A shared FTP credential for all developers",
       "Public network access with no restrictions"
     ],
-    "correctAnswers": ["HTTPS-only and a minimum TLS version"],
-    "explanation": "HTTPS-only plus a minimum TLS version enforces encrypted, modern-protocol traffic. Anonymous access, shared FTP credentials, and unrestricted public access all work against this goal.",
+    "correctAnswers": [
+      "HTTPS-only and a minimum TLS version"
+    ],
+    "explanation": "HTTPS-only rejects plaintext requests and a minimum TLS version rejects encrypted ones negotiating a deprecated protocol; neither implies the other. The shared FTP credential is worth noticing rather than dismissing: FTP is a separate publishing path that survives these settings, so leaving it enabled leaves an unencrypted route in.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c7",
     "difficulty": "easy"
   },
   {
@@ -220,128 +306,164 @@
       "By using the App Service's FTP credentials",
       "By hardcoding a client secret in the application code"
     ],
-    "correctAnswers": ["By using a managed identity assigned to the App Service"],
-    "explanation": "A managed identity lets the App Service authenticate to Key Vault/SQL without any stored secret. Storing credentials in a deployment package, using FTP credentials, or hardcoding a secret are exactly the anti-patterns managed identity avoids.",
+    "correctAnswers": [
+      "By using a managed identity assigned to the App Service"
+    ],
+    "explanation": "A managed identity lets the app request a token at runtime, so there is no secret in application settings, in code, or in the deployment package. The deployment-ZIP option is the tempting middle ground because the value is at least not in source control, whereas the credential still ships with the app and still has to be rotated.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c7",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-16",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-16",
     "type": "single",
     "prompt": "What restricts network-level access to an App Service to a specific set of source IPs?",
     "choices": [
-      "Access restrictions / IP rules",
-      "Content trust",
+      "Access restrictions, or IP rules",
+      "Container image content trust",
       "The Kubernetes network policy feature",
-      "SQL Row-Level Security"
+      "SQL Row-Level Security predicates"
     ],
-    "correctAnswers": ["Access restrictions / IP rules"],
-    "explanation": "App Service access restrictions let you allow or deny traffic by IP/CIDR at the platform level. Content trust and Kubernetes network policies apply to containers, and Row-Level Security is a SQL feature — none apply to App Service network access.",
+    "correctAnswers": [
+      "Access restrictions, or IP rules"
+    ],
+    "explanation": "Access restrictions are App Service's own inbound allow-list, evaluated before the request reaches the app. The other three are real controls belonging to other services entirely, which is what makes the list plausible, whereas none of them can filter an inbound HTTP request to a web app.",
+    "skillRef": "d3c7",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-17",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-17",
     "type": "single",
     "prompt": "What does VNet integration combined with a private endpoint achieve for App Service?",
     "choices": [
-      "Private, VNet-scoped connectivity both outbound to backend resources and inbound to the app itself",
-      "Automatic scaling of App Service Plan instances",
-      "Free SSL certificates renewed indefinitely",
-      "Bypassing the need for any authentication on the app"
+      "Private connectivity in both directions: outbound to backends, inbound to the app",
+      "Automatic scaling of the App Service Plan instance count, on demand and per region",
+      "Free SSL certificates, renewed indefinitely at no additional cost",
+      "Bypassing the need for any authentication on the app at all"
     ],
-    "correctAnswers": ["Private, VNet-scoped connectivity both outbound to backend resources and inbound to the app itself"],
-    "explanation": "VNet integration secures outbound calls to backend resources, and a private endpoint secures inbound access to the app itself, both staying inside the VNet. This has no bearing on autoscaling, certificate lifecycle, or authentication requirements.",
+    "correctAnswers": [
+      "Private connectivity in both directions: outbound to backends, inbound to the app"
+    ],
+    "explanation": "The two features cover opposite directions and that is why they are deployed together: VNet integration handles the app's outbound calls, the private endpoint handles inbound reach to the app. Reading either as covering both is the mistake that leaves one direction fully public while the design looks complete — neither feature has ever covered the other.",
+    "skillRef": "d3c7",
     "difficulty": "hard"
   },
   {
-    "id": "q-o3-3-18",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-18",
     "type": "single",
     "prompt": "How does Azure Functions typically secure HTTP-triggered functions in addition to Entra authentication?",
     "choices": [
-      "Function/host keys required on the HTTP trigger",
-      "A shared registry admin password",
+      "Function or host keys required on the HTTP trigger",
       "Kubernetes network policies applied to the function app",
-      "SQL dynamic data masking on the function's output"
+      "A shared container registry admin password",
+      "SQL dynamic data masking on the function output"
     ],
-    "correctAnswers": ["Function/host keys required on the HTTP trigger"],
-    "explanation": "Function and host keys gate HTTP-triggered functions, complementing Entra-based authentication. A registry password and Kubernetes network policies don't apply to Functions, and dynamic data masking is an unrelated SQL feature.",
+    "correctAnswers": [
+      "Function or host keys required on the HTTP trigger"
+    ],
+    "explanation": "Function and host keys are the built-in shared-secret layer on the trigger itself, used alongside Entra rather than instead of it. Note the limitation that comes with them: a key identifies nothing about the caller, so they are a coarse gate rather than authentication — which is why Entra authentication is still the control that matters.",
+    "skillRef": "d3c5",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-19",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-19",
     "type": "single",
     "prompt": "Which security pattern applies equally to App Service, Functions, and Logic Apps for reaching downstream Azure resources securely?",
     "choices": [
-      "Managed identity instead of stored credentials",
-      "The ACR admin account",
-      "A shared Kubernetes service account",
-      "Client certificates rotated manually every five years"
+      "A managed identity instead of stored credentials",
+      "The container registry admin account password",
+      "A shared Kubernetes service account token",
+      "Client certificates rotated by hand every five years"
     ],
-    "correctAnswers": ["Managed identity instead of stored credentials"],
-    "explanation": "Managed identity is the consistent, credential-free pattern used across App Service, Functions, and Logic Apps. The ACR admin account and Kubernetes service accounts are unrelated to these app platform services, and manual long-lived certificates are an anti-pattern.",
+    "correctAnswers": [
+      "A managed identity instead of stored credentials"
+    ],
+    "explanation": "All three services can carry a managed identity, so the same pattern removes the stored credential from each of them. The hand-rotated certificate is the tempting compromise because it is a real practice, whereas a five-year rotation means a credential exists and is largely unwatched for five years.",
+    "skillRef": "d3c6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-20",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-20",
     "type": "single",
     "prompt": "Where should a Logic App store sensitive configuration values such as connection secrets?",
     "choices": [
       "Azure Key Vault, referenced as secure parameters",
       "Plaintext in the Logic App's designer trigger history",
-      "A public GitHub repository for easy team access",
-      "The workflow's run history logs"
+      "A public GitHub repository, for easy team access",
+      "The workflow's own run history log entries"
     ],
-    "correctAnswers": ["Azure Key Vault, referenced as secure parameters"],
-    "explanation": "Storing secrets in Key Vault and referencing them as secure parameters keeps them out of plaintext workflow definitions and logs. Trigger history, public repos, and run history are all places secrets should never be exposed.",
+    "correctAnswers": [
+      "Azure Key Vault, referenced as secure parameters"
+    ],
+    "explanation": "A secure parameter backed by Key Vault keeps the value out of the definition and out of the run history. The trigger-history option is the one worth dwelling on: values that pass through a workflow are recorded there by default, so anyone who can read the run history reads the secret. Marking a parameter secure matters as much as vaulting it, and a vaulted secret that is not marked secure is still exposed.",
+    "skillRef": "d3c6",
     "difficulty": "easy"
   },
   {
-    "id": "q-o3-3-21",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-21",
     "type": "single",
     "prompt": "How can a Logic App achieve private, VNet-based connectivity to backend systems?",
     "choices": [
-      "Using an Integration Service Environment (ISE) or the Standard plan deployed into a VNet",
-      "Enabling the Consumption plan's default public endpoint",
-      "Disabling managed identity to simplify networking",
-      "Routing all traffic through the ACR admin account"
+      "An Integration Service Environment, or the Standard plan in a VNet",
+      "Enabling the Consumption plan's default public endpoint instead of this",
+      "Disabling the managed identity, to simplify the networking",
+      "Routing all of the traffic through the registry admin account"
     ],
-    "correctAnswers": ["Using an Integration Service Environment (ISE) or the Standard plan deployed into a VNet"],
-    "explanation": "ISE or the Standard plan in a VNet gives Logic Apps private connectivity to backend systems. The Consumption plan's default is public, disabling managed identity doesn't affect networking, and the ACR admin account is unrelated to Logic Apps entirely.",
+    "correctAnswers": [
+      "An Integration Service Environment, or the Standard plan in a VNet"
+    ],
+    "explanation": "Private connectivity requires a hosting model that can live in a VNet, which the Consumption plan cannot — that is the tempting answer and it is the plan you have to leave rather than configure. Disabling the managed identity would remove credential-free authentication without changing the network path at all.",
+    "skillRef": "d3c6",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-22",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-22",
     "type": "single",
     "prompt": "Which rule set does a Web Application Firewall typically apply to detect common web attacks like SQL injection and XSS?",
     "choices": [
       "The OWASP Core Rule Set",
       "The CIS Benchmark for Linux",
-      "The NIST 800-53 control catalog",
-      "The PCI-DSS network segmentation standard"
+      "The NIST 800-53 catalog",
+      "The PCI-DSS segmentation standard"
     ],
-    "correctAnswers": ["The OWASP Core Rule Set"],
-    "explanation": "The OWASP Core Rule Set is the managed rule set WAFs use to catch SQLi, XSS, and similar web attacks. The other options are OS hardening benchmarks or compliance frameworks, not WAF rule sets.",
-    "difficulty": "easy"
+    "correctAnswers": [
+      "The OWASP Core Rule Set"
+    ],
+    "explanation": "The OWASP Core Rule Set is the managed signature set an Azure WAF evaluates each request against. The other three are genuinely well-known security frameworks, which is exactly why they are tempting, whereas none of them is a set of HTTP signatures — they describe configuration baselines and controls rather than request patterns.",
+    "skillRef": "d3c8",
+    "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-23",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-23",
     "type": "single",
     "prompt": "On which Azure services can a Web Application Firewall be deployed?",
     "choices": [
-      "Application Gateway (regional) or Azure Front Door (global)",
-      "Only Azure Bastion",
-      "Only Azure Container Registry",
-      "Only Azure Functions Premium plan"
+      "Application Gateway, regional, or Front Door, global",
+      "Only Azure Bastion, for management sessions",
+      "Only Azure Container Registry, for image pulls",
+      "Only the Azure Functions Premium plan, per function app"
     ],
-    "correctAnswers": ["Application Gateway (regional) or Azure Front Door (global)"],
-    "explanation": "WAF is available on Application Gateway for regional scenarios and Front Door for global scenarios. Bastion, ACR, and Functions Premium are unrelated services that don't host a WAF.",
+    "correctAnswers": [
+      "Application Gateway, regional, or Front Door, global"
+    ],
+    "explanation": "A WAF policy attaches to a layer-7 entry point, and Azure has exactly two: Application Gateway for a region, Front Door for the global edge. The other options name real services that cannot host one, because none of them terminates and parses an HTTP request on the application's behalf.",
+    "skillRef": "d3c5",
     "difficulty": "medium"
   },
   {
@@ -355,113 +477,167 @@
       "They are identical, differing only in the dashboard color used",
       "Prevention mode disables all logging entirely"
     ],
-    "correctAnswers": ["Prevention blocks matched attacks; Detection only logs them"],
+    "correctAnswers": [
+      "Prevention blocks matched attacks; Detection only logs them"
+    ],
     "explanation": "Prevention mode actively blocks requests that match a rule; Detection mode records matches for review without blocking. The modes are functionally different, not a cosmetic distinction, and Prevention mode does not disable logging.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c8",
     "difficulty": "easy"
   },
   {
-    "id": "q-o3-3-25",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-25",
     "type": "single",
     "prompt": "A company needs to protect a regional web app that requires path-based routing inside a VNet. Which WAF-capable service fits this scenario?",
     "choices": [
-      "Application Gateway",
-      "Azure Front Door",
-      "Azure API Management alone, with no WAF",
-      "Azure Bastion"
+      "Application Gateway with a WAF policy",
+      "Azure Front Door with a WAF policy attached",
+      "Azure API Management alone, no WAF",
+      "Azure Bastion for the connection"
     ],
-    "correctAnswers": ["Application Gateway"],
-    "explanation": "Application Gateway is the regional, VNet-scoped service with path-based routing and WAF support. Front Door is designed for global scenarios, APIM alone isn't a WAF, and Bastion has no relation to web traffic filtering.",
+    "correctAnswers": [
+      "Application Gateway with a WAF policy"
+    ],
+    "explanation": "Application Gateway is the regional layer-7 load balancer, it lives in the VNet, and path-based routing is one of its native capabilities. Front Door is the tempting upgrade and carries the same WAF, whereas paying for a global edge when the audience is regional buys latency and cost rather than protection.",
+    "skillRef": "d3c9",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-26",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-26",
     "type": "single",
     "prompt": "A company needs to protect a globally distributed, internet-facing app with CDN caching and anycast routing at the edge. Which WAF-capable service fits this scenario?",
     "choices": [
-      "Azure Front Door",
-      "Application Gateway",
-      "Azure Bastion",
-      "Azure Disk Encryption"
+      "Azure Front Door with a WAF policy",
+      "Application Gateway with a WAF policy",
+      "Azure Bastion for the session path",
+      "Azure Disk Encryption on the disks"
     ],
-    "correctAnswers": ["Azure Front Door"],
-    "explanation": "Front Door provides global edge presence with CDN and anycast, plus WAF — matching this scenario's global scope. Application Gateway is regional, and Bastion/disk encryption are unrelated to web traffic distribution.",
+    "correctAnswers": [
+      "Azure Front Door with a WAF policy"
+    ],
+    "explanation": "Front Door is the global edge, with CDN caching and anycast, and it can host the same WAF policy. Application Gateway is the closest miss and fails only on scope — being regional, it sends users on other continents through one region, so answering on WAF capability rather than on reach gets this wrong.",
+    "skillRef": "d3c8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-27",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-27",
     "type": "single",
     "prompt": "What role does Azure API Management play in protecting a back-end API?",
     "choices": [
-      "Enforces subscription keys, Entra/OAuth validation, IP filtering, and rate-limit/quota policies",
-      "Blocks SQL injection and cross-site scripting at the network edge",
-      "Provides Kubernetes admission control for containerized APIs",
-      "Encrypts the API's database at rest"
+      "Subscription keys, OAuth token validation, IP filtering, and rate limits",
+      "Blocking SQL injection and cross-site scripting attacks at the network edge",
+      "Kubernetes admission control for containerized API workloads",
+      "Encryption of the API backing database where it sits at rest"
     ],
-    "correctAnswers": ["Enforces subscription keys, Entra/OAuth validation, IP filtering, and rate-limit/quota policies"],
-    "explanation": "APIM protects the API layer through subscription keys, OAuth/JWT validation, IP filtering, and throttling policies. Blocking SQLi/XSS is a WAF's job, admission control is a Kubernetes concept, and database encryption is a separate concern.",
+    "correctAnswers": [
+      "Subscription keys, OAuth token validation, IP filtering, and rate limits"
+    ],
+    "explanation": "APIM governs the API contract: who the caller is, whether their token is valid, and how much they may consume. Blocking injection and cross-site scripting is the tempting answer and belongs to a WAF, which is precisely why the two are usually deployed together rather than chosen between.",
+    "skillRef": "d3c9",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-28",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-28",
     "type": "single",
     "prompt": "How can APIM expose an API without directly exposing the backend service?",
     "choices": [
-      "By fronting the backend with APIM and exposing the API privately/through APIM's endpoint only",
-      "By publishing the backend service's IP address directly to consumers",
-      "By disabling all authentication so the backend is reachable freely",
-      "By replacing the backend with a static website"
+      "Fronting the backend with APIM and exposing only APIM's endpoint",
+      "Publishing the backend service's IP address directly to consumers",
+      "Disabling all authentication so the backend is freely reachable",
+      "Replacing the backend service with a static website instead"
     ],
-    "correctAnswers": ["By fronting the backend with APIM and exposing the API privately/through APIM's endpoint only"],
-    "explanation": "APIM sits in front of the backend and is the only exposed entry point, keeping the backend itself private. Publishing the backend IP directly or disabling authentication defeats this purpose, and replacing the backend with a static site isn't relevant to API protection.",
+    "correctAnswers": [
+      "Fronting the backend with APIM and exposing only APIM's endpoint"
+    ],
+    "explanation": "The backend keeps a private endpoint and only APIM is reachable, so every request arrives having passed the policies APIM applies. Publishing the backend address is the tempting shortcut because it does work, whereas it leaves a second, unpoliced route to the same API — and that route is the one an attacker will find.",
+    "skillRef": "d3c9",
     "difficulty": "medium"
   },
   {
+    "src": "kb-appsvc",
+    "objectiveId": "o3-3",
     "id": "q-o3-3-29",
-    "objectiveId": "o3-3",
-    "type": "single",
-    "prompt": "Why are WAF and APIM often deployed together in front of an API-based application?",
-    "choices": [
-      "WAF blocks web-layer exploits, while APIM handles API-layer authentication and throttling — complementary, not interchangeable, controls",
-      "They perform the exact same function, so deploying both is redundant",
-      "APIM replaces the need for TLS certificates entirely",
-      "WAF eliminates the need for any authentication on the API"
+    "type": "drag-match",
+    "prompt": "An API-based application needs four separate protections. Assign the control that provides each one; two controls in the list provide none of them.",
+    "sources": [
+      "A Web Application Firewall policy",
+      "Azure API Management",
+      "App Service built-in authentication ('Easy Auth')",
+      "A private endpoint on the App Service",
+      "Azure Container Registry content trust",
+      "A Kubernetes network policy"
     ],
-    "correctAnswers": ["WAF blocks web-layer exploits, while APIM handles API-layer authentication and throttling — complementary, not interchangeable, controls"],
-    "explanation": "WAF and APIM address different layers of risk (web exploits vs. API access control/throttling), which is why they're commonly layered together. They are not redundant, and neither one removes the need for TLS or authentication.",
+    "targets": [
+      {
+        "id": "t1",
+        "label": "Block SQL injection and cross-site scripting inside the HTTP request itself",
+        "correctSource": "A Web Application Firewall policy"
+      },
+      {
+        "id": "t2",
+        "label": "Validate an OAuth token per client and throttle each client to its own quota",
+        "correctSource": "Azure API Management"
+      },
+      {
+        "id": "t3",
+        "label": "Require a Microsoft Entra sign-in before any request reaches the application code",
+        "correctSource": "App Service built-in authentication ('Easy Auth')"
+      },
+      {
+        "id": "t4",
+        "label": "Remove the inbound public endpoint of the application entirely",
+        "correctSource": "A private endpoint on the App Service"
+      }
+    ],
+    "explanation": "WAF and APIM are the pair most often treated as interchangeable, whereas they are not: one inspects the CONTENT of a request for exploits, the other governs the API contract — identity, quota, and who may call what. Easy Auth and a private endpoint answer different questions again, about authentication and about reachability. The two unused controls belong to the container supply chain and to in-cluster networking.",
+    "skillRef": "d3c9",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-30",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-30",
     "type": "single",
     "prompt": "A team wants image vulnerability scanning both when an image is pushed to ACR and while containers are running in AKS. Which single Defender plan covers both?",
     "choices": [
       "Microsoft Defender for Containers",
-      "Microsoft Defender for Servers",
+      "Microsoft Defender for Servers Plan 2",
       "Microsoft Defender for Storage",
       "Microsoft Defender for Key Vault"
     ],
-    "correctAnswers": ["Microsoft Defender for Containers"],
-    "explanation": "Defender for Containers covers both registry-time image scanning and AKS runtime protection in a single plan. Defender for Servers, Storage, and Key Vault protect entirely different resource types.",
+    "correctAnswers": [
+      "Microsoft Defender for Containers"
+    ],
+    "explanation": "One plan spans registry scanning and runtime protection, which is what makes it the answer to a requirement stated as \"both\". Defender for Servers Plan 2 is the tempting alternative because it does include vulnerability scanning, whereas it scans the host rather than the images in a registry or the workloads in a cluster.",
+    "skillRef": "d3c1",
     "difficulty": "easy"
   },
   {
-    "id": "q-o3-3-31",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-31",
     "type": "multiple",
     "prompt": "Which two are correct API Management security practices? (Choose two.)",
     "choices": [
-      "Require subscription keys on every product",
-      "Use OAuth 2.0/JWT validation for client authentication",
-      "Deploy only in external mode to guarantee isolation",
-      "Disable rate limiting to maximize throughput"
+      "Require subscription keys on every published product",
+      "Use OAuth 2.0 and JWT validation for client authentication",
+      "Deploy only in external mode, in order to guarantee isolation",
+      "Disable rate limiting, in order to maximize throughput"
     ],
-    "correctAnswers": ["Require subscription keys on every product", "Use OAuth 2.0/JWT validation for client authentication"],
-    "explanation": "Subscription keys and OAuth/JWT validation are both core APIM hardening practices. Internal (not external) mode actually provides network isolation, and disabling rate limiting removes a key protection against abuse rather than improving security.",
+    "correctAnswers": [
+      "Require subscription keys on every published product",
+      "Use OAuth 2.0 and JWT validation for client authentication"
+    ],
+    "explanation": "Keys identify the consuming product and OAuth validation identifies the caller, so the two are used together rather than as alternatives. External mode is the tempting answer because it sounds like a hardening choice, whereas it is the mode that gives the gateway a public endpoint — internal mode is the isolated one, so the option states the opposite of what it claims.",
+    "skillRef": "d3c9",
     "difficulty": "medium"
   },
   {
@@ -470,76 +646,110 @@
     "type": "multiple",
     "prompt": "Which two are recommended AKS security configurations? (Choose two.)",
     "choices": [
-      "Microsoft Entra integration with Azure RBAC for Kubernetes",
-      "Private cluster and Kubernetes network policies",
       "A single shared cluster-admin kubeconfig for the whole team",
-      "Enabling the ACR admin account for cluster image pulls"
+      "Enabling the ACR admin account for cluster image pulls",
+      "Microsoft Entra integration with Azure RBAC for Kubernetes",
+      "Private cluster and Kubernetes network policies"
     ],
-    "correctAnswers": ["Microsoft Entra integration with Azure RBAC for Kubernetes", "Private cluster and Kubernetes network policies"],
-    "explanation": "Entra RBAC integration and private cluster/network policies are the recommended controls. A shared kubeconfig and the ACR admin account are the anti-patterns these controls replace.",
+    "correctAnswers": [
+      "Microsoft Entra integration with Azure RBAC for Kubernetes",
+      "Private cluster and Kubernetes network policies"
+    ],
+    "explanation": "Entra integration with Azure RBAC governs who may do what in the cluster, and a private cluster with network policies governs what can reach what — identity and network, the two halves. The shared kubeconfig is the anti-pattern the first control replaces, and the ACR admin account the one the second has nothing to do with: neither is made safe by the other.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c3",
     "difficulty": "medium"
   },
   {
+    "src": "kb-appsvc",
+    "objectiveId": "o3-3",
     "id": "q-o3-3-33",
-    "objectiveId": "o3-3",
-    "type": "multiple",
-    "prompt": "Which two statements about WAF placement are correct? (Choose two.)",
-    "choices": [
-      "Application Gateway WAF fits a regional app needing VNet-scoped, path-based routing",
-      "Front Door WAF fits a global, internet-facing app needing CDN/edge and anycast",
-      "Front Door is regional-only and cannot serve traffic globally",
-      "Detection mode blocks matched attacks just as effectively as Prevention mode"
+    "type": "statement-grid",
+    "prompt": "For each statement about where a Web Application Firewall should be placed, select Yes if it is true.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "Application Gateway WAF fits a regional app that needs VNet-scoped, path-based routing.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s2",
+        "text": "Front Door is regional only and cannot serve traffic globally.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s3",
+        "text": "Detection mode blocks matched attacks just as effectively as Prevention mode.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s4",
+        "text": "Front Door WAF fits a global, internet-facing app that needs CDN edge caching and anycast.",
+        "correctValue": "Yes"
+      }
     ],
-    "correctAnswers": ["Application Gateway WAF fits a regional app needing VNet-scoped, path-based routing", "Front Door WAF fits a global, internet-facing app needing CDN/edge and anycast"],
-    "explanation": "These two statements correctly describe when to choose each service. Front Door is explicitly a global service (the opposite of the third option), and Detection mode only logs — it does not block, unlike Prevention mode.",
+    "explanation": "The two services differ on scope and nothing else that matters here: Application Gateway is regional and in the VNet, Front Door is the global edge — so the second statement inverts the one property that distinguishes them. The third is the more dangerous belief: Detection mode logs a match and lets the request through, so a policy left there protects nothing whereas it appears fully configured.",
+    "skillRef": "d3c8",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-34",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-34",
     "type": "case-study",
     "caseStudyId": "cs-litware-ai",
     "prompt": "Referring to requirement 6 (the containerized order-processing workload on AKS must authenticate cluster users with corporate identities rather than static kubeconfig credentials), which configuration meets this requirement?",
     "choices": [
-      "Enable Microsoft Entra integration with Azure RBAC for Kubernetes on the AKS cluster",
-      "Distribute a single shared cluster-admin kubeconfig file to the operations team",
-      "Enable the Azure Container Registry admin account for cluster access",
-      "Issue long-lived client certificates to each engineer with no expiry"
+      "Enable Entra integration with Azure RBAC for Kubernetes on the cluster",
+      "Distribute one shared cluster-admin kubeconfig file to the ops team",
+      "Enable the container registry admin account for cluster access",
+      "Issue long-lived client certificates to each engineer, with no expiry date set"
     ],
-    "correctAnswers": ["Enable Microsoft Entra integration with Azure RBAC for Kubernetes on the AKS cluster"],
-    "explanation": "Entra integration with Azure RBAC for Kubernetes replaces static kubeconfig credentials with governable corporate identities, exactly matching the requirement. A shared kubeconfig, the ACR admin account, and unmanaged long-lived certificates are the anti-patterns this requirement is meant to eliminate.",
+    "correctAnswers": [
+      "Enable Entra integration with Azure RBAC for Kubernetes on the cluster"
+    ],
+    "explanation": "Entra integration makes every kubectl call an authenticated corporate identity subject to Conditional Access, and Azure RBAC for Kubernetes decides what that identity may do. Per-engineer client certificates are the tempting middle ground because they are at least individual, whereas a credential with no expiry cannot be revoked without rotating the cluster CA.",
+    "skillRef": "d3c3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-35",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-35",
     "type": "case-study",
     "caseStudyId": "cs-litware-ai",
     "prompt": "Referring to requirement 6 (the registry feeding the AKS workload must have no anonymous access), which ACR configuration is correct?",
     "choices": [
-      "Disable the ACR admin account and require Entra/RBAC or repository-scoped tokens for all pulls",
-      "Enable the ACR admin account so operators can pull with a shared password",
-      "Make the registry publicly readable to simplify CI/CD",
+      "Disable the ACR admin account and require Entra RBAC or scoped tokens",
+      "Enable the ACR admin account so that operators pull with a shared password",
+      "Make the registry publicly readable, to simplify the CI/CD pipeline",
       "Rely on the AKS network policy alone to prevent unauthorized pulls"
     ],
-    "correctAnswers": ["Disable the ACR admin account and require Entra/RBAC or repository-scoped tokens for all pulls"],
-    "explanation": "Disabling the admin account and requiring Entra/RBAC or scoped tokens is exactly what eliminates anonymous, non-attributable access to the registry. Enabling the admin account or public readability directly contradicts the requirement, and a network policy governs pod traffic, not registry authentication.",
+    "correctAnswers": [
+      "Disable the ACR admin account and require Entra RBAC or scoped tokens"
+    ],
+    "explanation": "Every pull then carries an attributable identity, which is what \"no anonymous access\" requires. The network-policy option is the interesting distractor: it restricts which pods may reach the registry from inside the cluster, whereas it says nothing about who may pull from anywhere else — network reach and authorization are different controls.",
+    "skillRef": "d3c3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o3-3-36",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
+    "id": "q-o3-3-36",
     "type": "case-study",
     "caseStudyId": "cs-litware-ai",
     "prompt": "Referring to requirement 7 (a public order-status API must validate Microsoft Entra tokens, apply per-client rate limits, and be fronted privately rather than exposing the backend directly), which configuration is correct?",
     "choices": [
-      "Publish the API through Azure API Management with OAuth/JWT validation and rate-limit policies, keeping the backend private",
-      "Expose the backend App Service directly to the internet with anonymous access enabled",
-      "Add an NSG rule allowing inbound traffic from any source to the backend",
-      "Disable authentication on the backend to simplify client integration"
+      "Publish through APIM with OAuth validation and rate limits, backend private",
+      "Expose the backend App Service directly to the internet, with anonymous access",
+      "Add an NSG rule allowing inbound traffic from any source to the backend app",
+      "Disable authentication on the backend, to simplify client integration"
     ],
-    "correctAnswers": ["Publish the API through Azure API Management with OAuth/JWT validation and rate-limit policies, keeping the backend private"],
-    "explanation": "APIM is exactly the layer that validates Entra tokens, enforces per-client rate limits, and fronts the backend so it isn't directly exposed — satisfying all three parts of the requirement. Direct backend exposure, an open NSG rule, and disabled authentication all violate the requirement.",
+    "correctAnswers": [
+      "Publish through APIM with OAuth validation and rate limits, backend private"
+    ],
+    "explanation": "Three clauses, three APIM capabilities: token validation, per-client throttling, and a gateway that is the only reachable endpoint. The other three options each remove one of those protections rather than providing it, which makes this a requirement where reading the clauses and counting them off is faster than reasoning about the products.",
+    "skillRef": "d3c7",
     "difficulty": "medium"
   },
   {
@@ -548,9 +758,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o3-3",
     "prompt": "Proposed solution: Enable the Azure Container Registry admin account and share its password with the AKS cluster's service accounts for image pulls. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
     "explanation": "The admin account is a shared password, not an Entra identity — this both fails to eliminate anonymous-style shared credentials and doesn't authenticate via Microsoft Entra as required by the goal.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c3",
     "difficulty": "medium"
   },
   {
@@ -558,10 +775,17 @@
     "objectiveId": "o3-3",
     "type": "solution-goal",
     "caseStudyId": "sg-o3-3",
-    "prompt": "Proposed solution: Disable the registry's admin account and configure AKS to pull images using its managed identity, granted the AcrPull role via Azure RBAC. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "Disabling the admin account removes anonymous/shared-password pulls, and granting AcrPull to the cluster's managed identity provides Entra-based, attributable authentication for every pull — exactly meeting the goal.",
+    "prompt": "Proposed solution: Make the container registry publicly readable so any client, including the AKS cluster, can pull images without authenticating. Does this solution meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "Public readability is the definition of anonymous pull access, so the solution does the opposite of what the goal asks. It is tempting because it does make the cluster able to pull, whereas the requirement was never about connectivity — it was about every pull carrying an attributable identity.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c3",
     "difficulty": "easy"
   },
   {
@@ -569,24 +793,42 @@
     "objectiveId": "o3-3",
     "type": "solution-goal",
     "caseStudyId": "sg-o3-3",
-    "prompt": "Proposed solution: Make the container registry publicly readable so any client, including the AKS cluster, can pull images without authenticating. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "Public readability is the definition of anonymous pull access, which is precisely what the goal requires eliminating — this solution does the opposite of what's asked.",
+    "prompt": "Proposed solution: Disable the registry's admin account and configure AKS to pull images using its managed identity, granted the AcrPull role via Azure RBAC. Does this solution meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "Disabling the admin account removes the shared-password path, and AcrPull on the cluster's managed identity makes every pull an attributable Entra authentication. Note the prerequisite this accepts: the identity must exist and hold the role before the first pull, otherwise images fail to pull rather than falling back to anonymous access.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c2",
     "difficulty": "easy"
   },
   {
-    "id": "q-o3-3-40",
+    "src": "kb-appsvc",
     "objectiveId": "o3-3",
-    "type": "reorder",
-    "prompt": "Order the steps to harden an Azure Container Registry feeding a production AKS cluster.",
-    "reorderItems": [
-      "Disable the registry's admin account",
-      "Grant the AKS cluster's managed identity the AcrPull role via Azure RBAC",
-      "Add a private endpoint to remove the registry's public network exposure",
+    "id": "q-o3-3-40",
+    "type": "build-list",
+    "prompt": "Build the sequence that hardens a container registry feeding a production AKS cluster. Not every action in the pool belongs in the answer.",
+    "poolItems": [
+      "Grant the cluster's managed identity the AcrPull role on the registry",
+      "Disable the registry's shared admin account",
+      "Add a private endpoint so the registry has no public network exposure",
+      "Enable vulnerability scanning and quarantine for newly pushed images",
+      "Enable the admin account so the pipeline can keep pulling during the change",
+      "Make the registry publicly readable so no authentication is needed",
+      "Delete the existing images and re-push them after the change"
+    ],
+    "correctOrder": [
+      "Grant the cluster's managed identity the AcrPull role on the registry",
+      "Disable the registry's shared admin account",
+      "Add a private endpoint so the registry has no public network exposure",
       "Enable vulnerability scanning and quarantine for newly pushed images"
     ],
-    "explanation": "Removing the shared admin credential and replacing it with a scoped managed-identity role comes first, followed by removing network exposure and adding ongoing image-scanning controls.",
+    "explanation": "The replacement comes before the removal: grant AcrPull first, because disabling the admin account while nothing else can authenticate breaks every pull. Network exposure and image scanning follow. The three excluded actions run the wrong way — re-enabling the admin account restores the shared password, public readability is the anonymous access being removed, whereas re-pushing images changes nothing at all about who may pull them.",
+    "skillRef": "d3c3",
     "difficulty": "medium"
   },
   {
@@ -601,7 +843,9 @@
       "Add a rate-limit-by-key policy scoped per client/subscription",
       "Publish the product and distribute subscription keys to approved consumers"
     ],
-    "explanation": "APIM must exist and reach the backend before network isolation and policies can be layered on top; JWT validation and rate limiting are applied as inbound policies before the product is published to consumers.",
+    "explanation": "APIM must exist and reach the backend before anything can be layered on it, and the inbound policies must be in place before the product is published. Publishing first is the ordering mistake, and its consequence is specific: consumers hold keys to an endpoint that validates no token and throttles nobody, whereas the design on paper looks finished.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c9",
     "difficulty": "medium"
   },
   {
@@ -611,12 +855,95 @@
     "prompt": "Configure this simplified Azure Container Registry screen so a production AKS cluster pulls images with no anonymous or shared-credential access, and the registry has no public network exposure.",
     "screenTitle": "Azure Container Registry security (simulated)",
     "fields": [
-      { "id": "adminAccount", "label": "Admin user account", "kind": "toggle", "correctValue": "Off" },
-      { "id": "aksAuth", "label": "AKS pull authentication method", "kind": "select", "options": ["Admin account credentials", "AKS managed identity with AcrPull role", "Anonymous pull", "Shared personal access token"], "correctValue": "AKS managed identity with AcrPull role" },
-      { "id": "publicAccess", "label": "Public network access", "kind": "toggle", "correctValue": "Off" },
-      { "id": "privateEndpoint", "label": "Private endpoint configured", "kind": "toggle", "correctValue": "On" }
+      {
+        "id": "adminAccount",
+        "label": "Admin user account",
+        "kind": "toggle",
+        "correctValue": "Off"
+      },
+      {
+        "id": "aksAuth",
+        "label": "AKS pull authentication method",
+        "kind": "select",
+        "options": [
+          "Admin account credentials",
+          "AKS managed identity with AcrPull role",
+          "Anonymous pull",
+          "Shared personal access token"
+        ],
+        "correctValue": "AKS managed identity with AcrPull role"
+      },
+      {
+        "id": "publicAccess",
+        "label": "Public network access",
+        "kind": "toggle",
+        "correctValue": "Off"
+      },
+      {
+        "id": "privateEndpoint",
+        "label": "Private endpoint configured",
+        "kind": "toggle",
+        "correctValue": "On"
+      }
     ],
-    "explanation": "Disabling the admin account and anonymous pull, authenticating AKS via its managed identity's AcrPull role, and removing public access in favor of a private endpoint together eliminate anonymous and shared-credential access while closing off public exposure.",
+    "explanation": "Disabling the admin account and authenticating AKS through its managed identity removes anonymous and shared-credential pulls; disabling public network access with a private endpoint closes the network path. The last two fields are one decision rather than two: disabling public access without the private endpoint leaves the cluster unable to pull at all.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c3",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-43",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "A team runs a stateless HTTP API as a container. It must scale to zero when idle, pull its image from a private registry without a stored credential, and reach a database over a private endpoint. Which service fits with the least configuration?",
+    "choices": [
+      "Azure Container Apps, using a managed identity for the registry pull and virtual network integration for the database",
+      "Azure Container Instances, using a managed identity for the registry pull and a delegated subnet for the database",
+      "Azure Kubernetes Service with a private cluster, workload identity federation, and a network policy on the database namespace",
+      "An App Service container plan with the registry credentials stored in the application settings"
+    ],
+    "correctAnswers": [
+      "Azure Container Apps, using a managed identity for the registry pull and virtual network integration for the database"
+    ],
+    "explanation": "Scale-to-zero plus managed ingress and virtual network integration is the Container Apps profile, and it needs no cluster to operate. Container Instances is the closest miss and the reason this pair is worth distinguishing: it also runs a single container with a managed identity, but it has no autoscaling at all, so it cannot scale to zero and back. Kubernetes would work and is the over-engineered answer, while storing registry credentials in application settings is the practice managed identity replaced.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c4",
+    "outdated": 3,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-3-44",
+    "objectiveId": "o3-3",
+    "type": "drag-match",
+    "prompt": "Drag each container hosting service onto the requirement it best satisfies. Not every service in the pool is used.",
+    "sources": [
+      "Azure Container Instances",
+      "Azure Container Apps",
+      "Azure Kubernetes Service",
+      "Azure Container Registry",
+      "Azure App Service",
+      "Azure Functions"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "label": "A single short-lived container for a nightly batch job, billed only while it runs, with no orchestrator to operate",
+        "correctSource": "Azure Container Instances"
+      },
+      {
+        "id": "t2",
+        "label": "An HTTP microservice that must scale to zero when idle and support revision-based traffic splitting",
+        "correctSource": "Azure Container Apps"
+      },
+      {
+        "id": "t3",
+        "label": "A multi-team platform needing namespace isolation, pod-to-pod network policy, and custom admission control",
+        "correctSource": "Azure Kubernetes Service"
+      }
+    ],
+    "explanation": "The three differ by how much orchestration you get and must run. Container Instances is the smallest unit with no scaling and no orchestrator; Container Apps adds managed autoscaling, revisions and ingress without exposing Kubernetes; AKS exposes the whole cluster and everything that comes with owning one. The registry is the sharpest distractor because it appears in all three architectures — but it stores images rather than running them.",
+    "src": "kb-appsvc",
+    "skillRef": "d3c4",
     "difficulty": "medium"
   }
 ]

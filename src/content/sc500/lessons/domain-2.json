@@ -1,7 +1,10 @@
 [
   {
     "objectiveId": "o2-1",
-    "diagrams": ["storage-auth", "endpoints"],
+    "diagrams": [
+      "storage-auth",
+      "endpoints"
+    ],
     "summary": "Storage accounts host Blobs/Files/Queues/Tables behind account-level toggles that either close off most of the exposure surface (Secure transfer required, minimum TLS, disabling Blob public access, disabling Shared Key authorization) or leave the whole account one leaked key away from full compromise. SAS tokens layer scoped, time-limited access on top of that baseline, with a user delegation SAS — signed by Microsoft Entra credentials rather than the account key — the strongest option. Network exposure narrows across a spectrum from fully open to Selected networks (service endpoints) to Disabled with a private endpoint, and Microsoft Defender for Storage adds threat detection on top of whichever posture is chosen.",
     "keyPoints": [
       "**Secure transfer required = Enabled** forces every REST call onto HTTPS; **Minimum TLS version** should be raised to **1.2+** to retire legacy, weaker protocol versions — these are two separate settings, not the same control.",
@@ -54,7 +57,9 @@
   },
   {
     "objectiveId": "o2-2",
-    "diagrams": ["sql-protection"],
+    "diagrams": [
+      "sql-protection"
+    ],
     "summary": "Azure SQL Database (fully managed PaaS) and Azure SQL Managed Instance (near-100% SQL Server compatibility, deployed inside your VNet) share the same layered security model: authenticate with Microsoft Entra ID (optionally Entra-only), restrict network reach with firewall rules or — stronger — a private endpoint, encrypt at rest with TDE, protect the most sensitive columns in use with Always Encrypted, mask output cosmetically with Dynamic Data Masking, and filter rows with Row-Level Security. Auditing and Microsoft Defender for Databases are complementary, not overlapping: auditing is a durable record of what happened, Defender is threat detection and vulnerability scanning.",
     "keyPoints": [
       "Configure a **Microsoft Entra admin** on the logical server to enable Entra authentication alongside SQL logins; enabling **Microsoft Entra-only authentication** disables SQL/Windows logins entirely and forces every connection through Entra identities — plan a break-glass Entra account first.",
@@ -112,7 +117,11 @@
   },
   {
     "objectiveId": "o2-3",
-    "diagrams": ["nsg-layers", "firewall-vs-waf", "endpoints"],
+    "diagrams": [
+      "nsg-layers",
+      "firewall-vs-waf",
+      "endpoints"
+    ],
     "summary": "NSGs and ASGs provide stateful L3-L4 microsegmentation inside a VNet; Azure Firewall, WAF, and DDoS Protection each defend a different layer and threat shape — general network egress/ingress, HTTP(S) web attacks, and volumetric floods, respectively — and are complementary, not substitutes. Private Link/private endpoints remove PaaS resources from the public internet, but only work once private DNS resolution is wired up correctly, which is the single most common reason a \"working\" private endpoint still fails. At tenant scale, Azure Virtual Network Manager's security admin rules override every NSG centrally, while VPNs and Microsoft Entra Private Access (part of Global Secure Access) provide two very different models for remote access.",
     "keyPoints": [
       "**NSGs** filter stateful L3/L4 traffic by priority (100–4096, lowest number evaluated first, first match wins) on a **subnet and/or a NIC**; both rule sets are evaluated for a flow. Default rules allow intra-VNet and outbound-to-internet traffic while denying inbound from the internet.",
@@ -124,14 +133,18 @@
       "Private endpoints require **private DNS**: a private DNS zone (e.g. `privatelink.blob.core.windows.net`) linked to the VNet must resolve the resource's FQDN to the PE's private IP, or clients will keep resolving the public IP and bypass the PE entirely.",
       "**Azure Virtual WAN (vWAN)** provides a managed, global hub-and-spoke backbone; a **secured virtual hub** embeds Azure Firewall (or a partner NVA) directly in the hub so spoke traffic is inspected centrally.",
       "**Azure Virtual Network Manager (AVNM)** groups VNets into **network groups** and pushes connectivity configurations (hub-and-spoke/mesh) and **security admin rules** — high-priority rules evaluated **before** NSGs and which resource owners cannot override, ideal for tenant-wide, non-negotiable blocks.",
-      "**VPN** (site-to-site for whole networks, point-to-site for individual devices) should be hardened with strong IPsec/IKE policies and certificate- or Entra-based P2S authentication; **Microsoft Entra Private Access** (part of Global Secure Access, Microsoft's Security Service Edge) publishes private apps to remote users with per-app Conditional Access, replacing legacy VPN for Zero Trust application access."
+      "**VPN** (site-to-site for whole networks, point-to-site for individual devices) should be hardened with strong IPsec/IKE policies and certificate- or Entra-based P2S authentication; **Microsoft Entra Private Access** (part of Global Secure Access, Microsoft's Security Service Edge) publishes private apps to remote users with per-app Conditional Access, replacing legacy VPN for Zero Trust application access.",
+      "**Azure Network Watcher** is how you answer \"why is this flow blocked?\" without guessing. **Effective security rules** flattens the subnet NSG, the NIC NSG and any AVNM security admin rules into the single ordered list actually applied to a NIC — which is the only view that shows a central security admin rule winning over a subnet owner's NSG. **IP flow verify** takes one five-tuple and returns allowed or denied *plus the deciding rule*, without sending a packet.",
+      "Pick the diagnostic by the question: **IP flow verify** for \"is this exact packet allowed, and by which rule\"; **effective security rules** for \"what does this NIC actually enforce\"; **next hop** for routing rather than filtering; **NSG flow logs** for what already happened, on a collection interval; **connection troubleshoot** to send real traffic end to end."
     ],
     "commonPitfalls": [
       "Treating **Azure Firewall** and a **WAF** as interchangeable — Azure Firewall inspects general L3-L7 network/application traffic; a WAF specifically inspects HTTP(S) requests for OWASP web attacks and is attached to Application Gateway/Front Door, not deployed on its own.",
       "Deploying a **private endpoint** and assuming it \"just works\" — without a linked private DNS zone (or equivalent custom DNS forwarding), clients still resolve the public FQDN to a public IP and the traffic never reaches the PE; this is the #1 cause of \"the private endpoint isn't working.\"",
       "Assuming a resource owner's NSG can override a central security requirement — **AVNM security admin rules** are evaluated first and cannot be overridden by a subnet/NIC NSG, which is exactly why they're used for estate-wide, non-negotiable rules.",
       "Confusing **site-to-site** (whole networks) with **point-to-site** (individual devices) VPN connections — a frequent exchange in exam scenarios.",
-      "Assuming a **UDR** forcing traffic to a firewall also inspects/filters that traffic — a UDR only changes the routing path; the actual inspection happens at the next hop (the firewall itself)."
+      "Assuming a **UDR** forcing traffic to a firewall also inspects/filters that traffic — a UDR only changes the routing path; the actual inspection happens at the next hop (the firewall itself).",
+      "Reading the NSG blade and concluding the rule set is what applies — the blade shows one NSG, whereas a NIC is governed by its own NSG, its subnet's NSG and possibly an AVNM security admin rule. **Effective security rules** is the only place the real, merged order is visible.",
+      "Reaching for **NSG flow logs** to debug a live problem: they are historical and arrive on a collection interval, so the answer is minutes late and still has to be searched for. IP flow verify answers the same question immediately."
     ],
     "commands": [
       {
@@ -153,6 +166,16 @@
         "task": "Force a subnet's egress through Azure Firewall in a secured hub via UDR",
         "cli": "az network route-table create --name RT1 --resource-group RG1\naz network route-table route create --route-table-name RT1 --resource-group RG1 --name ToFirewall --address-prefix 0.0.0.0/0 --next-hop-type VirtualAppliance --next-hop-ip-address 10.0.0.4\naz network vnet subnet update --vnet-name VNet1 --name CoreBankingSubnet --resource-group RG1 --route-table RT1",
         "powershell": "New-AzRouteTable -Name RT1 -ResourceGroupName RG1 -Location westeurope\nAdd-AzRouteConfig -Name ToFirewall -AddressPrefix 0.0.0.0/0 -NextHopType VirtualAppliance -NextHopIpAddress 10.0.0.4 -RouteTable $rt | Set-AzRouteTable\nSet-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet -Name CoreBankingSubnet -AddressPrefix 10.0.2.0/24 -RouteTable $rt ; $vnet | Set-AzVirtualNetwork"
+      },
+      {
+        "task": "Test whether an inbound packet to VM1 on port 443 is allowed, and see which NSG rule decided",
+        "cli": "az network watcher test-ip-flow --vm VM1 --resource-group RG1 --direction Inbound --protocol TCP --local 10.0.1.4:443 --remote 203.0.113.5:60000",
+        "powershell": "Test-AzNetworkWatcherIPFlow -NetworkWatcher $nw -TargetVirtualMachineId $vm.Id -Direction Inbound -Protocol TCP -LocalIPAddress 10.0.1.4 -LocalPort 443 -RemoteIPAddress 203.0.113.5 -RemotePort 60000"
+      },
+      {
+        "task": "Show the merged, effective NSG rules applied to a network interface",
+        "cli": "az network nic list-effective-nsg --name NIC1 --resource-group RG1",
+        "powershell": "Get-AzEffectiveNetworkSecurityGroup -NetworkInterfaceName NIC1 -ResourceGroupName RG1"
       }
     ],
     "learnLinks": [

@@ -2,205 +2,374 @@
   "exam": {
     "code": "SC-500",
     "name": "Implementing End-to-End Security Controls for Cloud and AI Workloads",
-    "certification": "Microsoft Certified: Cloud and AI Security Engineer Associate (beta)",
-    "skillsMeasuredAsOf": "2026-05-21",
-    "retirementDate": "Not yet announced (exam currently in beta)",
+    "certification": "Microsoft Certified: Cloud and AI Security Engineer Associate",
+    "skillsMeasuredAsOf": "2026-04-26",
+    "retirementDate": "Not announced by Microsoft",
     "passingScore": 700,
     "scoreMax": 1000,
     "durationMinutes": 120,
-    "questionCountRange": "40-60"
+    "questionCountRange": "40-60",
+    "questionCountRangeSource": "Community estimate. Microsoft does not publish an item count for SC-500 on the study guide or the certification page.",
+    "studyGuideUrl": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-500",
+    "outlineVerifiedOn": "2026-08-03",
+    "itemFormatNote": "Official exam policy: \"This exam will be proctored. You may have interactive components to complete as part of this exam.\" Microsoft does not enumerate the item formats; the formats this app simulates are inferred from the exam sandbox and from Microsoft's published item-type guidance.",
+    "contentCurrencyNote": "Official study-guide note: \"Most questions cover features that are general availability (GA). The exam may contain questions on Preview features if those features are commonly used.\"",
+    "bankStatus": {
+      "referentialVerified": true,
+      "freeScorePercent": 2.8,
+      "measuredOn": "2026-08-06"
+    }
   },
   "domains": [
     {
       "id": "d1",
-      "name": "Manage identity, access & governance",
-      "weightPercent": { "min": 20, "max": 25 }
+      "name": "Manage identity, access, and governance",
+      "weightPercent": {
+        "min": 20,
+        "max": 25
+      }
     },
     {
       "id": "d2",
-      "name": "Secure storage, databases & networking",
-      "weightPercent": { "min": 25, "max": 30 }
+      "name": "Secure storage, databases, and networking",
+      "weightPercent": {
+        "min": 25,
+        "max": 30
+      }
     },
     {
       "id": "d3",
-      "name": "Secure compute, incl. AI workloads",
-      "weightPercent": { "min": 20, "max": 25 }
+      "name": "Secure compute",
+      "weightPercent": {
+        "min": 20,
+        "max": 25
+      }
     },
     {
       "id": "d4",
-      "name": "Manage & monitor security posture",
-      "weightPercent": { "min": 20, "max": 25 }
+      "name": "Manage and monitor security posture",
+      "weightPercent": {
+        "min": 20,
+        "max": 25
+      }
     }
   ],
   "objectives": [
     {
       "id": "o1-1",
       "domainId": "d1",
-      "title": "Secure access with Microsoft Entra ID",
-      "description": "Privileged Identity Management (eligible vs active, activation policies), Conditional Access (assignments, grant/session controls, report-only), and authentication methods (MFA, passwordless, phishing-resistant methods, licensing).",
+      "title": "Secure access to resources by using Microsoft Entra ID — human identity",
+      "officialSkillArea": "Secure access to resources by using Microsoft Entra ID",
+      "skillRefs": [
+        "d1a1",
+        "d1a2",
+        "d1a3"
+      ],
+      "description": "The human-identity half of the official sub-skill: Privileged Identity Management (eligible vs active assignments, activation policies across Entra roles, Azure resource roles and groups), Conditional Access (assignments, grant and session controls, authentication strength, report-only mode), and authentication methods including MFA and passwordless.",
       "officialSkills": [
-        "Configure Privileged Identity Management (PIM) eligible assignments and activation policies for Entra and Azure resource roles",
-        "Design and implement Conditional Access policies (assignments, grant controls, session controls, authentication strength)",
-        "Configure authentication methods, passwordless options, and the Authentication methods policy",
-        "Distinguish Entra ID P1 vs P2 licensing requirements for CA, Identity Protection, and PIM",
-        "Configure break-glass accounts excluded from Conditional Access and PIM"
+        "Implement and configure Privileged Identity Management (PIM)",
+        "Implement conditional access policies",
+        "Implement and configure authentication methods, including multifactor authentication (MFA) and passwordless"
       ]
     },
     {
       "id": "o1-2",
       "domainId": "d1",
-      "title": "Application identity, OAuth consent & managed identities",
-      "description": "App registration vs enterprise application (service principal), delegated vs application OAuth permissions and consent, user/admin consent settings, and system-assigned vs user-assigned managed identities.",
+      "title": "Secure access to resources by using Microsoft Entra ID — workload identity",
+      "officialSkillArea": "Secure access to resources by using Microsoft Entra ID",
+      "skillRefs": [
+        "d1a4",
+        "d1a5",
+        "d1a6"
+      ],
+      "description": "The workload-identity half of the same official sub-skill: app registrations vs enterprise applications (service principals), delegated vs application OAuth permissions, user consent restrictions and the admin consent request workflow, and system-assigned vs user-assigned managed identities for Azure resources.",
       "officialSkills": [
-        "Differentiate app registrations from enterprise applications (service principals)",
-        "Configure delegated vs application OAuth permissions and the consent workflow",
-        "Restrict user consent and configure the admin consent request workflow",
-        "Choose between system-assigned and user-assigned managed identities",
-        "Prefer managed identity over service principal with certificate or client secret"
+        "Implement and configure identity for applications, including enterprise applications and app registrations",
+        "Manage OAuth permission grants and consent settings",
+        "Implement and configure managed identities for Azure resources"
       ]
     },
     {
       "id": "o1-3",
       "domainId": "d1",
-      "title": "Secure secrets & keys with Azure Key Vault",
-      "description": "Key Vault object types (keys, secrets, certificates), Azure RBAC vs vault access policy authorization models, network restriction and private endpoints, and Defender for Key Vault vs Defender CSPM secret scanning.",
+      "title": "Secure secrets and keys by using Azure Key Vault",
+      "officialSkillArea": "Secure secrets and keys by using Azure Key Vault",
+      "skillRefs": [
+        "d1b1",
+        "d1b2",
+        "d1b3",
+        "d1b4",
+        "d1b5",
+        "d1b6",
+        "d1b7"
+      ],
+      "description": "Deploying and configuring Key Vault, the Azure RBAC vs vault access policy authorization models, soft-delete and purge protection, firewall and private endpoint restriction, managing keys, secrets and certificates, and the deliberate split between Defender CSPM secret scanning (posture) and Defender for Key Vault (runtime threat detection).",
       "officialSkills": [
-        "Deploy and harden a Key Vault (RBAC authorization, soft-delete, purge protection, network restriction)",
-        "Choose between Azure RBAC and legacy vault access policy authorization models",
-        "Grant a managed identity data-plane access to secrets via RBAC roles",
-        "Distinguish Defender for Key Vault (runtime threat detection) from Defender CSPM secret scanning (posture)",
-        "Use customer-managed keys (CMK) and Bring Your Own Key (BYOK) for encryption at rest"
+        "Deploy Key Vault",
+        "Configure Key Vault settings",
+        "Configure access to Key Vault",
+        "Configure firewall settings on Key Vault",
+        "Manage keys, secrets, and certificates",
+        "Scan for secrets by using Defender Cloud Security Posture Management (Defender CSPM)",
+        "Implement Defender for Key Vault"
       ]
     },
     {
       "id": "o1-4",
       "domainId": "d1",
-      "title": "Governance: Azure Policy, RBAC, resource locks, backup & IaC",
-      "description": "Azure Policy effects (Audit, Deny, DeployIfNotExists, Modify, AuditIfNotExists), Azure RBAC vs Microsoft Entra roles, resource locks, Azure Backup hardening (soft delete, immutable vaults, Multi-User Authorization), regulatory compliance, and Infrastructure as Code security.",
+      "title": "Implement governance to enforce security and regulatory compliance",
+      "officialSkillArea": "Implement governance to enforce security and regulatory compliance",
+      "skillRefs": [
+        "d1c1",
+        "d1c2",
+        "d1c3",
+        "d1c4",
+        "d1c5",
+        "d1c6",
+        "d1c7",
+        "d1c8",
+        "d1c9"
+      ],
+      "description": "Azure Policy built-in and custom definitions and their effects, regulatory compliance and security standards in Defender for Cloud, resource locks, built-in and custom Azure and Microsoft Entra role assignments, remediating overprivileged access with Azure RBAC, Azure Backup security features, and securing infrastructure as code.",
       "officialSkills": [
-        "Assign built-in and custom Azure Policy definitions and initiatives with the correct effect",
-        "Apply least-privilege Azure RBAC role assignments and distinguish them from Microsoft Entra directory roles",
-        "Configure resource locks (CanNotDelete, ReadOnly) and Azure Backup hardening (soft delete, immutable vaults, MUA)",
-        "Map an environment to regulatory compliance standards in Defender for Cloud",
-        "Secure Infrastructure as Code (Bicep/ARM/Terraform) with pre-deployment scanning and DevOps security"
+        "Implement and configure security controls by using Azure Policy, including built-in and custom policy definitions",
+        "Evaluate regulatory compliance by using Microsoft Defender for Cloud",
+        "Implement and configure security controls in Defender for Cloud, including security standards and recommendations",
+        "Implement resource locks",
+        "Manage Azure built-in role assignments",
+        "Manage custom roles, including Azure roles and Microsoft Entra roles",
+        "Evaluate and remediate overprivileged access assignments by using Azure role-based access control (RBAC)",
+        "Configure security controls for backup protection by using Azure Backup security features",
+        "Implement and configure security controls by using infrastructure as code"
       ]
     },
     {
       "id": "o2-1",
       "domainId": "d2",
-      "title": "Security for storage accounts",
-      "description": "Storage account hardening (secure transfer, minimum TLS, public blob access, Shared Key authorization), SAS types and stored access policies, network restriction (service endpoint vs private endpoint), and Defender for Storage.",
+      "title": "Implement security for storage accounts",
+      "officialSkillArea": "Implement security for storage accounts",
+      "skillRefs": [
+        "d2a1",
+        "d2a2",
+        "d2a3",
+        "d2a4"
+      ],
+      "description": "Storage account hardening (secure transfer, minimum TLS version, disabling anonymous access and Shared Key authorization), storage firewall rules and network restriction via service endpoints vs private endpoints, Defender for Storage threat protection configuration, and managing access through SAS types and stored access policies.",
       "officialSkills": [
-        "Harden a storage account: require secure transfer, minimum TLS 1.2, disable public blob access and Shared Key authorization",
-        "Choose the appropriate SAS type (account, service, user delegation) and apply stored access policies",
-        "Restrict storage network access using service endpoints vs private endpoints",
-        "Enable Microsoft Defender for Storage (malware scanning, sensitive data threat detection)",
-        "Apply customer-managed keys and infrastructure encryption for storage accounts"
+        "Implement and configure security for storage accounts",
+        "Configure Azure Storage firewall rules",
+        "Implement Defender for Storage threat protection configurations",
+        "Manage access to storage, including access policies"
       ]
     },
     {
       "id": "o2-2",
       "domainId": "d2",
-      "title": "Security for databases (Azure SQL)",
-      "description": "Azure SQL authentication (Microsoft Entra auth, Entra-only auth), network restriction (firewall rules, private endpoint), Transparent Data Encryption vs Always Encrypted vs Dynamic Data Masking, Row-Level Security, and SQL Auditing vs Defender for Databases.",
+      "title": "Implement security for databases",
+      "officialSkillArea": "Implement security for databases",
+      "skillRefs": [
+        "d2b1",
+        "d2b2",
+        "d2b3"
+      ],
+      "description": "Platform-level security in Azure SQL (Microsoft Entra-only authentication, firewall rules and private endpoints, TDE vs Always Encrypted vs Dynamic Data Masking, Row-Level Security), auditing for Azure SQL Database and SQL Managed Instance, and Defender for Databases across Azure database services — Azure SQL, SQL on machines, MySQL, PostgreSQL, MariaDB and Cosmos DB.",
       "officialSkills": [
-        "Configure Microsoft Entra authentication and Entra-only auth for Azure SQL",
-        "Restrict Azure SQL network access with firewall rules and private endpoints",
-        "Differentiate TDE (at rest), Always Encrypted (in use), and Dynamic Data Masking (cosmetic)",
-        "Configure Row-Level Security and Vulnerability Assessment baselines",
-        "Distinguish SQL Auditing (logging) from Microsoft Defender for Databases (threat alerts)"
+        "Implement platform-level security configurations in Azure SQL",
+        "Configure database auditing for Azure SQL Database and Azure SQL Managed Instance",
+        "Configure Defender for Databases protection across Azure database services"
       ]
     },
     {
       "id": "o2-3",
       "domainId": "d2",
-      "title": "Security for Azure network services",
-      "description": "NSGs and Application Security Groups, Azure Firewall vs WAF vs DDoS Protection, Private Link and private endpoints, and connectivity at scale (Virtual WAN, Azure Virtual Network Manager security admin rules, VPN, Entra Private Access).",
+      "title": "Implement security for Azure network services",
+      "officialSkillArea": "Implement security for Azure network services",
+      "skillRefs": [
+        "d2c1",
+        "d2c2",
+        "d2c3",
+        "d2c4",
+        "d2c5",
+        "d2c6",
+        "d2c7",
+        "d2c8",
+        "d2c9"
+      ],
+      "description": "Network security groups and application security groups, Azure Virtual Network Manager security admin rules, Azure Virtual WAN and VPN security, Microsoft Entra Private Access, private endpoints for PaaS vs publishing your own Private Link service, Azure Firewall, and diagnosing effective security rules with Azure Network Watcher.",
       "officialSkills": [
-        "Design NSG rules and use Application Security Groups for role-based, IP-independent segmentation",
-        "Select the correct control among NSG, Azure Firewall, WAF, and DDoS Protection for a given threat layer",
-        "Deploy Private Link / private endpoints and resolve the private-DNS-zone requirement",
-        "Use Azure Virtual Network Manager security admin rules to enforce estate-wide controls that override NSGs",
-        "Harden VPN connectivity and evaluate Microsoft Entra Private Access (Global Secure Access) as a VPN alternative"
+        "Implement and manage network security groups (NSGs) and application security groups (ASGs)",
+        "Implement and configure network access policies by using Azure Virtual Network Manager",
+        "Configure security for an Azure Virtual WAN",
+        "Implement and configure security for virtual private network (VPN) connections",
+        "Implement and configure Microsoft Entra Private Access",
+        "Configure Azure private endpoints to secure access to Azure platform as a service (PaaS) resources",
+        "Configure Azure Private Link services to secure access to network resources",
+        "Implement and configure Azure Firewall",
+        "Evaluate effective security rules by using Azure Network Watcher diagnostics"
       ]
     },
     {
       "id": "o3-1",
       "domainId": "d3",
-      "title": "Security for AI (Copilot, Foundry, Entra Agent ID, Purview DSPM for AI)",
-      "description": "AI-specific risks (prompt injection, oversharing, autonomous agents), Purview DSPM for AI (data risk assessment, one-click policies), Microsoft Entra Agent ID (agent identity, Conditional Access for agents), and threat/posture (Defender for AI Services, Microsoft Foundry guardrails, AI gateway via APIM).",
+      "title": "Implement security for AI",
+      "officialSkillArea": "Implement security for AI",
+      "skillRefs": [
+        "d3a1",
+        "d3a2",
+        "d3a3",
+        "d3a4",
+        "d3a5",
+        "d3a6",
+        "d3a7",
+        "d3a8",
+        "d3a9",
+        "d3a10",
+        "d3a11"
+      ],
+      "description": "SharePoint data overexposure and Copilot risk assessment with Purview DSPM for AI, real-time protection for Copilot Studio agents, Microsoft Entra Agent ID (Conditional Access, access management, blast-radius analysis in Defender XDR), the AI Gateway in Azure API Management for Microsoft Foundry, Defender for AI Service, Foundry agent guardrails, the Data and AI security dashboard in Defender for Cloud, and agent management in the Microsoft 365 admin center. Spans four portals — knowing which one owns a control is itself examinable.",
       "officialSkills": [
-        "Run a Purview DSPM for AI data risk assessment to find SharePoint/OneDrive oversharing before Copilot rollout",
-        "Configure Microsoft Entra Agent ID identities and Conditional Access policies scoped to agent risk",
-        "Enable Microsoft Defender for AI Services and interpret its alert types (jailbreak, data leakage, wallet attack)",
-        "Apply Microsoft Foundry guardrails (Prompt Shields, content filters, blocklists, MCP allowed-tools list)",
-        "Deploy Azure API Management as an AI gateway (Entra auth, token rate-limiting, centralized logging)"
+        "Identify overexposure of data in SharePoint",
+        "Identify risks related to Microsoft Copilot and AI apps by using Microsoft Purview Data Security Posture Management (DSPM)",
+        "Enable and configure real-time protection for Microsoft Copilot Studio agents",
+        "Implement conditional access for Microsoft Entra Agent ID",
+        "Analyze blast radius for security risks related to Entra Agent ID by using Defender XDR",
+        "Manage Entra Agent ID access",
+        "Configure and deploy AI Gateway in Azure API Management for Microsoft Foundry",
+        "Enable Defender for AI Service in Cloud Workload Protection in Defender for Cloud",
+        "Configure guardrails for agent security in Foundry",
+        "Monitor AI security by using the Data and AI security dashboard in Defender for Cloud",
+        "Manage agents in Microsoft 365 admin center"
       ]
     },
     {
       "id": "o3-2",
       "domainId": "d3",
-      "title": "Security for servers & virtual machines",
-      "description": "VM encryption options (encryption at host, Azure Disk Encryption, CMK), Azure Bastion vs Just-In-Time VM access, Trusted launch, Defender for Servers (Plan 1 vs Plan 2), Azure Arc, and agentless scanning.",
+      "title": "Implement security for servers and virtual machines (VMs)",
+      "officialSkillArea": "Implement security for servers and virtual machines (VMs)",
+      "skillRefs": [
+        "d3b1",
+        "d3b2",
+        "d3b3",
+        "d3b4",
+        "d3b5",
+        "d3b6",
+        "d3b7",
+        "d3b8",
+        "d3b9"
+      ],
+      "description": "Disk encryption options (encryption at host, Azure Disk Encryption, customer-managed keys), Azure Bastion, just-in-time VM access, extending controls to hybrid and multicloud servers with Azure Arc, onboarding and configuring Defender for Servers (vulnerability scanning, EDR, agentless scanning, and the Plan 1 vs Plan 2 boundary), VM security features (secure boot, vTPM, integrity monitoring, security type), and enforcing in-guest configuration with Azure Machine Configuration.",
       "officialSkills": [
-        "Choose between encryption at host, Azure Disk Encryption, and server-side CMK encryption for VM disks",
-        "Combine Azure Bastion and Just-In-Time VM access to eliminate standing exposure of management ports",
-        "Enable Trusted launch (Secure Boot + vTPM) to defend against rootkits and boot-kits",
-        "Distinguish Defender for Servers Plan 1 (EDR only) from Plan 2 (adds MDVM, agentless scanning, JIT, FIM)",
-        "Onboard non-Azure servers with Azure Arc for unified governance and Defender coverage"
+        "Implement and configure disk encryption",
+        "Plan and implement Azure Bastion",
+        "Enable and enforce use of just-in-time (JIT) VM access",
+        "Extend security controls to hybrid and multicloud servers by using Azure Arc",
+        "Onboard servers to Defender for Servers in Defender for Cloud, including hybrid and multicloud scenarios",
+        "Configure Defender for Servers settings, including vulnerability scanning, and endpoint detection and response (EDR)",
+        "Implement and manage agentless scanning for VMs in Defender for Servers",
+        "Configure security features on a VM, including secure boot, virtual Trusted Platform Module (vTPM), integrity monitoring, and security type",
+        "Enforce security configuration of Azure-managed servers by using Azure Machine Configuration"
       ]
     },
     {
       "id": "o3-3",
       "domainId": "d3",
-      "title": "Security for application platform services",
-      "description": "Container security (Defender for Containers, AKS hardening, ACR hardening), App Service/Functions/Logic Apps authentication and network controls, Web Application Firewall placement (Application Gateway vs Front Door), and API Management protection.",
+      "title": "Implement security for application platform services",
+      "officialSkillArea": "Implement security for application platform services",
+      "skillRefs": [
+        "d3c1",
+        "d3c2",
+        "d3c3",
+        "d3c4",
+        "d3c5",
+        "d3c6",
+        "d3c7",
+        "d3c8",
+        "d3c9"
+      ],
+      "description": "Container workload misconfigurations and runtime risks in Defender for Containers, security controls for Azure Kubernetes Service, Azure Container Registry, Azure Container Instances and Azure Container Apps, Azure Functions (authentication and network access), Azure Logic Apps and Azure App Service, Azure Web Application Firewall placement, and back-end API protection policies in API Management.",
       "officialSkills": [
-        "Harden Azure Kubernetes Service (Entra + Kubernetes RBAC, private clusters, network policies, workload identity)",
-        "Harden Azure Container Registry (disable admin user, Entra/RBAC, private endpoint, content trust)",
-        "Configure App Service/Functions/Logic Apps authentication, network restrictions, and managed identity access",
-        "Place Web Application Firewall correctly on Application Gateway (regional) vs Front Door (global)",
-        "Protect back-end APIs with Azure API Management (Entra/OAuth validation, rate-limit/quota policies)"
+        "Detect misconfigurations and runtime risks in container workloads by using Defender for Containers",
+        "Implement and configure security controls for Azure Kubernetes Service (AKS)",
+        "Implement and configure security controls for Azure Container Registry",
+        "Implement and configure security controls for Azure Container Instances and Azure Container Apps",
+        "Implement and configure security controls for Azure Functions, including authentication and network access",
+        "Implement and configure security controls for Azure Logic Apps",
+        "Implement and configure security controls for Azure App Service",
+        "Implement and configure Azure Web Application Firewall",
+        "Implement security policies for back-end API protection by using API Management"
       ]
     },
     {
       "id": "o4-1",
       "domainId": "d4",
-      "title": "Manage posture with Microsoft Defender for Cloud",
-      "description": "Defender for Cloud as a CNAPP (CSPM + CWP), Secure Score, free vs paid Defender CSPM tiers (attack path analysis, cloud security explorer, EASM), regulatory compliance dashboard, workload protection plans, and multicloud connectors (AWS/GCP).",
+      "title": "Manage security posture by using Defender for Cloud",
+      "officialSkillArea": "Manage security posture by using Defender for Cloud",
+      "skillRefs": [
+        "d4a1",
+        "d4a2",
+        "d4a3",
+        "d4a4",
+        "d4a5",
+        "d4a6"
+      ],
+      "description": "Identifying risk with Defender CSPM (attack path analysis, cloud security explorer, and the free-vs-paid tier boundary), evaluating compliance against security frameworks, enabling and scoping workload protection plans, connecting hybrid, AWS and GCP environments with secret-free federated connectors, Defender Vulnerability Management settings for Azure VMs, and discovering unknown internet-facing assets with Defender EASM.",
       "officialSkills": [
-        "Interpret Secure Score and prioritize security recommendations by impact",
-        "Distinguish free foundational CSPM from paid Defender CSPM features (attack path analysis, cloud security explorer, EASM)",
-        "Map an environment to a regulatory compliance standard and track pass/fail evidence",
-        "Enable and scope per-resource Defender workload protection plans",
-        "Connect AWS and GCP accounts to Defender for Cloud using native, secret-free federation",
-        "Differentiate Microsoft Defender Vulnerability Management (inward CVE detection) from External Attack Surface Management (outward asset discovery)"
+        "Identify security risks by using Defender CSPM",
+        "Evaluate compliance against security frameworks by using Defender for Cloud",
+        "Enable and configure Defender for Cloud workload protection plans",
+        "Connect hybrid cloud and multicloud environments to Defender for Cloud, including Amazon Web Services (AWS) and Google Cloud Platform (GCP)",
+        "Configure Microsoft Defender Vulnerability Management settings for Azure VMs",
+        "Discover unprotected assets and vulnerabilities by using Microsoft Defender External Attack Surface Management (EASM)"
       ]
     },
     {
       "id": "o4-2",
       "domainId": "d4",
-      "title": "Activity & event collection in Microsoft Sentinel",
-      "description": "Sentinel as SIEM+SOAR on a Log Analytics workspace, Sentinel RBAC roles, Content hub data connectors (native, AMA/DCR, CEF/Syslog), analytics rules vs incidents vs automation rules vs playbooks, and retention tiers with the unified Defender portal.",
+      "title": "Implement activity and event collection in Microsoft Sentinel",
+      "officialSkillArea": "Implement activity and event collection in Microsoft Sentinel",
+      "skillRefs": [
+        "d4b1",
+        "d4b2",
+        "d4b3",
+        "d4b4",
+        "d4b5",
+        "d4b6",
+        "d4b7",
+        "d4b8",
+        "d4b9",
+        "d4b10"
+      ],
+      "description": "Creating and connecting Sentinel workspaces, assigning Sentinel roles, content hub solutions, Microsoft data connectors for Azure resources, syslog and CEF collection, Windows Security event collection via data collection rules including Windows Event Forwarding, custom log tables, automation rules and playbooks, data retention across Sentinel data stores, and querying Microsoft Purview Audit in Defender XDR. This sub-skill is collection, not detection engineering — analytics-rule authoring and KQL hunting belong to SC-200.",
       "officialSkills": [
-        "Onboard Microsoft Sentinel onto a Log Analytics workspace and assign the correct Sentinel role (Reader/Responder/Contributor)",
-        "Configure data connectors for Microsoft cloud sources, Windows Security events (AMA + DCR), and CEF/Syslog appliances",
-        "Author analytics rules and distinguish alerts, incidents, automation rules, and playbooks",
-        "Choose the correct log retention tier (interactive analytics vs long-term/archive) for a given cost/query requirement",
-        "Use the unified Microsoft Defender portal for cross-Sentinel/XDR advanced hunting"
+        "Create and connect workspaces in Microsoft Sentinel",
+        "Assign roles in Microsoft Sentinel",
+        "Implement and use content hub solutions",
+        "Configure and use Microsoft data connectors for Azure resources",
+        "Implement and configure syslog and Common Event Format (CEF) event collections",
+        "Implement and configure collection of Windows Security events by using data collection rules, including Windows Event Forwarding (WEF)",
+        "Create custom log tables in the workspace to store ingested data",
+        "Implement automation rules and playbooks in Microsoft Sentinel",
+        "Implement data retention in Microsoft Sentinel data stores",
+        "Query Microsoft Purview Audit in Defender XDR"
       ]
     },
     {
       "id": "o4-3",
       "domainId": "d4",
-      "title": "Microsoft Security Copilot",
-      "description": "Security Copilot standalone vs embedded modes, Security Compute Units (SCU) capacity, owner vs contributor roles, and plugins/promptbooks/agents extending Copilot's reach across Defender, Sentinel, Entra, Intune, and Purview.",
+      "title": "Implement Microsoft Security Copilot",
+      "officialSkillArea": "Implement Microsoft Security Copilot",
+      "skillRefs": [
+        "d4c1",
+        "d4c2",
+        "d4c3",
+        "d4c4"
+      ],
+      "description": "Configuring Security Copilot workspaces and Security Compute Unit capacity, managing owner vs contributor permissions and roles, enabling and troubleshooting plugins across Defender, Sentinel, Entra, Intune and Purview — noting that Copilot never exceeds the signed-in user's own access — and enabling Microsoft agents and Security Store agents.",
       "officialSkills": [
-        "Provision Security Copilot capacity (SCUs) and configure the default environment",
-        "Assign owner vs contributor roles for Security Copilot administration and usage",
-        "Enable and troubleshoot plugins that connect Copilot to Defender, Sentinel, Entra, and Purview",
-        "Distinguish standalone Security Copilot sessions from embedded experiences inside other portals",
-        "Use promptbooks and autonomous agents for repeatable security investigations"
+        "Configure workspaces for Security Copilot",
+        "Manage permissions and roles in Security Copilot",
+        "Enable and configure plugins",
+        "Enable and configure Microsoft agents and Security Store agents"
       ]
     }
   ]

@@ -4,6 +4,8 @@ import { db } from '../db'
 import { getCertContent } from '../content/registry'
 import { useCertId } from '../certifications'
 import { domainWeightMidpoint } from '../lib/examBuilder'
+import { buildReviewQueue } from '../lib/reviewQueue'
+import ExamMetaNotices from '../components/ExamMetaNotices'
 import { isOverdue, latestAccuracy } from '../lib/spacedRepetition'
 import type { UserProgress } from '../types'
 
@@ -14,7 +16,7 @@ function pct(value: number): string {
 export default function Dashboard() {
   const certId = useCertId()
   const content = getCertContent(certId)!
-  const { domains, objectives, objectivesByDomain, domainsById, examMeta } = content
+  const { domains, objectives, objectivesByDomain, domainsById, examMeta, questionsById } = content
 
   const progressList = useLiveQuery(
     () => db.userProgress.where('certId').equals(certId).toArray(),
@@ -30,7 +32,17 @@ export default function Dashboard() {
     [],
   )
 
+  const attempts = useLiveQuery(
+    () => db.quizAttempts.where('certId').equals(certId).toArray(),
+    [certId],
+    [],
+  )
+
   const progressByObjective = new Map(progressList?.map((p) => [p.objectiveId, p]))
+
+  // Built with the same function the review page uses, so the count on the
+  // dashboard and the list behind it can never disagree.
+  const reviewQueue = buildReviewQueue(attempts ?? [], questionsById, progressByObjective)
 
   const domainStats = domains.map((domain) => {
     const objs = objectivesByDomain[domain.id] ?? []
@@ -62,6 +74,8 @@ export default function Dashboard() {
         Prépare l'examen {examMeta.code} — {examMeta.durationMinutes} min · réussite à {examMeta.passingScore}/
         {examMeta.scoreMax}.
       </p>
+
+      <ExamMetaNotices examMeta={examMeta} />
 
       <div className="card">
         <div className="stat-row">
@@ -108,6 +122,31 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+
+      {reviewQueue.length > 0 && (
+        <div className="card">
+          <h2>🔁 À revoir</h2>
+          <div className="stat-row">
+            <div className="big-score" style={{ color: 'var(--bad)' }}>
+              {reviewQueue.length}
+            </div>
+            <div>
+              <p style={{ margin: 0 }}>
+                question{reviewQueue.length === 1 ? '' : 's'} dont la dernière réponse était fausse
+                {reviewQueue.filter((e) => e.overdue).length > 0 &&
+                  `, dont ${reviewQueue.filter((e) => e.overdue).length} sur un objectif en retard`}
+                .
+              </p>
+              <p className="muted" style={{ margin: '0.3rem 0 0' }}>
+                Répondre juste à une question la retire de la liste.
+              </p>
+            </div>
+          </div>
+          <Link to={`/${certId}/review`} className="btn" style={{ marginTop: '0.8rem' }}>
+            Ouvrir la liste
+          </Link>
+        </div>
+      )}
 
       <div className="card">
         <h2>⚠️ Objectifs à risque</h2>

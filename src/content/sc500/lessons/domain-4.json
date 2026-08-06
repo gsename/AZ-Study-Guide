@@ -1,7 +1,10 @@
 [
   {
     "objectiveId": "o4-1",
-    "diagrams": ["cspm-vs-cwp", "mdvm-vs-easm"],
+    "diagrams": [
+      "cspm-vs-cwp",
+      "mdvm-vs-easm"
+    ],
     "summary": "Microsoft Defender for Cloud (MDC) is a CNAPP that fuses CSPM — continuous configuration assessment scored via a single Secure Score against the Microsoft Cloud Security Benchmark (MCSB) — with CWP, the per-resource Defender workload-protection plans that raise runtime threat alerts. It spans Azure, AWS, GCP, and Arc-connected on-premises resources. The free foundational CSPM tier ships by default with every Azure subscription; the paid Defender CSPM tier adds attack-path analysis, the cloud security explorer graph, agentless scanning, DevOps posture, and EASM insights. A regulatory compliance dashboard separately maps the same environment against formal standards (ISO 27001, PCI-DSS, NIST SP 800-53, CIS, SOC 2) with pass/fail evidence per control.",
     "keyPoints": [
       "**CNAPP = CSPM + CWP** in one product: CSPM continuously evaluates configuration against best practices and answers 'are we configured safely?'; CWP runs per-resource 'Defender for X' threat-protection plans and answers 'are we being attacked right now?'. Works across **Azure, AWS, GCP, and on-premises via Azure Arc**.",
@@ -49,7 +52,9 @@
   },
   {
     "objectiveId": "o4-2",
-    "diagrams": ["sentinel-flow"],
+    "diagrams": [
+      "sentinel-flow"
+    ],
     "summary": "Microsoft Sentinel is Microsoft's cloud-native SIEM+SOAR, layered on top of a Log Analytics workspace: data connectors ingest logs from Microsoft cloud sources, on-premises servers, and network appliances; analysts query everything in KQL; analytics rules raise alerts that group into incidents; and automation rules plus Logic App playbooks drive the response. Access is governed by Azure RBAC plus Sentinel-specific Reader/Responder/Contributor roles. Since Sentinel's move into the unified Microsoft Defender portal, its incidents merge with Defender XDR's into a single investigation queue with cross-product advanced hunting.",
     "keyPoints": [
       "**Sentinel = SIEM** (collect, store, correlate, alert on logs from many sources) **+ SOAR** (automate response via playbooks), built **on top of a Log Analytics workspace**, which is the storage and query boundary.",
@@ -59,7 +64,9 @@
       "**Detection-to-response chain**: **analytics rules** (mostly scheduled KQL, plus Microsoft-security and ML rules) raise **alerts** → correlated alerts become an **incident** → **automation rules** apply lightweight if/then logic (set severity, assign owner, close noise, invoke a playbook) → a **playbook** (Azure Logic App) performs the actual external action (post to Teams/ServiceNow, disable a user, isolate a device).",
       "**Automation rule ≠ playbook**: the automation rule is the trigger/condition layer over an incident that can invoke a playbook; the playbook is the Logic App that does the heavy external work. A **SOC optimization** recommendation only flags coverage gaps or costly low-value data — it is not itself a detection.",
       "**Retention tiers**: **interactive/analytics retention** is fast to query (up to 2 years, first 90 days free) for active detection/hunting; cheaper **long-term/archive retention** (up to 12 years) suits compliance data that's rarely queried.",
-      "**Unified Microsoft Defender portal**: Sentinel now operates there, merging Sentinel and Defender XDR incidents into **one queue**, with **advanced hunting KQL spanning both**; Microsoft Purview Audit logs also surface there for unified investigation."
+      "**Unified Microsoft Defender portal**: Sentinel now operates there, merging Sentinel and Defender XDR incidents into **one queue**, with **advanced hunting KQL spanning both**; Microsoft Purview Audit logs also surface there for unified investigation.",
+      "When no connector exists, data reaches Sentinel through a **custom log table**: create the table in the Log Analytics workspace (its name ends in `_CL`), define a **Data Collection Rule** with the schema and any transformation, and post to the **Logs Ingestion API** against the DCR endpoint. The **Codeless Connector Platform** reaches the same destination declaratively, for a source that exposes an API you can poll.",
+      "The **DCR transformation** is where cost and quality are decided before ingestion: a KQL transform can drop columns, filter rows and reshape fields on the way in, so you pay to store what you will query rather than everything the source emits. Getting the schema wrong is expensive to undo — a custom table's columns are far easier to define correctly once than to change later."
     ],
     "commonPitfalls": [
       "**Automation rule ≠ playbook**: don't describe the automation rule as performing the external action — it triggers/conditions and can invoke a playbook, which is the Logic App that actually acts.",
@@ -67,7 +74,9 @@
       "Never propose the retired **Log Analytics agent (MMA)** for new telemetry collection — **AMA + DCR** is the only supported path for Windows Security events today.",
       "'Keep logs 7 years for audit, rarely queried' = **long-term/archive retention**, not the interactive analytics tier, which is far more expensive for that use case.",
       "**CEF/Syslog** ingestion needs an **AMA-based Linux forwarder/collector** — it is not a one-click native connector like Entra ID's.",
-      "A **SOC optimization** recommendation is advisory (coverage gap or cost/value tuning), not an alert or incident by itself."
+      "A **SOC optimization** recommendation is advisory (coverage gap or cost/value tuning), not an alert or incident by itself.",
+      "Creating the custom table and expecting data to appear — nothing arrives until a **DCR exists and something posts to its ingestion endpoint**. The table is the destination, not the pipeline.",
+      "Ingesting the full payload into a custom table and planning to filter at query time: the ingestion charge is already incurred. Filtering belongs in the **DCR transformation**, before the data lands."
     ],
     "commands": [
       {
@@ -81,6 +90,11 @@
       {
         "task": "Summarize open incidents by severity via KQL in the Sentinel workspace",
         "cli": "SecurityIncident | summarize count() by Severity"
+      },
+      {
+        "task": "Create a Data Collection Rule from a JSON definition, for a custom log table fed by the Logs Ingestion API",
+        "cli": "az monitor data-collection rule create --name DCR-CustomApp --resource-group RG1 --location westeurope --rule-file dcr-customapp.json",
+        "powershell": "New-AzDataCollectionRule -Name DCR-CustomApp -ResourceGroupName RG1 -JsonFilePath dcr-customapp.json"
       }
     ],
     "learnLinks": [

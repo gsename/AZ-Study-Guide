@@ -1,67 +1,97 @@
 [
   {
-    "id": "q-o2-2-01",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-01",
     "type": "single",
     "prompt": "What must be configured on the Azure SQL logical server to enable Microsoft Entra authentication?",
-    "choices": ["A Microsoft Entra admin for the server", "A SQL admin login only", "A private endpoint", "A Vulnerability Assessment baseline"],
-    "correctAnswers": ["A Microsoft Entra admin for the server"],
-    "explanation": "Setting a Microsoft Entra admin is what enables Entra-based sign-in alongside SQL logins. A private endpoint and VA baseline are unrelated network/posture controls.",
+    "choices": [
+      "A Microsoft Entra admin for the logical server",
+      "A SQL administrator login, and nothing more than that",
+      "A private endpoint on the logical server",
+      "A Vulnerability Assessment baseline scan"
+    ],
+    "correctAnswers": [
+      "A Microsoft Entra admin for the logical server"
+    ],
+    "explanation": "Until an Entra admin is set on the server, no Entra identity can be granted access to it — the setting is what bootstraps the whole authentication path. A private endpoint is the tempting answer because it is the other thing you configure on a logical server, whereas it governs where connections arrive from rather than which identities are accepted.",
+    "skillRef": "d2b1",
     "difficulty": "easy"
   },
   {
-    "id": "q-o2-2-02",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-02",
     "type": "single",
     "prompt": "What does enabling Microsoft Entra-only authentication on an Azure SQL server do?",
     "choices": [
       "Disables all SQL and Windows logins, forcing every connection through Entra identities",
-      "Enables both SQL and Entra logins simultaneously with no change",
-      "Encrypts data at rest with an Entra-managed key",
-      "Restricts network access to Entra-joined devices only"
+      "Enables SQL logins and Microsoft Entra logins side by side, changing nothing else about the server",
+      "Encrypts the data at rest with a key managed by Microsoft Entra ID",
+      "Restricts network access to devices that are joined to Microsoft Entra ID"
     ],
-    "correctAnswers": ["Disables all SQL and Windows logins, forcing every connection through Entra identities"],
-    "explanation": "Entra-only authentication is an all-or-nothing switch that removes SQL/Windows login capability entirely, not a network or encryption control.",
+    "correctAnswers": [
+      "Disables all SQL and Windows logins, forcing every connection through Entra identities"
+    ],
+    "explanation": "The switch is exclusive, not additive: every SQL and Windows login stops working, including the server administrator, which is why it must never be flipped before an Entra admin and a break-glass group exist. Reading it as enabling both login types side by side is the misconception — that is the DEFAULT state, and Entra-only is precisely the removal of it.",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-03",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-03",
     "type": "single",
     "prompt": "Before enabling Microsoft Entra-only authentication in production, what should an administrator ensure first?",
     "choices": [
       "A break-glass Entra account or group with server access exists",
-      "The storage account key has been rotated",
-      "Dynamic Data Masking is disabled",
-      "TDE is turned off"
+      "The storage account key for the audit destination has been rotated recently",
+      "Dynamic Data Masking has been disabled on every masked column",
+      "Transparent Data Encryption has been turned off on the database"
     ],
-    "correctAnswers": ["A break-glass Entra account or group with server access exists"],
-    "explanation": "Since Entra-only auth removes even the classic server admin SQL login, an Entra-based fallback must exist first to avoid locking everyone out. Storage keys, DDM, and TDE are unrelated to this switch.",
+    "correctAnswers": [
+      "A break-glass Entra account or group with server access exists"
+    ],
+    "explanation": "Entra-only authentication removes the SQL logins that would otherwise be the fallback, so the break-glass identity is the only thing standing between a directory or MFA outage and a server nobody can reach. The other three are tempting because each names a real setting on the same server, whereas none of them has any bearing on whether you can still authenticate afterwards.",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-04",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-04",
     "type": "single",
     "prompt": "Which network control still leaves an Azure SQL server's endpoint reachable on the public internet, just restricted by source IP?",
-    "choices": ["A server/database firewall rule", "A private endpoint with public access disabled", "Always Encrypted", "Row-Level Security"],
-    "correctAnswers": ["A server/database firewall rule"],
-    "explanation": "Firewall rules narrow who can reach the still-public endpoint by IP; they don't remove the public endpoint itself the way a private endpoint does.",
+    "choices": [
+      "A server or database firewall rule",
+      "A private endpoint with public network access disabled",
+      "Always Encrypted on the sensitive columns",
+      "Row-Level Security on the queried tables"
+    ],
+    "correctAnswers": [
+      "A server or database firewall rule"
+    ],
+    "explanation": "A firewall rule filters who may connect to an endpoint that remains public and publicly resolvable, so the server still appears in DNS and still answers. The private endpoint is the closest miss and does the opposite: it assigns a private IP inside the VNet and, with public access disabled, removes the public endpoint rather than restricting it.",
+    "skillRef": "d2b1",
     "difficulty": "easy"
   },
   {
-    "id": "q-o2-2-05",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-05",
     "type": "single",
     "prompt": "Which configuration removes an Azure SQL server's public endpoint entirely?",
     "choices": [
       "A private endpoint with Public network access set to Disabled",
-      "A firewall rule scoped to 0.0.0.0/0",
-      "Allow Azure services and resources to access this server = On",
-      "Dynamic Data Masking"
+      "A server firewall rule scoped to 0.0.0.0/0, allowing every source",
+      "Allow Azure services and resources to access this server, set to On",
+      "Dynamic Data Masking applied to every column in the database"
     ],
-    "correctAnswers": ["A private endpoint with Public network access set to Disabled"],
-    "explanation": "Only disabling public network access alongside a private endpoint eliminates the public endpoint. A 0.0.0.0/0 firewall rule would actually open it to everyone, the opposite of restricting it.",
+    "correctAnswers": [
+      "A private endpoint with Public network access set to Disabled"
+    ],
+    "explanation": "Both halves are required: the private endpoint supplies a path in, and Disabled is what takes the public one away — a private endpoint alone leaves the public endpoint answering. The Allow Azure services toggle is the trap here and moves in the wrong direction entirely: it admits traffic from any Azure resource in any tenant, so it widens exposure rather than removing it.",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
@@ -70,84 +100,180 @@
     "type": "single",
     "prompt": "What is the risk of leaving 'Allow Azure services and resources to access this server' enabled?",
     "choices": [
-      "It permits traffic from any Azure resource in any tenant/subscription, not just your own, widening the attack surface",
-      "It disables TDE for the server",
-      "It forces Microsoft Entra-only authentication",
-      "It automatically enables public blob access on linked storage accounts"
+      "It permits traffic from any Azure resource in any tenant, not just your own",
+      "It disables Transparent Data Encryption for the server",
+      "It forces Microsoft Entra-only authentication on the server",
+      "It automatically enables public blob access on any linked storage accounts as well"
     ],
-    "correctAnswers": ["It permits traffic from any Azure resource in any tenant/subscription, not just your own, widening the attack surface"],
+    "correctAnswers": [
+      "It permits traffic from any Azure resource in any tenant, not just your own"
+    ],
     "explanation": "This setting is a broad exception covering all Azure-originated traffic, not just resources you control — it should be off unless there's a specific, justified need.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-07",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-07",
     "type": "single",
     "prompt": "What does Transparent Data Encryption (TDE) protect?",
-    "choices": ["Data and log files at rest", "Data during query execution", "SAS tokens", "Network traffic in transit"],
-    "correctAnswers": ["Data and log files at rest"],
-    "explanation": "TDE encrypts the physical files on disk. It does not protect data while it's being processed in memory by the query engine, nor is it a network-in-transit control.",
+    "choices": [
+      "The data and log files at rest",
+      "The data while a query is executing",
+      "Shared access signature tokens",
+      "Network traffic while it is in transit"
+    ],
+    "correctAnswers": [
+      "The data and log files at rest"
+    ],
+    "explanation": "TDE encrypts the database files, log files and backups on disk, which is why a stolen backup or a lifted disk is unreadable. It does not protect data in use — the engine decrypts transparently, so a query returns plaintext — and it does not touch the connection, which is what TLS covers instead. Those two adjacent layers are where TDE is most often over-credited.",
+    "skillRef": "d2b1",
     "difficulty": "easy"
   },
   {
     "id": "q-o2-2-08",
     "objectiveId": "o2-2",
-    "type": "single",
-    "prompt": "Is TDE enabled by default on new Azure SQL databases?",
-    "choices": ["Yes", "No, it must always be manually enabled", "Only on Managed Instance", "Only when a customer-managed key is configured"],
-    "correctAnswers": ["Yes"],
-    "explanation": "TDE is on by default for new Azure SQL databases using a Microsoft-managed key; a CMK is an optional upgrade, not a prerequisite for TDE to be active.",
+    "type": "statement-grid",
+    "prompt": "For each statement about Transparent Data Encryption on Azure SQL Database, select Yes if it is true.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "A newly created Azure SQL database already has TDE enabled.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s2",
+        "text": "TDE can use either a Microsoft-managed key or a customer-managed key held in Key Vault.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s3",
+        "text": "A database administrator who runs a SELECT against a TDE-protected table sees ciphertext.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s4",
+        "text": "TDE must be configured separately on each table that holds sensitive columns.",
+        "correctValue": "No"
+      }
+    ],
+    "explanation": "TDE is on by default and takes a Microsoft-managed key unless you supply a customer-managed one, so the first two are true. The third is the misconception that matters: TDE decrypts transparently inside the engine, so a DBA sees plaintext — protecting data from the DBA is what Always Encrypted does instead. The fourth confuses TDE with column-level encryption: TDE operates on the database files as a whole and has no per-table configuration.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-09",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-09",
     "type": "single",
     "prompt": "A database administrator runs a SELECT statement against a TDE-protected table. What do they see?",
     "choices": [
       "Plaintext data — TDE decrypts transparently within the engine",
-      "Ciphertext, because TDE also protects data in use",
-      "An access-denied error",
-      "Masked data"
+      "Ciphertext, on the grounds that TDE also protects data while it is in use",
+      "An access-denied error returned by the database engine",
+      "Masked data, as a Dynamic Data Masking rule would return"
     ],
-    "correctAnswers": ["Plaintext data — TDE decrypts transparently within the engine"],
-    "explanation": "TDE is transparent to queries: the engine decrypts pages as it reads them, so any authorized query sees plaintext, including DBAs. Masking is a separate feature (DDM).",
+    "correctAnswers": [
+      "Plaintext data — TDE decrypts transparently within the engine"
+    ],
+    "explanation": "TDE is transparent by design: the engine holds the key, decrypts on read, and returns plaintext to whoever is authorized to query. Expecting ciphertext is the misconception that makes TDE look like a defence against insiders, whereas keeping data from a DBA needs Always Encrypted, where the key never reaches the engine at all.",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-10",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-10",
     "type": "single",
     "prompt": "Which key options exist for Transparent Data Encryption?",
     "choices": [
-      "A Microsoft-managed key by default, or a customer-managed key (CMK/BYOK) from Key Vault",
-      "Only a customer-managed key",
-      "Only a hardware security module key with no cloud option",
-      "A Shared Key borrowed from a linked storage account"
+      "A Microsoft-managed key by default, or a customer-managed key from Key Vault",
+      "Only a customer-managed key supplied from an Azure Key Vault instance",
+      "Only a hardware security module key held on premises, with no cloud-hosted option",
+      "A Shared Key borrowed from a storage account linked to the logical server"
     ],
-    "correctAnswers": ["A Microsoft-managed key by default, or a customer-managed key (CMK/BYOK) from Key Vault"],
-    "explanation": "TDE always uses a key — by default managed by Microsoft, or optionally a CMK from Key Vault for lifecycle control. There's no shared-key relationship with storage.",
+    "correctAnswers": [
+      "A Microsoft-managed key by default, or a customer-managed key from Key Vault"
+    ],
+    "explanation": "TDE works out of the box with a Microsoft-managed key, and a customer-managed key from Key Vault is the opt-in for organizations that need to hold the key lifecycle themselves. Reading CMK as mandatory is the tempting error and it inverts the default: nothing has to be configured for TDE to be protecting the files already.",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-2-11",
     "objectiveId": "o2-2",
-    "type": "single",
-    "prompt": "Which technology encrypts and decrypts data inside the client driver, so that keys are never exposed to the database engine itself?",
-    "choices": ["Always Encrypted", "Transparent Data Encryption", "Dynamic Data Masking", "Row-Level Security"],
-    "correctAnswers": ["Always Encrypted"],
-    "explanation": "Always Encrypted performs cryptographic operations client-side; TDE, in contrast, decrypts inside the engine, and DDM/RLS don't involve encryption keys at all.",
-    "difficulty": "medium"
+    "type": "drag-match",
+    "prompt": "Match each protection requirement to the Azure SQL feature that meets it. Not every feature in the pool is used.",
+    "sources": [
+      "Always Encrypted",
+      "Transparent Data Encryption",
+      "Dynamic Data Masking",
+      "Row-Level Security",
+      "SQL Auditing",
+      "Microsoft Defender for Databases"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "label": "The column must be unreadable to the database engine and to any DBA, with keys held only by the client driver",
+        "correctSource": "Always Encrypted"
+      },
+      {
+        "id": "t2",
+        "label": "The database and log files must be encrypted on disk, with no change to how applications query them",
+        "correctSource": "Transparent Data Encryption"
+      },
+      {
+        "id": "t3",
+        "label": "Support staff must see obfuscated values in query results, while the application keeps reading the real ones",
+        "correctSource": "Dynamic Data Masking"
+      },
+      {
+        "id": "t4",
+        "label": "Each regional manager must see only the rows belonging to their own region, whatever tool they query with",
+        "correctSource": "Row-Level Security"
+      }
+    ],
+    "explanation": "The four differ in WHERE they act, which is what makes them substitutable-looking and never actually interchangeable: Always Encrypted in the client driver, TDE on the files at rest, Dynamic Data Masking on the result set, Row-Level Security in the query plan. The pair that gets swapped most often is masking and Always Encrypted — masking changes what a less-privileged role is shown, whereas the underlying value is still plaintext in the engine and a DBA can read it. The two unused features record and alert on activity rather than restricting what anyone can read.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
+    "difficulty": "hard"
   },
   {
     "id": "q-o2-2-12",
     "objectiveId": "o2-2",
-    "type": "single",
-    "prompt": "A requirement states DBAs must never see national ID numbers in plaintext, even while the application queries them normally. Which feature satisfies this?",
-    "choices": ["Always Encrypted", "Transparent Data Encryption", "Dynamic Data Masking", "SQL Auditing"],
-    "correctAnswers": ["Always Encrypted"],
-    "explanation": "TDE only protects data at rest and still shows plaintext to any query. DDM only changes display for less-privileged roles, not for DBAs with full rights. Only Always Encrypted keeps the engine — and thus DBAs — from ever holding the plaintext.",
-    "difficulty": "medium"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the design so that national ID numbers stay unreadable to DBAs while the application continues to query them normally.",
+    "template": "Protect the column with [[b1]], and hold its column encryption key [[b2]].",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "Always Encrypted",
+          "Transparent Data Encryption",
+          "Dynamic Data Masking",
+          "Row-Level Security"
+        ],
+        "correctValue": "Always Encrypted"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "in a client-side key store the database engine cannot reach",
+          "in the TDE protector on the logical server",
+          "in the database master key",
+          "in a stored access policy on the audit container"
+        ],
+        "correctValue": "in a client-side key store the database engine cannot reach"
+      }
+    ],
+    "explanation": "The feature and the key location are one decision, not two: Always Encrypted only keeps data from the DBA because the key never reaches the engine, so storing it server-side in the TDE protector would defeat the whole design while leaving the column technically encrypted. TDE and masking are the tempting alternatives and both fail the same way — the engine holds the plaintext, so anyone with engine access can read it.",
+    "src": "kb-sql",
+    "skillRef": "d2b2",
+    "difficulty": "hard"
   },
   {
     "id": "q-o2-2-13",
@@ -155,28 +281,36 @@
     "type": "single",
     "prompt": "What do secure enclaves add to Always Encrypted?",
     "choices": [
-      "The ability to perform limited computation (e.g. pattern matching, range comparisons) on encrypted columns inside a protected memory region, without exposing plaintext outside it",
-      "Automatic key rotation every 24 hours",
-      "Data masking for non-privileged users",
-      "Server-level row filtering"
+      "Limited computation on encrypted columns inside a protected memory region",
+      "Automatic rotation of the column master key every twenty-four hours in Key Vault",
+      "Dynamic Data Masking applied for non-privileged users",
+      "Server-level row filtering applied by a security predicate"
     ],
-    "correctAnswers": ["The ability to perform limited computation (e.g. pattern matching, range comparisons) on encrypted columns inside a protected memory region, without exposing plaintext outside it"],
-    "explanation": "Enclaves let richer operations run against encrypted data server-side without ever leaking plaintext to the wider engine or an attacker. They don't handle key rotation, masking, or RLS.",
+    "correctAnswers": [
+      "Limited computation on encrypted columns inside a protected memory region"
+    ],
+    "explanation": "Enclaves let richer operations — pattern matching, range comparisons — run against encrypted data server-side inside a protected memory region, so plaintext is never exposed outside it and never leaks to the wider engine or to an attacker. They do not handle key rotation, masking, or Row-Level Security, which is what makes those three tempting but wrong.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-14",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-14",
     "type": "single",
     "prompt": "What does Dynamic Data Masking do?",
     "choices": [
-      "Masks query results for non-privileged users at the presentation layer, without changing the underlying stored data",
-      "Encrypts columns so even DBAs cannot read them",
-      "Filters which rows a user can see",
-      "Encrypts data at rest"
+      "Masks query results for non-privileged users at the presentation layer",
+      "Encrypts individual columns so that even a DBA cannot read their contents",
+      "Filters which rows a given user is allowed to see in a query result",
+      "Encrypts the database and log files where they sit at rest"
     ],
-    "correctAnswers": ["Masks query results for non-privileged users at the presentation layer, without changing the underlying stored data"],
-    "explanation": "DDM is cosmetic — it changes what's shown, not what's stored. Encrypting so DBAs can't read data is Always Encrypted; filtering rows is Row-Level Security.",
+    "correctAnswers": [
+      "Masks query results for non-privileged users at the presentation layer"
+    ],
+    "explanation": "Masking rewrites what a less-privileged role is shown; the stored value is untouched plaintext, which is why it is a display control rather than an encryption one. The column-encryption option is the trap, because it describes what people assume masking achieves — Always Encrypted is what actually keeps a DBA out, whereas masking can be bypassed by anyone who can read the underlying column.",
+    "skillRef": "d2b1",
     "difficulty": "easy"
   },
   {
@@ -185,43 +319,55 @@
     "type": "single",
     "prompt": "Why is Dynamic Data Masking NOT a substitute for Always Encrypted in a 'must be unreadable even to DBAs' scenario?",
     "choices": [
-      "DDM only changes what less-privileged roles see in query results; the underlying plaintext is unchanged and visible to privileged roles or through a clever query",
-      "DDM encrypts data with a weaker cipher than Always Encrypted",
+      "DDM only changes what less-privileged roles see in query results",
+      "DDM encrypts the data with a weaker cipher than Always Encrypted does",
       "DDM requires Microsoft Entra-only authentication to function",
       "DDM only works with Azure SQL Managed Instance"
     ],
-    "correctAnswers": ["DDM only changes what less-privileged roles see in query results; the underlying plaintext is unchanged and visible to privileged roles or through a clever query"],
-    "explanation": "DDM never encrypts anything — it's purely a display filter. A DBA with sufficient privilege (or an unmasked query context) can still retrieve the actual plaintext.",
+    "correctAnswers": [
+      "DDM only changes what less-privileged roles see in query results"
+    ],
+    "explanation": "DDM never encrypts anything — it is purely a display filter, so the underlying plaintext is unchanged. A DBA with sufficient privilege, or an unmasked query context, can still retrieve the real value, and a determined caller can recover masked data through repeated range queries. Always Encrypted is the only option here that keeps plaintext away from the engine.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-16",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-16",
     "type": "single",
     "prompt": "What is the primary mechanism used to implement Row-Level Security?",
     "choices": [
       "Inline table-valued functions used as security predicates, bound via a security policy",
-      "Firewall rules scoped per row",
-      "A stored access policy",
-      "Always Encrypted column keys"
+      "Server-level firewall rules whose scope is narrowed down to individual rows of the target table",
+      "A stored access policy attached to the container holding the audit log",
+      "Always Encrypted column encryption keys, applied per row of the table"
     ],
-    "correctAnswers": ["Inline table-valued functions used as security predicates, bound via a security policy"],
-    "explanation": "RLS is implemented with predicate functions bound to tables through a security policy — a purely database-engine construct, unrelated to firewalls, stored access policies (a storage concept), or encryption keys.",
+    "correctAnswers": [
+      "Inline table-valued functions used as security predicates, bound via a security policy"
+    ],
+    "explanation": "The predicate is an inline table-valued function, and a security policy is what binds it to a table so the engine applies it to every query. The firewall option is the tempting one because both are called filtering, whereas a firewall decides which network addresses may connect and cannot see a row at all.",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-17",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-17",
     "type": "single",
     "prompt": "Where is a Row-Level Security predicate enforced?",
     "choices": [
-      "Inside the database engine itself, regardless of which application or tool issues the query",
-      "Only inside the application's business logic layer",
-      "Only at the SQL Auditing layer",
-      "Only when Microsoft Defender for Databases is enabled"
+      "Inside the database engine itself, whatever application or tool issues the query",
+      "Only inside the application's own business logic layer, before the query is sent",
+      "Only at the SQL Auditing layer, after the query has already returned its rows",
+      "Only while Microsoft Defender for Databases is enabled on the server and reporting"
     ],
-    "correctAnswers": ["Inside the database engine itself, regardless of which application or tool issues the query"],
-    "explanation": "Because RLS lives in the engine, protection applies universally to any client or tool, not just an application that remembers to add a WHERE clause.",
+    "correctAnswers": [
+      "Inside the database engine itself, whatever application or tool issues the query"
+    ],
+    "explanation": "Enforcement in the engine is the whole value: a user connecting with SSMS, a report tool or an ad-hoc script gets the same filtered rows as the application. The application-layer option is the tempting one because that is where row filtering is usually written, whereas anything bypassing the application then bypasses the filter — which is exactly the gap RLS closes.",
+    "skillRef": "d2b3",
     "difficulty": "medium"
   },
   {
@@ -230,28 +376,36 @@
     "type": "single",
     "prompt": "Why is RLS considered more robust than filtering rows in application code?",
     "choices": [
-      "It's enforced by the database engine for every query, even from a new or compromised application that forgets to filter",
-      "It's always faster than application-layer filtering",
-      "It automatically encrypts the filtered rows",
-      "It replaces the need for authentication entirely"
+      "It is enforced by the database engine for every query, whatever the client",
+      "It is always faster than filtering the same rows in the application's own code",
+      "It automatically encrypts the rows it filters out",
+      "It replaces the need for user authentication entirely"
     ],
-    "correctAnswers": ["It's enforced by the database engine for every query, even from a new or compromised application that forgets to filter"],
+    "correctAnswers": [
+      "It is enforced by the database engine for every query, whatever the client"
+    ],
     "explanation": "Application-layer filtering can be bypassed by a new client, a bug, or a direct query tool; engine-enforced RLS cannot be skipped this way.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-19",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-19",
     "type": "single",
     "prompt": "What does a Vulnerability Assessment (VA) scan for?",
     "choices": [
-      "Misconfigurations, excessive permissions, and configuration drift against a Microsoft-curated baseline",
-      "Live SQL injection attempts in progress",
-      "Network latency issues",
-      "Storage account key leaks"
+      "Misconfigurations, excessive permissions, and drift against a Microsoft-curated baseline",
+      "Live SQL injection attempts in progress, reported as they are executed against the database",
+      "Network latency between the client and the database, sampled continuously",
+      "Storage account key leaks affecting the configured audit destination"
     ],
-    "correctAnswers": ["Misconfigurations, excessive permissions, and configuration drift against a Microsoft-curated baseline"],
-    "explanation": "VA is a posture/configuration scan, not a real-time threat detector — live attack detection is Defender for Databases' job.",
+    "correctAnswers": [
+      "Misconfigurations, excessive permissions, and drift against a Microsoft-curated baseline"
+    ],
+    "explanation": "A VA scan is a point-in-time comparison of configuration against a baseline, and its findings are things to fix rather than events to respond to. Live injection attempts are the tempting answer and belong to Microsoft Defender for Databases: the split between them is posture versus detection, and it is the distinction the objective tests most often.",
+    "skillRef": "d2b3",
     "difficulty": "easy"
   },
   {
@@ -259,29 +413,56 @@
     "objectiveId": "o2-2",
     "type": "single",
     "prompt": "Which SQL Auditing destination is best suited for querying with KQL and for Microsoft Sentinel integration?",
-    "choices": ["A Log Analytics workspace", "A storage account only", "An Event Hub only", "A local file on the server"],
-    "correctAnswers": ["A Log Analytics workspace"],
+    "choices": [
+      "A Log Analytics workspace",
+      "A storage account only",
+      "An Event Hub only",
+      "A local file on the server"
+    ],
+    "correctAnswers": [
+      "A Log Analytics workspace"
+    ],
     "explanation": "Log Analytics is the queryable destination that plugs directly into Sentinel analytics rules. Storage is cheaper for archival but not for interactive querying; Event Hub is for streaming to third-party tools.",
+    "src": "kb-sql",
+    "skillRef": "d2b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-21",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-21",
     "type": "single",
     "prompt": "Which SQL Auditing destination is best suited for cheap, long-term retention rather than active querying?",
-    "choices": ["A storage account", "A Log Analytics workspace", "An Event Hub", "Always Encrypted"],
-    "correctAnswers": ["A storage account"],
-    "explanation": "Storage accounts offer the lowest-cost option for archiving audit logs over long retention periods, at the cost of convenient querying.",
+    "choices": [
+      "A storage account, priced for archival volumes",
+      "A Log Analytics workspace, priced for ingestion and query",
+      "An Event Hub, which retains events only briefly",
+      "A Dynamic Data Masking policy on the audited columns"
+    ],
+    "correctAnswers": [
+      "A storage account, priced for archival volumes"
+    ],
+    "explanation": "A storage account is the cheapest place to keep years of events that are read only during an audit. The workspace is the tempting default because it is the destination that makes the data useful, whereas you pay for ingestion and retention there — and an Event Hub is a transport rather than a store, so events not consumed in time are simply gone.",
+    "skillRef": "d2b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-22",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-22",
     "type": "single",
     "prompt": "Which SQL Auditing destination is best suited for streaming events to a third-party SIEM?",
-    "choices": ["An Event Hub", "A storage account", "A Log Analytics workspace only", "Dynamic Data Masking"],
-    "correctAnswers": ["An Event Hub"],
-    "explanation": "Event Hub is the streaming-ingestion target designed to forward events onward to external systems in near real time.",
+    "choices": [
+      "An Event Hub, which downstream tooling subscribes to",
+      "A storage account, which the SIEM would then have to poll on a schedule",
+      "A Log Analytics workspace, queried by the SIEM through the API",
+      "A Dynamic Data Masking policy on the audited columns"
+    ],
+    "correctAnswers": [
+      "An Event Hub, which downstream tooling subscribes to"
+    ],
+    "explanation": "An Event Hub is the streaming destination: the SIEM subscribes and receives events as they occur, with no polling loop to build. The storage account is the tempting alternative because it does hold the same events, whereas reading them means scheduled polling and a delay measured in minutes rather than seconds.",
+    "skillRef": "d2b2",
     "difficulty": "medium"
   },
   {
@@ -295,23 +476,31 @@
       "It only applies to newly created databases going forward",
       "It must be separately re-enabled per database regardless"
     ],
-    "correctAnswers": ["It applies to every database on that server"],
-    "explanation": "Server-level auditing is inherited by every database hosted on that logical server, existing and new, unless a database explicitly overrides it.",
+    "correctAnswers": [
+      "It applies to every database on that server"
+    ],
+    "explanation": "Server-level auditing is inherited by every database on that logical server, existing and new alike, unless a database sets its own policy. \"Newly created databases only\" is the tempting reading and would leave every database that already exists unaudited — which is the gap a reviewer would never notice from the server blade, because auditing shows as enabled.",
+    "src": "kb-sql",
+    "skillRef": "d2b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-24",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-24",
     "type": "single",
     "prompt": "Which capability does Microsoft Defender for Databases add that plain SQL Auditing does not provide?",
     "choices": [
-      "Real-time threat alerts (SQL injection, anomalous access, brute force, exfiltration) plus integrated Vulnerability Assessment",
-      "An immutable log of every query",
-      "A way to send logs to an Event Hub",
-      "TDE key management"
+      "Real-time threat alerts plus integrated Vulnerability Assessment",
+      "An immutable, tamper-evident log of every query that was run",
+      "A way to stream the audit log to an Event Hub for downstream tooling",
+      "Management of the Transparent Data Encryption protector key"
     ],
-    "correctAnswers": ["Real-time threat alerts (SQL injection, anomalous access, brute force, exfiltration) plus integrated Vulnerability Assessment"],
-    "explanation": "Defender adds active detection and posture scanning. The immutable log and Event Hub delivery are auditing's job, and TDE key management is unrelated to either feature.",
+    "correctAnswers": [
+      "Real-time threat alerts plus integrated Vulnerability Assessment"
+    ],
+    "explanation": "Defender detects and alerts; auditing records. The immutable-log option is the tempting one because it sounds like the stronger guarantee, whereas that is a property of the audit DESTINATION — a storage account with a time-based retention policy — and not something Defender supplies. Event Hub streaming is likewise a plain auditing feature.",
+    "skillRef": "d2b3",
     "difficulty": "medium"
   },
   {
@@ -320,104 +509,168 @@
     "type": "single",
     "prompt": "Which statement best distinguishes SQL Auditing from Microsoft Defender for Databases?",
     "choices": [
-      "Auditing records what happened; Defender detects and alerts on threats while also scanning for vulnerabilities",
-      "They are the same feature under two different names",
-      "Auditing requires Defender to be enabled first",
-      "Defender replaces the need for TDE"
+      "Auditing records what happened; Defender detects and alerts on threats",
+      "They are the same underlying feature, marketed under two entirely different names",
+      "Auditing requires Defender for Databases to be enabled first",
+      "Defender for Databases replaces the need for TDE entirely"
     ],
-    "correctAnswers": ["Auditing records what happened; Defender detects and alerts on threats while also scanning for vulnerabilities"],
-    "explanation": "The two are complementary and independently enabled — neither is a prerequisite for the other, and neither replaces TDE.",
+    "correctAnswers": [
+      "Auditing records what happened; Defender detects and alerts on threats"
+    ],
+    "explanation": "The two are complementary and independently enabled: auditing is the record of what happened, Defender is the detection of what is happening, and Defender additionally scans for vulnerabilities. Neither is a prerequisite for the other, and neither replaces TDE.",
+    "src": "kb-sql",
+    "skillRef": "d2b3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-26",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-26",
     "type": "single",
     "prompt": "Besides Azure SQL, which other data services does Microsoft Defender for Databases cover?",
     "choices": [
-      "SQL on VM/Arc, MySQL, PostgreSQL, and Cosmos DB",
-      "Only Azure SQL Managed Instance",
-      "Only Cosmos DB",
-      "Only on-premises SQL Server, and only via Azure Arc"
+      "SQL on VM and Arc, MySQL, PostgreSQL, and Cosmos DB",
+      "Only Azure SQL Managed Instance, and nothing else",
+      "Only Azure Cosmos DB accounts, and no SQL variants",
+      "Only on-premises SQL Server, and only through Azure Arc"
     ],
-    "correctAnswers": ["SQL on VM/Arc, MySQL, PostgreSQL, and Cosmos DB"],
-    "explanation": "Defender for Databases is a family of plans spanning multiple relational and NoSQL engines, both Azure-native and Arc-enabled, not a single-service feature.",
+    "correctAnswers": [
+      "SQL on VM and Arc, MySQL, PostgreSQL, and Cosmos DB"
+    ],
+    "explanation": "The plan is a family covering SQL servers on VMs and Arc-enabled machines, the open-source database services, and Cosmos DB — which is why it is priced and enabled per resource type rather than once. Each of the three narrow options is tempting because it names a genuinely covered service, whereas the word \"only\" is what makes it wrong.",
+    "skillRef": "d2b3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-27",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-27",
     "type": "single",
     "prompt": "A requirement asks for 'an alert the moment a possible SQL injection attempt occurs.' Which feature satisfies this?",
-    "choices": ["Microsoft Defender for Databases", "SQL Auditing alone", "A Vulnerability Assessment baseline scan only", "Dynamic Data Masking"],
-    "correctAnswers": ["Microsoft Defender for Databases"],
-    "explanation": "Real-time alerting on active attacks is Defender's Advanced Threat Protection capability. Auditing and VA are passive/periodic, and DDM has nothing to do with detection.",
+    "choices": [
+      "Microsoft Defender for Databases",
+      "SQL Auditing on its own, with no Defender plan",
+      "A Vulnerability Assessment baseline scan only",
+      "Dynamic Data Masking on the queried columns"
+    ],
+    "correctAnswers": [
+      "Microsoft Defender for Databases"
+    ],
+    "explanation": "Only Defender turns activity into a real-time alert. SQL Auditing is the closest miss and would record the same statement, whereas nobody is told about it until someone queries the log — the requirement says \"the moment\", which is what separates detection from recording. A VA scan reports posture on a schedule instead of events as they happen.",
+    "skillRef": "d2b3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-28",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-28",
     "type": "single",
     "prompt": "A requirement asks to 'keep an immutable record of every login and query' for compliance review. Which feature satisfies this?",
     "choices": [
-      "SQL Auditing to a durable target (Log Analytics workspace or storage account)",
-      "Microsoft Defender for Databases alerts",
-      "Dynamic Data Masking",
-      "Always Encrypted"
+      "SQL Auditing to a durable target, such as a workspace or a storage account",
+      "Microsoft Defender for Databases alerts, reviewed in the Defender for Cloud portal",
+      "Dynamic Data Masking applied to the columns under review",
+      "Always Encrypted on every column the compliance review touches"
     ],
-    "correctAnswers": ["SQL Auditing to a durable target (Log Analytics workspace or storage account)"],
-    "explanation": "Auditing is the durable logging mechanism; Defender only fires alerts on threats it detects, it doesn't log every routine query the way an audit trail does.",
+    "correctAnswers": [
+      "SQL Auditing to a durable target, such as a workspace or a storage account"
+    ],
+    "explanation": "A complete record of logins and queries is what auditing produces, and only a durable destination makes it reviewable later. Defender alerts are the tempting answer because they are also a security record, whereas they capture what looked suspicious rather than everything that happened — a compliance review needs the full history, not the exceptions.",
+    "skillRef": "d2b3",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-29",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-29",
     "type": "multiple",
     "prompt": "Which two statements about Transparent Data Encryption are correct? (Choose two.)",
     "choices": [
-      "Enabled by default",
-      "Protects data at rest",
-      "Protects data from being read in plaintext by a DBA during a query",
-      "Requires Always Encrypted to function"
+      "It is enabled by default on a newly created Azure SQL database",
+      "It protects the data and log files where they sit at rest",
+      "It prevents a DBA from reading plaintext values during a query",
+      "It requires Always Encrypted to be configured first in order to work"
     ],
-    "correctAnswers": ["Enabled by default", "Protects data at rest"],
-    "explanation": "TDE is on by default and covers only at-rest protection. A DBA querying the database still sees plaintext, since TDE decrypts transparently in the engine.",
+    "correctAnswers": [
+      "It is enabled by default on a newly created Azure SQL database",
+      "It protects the data and log files where they sit at rest"
+    ],
+    "explanation": "TDE is on by default and protects the files at rest — those are the two true statements. Blocking a DBA is the tempting third because it is what people want from encryption, whereas TDE decrypts inside the engine and returns plaintext. The two features are independent: neither requires the other, and each protects a different layer.",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-30",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-30",
     "type": "multiple",
     "prompt": "Which two statements about Row-Level Security are correct? (Choose two.)",
     "choices": [
-      "Predicates are enforced inside the database engine",
+      "Predicates are enforced inside the database engine itself",
       "It uses inline table-valued functions bound via a security policy",
-      "It encrypts the filtered rows",
-      "It replaces the need for a network firewall"
+      "It encrypts the rows that its predicate filters out of the result",
+      "It removes the need for a server-level network firewall entirely, on its own"
     ],
-    "correctAnswers": ["Predicates are enforced inside the database engine", "It uses inline table-valued functions bound via a security policy"],
-    "explanation": "RLS filters visible rows using engine-enforced predicate functions; it does not encrypt anything and is unrelated to network firewalling.",
+    "correctAnswers": [
+      "Predicates are enforced inside the database engine itself",
+      "It uses inline table-valued functions bound via a security policy"
+    ],
+    "explanation": "RLS is engine-enforced and implemented with an inline table-valued function bound by a security policy. It never encrypts anything, which is the tempting conflation with Always Encrypted, and it is not a network control: a firewall decides who may connect at all, whereas RLS decides what an already-connected user is shown.",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-2-31",
     "objectiveId": "o2-2",
-    "type": "multiple",
-    "prompt": "Which two are valid SQL Auditing destinations? (Choose two.)",
-    "choices": ["Log Analytics workspace", "Event Hub", "Always Encrypted key vault", "Dynamic Data Masking policy"],
-    "correctAnswers": ["Log Analytics workspace", "Event Hub"],
-    "explanation": "Auditing can target a Log Analytics workspace, a storage account, or an Event Hub. Always Encrypted key vaults and DDM policies are unrelated features, not audit destinations.",
+    "type": "drag-match",
+    "prompt": "Match each auditing requirement to the SQL Auditing destination that fits it best. Not every option in the pool is a valid destination.",
+    "sources": [
+      "A Log Analytics workspace",
+      "A storage account",
+      "An Event Hub",
+      "A Dynamic Data Masking policy",
+      "An Always Encrypted key store"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "label": "Analysts must query the audit trail with KQL and correlate it in Microsoft Sentinel",
+        "correctSource": "A Log Analytics workspace"
+      },
+      {
+        "id": "t2",
+        "label": "Seven years of events must be kept as cheaply as possible and are read only during an audit",
+        "correctSource": "A storage account"
+      },
+      {
+        "id": "t3",
+        "label": "Events must be streamed continuously to a third-party SIEM that is already in place",
+        "correctSource": "An Event Hub"
+      }
+    ],
+    "explanation": "The three valid destinations are chosen by what happens to the events afterwards: a workspace to query them, a storage account to keep them, an Event Hub to forward them. The two unused options are not destinations at all — masking shapes query results and a key store holds encryption keys — which is the point worth noticing, because a plausible-looking list of SQL features is not a list of audit targets.",
+    "src": "kb-sql",
+    "skillRef": "d2b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-32",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-32",
     "type": "case-study",
     "caseStudyId": "cs-woodgrove-data",
     "prompt": "Referring to requirement 3 (national ID numbers in a SQL column must remain unreadable in plaintext even to DBAs, while still being queryable by the application), which feature is correct?",
-    "choices": ["Always Encrypted", "Transparent Data Encryption", "Dynamic Data Masking", "SQL Auditing"],
-    "correctAnswers": ["Always Encrypted"],
-    "explanation": "Only Always Encrypted keeps the plaintext out of the engine's reach entirely, satisfying 'unreadable even to DBAs' while the application driver still decrypts for legitimate queries. TDE and DDM both still expose plaintext to a privileged query.",
+    "choices": [
+      "Always Encrypted, with client-held keys",
+      "Transparent Data Encryption on the database",
+      "Dynamic Data Masking on the column",
+      "SQL Auditing to a Log Analytics workspace"
+    ],
+    "correctAnswers": [
+      "Always Encrypted, with client-held keys"
+    ],
+    "explanation": "Only Always Encrypted keeps the key out of the engine, which is what makes the column unreadable to a DBA while the client driver still decrypts for the application. Masking is the trap in this requirement: it hides the value from a low-privileged role in query results, whereas a DBA reads the underlying column and sees plaintext.",
+    "skillRef": "d2b2",
     "difficulty": "medium"
   },
   {
@@ -426,25 +679,38 @@
     "type": "case-study",
     "caseStudyId": "cs-woodgrove-data",
     "prompt": "Woodgrove also wants the application to run range queries against the encrypted national ID column without ever exposing plaintext to the database engine. Which Always Encrypted feature enables this?",
-    "choices": ["Secure enclaves", "Dynamic Data Masking", "Row-Level Security", "A stored access policy"],
-    "correctAnswers": ["Secure enclaves"],
+    "choices": [
+      "Secure enclaves",
+      "Dynamic Data Masking",
+      "Row-Level Security",
+      "A stored access policy"
+    ],
+    "correctAnswers": [
+      "Secure enclaves"
+    ],
     "explanation": "Secure enclaves allow richer computation (like range comparisons) on encrypted data inside a protected memory region, something basic Always Encrypted alone can't do. DDM, RLS, and stored access policies address unrelated concerns.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
     "difficulty": "hard"
   },
   {
-    "id": "q-o2-2-34",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-34",
     "type": "case-study",
     "caseStudyId": "cs-woodgrove-data",
     "prompt": "Referring to requirement 4 (compliance must review a full, immutable history of every login and query against the customer-accounts table), which configuration is correct?",
     "choices": [
-      "SQL Auditing enabled at server or database level, targeting a Log Analytics workspace or storage account",
-      "Microsoft Defender for Databases alerts only",
-      "Dynamic Data Masking on the sensitive columns",
-      "Row-Level Security predicates on the table"
+      "SQL Auditing at server or database level, targeting a workspace or storage account",
+      "Microsoft Defender for Databases alerts only, with no audit destination configured at all",
+      "Dynamic Data Masking on the sensitive columns, so the audit log never records them",
+      "Row-Level Security predicates applied to the customer-accounts table"
     ],
-    "correctAnswers": ["SQL Auditing enabled at server or database level, targeting a Log Analytics workspace or storage account"],
-    "explanation": "A durable, queryable history of every event is exactly what Auditing provides. Defender only alerts on detected threats, and DDM/RLS don't produce any historical log at all.",
+    "correctAnswers": [
+      "SQL Auditing at server or database level, targeting a workspace or storage account"
+    ],
+    "explanation": "A full history requires auditing with a durable destination — Defender alerts, however useful, record only what was judged suspicious and satisfy neither \"full\" nor \"immutable\". The masking option is worth reading twice: it inverts the requirement, since compliance needs the sensitive activity recorded rather than hidden from the record.",
+    "skillRef": "d2b3",
     "difficulty": "medium"
   },
   {
@@ -453,9 +719,16 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o2-2",
     "prompt": "Proposed solution: Enable Transparent Data Encryption on the database. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
     "explanation": "TDE only protects data at rest; the engine (and thus any DBA running a query) still sees plaintext, so the goal of hiding the value even from DBAs is not met.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
@@ -463,10 +736,17 @@
     "objectiveId": "o2-2",
     "type": "solution-goal",
     "caseStudyId": "sg-o2-2",
-    "prompt": "Proposed solution: Configure Always Encrypted on the national ID column, with keys managed client-side and never exposed to the database engine. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "This is exactly what Always Encrypted is built for: the engine never holds the decryption key, so DBAs cannot read the plaintext, while the client application can still decrypt normally.",
+    "prompt": "Proposed solution: Apply a Dynamic Data Masking rule to the national ID column so DBAs see a masked value in query results. Does this solution meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "Masking changes only what certain roles are shown; the stored value stays plaintext, so a DBA with sufficient privilege, or a query context that bypasses the mask, still retrieves the real number. The solution is tempting because the screen genuinely does show a masked value, whereas the goal asks for unreadable rather than not displayed.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
@@ -474,25 +754,43 @@
     "objectiveId": "o2-2",
     "type": "solution-goal",
     "caseStudyId": "sg-o2-2",
-    "prompt": "Proposed solution: Apply a Dynamic Data Masking rule to the national ID column so DBAs see a masked value in query results. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "DDM only changes the displayed result for certain roles; a DBA with sufficient privilege, or a query context that bypasses the mask, can still retrieve the true plaintext.",
+    "prompt": "Proposed solution: Configure Always Encrypted on the national ID column, with keys managed client-side and never exposed to the database engine. Does this solution meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "This is exactly what Always Encrypted is built for: the engine never holds the decryption key, so DBAs cannot read the plaintext, while the client application can still decrypt normally.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-2-38",
     "objectiveId": "o2-2",
-    "type": "reorder",
-    "prompt": "Order the steps to enable Microsoft Entra-only authentication safely on an Azure SQL logical server.",
-    "reorderItems": [
-      "Configure a Microsoft Entra admin on the logical server",
-      "Create or confirm a break-glass Entra account/group with server access",
+    "type": "build-list",
+    "prompt": "Build the sequence that moves an Azure SQL logical server to Microsoft Entra-only authentication without losing access to it. Not every action in the pool belongs in the answer.",
+    "poolItems": [
+      "Set a Microsoft Entra admin on the logical server",
+      "Confirm a break-glass Entra group already holds server access, so an MFA or directory outage is survivable",
       "Enable Microsoft Entra-only authentication",
-      "Verify SQL logins can no longer authenticate and Entra sign-in still works"
+      "Check that SQL logins now fail while Entra sign-in still works",
+      "Delete the SQL administrator login from the server",
+      "Turn off Transparent Data Encryption while the change is applied",
+      "Set the server's public network access to Disabled at the same time"
     ],
-    "explanation": "An Entra admin and a break-glass identity must exist before removing SQL login capability, so verification comes only after the switch is flipped.",
-    "difficulty": "medium"
+    "correctOrder": [
+      "Set a Microsoft Entra admin on the logical server",
+      "Confirm a break-glass Entra group already holds server access, so an MFA or directory outage is survivable",
+      "Enable Microsoft Entra-only authentication",
+      "Check that SQL logins now fail while Entra sign-in still works"
+    ],
+    "explanation": "Entra-only authentication disables every SQL and Windows login at once, so the Entra admin and the break-glass group must both be in place first — otherwise the switch removes the only credentials that could undo it. The three excluded actions are the ones that feel like part of the same tidy-up and are not: deleting the SQL admin login is unnecessary because Entra-only already disables it, TDE has nothing to do with authentication, and changing network access in the same window means a failure afterwards cannot be attributed to either change.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
+    "difficulty": "hard"
   },
   {
     "id": "q-o2-2-39",
@@ -505,7 +803,9 @@
       "Confirm connectivity to the server over the private IP",
       "Set the SQL server's public network access to Disabled and remove firewall rules"
     ],
-    "explanation": "The private path must be built and verified as working before removing the public endpoint, to avoid an outage during the cutover.",
+    "explanation": "The private endpoint and its DNS zone must be in place and the connection verified BEFORE public access is disabled, or the cutover removes the only working path. Disabling public access first is the ordering mistake that causes an outage rather than a warning, and skipping the DNS zone is the subtler one: the endpoint exists and the hostname still resolves publicly.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
@@ -515,12 +815,39 @@
     "prompt": "Configure this simplified Azure SQL server security screen so only Microsoft Entra identities can authenticate and the server has no public endpoint.",
     "screenTitle": "Azure SQL server - Security (simulated)",
     "fields": [
-      { "id": "entraOnly", "label": "Microsoft Entra-only authentication", "kind": "toggle", "correctValue": "On" },
-      { "id": "publicAccess", "label": "Public network access", "kind": "toggle", "correctValue": "Off" },
-      { "id": "privateEndpoint", "label": "Private endpoint", "kind": "select", "options": ["None", "Configured to the sqlServer sub-resource", "Configured to the blob sub-resource"], "correctValue": "Configured to the sqlServer sub-resource" },
-      { "id": "allowAzureServices", "label": "Allow Azure services and resources to access this server", "kind": "toggle", "correctValue": "Off" }
+      {
+        "id": "entraOnly",
+        "label": "Microsoft Entra-only authentication",
+        "kind": "toggle",
+        "correctValue": "On"
+      },
+      {
+        "id": "publicAccess",
+        "label": "Public network access",
+        "kind": "toggle",
+        "correctValue": "Off"
+      },
+      {
+        "id": "privateEndpoint",
+        "label": "Private endpoint",
+        "kind": "select",
+        "options": [
+          "None",
+          "Configured to the sqlServer sub-resource",
+          "Configured to the blob sub-resource"
+        ],
+        "correctValue": "Configured to the sqlServer sub-resource"
+      },
+      {
+        "id": "allowAzureServices",
+        "label": "Allow Azure services and resources to access this server",
+        "kind": "toggle",
+        "correctValue": "Off"
+      }
     ],
-    "explanation": "Entra-only auth removes SQL logins, disabling public network access plus a sqlServer-scoped private endpoint removes the public endpoint, and turning off the broad Azure-services exception avoids widening the attack surface.",
+    "explanation": "Entra-only authentication removes the SQL logins, and disabling public network access alongside a sqlServer-scoped private endpoint removes the public endpoint rather than merely restricting it. The trap in this screen is the last field: leaving the Azure-services exception On admits traffic from any Azure resource in any tenant, so the private endpoint above it buys nothing.",
+    "src": "kb-sql",
+    "skillRef": "d2b1",
     "difficulty": "medium"
   },
   {
@@ -534,38 +861,50 @@
       "Row-Level Security",
       "Transparent Data Encryption"
     ],
-    "correctAnswers": ["Audit action groups"],
+    "correctAnswers": [
+      "Audit action groups"
+    ],
     "explanation": "Audit action groups let you scope auditing to specific categories of activity instead of logging everything, reducing volume and cost while still meeting the compliance requirement.",
+    "src": "kb-sql",
+    "skillRef": "d2b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-42",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-42",
     "type": "single",
     "prompt": "Audit logs must provide tamper-resistant, audit-grade evidence that cannot be deleted or modified during the retention period. Which audit target configuration achieves this?",
     "choices": [
-      "A storage account configured with immutability (time-based retention policy)",
-      "A standard, mutable storage account",
-      "Dynamic Data Masking on the audited columns",
-      "A server-level firewall rule"
+      "A storage account with a time-based retention immutability policy",
+      "A standard, fully mutable storage account with no retention policy",
+      "Dynamic Data Masking applied to the columns that are being audited",
+      "A server-level firewall rule restricting which addresses may reach the database"
     ],
-    "correctAnswers": ["A storage account configured with immutability (time-based retention policy)"],
-    "explanation": "Only an immutable storage configuration blocks deletion or modification of the audit log blobs during the retention window, providing tamper-resistant evidence. A standard mutable account offers no such guarantee.",
+    "correctAnswers": [
+      "A storage account with a time-based retention immutability policy"
+    ],
+    "explanation": "Immutability is a property of the destination, not of auditing: a time-based retention policy makes the blobs write-once so that nobody, including an account owner, can alter or delete them before the period expires. A plain storage account is the tempting near-answer and holds the same events, whereas an administrator who wants them gone can simply delete them.",
+    "skillRef": "d2b2",
     "difficulty": "medium"
   },
   {
-    "id": "q-o2-2-43",
+    "src": "kb-sql",
     "objectiveId": "o2-2",
+    "id": "q-o2-2-43",
     "type": "single",
     "prompt": "You configured server-level auditing for an Azure SQL Database logical server and assume it also covers an Azure SQL Managed Instance in the same environment. What is wrong with this assumption?",
     "choices": [
-      "Managed Instance auditing requires its own explicit, instance-specific configuration",
-      "Managed Instance cannot be audited at all",
-      "Server-level auditing only works for Managed Instance, never for single databases",
-      "Auditing is identical and no extra configuration is ever needed"
+      "Managed Instance auditing needs its own explicit, instance-specific configuration",
+      "Managed Instance cannot be audited at all, at any level, by any mechanism",
+      "Server-level auditing only ever works for Managed Instance, never for single databases",
+      "Auditing behaves identically, and no extra configuration is ever needed anywhere"
     ],
-    "correctAnswers": ["Managed Instance auditing requires its own explicit, instance-specific configuration"],
-    "explanation": "SQL Managed Instance auditing is configured separately from single-database server-level auditing — assuming one automatically covers the other leaves a compliance gap.",
+    "correctAnswers": [
+      "Managed Instance auditing needs its own explicit, instance-specific configuration"
+    ],
+    "explanation": "Managed Instance is a separate resource type with its own auditing settings, so a logical server's policy never reaches it — the assumption produces a gap that looks covered on the logical server's blade. Believing auditing is identical across the two is the comfortable version of the same error, and it is what leaves an unaudited instance in an environment reported as fully audited.",
+    "skillRef": "d2b2",
     "difficulty": "medium"
   }
 ]

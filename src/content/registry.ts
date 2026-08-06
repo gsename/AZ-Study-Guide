@@ -13,10 +13,47 @@ export interface ExamMeta {
   certification: string
   skillsMeasuredAsOf: string
   retirementDate: string
+  /** Where the retirement date comes from, quoted, so it is auditable. */
+  retirementSource?: string
   passingScore: number
   scoreMax: number
   durationMinutes: number
   questionCountRange: string
+  /**
+   * Where `questionCountRange` comes from. Microsoft no longer publishes item
+   * counts, so for recent exams this is an estimate and the UI must not present
+   * it as an official figure.
+   */
+  questionCountRangeSource?: string
+  studyGuideUrl?: string
+  /** When the domains, weights and `officialSkills` were last diffed against the guide. */
+  outlineVerifiedOn?: string
+  /** What the vendor actually says about item formats, quoted. */
+  itemFormatNote?: string
+  /** What the vendor says about GA vs Preview coverage, quoted. */
+  contentCurrencyNote?: string
+  /**
+   * The honest state of this certification's question bank, rendered to the
+   * learner rather than kept in the README.
+   *
+   * `freeScorePercent` is the figure `npm run check:bank` prints: what a
+   * candidate scores by always picking the longest option, which is the one
+   * authoring tell that survives runtime choice-shuffling. When it approaches the
+   * raw pass mark, a mock score on this bank is inflated and the learner is
+   * calibrating their readiness against a number that flatters them. Saying so is
+   * the honest mitigation when there is not time to fix the items.
+   *
+   * Declared per certification instead of testing `certId` inside a page, so the
+   * next certification added does not silently inherit another one's caveat.
+   */
+  bankStatus?: {
+    /** Has the referential been diffed against the official study guide? */
+    referentialVerified: boolean
+    /** Percentage, as printed by check-bank.mjs. */
+    freeScorePercent: number
+    /** When that figure was measured — it moves as the bank is remediated. */
+    measuredOn: string
+  }
 }
 
 export interface CertContent {

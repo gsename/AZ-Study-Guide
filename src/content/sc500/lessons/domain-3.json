@@ -1,7 +1,10 @@
 [
   {
     "objectiveId": "o3-1",
-    "diagrams": ["ai-layered-defense", "agent-identity"],
+    "diagrams": [
+      "ai-layered-defense",
+      "agent-identity"
+    ],
     "summary": "Generative AI apps and autonomous agents introduce risks classic security controls don't see: a model can be tricked into leaking data (prompt injection/jailbreak), it can surface data a user is technically allowed to open but shouldn't see (oversharing/overexposure), and agents act with their own identity to take real actions. SC-500 splits AI security into three layers — **data** (Microsoft Purview DSPM for AI), **identity** (Microsoft Entra Agent ID), and **threat/posture** (Microsoft Defender for AI Services plus Microsoft Foundry guardrails and an AI gateway in front of model endpoints). Each layer answers a different question: what sensitive data can the AI touch, who is the agent and can Conditional Access govern it, and what threats/misconfigurations put the deployment itself at risk.",
     "keyPoints": [
       "**Purview DSPM for AI** discovers **oversharing before Copilot amplifies it**: run a data risk assessment against high-risk SharePoint sites to find overly broad sharing (e.g. \"everyone except external\", anonymous links) — because Copilot can expose any content a user is technically permitted to open.",
@@ -16,7 +19,9 @@
       "**AI gateway via Azure API Management**: placing APIM in front of model endpoints enforces **Entra ID authentication instead of API keys**, applies **token-based rate-limiting/quotas** (defends against wallet attacks), load-balances across deployments, and centralizes logging to Azure Monitor — without changing the app.",
       "**Microsoft Defender for Cloud Apps** provides **real-time runtime protection specifically for Copilot Studio agents** — distinct from Defender for AI Services (which watches Foundry/Azure OpenAI). Enable it under the Defender portal's **Settings ▸ AI**, then coordinate with **Power Platform admins** to configure the correct **App ID** so the agent is recognized; only then does agent inventory, alerts, and Advanced Hunting data appear correctly in Microsoft Defender XDR.",
       "**Microsoft Agent 365** is the **management and governance plane** for AI agents deployed across the Microsoft 365 environment — distinct from Entra Agent ID, which is the underlying **identity layer** an agent authenticates with. Through Agent 365 you enable the management interface, **register agents**, apply access controls, and **monitor agent activity/usage** to enforce organizational AI governance policies over the agent's full lifecycle.",
-      "**Defender for Cloud's AI workloads plan** bundles **CSPM** (posture: misconfigurations, oversharing risk signals) and **CWP** (Defender for AI Services runtime alerts) for AI resources specifically, behind a single enablement toggle; results and combined insights surface in the **Data and AI security dashboard**, which correlates posture and threat findings for AI workloads in one place."
+      "**Defender for Cloud's AI workloads plan** bundles **CSPM** (posture: misconfigurations, oversharing risk signals) and **CWP** (Defender for AI Services runtime alerts) for AI resources specifically, behind a single enablement toggle; results and combined insights surface in the **Data and AI security dashboard**, which correlates posture and threat findings for AI workloads in one place.",
+      "Agents deployed to Microsoft 365 are governed from the **Microsoft 365 admin center**, which is the management plane for the agent fleet: which agents exist, who may use them, and whether an agent is approved for the tenant. **Microsoft Entra Agent ID** supplies each agent's identity, and **Agent 365** is the layer that registers, approves and monitors deployed agents — identity and management are separate concerns and both are needed.",
+      "The tenant-level lever worth knowing is **which agents users may install or invoke at all**: an agent nobody approved should not be reachable, and that decision lives with the Microsoft 365 admin rather than with the agent author. Combine it with a **custom security attribute** (for example `AgentApprovalStatus=IT_Approved`) so one Conditional Access policy covers every approved agent automatically instead of naming them one by one."
     ],
     "commonPitfalls": [
       "Confusing **Purview DSPM for AI** (data-centric: which sensitive data agents/Copilot touch, oversharing, DLP for AI sites, needs a Purview/M365 E5 license) with **Defender for AI Services** (threat detection on Foundry/Azure OpenAI, configured as a Defender for Cloud plan) — different products, different licenses, different questions answered.",
@@ -26,7 +31,9 @@
       "Treating **content filters** and **Prompt Shields** as the same Foundry control — content filters catch harmful content categories, while Prompt Shields specifically target jailbreak and (in)direct prompt injection attempts.",
       "Leaving an agent without an **MCP allowed-tools list** — an unrestricted agent can invoke arbitrary tools/data sources, which massively widens the blast radius if the agent is later compromised.",
       "Confusing **Microsoft Agent 365** (the governance/lifecycle plane — register, approve, monitor usage of deployed agents) with **Microsoft Entra Agent ID** (the underlying non-human identity an agent authenticates with) — Agent 365 governs agents *using* the identity Entra Agent ID provides; it doesn't replace it.",
-      "Assuming Copilot Studio agent protection in Defender for Cloud Apps is automatic once toggled on — without also configuring the agent's **App ID** with Power Platform admins, agent inventory and alerts stay incomplete in Defender XDR even though the setting shows as enabled."
+      "Assuming Copilot Studio agent protection in Defender for Cloud Apps is automatic once toggled on — without also configuring the agent's **App ID** with Power Platform admins, agent inventory and alerts stay incomplete in Defender XDR even though the setting shows as enabled.",
+      "Assuming that provisioning an **Entra Agent ID** is the whole of agent governance — the identity makes the agent addressable by policy, whereas approving it, publishing it to users and monitoring its usage happen in the Microsoft 365 admin center and Agent 365.",
+      "Governing agents by naming them individually in Conditional Access: the list is out of date the moment an agent is added. Target a **custom security attribute** instead, so approval and policy scope stay in step."
     ],
     "learnLinks": [
       "https://learn.microsoft.com/en-us/training/modules/identify-ai-data-risks-purview/",
@@ -43,7 +50,11 @@
   },
   {
     "objectiveId": "o3-2",
-    "diagrams": ["bastion-jit", "disk-encryption", "defender-servers-plans"],
+    "diagrams": [
+      "bastion-jit",
+      "disk-encryption",
+      "defender-servers-plans"
+    ],
     "summary": "VM disk encryption stacks three optional layers on top of always-on platform encryption, chosen by requirement rather than by \"more is better\": **encryption at host**, **Azure Disk Encryption (ADE)**, and **server-side encryption with a customer-managed key (CMK)**. **Azure Bastion** and **Just-In-Time (JIT) VM access** are complementary controls that together eliminate standing exposure of management ports. **Defender for Servers Plan 2** adds vulnerability scanning, file integrity monitoring, and **agentless scanning** on top of Plan 1's EDR, and **Azure Arc** is the bridge that lets non-Azure servers receive the same governance and protection.",
     "keyPoints": [
       "**Encryption at host** encrypts a VM's temp and cache disks **at the host level**, with **no in-guest agent** — the modern recommended default for coverage that ADE alone doesn't provide.",
@@ -98,7 +109,10 @@
   },
   {
     "objectiveId": "o3-3",
-    "diagrams": ["firewall-vs-waf", "appgw-vs-frontdoor"],
+    "diagrams": [
+      "firewall-vs-waf",
+      "appgw-vs-frontdoor"
+    ],
     "summary": "**Microsoft Defender for Containers** covers image scanning and runtime threat detection across AKS, Arc-enabled clusters, and other clouds, while **AKS** and **ACR** each need their own identity, network, and admission hardening. **App Service**, **Functions**, and **Logic Apps** share a common security pattern — built-in auth, network restriction, and managed identity — while a **Web Application Firewall** and **API Management** protect the web and API layers respectively, each at the right scope: regional versus global, exploit-blocking versus auth/throttling.",
     "keyPoints": [
       "**Microsoft Defender for Containers** finds misconfigurations and runtime risk across Kubernetes: **image vulnerability scanning** (in ACR and at runtime), runtime threat detection, and hardening recommendations — covers AKS, **Arc-enabled clusters**, and other clouds (EKS/GKE).",
@@ -110,7 +124,9 @@
       "**Logic Apps**: managed identity, IP access control, secure parameters stored in **Key Vault**, and private connectivity via **ISE or Standard plan inside a VNet**.",
       "**Web Application Firewall (WAF)**: applies the **OWASP Core Rule Set** on **Application Gateway** (regional) or **Front Door** (global) — blocks SQLi/XSS, supports custom rules and bot/rate-limit rules; **Prevention mode blocks**, **Detection mode only logs**.",
       "**Azure API Management (APIM)** protects back-end APIs: **subscription keys**, Entra/OAuth (JWT) validation, IP filtering, and **rate-limit/quota policies**, and can expose APIs **privately** rather than the raw backend.",
-      "**WAF placement rule**: use **Application Gateway WAF** for a regional app that needs path-based routing inside a VNet; use **Front Door WAF** for a global, internet-facing app that needs CDN/edge presence and anycast. WAF blocks web exploits; APIM protects the API layer (auth, throttling) — commonly used together."
+      "**WAF placement rule**: use **Application Gateway WAF** for a regional app that needs path-based routing inside a VNet; use **Front Door WAF** for a global, internet-facing app that needs CDN/edge presence and anycast. WAF blocks web exploits; APIM protects the API layer (auth, throttling) — commonly used together.",
+      "**Azure Container Instances (ACI)** and **Azure Container Apps** are secured like any other Azure-hosted workload, with three controls doing the work: deploy into a **VNet** (or a Container Apps environment bound to one) so the container is not reachable from the internet; use a **managed identity** for registry pulls and for downstream access, so no registry password lives in a deployment template; and pull from a **private-endpoint-only ACR** with the admin account disabled.",
+      "Ingress is the setting that most often stays too open: Container Apps ingress can be **internal** (VNet-only) or **external**, and ACI exposes a public IP unless it is deployed into a subnet. Restricting ingress is a separate decision from securing the pull — a container with a credential-free pull and public ingress is still publicly reachable."
     ],
     "commonPitfalls": [
       "Underestimating **Defender for Containers**' scope — it covers image scanning **and** runtime detection across AKS, Arc-enabled clusters, and other clouds, not just AKS-native workloads.",
@@ -118,7 +134,9 @@
       "Choosing **Application Gateway** when the scenario needs a **global**, internet-facing app with CDN/edge and anycast — that calls for **Front Door**; App Gateway is regional, VNet-scoped, path-based routing.",
       "Treating **WAF** and **APIM** as interchangeable — WAF blocks web exploits (SQLi/XSS); APIM protects the API layer (authentication, throttling). They complement each other, they don't replace one another.",
       "Leaving a WAF policy in **Detection mode** and assuming attacks are blocked — Detection only **logs** matches; **Prevention** is required to actually stop them.",
-      "Assuming Kubernetes **network policies** alone secure an AKS cluster — they only govern pod-to-pod traffic; private cluster, Entra/RBAC, and workload identity cover the other layers."
+      "Assuming Kubernetes **network policies** alone secure an AKS cluster — they only govern pod-to-pod traffic; private cluster, Entra/RBAC, and workload identity cover the other layers.",
+      "Passing registry credentials to ACI in the deployment command (`--registry-password`) because it is the documented quick start — that puts the registry password into the template, the pipeline log and the resource definition. A managed identity with **AcrPull** removes all three copies.",
+      "Leaving **external ingress** on a Container App that only serves internal callers: the app is then on the public internet, whatever the network configuration of the containers behind it."
     ],
     "commands": [
       {
@@ -140,6 +158,11 @@
         "task": "Create a WAF policy on Application Gateway in Prevention mode with the OWASP rule set",
         "cli": "az network application-gateway waf-policy create --name waf1 --resource-group RG1\naz network application-gateway waf-policy policy-setting update --policy-name waf1 --resource-group RG1 --mode Prevention",
         "powershell": "New-AzApplicationGatewayFirewallPolicy -Name waf1 -ResourceGroupName RG1\nSet-AzApplicationGatewayFirewallPolicySetting -Name waf1 -ResourceGroupName RG1 -Mode Prevention"
+      },
+      {
+        "task": "Create a container instance in a VNet subnet, pulling from ACR with a managed identity instead of a registry password",
+        "cli": "az container create --name app1 --resource-group RG1 --image acr1.azurecr.io/app:1.0 --vnet VNet1 --subnet aci-subnet --assign-identity <userAssignedIdentityId> --acr-identity <userAssignedIdentityId>",
+        "powershell": "New-AzContainerGroup -ResourceGroupName RG1 -Name app1 -Image acr1.azurecr.io/app:1.0 -SubnetId $subnet.Id -IdentityType UserAssigned -IdentityUserAssignedId $uami.Id"
       }
     ],
     "learnLinks": [

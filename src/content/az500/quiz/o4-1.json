@@ -4,9 +4,16 @@
     "objectiveId": "o4-1",
     "type": "single",
     "prompt": "Which Azure Policy effect blocks the creation of a non-compliant resource?",
-    "choices": ["Deny", "Audit", "AuditIfNotExists", "Append"],
-    "correctAnswers": ["Deny"],
-    "explanation": "Deny prevents non-compliant creation outright; Audit/AuditIfNotExists only report, and Append adds fields.",
+    "choices": [
+      "The Deny policy effect",
+      "The AuditIfNotExists effect",
+      "The Append policy effect",
+      "The Audit policy effect"
+    ],
+    "correctAnswers": [
+      "The Deny policy effect"
+    ],
+    "explanation": "Deny refuses the create or update request at the control plane, which is what \"blocks\" means here. Audit is the tempting answer because it also reacts to non-compliance, but it lets the resource through and merely records it — so the environment still ends up with the thing you meant to prevent. Append adds fields rather than refusing anything.",
     "difficulty": "easy"
   },
   {
@@ -14,9 +21,16 @@
     "objectiveId": "o4-1",
     "type": "single",
     "prompt": "Which Azure Policy effect only reports non-compliance without preventing it?",
-    "choices": ["Audit", "Deny", "Modify", "DeployIfNotExists"],
-    "correctAnswers": ["Audit"],
-    "explanation": "Audit flags non-compliant resources for visibility but does not block them.",
+    "choices": [
+      "The Audit policy effect",
+      "The DeployIfNotExists effect",
+      "The Modify policy effect",
+      "The Deny policy effect"
+    ],
+    "correctAnswers": [
+      "The Audit policy effect"
+    ],
+    "explanation": "Audit records the resource as non-compliant and lets the request through, which is exactly what makes it safe to assign broadly before you tighten. Deny is the closest miss: it reacts to the same condition but refuses the write, so assigning it by mistake breaks deployments rather than reporting on them.",
     "difficulty": "easy"
   },
   {
@@ -24,9 +38,16 @@
     "objectiveId": "o4-1",
     "type": "single",
     "prompt": "Which Azure Policy effect automatically deploys a missing configuration to remediate a resource?",
-    "choices": ["DeployIfNotExists", "Audit", "Deny", "Append"],
-    "correctAnswers": ["DeployIfNotExists"],
-    "explanation": "DeployIfNotExists remediates by deploying the missing configuration, using a managed identity with the needed permissions.",
+    "choices": [
+      "The DeployIfNotExists effect",
+      "The AuditIfNotExists effect, alone",
+      "The Append policy effect",
+      "The Audit policy effect"
+    ],
+    "correctAnswers": [
+      "The DeployIfNotExists effect"
+    ],
+    "explanation": "DeployIfNotExists creates the missing related resource — a diagnostic setting, an extension — using a managed identity on the assignment. Modify is the tempting alternative because it also changes things, but it edits a property on the resource being written rather than deploying a separate one, so it cannot install what is absent.",
     "difficulty": "medium"
   },
   {
@@ -35,13 +56,15 @@
     "type": "single",
     "prompt": "What is required for a DeployIfNotExists (or Modify) policy to actually remediate resources?",
     "choices": [
-      "A managed identity with sufficient permissions on the target scope",
-      "A Key Vault certificate",
-      "A Conditional Access policy",
-      "A user-assigned SAS token"
+      "A managed identity with permissions on the target scope",
+      "A Conditional Access policy on the resource provider itself",
+      "A user-assigned shared access signature token",
+      "A certificate stored in Azure Key Vault"
     ],
-    "correctAnswers": ["A managed identity with sufficient permissions on the target scope"],
-    "explanation": "Remediation tasks run under a managed identity that must hold the permissions needed to make the change.",
+    "correctAnswers": [
+      "A managed identity with permissions on the target scope"
+    ],
+    "explanation": "Both DeployIfNotExists and Modify act on your behalf, so the assignment needs a managed identity holding the permissions the change requires at the target scope. Without it the policy looks correctly assigned but silently remediates nothing, which is the worst failure mode: it reports rather than fails. Existing resources additionally need a remediation task, since the effect only fires on write.",
     "difficulty": "medium"
   },
   {
@@ -50,13 +73,15 @@
     "type": "single",
     "prompt": "What is an Azure Policy initiative?",
     "choices": [
-      "A set of grouped policy definitions working toward a common goal",
-      "A single policy assigned at a resource",
-      "A Key Vault access model",
-      "A Defender for Cloud alert category"
+      "A set of grouped policy definitions with a common goal",
+      "A single policy definition assigned at one resource only",
+      "A Defender for Cloud alert category on the plan",
+      "A Key Vault access model for the whole vault"
     ],
-    "correctAnswers": ["A set of grouped policy definitions working toward a common goal"],
-    "explanation": "An initiative (policy set) bundles multiple definitions, e.g. a compliance baseline.",
+    "correctAnswers": [
+      "A set of grouped policy definitions with a common goal"
+    ],
+    "explanation": "An initiative, or policy set, bundles definitions so a whole baseline is assigned and reported as one unit. It is not tied to any single effect, which is the usual misconception: an initiative can mix Audit, Deny and DeployIfNotExists definitions inside it.",
     "difficulty": "easy"
   },
   {
@@ -65,13 +90,15 @@
     "type": "single",
     "prompt": "How do Azure Policy and Azure RBAC relate?",
     "choices": [
-      "Policy governs resource configuration/standards; RBAC governs who can act — they are complementary",
-      "Policy replaces RBAC for access control",
-      "RBAC enforces configuration; Policy assigns roles",
-      "They are the same feature at different scopes"
+      "Policy governs configuration; RBAC governs who may act",
+      "RBAC enforces the configuration, and Policy assigns roles",
+      "They are the same feature at two different scopes",
+      "Policy replaces RBAC for access control entirely"
     ],
-    "correctAnswers": ["Policy governs resource configuration/standards; RBAC governs who can act — they are complementary"],
-    "explanation": "Policy shapes what resources may look like; RBAC controls who can do things. Different, complementary planes.",
+    "correctAnswers": [
+      "Policy governs configuration; RBAC governs who may act"
+    ],
+    "explanation": "Policy governs what a resource may look like; RBAC governs who may act on it. They are different planes and neither substitutes for the other — a user with Owner still cannot create a resource a Deny policy forbids, and a policy cannot stop someone who has no permission in the first place.",
     "difficulty": "medium"
   },
   {
@@ -79,9 +106,16 @@
     "objectiveId": "o4-1",
     "type": "single",
     "prompt": "As of Key Vault control-plane API version 2026-02-01, what is the default access model for a newly created vault?",
-    "choices": ["Azure RBAC", "Legacy vault access policies", "No access control", "Shared keys"],
-    "correctAnswers": ["Azure RBAC"],
-    "explanation": "New vaults created with API 2026-02-01+ default to Azure RBAC unless explicitly set otherwise.",
+    "choices": [
+      "Azure RBAC on the vault",
+      "Legacy vault access policies",
+      "No access control at all",
+      "Shared keys for the vault"
+    ],
+    "correctAnswers": [
+      "Azure RBAC on the vault"
+    ],
+    "explanation": "Vaults created through the newer control-plane API default to Azure RBAC, which is the centrally governed and PIM-capable model. Access policies remain the tempting answer because most existing documentation and older vaults still show them, but they are the legacy per-vault ACL and are no longer the default.",
     "difficulty": "medium"
   },
   {
@@ -90,13 +124,15 @@
     "type": "single",
     "prompt": "A Key Vault created years ago uses legacy vault access policies. What happens to it now that RBAC is the default for new vaults?",
     "choices": [
-      "It keeps its access-policy model unless someone explicitly migrates it to RBAC",
-      "It is automatically migrated to RBAC",
-      "It stops working until reconfigured",
-      "It must use both models at once"
+      "It keeps access policies unless someone migrates it",
+      "It is automatically migrated to Azure RBAC by the platform",
+      "It stops working until it has been reconfigured",
+      "It must use both of the models at the same time"
     ],
-    "correctAnswers": ["It keeps its access-policy model unless someone explicitly migrates it to RBAC"],
-    "explanation": "The default change affects only new vaults; existing vaults are not auto-migrated.",
+    "correctAnswers": [
+      "It keeps access policies unless someone migrates it"
+    ],
+    "explanation": "A default applies to newly created vaults only, so an existing vault keeps its access-policy model until someone migrates it deliberately. Assuming automatic migration is the dangerous reading, because a legacy vault then stays outside RBAC and outside PIM without anyone noticing — the change never announces itself.",
     "difficulty": "hard"
   },
   {
@@ -105,13 +141,15 @@
     "type": "single",
     "prompt": "Which Key Vault network setting lets specific first-party Azure services reach the vault when public access is otherwise restricted?",
     "choices": [
-      "'Allow trusted Microsoft services to bypass this firewall'",
-      "Soft delete",
-      "Purge protection",
-      "A customer-managed key"
+      "'Allow trusted Microsoft services' bypass",
+      "Soft delete with a configured retention window",
+      "Purge protection on the vault and its objects",
+      "A customer-managed key held inside the vault"
     ],
-    "correctAnswers": ["'Allow trusted Microsoft services to bypass this firewall'"],
-    "explanation": "This exception permits selected Microsoft platform integrations through the vault firewall.",
+    "correctAnswers": [
+      "'Allow trusted Microsoft services' bypass"
+    ],
+    "explanation": "The trusted-services exception lets selected first-party Azure services reach the vault while the firewall otherwise denies public traffic. It is not a blanket allow: services outside that list still need a network rule or a private endpoint, which is why it never replaces proper network restriction.",
     "difficulty": "medium"
   },
   {
@@ -125,8 +163,10 @@
       "Keys, disks, and snapshots",
       "Certificates, subscriptions, and tags"
     ],
-    "correctAnswers": ["Secrets, keys, and certificates"],
-    "explanation": "Key Vault stores secrets, cryptographic keys, and certificates.",
+    "correctAnswers": [
+      "Secrets, keys, and certificates"
+    ],
+    "explanation": "Key Vault holds secrets, keys and certificates — three distinct object types with their own RBAC roles, so granting access to one does not grant the others. Network security groups and resource locks are Azure resources rather than vault objects and never live inside a vault.",
     "difficulty": "easy"
   },
   {
@@ -135,13 +175,15 @@
     "type": "single",
     "prompt": "What do Key Vault soft delete and purge protection together achieve?",
     "choices": [
-      "Deleted items are recoverable within a window, and permanent deletion is blocked during it",
-      "Automatic rotation of all keys",
-      "Encryption of secrets at rest",
-      "Network isolation of the vault"
+      "Deleted items stay recoverable; purging is blocked",
+      "Automatic rotation of every key the vault holds today",
+      "Encryption of the secrets where they sit at rest",
+      "Network isolation of the vault from the internet"
     ],
-    "correctAnswers": ["Deleted items are recoverable within a window, and permanent deletion is blocked during it"],
-    "explanation": "Soft delete makes deletions recoverable; purge protection prevents early permanent deletion during retention.",
+    "correctAnswers": [
+      "Deleted items stay recoverable; purging is blocked"
+    ],
+    "explanation": "Soft delete makes a deleted object recoverable for the retention period; purge protection stops anyone, including a vault administrator, from cutting that period short. Soft delete alone is the tempting half-measure: it is reversible, so a compromised administrator can simply purge and the recovery window disappears.",
     "difficulty": "easy"
   },
   {
@@ -155,8 +197,10 @@
       "The network plane (firewall rules)",
       "The identity plane (directory objects)"
     ],
-    "correctAnswers": ["The data plane (reading/using secrets)"],
-    "explanation": "Key Vault Secrets User grants data-plane read on secrets; managing the vault resource itself is a separate management-plane role.",
+    "correctAnswers": [
+      "The data plane (reading/using secrets)"
+    ],
+    "explanation": "Key Vault Secrets User is a data-plane role: it grants reading secret values, not managing the vault. The management plane is the closest miss and the distinction matters in practice — Contributor on the vault resource lets you change its configuration without ever being able to read a secret through it.",
     "difficulty": "medium"
   },
   {
@@ -165,12 +209,14 @@
     "type": "single",
     "prompt": "How can you ensure cryptographic keys refresh regularly without manual work?",
     "choices": [
-      "Configure a key rotation policy in Key Vault",
-      "Enable purge protection",
-      "Add a resource lock",
-      "Enable soft delete"
+      "Configure a key rotation policy",
+      "Enable purge protection on the vault",
+      "Add a resource lock to the vault",
+      "Enable soft delete on the vault"
     ],
-    "correctAnswers": ["Configure a key rotation policy in Key Vault"],
+    "correctAnswers": [
+      "Configure a key rotation policy"
+    ],
     "explanation": "Key rotation policies automate periodic rotation of keys; soft delete/purge/locks address deletion protection, not rotation.",
     "difficulty": "medium"
   },
@@ -181,12 +227,14 @@
     "prompt": "Which Azure Backup feature requires a second administrator's approval (via a Resource Guard) before critical operations?",
     "choices": [
       "Multi-User Authorization (MUA)",
-      "Soft delete",
-      "Immutable vault",
-      "Cross-region restore"
+      "Cross-region restore of backups",
+      "An immutable backup vault",
+      "Soft delete on the vault"
     ],
-    "correctAnswers": ["Multi-User Authorization (MUA)"],
-    "explanation": "MUA uses a Resource Guard to require a second approver, preventing a single compromised admin from destroying backups.",
+    "correctAnswers": [
+      "Multi-User Authorization (MUA)"
+    ],
+    "explanation": "Multi-User Authorization puts a Resource Guard, usually in another subscription owned by another team, between an administrator and a destructive backup operation. Soft delete is the tempting answer because it also resists deletion, but it protects data after the fact rather than requiring a second person to approve the action.",
     "difficulty": "medium"
   },
   {
@@ -195,13 +243,15 @@
     "type": "single",
     "prompt": "Which Azure Backup feature enforces WORM so backup data cannot be altered or deleted before its retention ends?",
     "choices": [
-      "Immutable vault",
-      "Soft delete",
+      "An immutable vault",
       "Multi-User Authorization",
-      "Geo-redundant storage"
+      "Geo-redundant storage",
+      "Soft delete alone"
     ],
-    "correctAnswers": ["Immutable vault"],
-    "explanation": "Immutable vaults apply WORM to backup data; they can be locked to make the setting irreversible.",
+    "correctAnswers": [
+      "An immutable vault"
+    ],
+    "explanation": "An immutable vault applies write-once-read-many to backup data, so retention can be extended but never shortened, and it can be locked to make that irreversible. Soft delete only delays permanent deletion; it does not stop retention being reduced, which is precisely the move an attacker makes first.",
     "difficulty": "medium"
   },
   {
@@ -210,13 +260,15 @@
     "type": "single",
     "prompt": "What represents the maximum security posture for protecting Azure Backup data?",
     "choices": [
-      "Locked immutability (or always-on soft delete) combined with Multi-User Authorization",
-      "Soft delete alone",
-      "A strong backup-vault admin password",
-      "Disabling all restore operations"
+      "Locked immutability plus Multi-User Authorization",
+      "A strong password on the backup-vault admin account",
+      "Disabling every restore operation on the vault",
+      "Soft delete on its own, with nothing else"
     ],
-    "correctAnswers": ["Locked immutability (or always-on soft delete) combined with Multi-User Authorization"],
-    "explanation": "Microsoft's strongest tier combines an irreversible retention control with MUA's second-approver requirement.",
+    "correctAnswers": [
+      "Locked immutability plus Multi-User Authorization"
+    ],
+    "explanation": "The strongest posture combines an irreversible retention control with a second-approver requirement, because each covers the other's gap: immutability stops the data being altered, MUA stops the controls themselves being weakened. Soft delete alone is the common answer and it is not enough — it is reversible by the very administrator you are defending against.",
     "difficulty": "hard"
   },
   {
@@ -225,12 +277,14 @@
     "type": "single",
     "prompt": "What does 'security controls for asset management' primarily involve?",
     "choices": [
-      "Defender for Cloud inventory plus Azure Policy-enforced tagging/classification",
-      "Enabling TDE on all databases",
-      "Deploying a WAF on every public endpoint",
-      "Rotating all Key Vault keys nightly"
+      "Defender for Cloud inventory plus Policy-enforced tagging",
+      "Deploying a web application firewall on every public endpoint",
+      "Rotating all of the Key Vault keys every night",
+      "Enabling TDE on all of the databases in scope"
     ],
-    "correctAnswers": ["Defender for Cloud inventory plus Azure Policy-enforced tagging/classification"],
+    "correctAnswers": [
+      "Defender for Cloud inventory plus Policy-enforced tagging"
+    ],
     "explanation": "Asset management is about knowing and classifying what you have — inventory plus enforced tagging — not a single resource-type control.",
     "difficulty": "medium"
   },
@@ -240,12 +294,14 @@
     "type": "single",
     "prompt": "The security team wants to guarantee that no storage account can be created with public blob access. Which is the correct control?",
     "choices": [
-      "An Azure Policy with a Deny effect on that configuration",
-      "An Audit policy plus a monthly review",
-      "A resource lock on each storage account",
-      "A Conditional Access policy"
+      "An Azure Policy with a Deny effect on that setting",
+      "A Conditional Access policy on the storage data plane",
+      "An Audit policy plus a monthly manual review",
+      "A resource lock applied to every storage account"
     ],
-    "correctAnswers": ["An Azure Policy with a Deny effect on that configuration"],
+    "correctAnswers": [
+      "An Azure Policy with a Deny effect on that setting"
+    ],
     "explanation": "Deny actively blocks non-compliant creation; Audit only flags it, and locks/Conditional Access don't govern this property.",
     "difficulty": "medium"
   },
@@ -255,13 +311,15 @@
     "type": "single",
     "prompt": "You must enforce that every resource carries a 'CostCenter' tag at creation, automatically. Which effect(s) can achieve this?",
     "choices": [
-      "Deny (to block untagged) or Modify (to add/require the tag)",
-      "Audit only",
-      "Append the tag to the resource group name",
-      "A resource lock"
+      "Deny to block untagged, or Modify to add the tag",
+      "Append the tag to the resource group name instead",
+      "Audit only, with a review afterwards",
+      "A resource lock on the subscription"
     ],
-    "correctAnswers": ["Deny (to block untagged) or Modify (to add/require the tag)"],
-    "explanation": "Deny blocks resources missing the tag; Modify can add/require it. Audit only reports; locks don't enforce tags.",
+    "correctAnswers": [
+      "Deny to block untagged, or Modify to add the tag"
+    ],
+    "explanation": "Deny refuses resources missing the tag, and Modify adds it as the resource is written; used together they enforce and self-heal. Audit is the tempting answer because it names the same condition, but it only reports, so untagged resources keep appearing. A resource lock governs deletion and has nothing to do with tags.",
     "difficulty": "medium"
   },
   {
@@ -270,13 +328,15 @@
     "type": "single",
     "prompt": "Which is the correct place to restrict a Key Vault so it is reachable only from selected virtual network subnets?",
     "choices": [
-      "Key Vault ▸ Networking (firewall and virtual networks)",
-      "Key Vault ▸ Access configuration",
-      "Azure Policy ▸ Definitions",
-      "Microsoft Entra ▸ Conditional Access"
+      "Key Vault ▸ Networking (firewall and VNets)",
+      "Key Vault ▸ Access configuration ▸ Permission model",
+      "Microsoft Entra ▸ Conditional Access",
+      "Azure Policy ▸ Definitions ▸ Built-in"
     ],
-    "correctAnswers": ["Key Vault ▸ Networking (firewall and virtual networks)"],
-    "explanation": "Network restrictions (selected networks / private endpoint) are set on the Key Vault Networking blade; Access configuration selects the RBAC vs access-policy model.",
+    "correctAnswers": [
+      "Key Vault ▸ Networking (firewall and VNets)"
+    ],
+    "explanation": "Network restriction — selected networks, or a private endpoint — is configured on the vault's Networking blade. Access configuration is the closest miss and the one people click first: it chooses between RBAC and access policies, which is about who may read a secret, not about where they may reach the vault from.",
     "difficulty": "medium"
   },
   {
@@ -285,13 +345,15 @@
     "type": "single",
     "prompt": "Which statement about Key Vault access models is correct?",
     "choices": [
-      "You should pick one model (RBAC or access policies) per vault, not run both as co-primary",
+      "Pick one model per vault, not both as co-primary",
       "You must always enable both models simultaneously",
-      "Access policies are more granular than RBAC",
-      "RBAC only controls the network plane"
+      "Access policies are more granular than RBAC is",
+      "RBAC only controls the vault network plane"
     ],
-    "correctAnswers": ["You should pick one model (RBAC or access policies) per vault, not run both as co-primary"],
-    "explanation": "Choose a single access model per vault; RBAC is the recommended (and now default) granular, centralized model.",
+    "correctAnswers": [
+      "Pick one model per vault, not both as co-primary"
+    ],
+    "explanation": "Pick one model per vault. Running RBAC and access policies as co-primary means two sources of truth for the same data-plane decision, and an entry left in the legacy list keeps granting access nobody is auditing. Access policies are not more granular than RBAC — that belief is what keeps vaults on the legacy model.",
     "difficulty": "medium"
   },
   {
@@ -300,13 +362,15 @@
     "type": "single",
     "prompt": "Which is the right way to protect against loss of a critical certificate stored in Key Vault, for disaster recovery?",
     "choices": [
-      "Back up the certificate object and enable soft delete + purge protection",
+      "Back up the object, with soft delete and purge protection",
       "Store a copy of the private key in a public storage account",
-      "Disable the vault firewall",
-      "Rotate the certificate every hour"
+      "Rotate the certificate every hour, automatically",
+      "Disable the vault firewall so backups can run"
     ],
-    "correctAnswers": ["Back up the certificate object and enable soft delete + purge protection"],
-    "explanation": "Object backup plus soft delete/purge protection provides recoverability without exposing the material insecurely.",
+    "correctAnswers": [
+      "Back up the object, with soft delete and purge protection"
+    ],
+    "explanation": "Backing up the certificate object gives you a restorable copy, while soft delete and purge protection stop the original being destroyed irrecoverably. Frequent rotation is the tempting alternative because it sounds like hygiene, but it does not help you recover a certificate that has already been deleted.",
     "difficulty": "medium"
   },
   {
@@ -314,9 +378,16 @@
     "objectiveId": "o4-1",
     "type": "single",
     "prompt": "Which effect would you use to add a required 'Environment' tag value to resources that are created without it, rather than blocking them?",
-    "choices": ["Modify", "Deny", "Audit", "Disabled"],
-    "correctAnswers": ["Modify"],
-    "explanation": "Modify can add or change properties (like tags) during create/update; Deny would block instead of fix.",
+    "choices": [
+      "The Modify policy effect",
+      "The Disabled policy effect",
+      "The Audit policy effect",
+      "The Deny policy effect"
+    ],
+    "correctAnswers": [
+      "The Modify policy effect"
+    ],
+    "explanation": "Modify adds or changes a property, including a tag, as the resource is created or updated, so existing non-compliant resources can be fixed with a remediation task. Deny is the closest miss: it would refuse the deployment instead of correcting it, which is the wrong behaviour when the goal is to add the missing value.",
     "difficulty": "medium"
   },
   {
@@ -325,13 +396,15 @@
     "type": "single",
     "prompt": "How does Key Vault's soft delete differ from Azure Backup's soft delete?",
     "choices": [
-      "Key Vault soft delete protects vault objects (secrets/keys/certs); Azure Backup soft delete protects backup vault contents",
-      "They are the same feature applied to the same data",
-      "Key Vault soft delete protects VMs; Azure Backup soft delete protects secrets",
-      "Neither is related to deletion recovery"
+      "Key Vault protects vault objects; Backup protects backups",
+      "Key Vault soft delete protects VMs; Backup protects secrets",
+      "They are the same feature applied to the same data set",
+      "Neither of the two is related to deletion recovery"
     ],
-    "correctAnswers": ["Key Vault soft delete protects vault objects (secrets/keys/certs); Azure Backup soft delete protects backup vault contents"],
-    "explanation": "Same vocabulary, different services: one protects Key Vault objects, the other protects Recovery Services/Backup vault data.",
+    "correctAnswers": [
+      "Key Vault protects vault objects; Backup protects backups"
+    ],
+    "explanation": "Same vocabulary, different services and different data: Key Vault soft delete protects vault objects, Azure Backup soft delete protects recovery points in a vault. Treating them as one feature is the trap — enabling it in one service tells you nothing about whether the other is protected.",
     "difficulty": "hard"
   },
   {
@@ -341,15 +414,15 @@
     "prompt": "Which two statements about Azure Policy are correct? (Choose two.)",
     "choices": [
       "Deny blocks non-compliant resource creation",
-      "DeployIfNotExists can remediate missing configuration automatically",
-      "Audit blocks non-compliant creation",
-      "Policy replaces the need for Azure RBAC"
+      "DeployIfNotExists can remediate missing configuration",
+      "Policy replaces the need for Azure RBAC role assignments",
+      "Audit also blocks non-compliant resource creation"
     ],
     "correctAnswers": [
       "Deny blocks non-compliant resource creation",
-      "DeployIfNotExists can remediate missing configuration automatically"
+      "DeployIfNotExists can remediate missing configuration"
     ],
-    "explanation": "Audit does not block, and Policy complements RBAC rather than replacing it.",
+    "explanation": "Deny refuses the write and DeployIfNotExists creates what is missing. The two distractors are the classic confusions: Audit reacts to the same condition but never blocks, and Policy does not replace RBAC — they govern different planes, so you need both.",
     "difficulty": "medium"
   },
   {
@@ -358,16 +431,16 @@
     "type": "multiple",
     "prompt": "Which two statements about Key Vault access models are correct? (Choose two.)",
     "choices": [
-      "Azure RBAC is the default model for newly created vaults",
-      "Legacy vault access policies remain supported for vaults already using them",
-      "All existing vaults are auto-migrated to RBAC",
-      "RBAC and access policies should always run together on the same vault"
+      "Azure RBAC is the default model for new vaults",
+      "Legacy access policies remain supported on existing vaults",
+      "RBAC and access policies should always run together on a vault",
+      "All existing vaults are automatically migrated to RBAC"
     ],
     "correctAnswers": [
-      "Azure RBAC is the default model for newly created vaults",
-      "Legacy vault access policies remain supported for vaults already using them"
+      "Azure RBAC is the default model for new vaults",
+      "Legacy access policies remain supported on existing vaults"
     ],
-    "explanation": "The default applies to new vaults only; existing vaults keep their model, and you pick one model per vault.",
+    "explanation": "The RBAC default applies to newly created vaults, and vaults already on access policies keep working. Neither distractor holds: nothing is auto-migrated, so a legacy vault stays legacy until someone moves it, and running both models on one vault leaves an unaudited second source of access.",
     "difficulty": "medium"
   },
   {
@@ -377,15 +450,15 @@
     "prompt": "Which two features protect Azure Backup data against a single compromised admin? (Choose two.)",
     "choices": [
       "Multi-User Authorization (Resource Guard)",
-      "Immutable (locked) vault",
-      "Dynamic data masking",
-      "A user-defined route"
+      "An immutable, locked backup vault",
+      "Dynamic data masking on the audited columns",
+      "A user-defined route on the subnet"
     ],
     "correctAnswers": [
       "Multi-User Authorization (Resource Guard)",
-      "Immutable (locked) vault"
+      "An immutable, locked backup vault"
     ],
-    "explanation": "MUA requires a second approver and a locked immutable vault blocks tampering; masking and UDRs are unrelated.",
+    "explanation": "Multi-User Authorization requires a second approver, and a locked immutable vault makes retention impossible to shorten — together they cover both the action and the control. Dynamic data masking and user-defined routes are a database presentation feature and a network control, neither of which touches backup data.",
     "difficulty": "medium"
   },
   {
@@ -395,13 +468,15 @@
     "caseStudyId": "cs-adatum-governance",
     "prompt": "Referring to requirement 1 (new Key Vaults must use a centrally governed, granular model without vault access policies, and network access limited to specific subnets), which configuration is correct?",
     "choices": [
-      "Create vaults with the Azure RBAC access model and restrict Networking to selected subnets or a private endpoint",
-      "Create vaults with legacy access policies and no network restriction",
-      "Disable authentication on the vaults",
-      "Use shared keys for all vault operations"
+      "Azure RBAC access model, with Networking limited to subnets",
+      "Legacy access policies, with no network restriction whatsoever",
+      "Shared keys used for all of the vault operations",
+      "Authentication disabled on the vaults entirely"
     ],
-    "correctAnswers": ["Create vaults with the Azure RBAC access model and restrict Networking to selected subnets or a private endpoint"],
-    "explanation": "RBAC gives the centralized granular model; the Networking blade restricts access to specific subnets or a private endpoint.",
+    "correctAnswers": [
+      "Azure RBAC access model, with Networking limited to subnets"
+    ],
+    "explanation": "RBAC provides the centrally governed, granular model the requirement asks for, and the Networking blade is where the vault is closed to everything but named subnets or a private endpoint. Legacy access policies with no network restriction fails on both counts, which is why it is the option to recognise and reject.",
     "difficulty": "medium"
   },
   {
@@ -411,13 +486,15 @@
     "caseStudyId": "cs-adatum-governance",
     "prompt": "Referring to requirement 2 (every new resource tagged with a business-criticality classification before provisioning, enforced automatically), which control fits?",
     "choices": [
-      "An Azure Policy (Deny or Modify) requiring the mandatory tag on new resources",
+      "An Azure Policy (Deny or Modify) requiring the tag",
       "A manual checklist reviewed by the provisioning team",
-      "Microsoft Defender EASM",
-      "Azure Backup Multi-User Authorization"
+      "Azure Backup Multi-User Authorization on the vault",
+      "Microsoft Defender EASM asset discovery"
     ],
-    "correctAnswers": ["An Azure Policy (Deny or Modify) requiring the mandatory tag on new resources"],
-    "explanation": "Enforcing a mandatory tag automatically at creation is exactly an Azure Policy Deny or Modify effect.",
+    "correctAnswers": [
+      "An Azure Policy (Deny or Modify) requiring the tag"
+    ],
+    "explanation": "Enforcing a mandatory tag at creation time is precisely an Azure Policy Deny or Modify effect. A reviewed checklist is the tempting organisational answer and it is what the requirement rules out: it depends on people remembering, so it degrades silently rather than failing visibly.",
     "difficulty": "medium"
   },
   {
@@ -427,13 +504,15 @@
     "caseStudyId": "cs-adatum-governance",
     "prompt": "Adatum wants a single, queryable view of all resources across Azure, AWS, and GCP to support its asset-management controls. Which capability provides this?",
     "choices": [
-      "Microsoft Defender for Cloud asset inventory (queryable via Azure Resource Graph)",
-      "A read-only resource lock on each subscription",
-      "Key Vault purge protection",
-      "A DeployIfNotExists policy"
+      "Defender for Cloud inventory, via Resource Graph",
+      "A read-only resource lock applied to each subscription",
+      "Key Vault purge protection on every vault in scope",
+      "A DeployIfNotExists policy on the subscriptions"
     ],
-    "correctAnswers": ["Microsoft Defender for Cloud asset inventory (queryable via Azure Resource Graph)"],
-    "explanation": "Defender for Cloud's inventory (backed by Azure Resource Graph) gives a unified, queryable view across Azure/AWS/GCP.",
+    "correctAnswers": [
+      "Defender for Cloud inventory, via Resource Graph"
+    ],
+    "explanation": "Defender for Cloud's asset inventory is backed by Azure Resource Graph, which is what makes a single query span Azure, AWS and GCP. A DeployIfNotExists policy is the closest miss because it also works across subscriptions, but it enforces configuration rather than answering questions about what exists.",
     "difficulty": "medium"
   },
   {
@@ -447,7 +526,7 @@
       "Assign the policy (or an initiative containing it) at the management group or subscription scope",
       "Verify that a non-compliant creation attempt is blocked"
     ],
-    "explanation": "The definition and its effect must exist before assignment, with verification confirming enforcement.",
+    "explanation": "A definition must exist before it can be assigned, and the assignment must exist before anything is enforced — so verification comes last, against a real deployment attempt rather than against the compliance dashboard, which only refreshes on its own schedule.",
     "difficulty": "medium"
   },
   {
@@ -461,7 +540,7 @@
       "Assign an Azure RBAC data role (e.g. Key Vault Secrets User) to the workload's identity",
       "Enable purge protection"
     ],
-    "explanation": "The vault and its network boundary come first, then data-plane access is granted, with purge protection hardening it last.",
+    "explanation": "The vault and its network boundary come first, because granting data-plane access to a vault still open to the internet leaves a window between the two steps. Purge protection is hardened last since it cannot be undone: enable it before the configuration is settled and a mistake becomes permanent.",
     "difficulty": "medium"
   },
   {
@@ -471,11 +550,36 @@
     "prompt": "Configure this simplified Azure Backup vault screen for the maximum protection posture against a compromised admin account.",
     "screenTitle": "Backup vault security (simulated)",
     "fields": [
-      { "id": "immutability", "label": "Immutability", "kind": "select", "options": ["Disabled", "Enabled", "Enabled and Locked"], "correctValue": "Enabled and Locked" },
-      { "id": "mua", "label": "Multi-User Authorization", "kind": "toggle", "correctValue": "On" },
-      { "id": "softDelete", "label": "Soft delete", "kind": "select", "options": ["Off", "On (default)", "Always-on (irreversible)"], "correctValue": "Always-on (irreversible)" }
+      {
+        "id": "immutability",
+        "label": "Immutability",
+        "kind": "select",
+        "options": [
+          "Disabled",
+          "Enabled",
+          "Enabled and Locked"
+        ],
+        "correctValue": "Enabled and Locked"
+      },
+      {
+        "id": "mua",
+        "label": "Multi-User Authorization",
+        "kind": "toggle",
+        "correctValue": "On"
+      },
+      {
+        "id": "softDelete",
+        "label": "Soft delete",
+        "kind": "select",
+        "options": [
+          "Off",
+          "On (default)",
+          "Always-on (irreversible)"
+        ],
+        "correctValue": "Always-on (irreversible)"
+      }
     ],
-    "explanation": "Locked immutability plus always-on soft delete plus MUA is Microsoft's maximum posture, combining an irreversible retention control with a second-approver requirement.",
+    "explanation": "Locked immutability, always-on soft delete and Multi-User Authorization together form the maximum posture: an irreversible retention control plus a second approver. Leaving immutability unlocked is the tempting middle ground, but an unlocked setting can be turned off by the compromised administrator it exists to stop.",
     "difficulty": "hard"
   },
   {
@@ -484,9 +588,14 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o4-1",
     "prompt": "Proposed solution: Publish an internal wiki page asking teams to always add the BusinessCriticality tag. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "This relies on manual discipline with no enforcement — exactly what the goal says to avoid.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "This relies on people remembering, which is exactly what the goal excludes. A wiki page produces no enforcement and no compliance signal, so untagged resources appear without anyone noticing until an audit — the failure mode is silence rather than an error.",
     "difficulty": "easy"
   },
   {
@@ -495,9 +604,14 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o4-1",
     "prompt": "Proposed solution: Assign an Azure Policy with a Deny effect that blocks creation of untagged resources. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "Deny automatically blocks non-compliant (untagged) creation, enforcing the tag without relying on manual discipline.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "A Deny effect refuses the creation of an untagged resource at the control plane, so the tag is enforced without depending on anyone's discipline. Note the trade-off it accepts: deployments now fail visibly, which is the intended behaviour rather than a side effect.",
     "difficulty": "medium"
   },
   {
@@ -506,84 +620,155 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o4-1",
     "prompt": "Proposed solution: Create an Azure Policy with an Audit effect that reports untagged resources monthly. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "Audit only reports non-compliance after the fact; it does not prevent untagged resources from being created.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "Audit reports untagged resources after they exist, so the goal is not met: the resource is already there. It is the tempting answer because it uses the same policy definition and the same condition as Deny — only the effect differs, and that difference is the whole requirement.",
     "difficulty": "medium"
   },
   {
     "id": "q-o4-1-37",
     "objectiveId": "o4-1",
-    "type": "single",
-    "prompt": "Which command assigns an existing policy definition to resource group RG1?",
-    "choices": [
-      "az policy assignment create --name RequireTag --policy <policyDefId> --scope /subscriptions/<subId>/resourceGroups/RG1",
-      "az policy definition create --name RequireTag --scope RG1",
-      "az policy apply --definition RequireTag --rg RG1",
-      "az policy set-definition assign --name RequireTag --target RG1"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the command that assigns one existing policy definition to resource group RG1 and has it actually block non-compliant deployments.",
+    "template": "az policy assignment create --name RequireTag --scope /subscriptions/<subId>/resourceGroups/RG1 [[b1]] [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "--policy <policyDefId>",
+          "--policy-set-definition <initiativeId>",
+          "--definition RequireTag",
+          "--rules @rules.json"
+        ],
+        "correctValue": "--policy <policyDefId>"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "--enforcement-mode Default",
+          "--enforcement-mode DoNotEnforce",
+          "--enforcement-mode Audit",
+          "--enforcement-mode Disabled"
+        ],
+        "correctValue": "--enforcement-mode Default"
+      }
     ],
-    "correctAnswers": ["az policy assignment create --name RequireTag --policy <policyDefId> --scope /subscriptions/<subId>/resourceGroups/RG1"],
-    "explanation": "Assignments use `az policy assignment create` with --policy and --scope. `policy definition create` authors a new definition; the other two don't exist.",
+    "explanation": "`--policy` takes a single definition; `--policy-set-definition` is for an initiative, which is a bundle of definitions, so the two are not interchangeable. Enforcement mode has exactly two values and Default is the one that enforces: DoNotEnforce is the trap, because the assignment still evaluates and reports compliance while every Deny effect is skipped — an assignment that looks correct on the compliance blade and blocks nothing.",
     "difficulty": "medium"
   },
   {
     "id": "q-o4-1-38",
     "objectiveId": "o4-1",
-    "type": "single",
-    "prompt": "Which command creates a Key Vault that uses Azure RBAC and blocks permanent deletion during retention?",
-    "choices": [
-      "az keyvault create --name KV1 --resource-group RG1 --enable-rbac-authorization true --enable-purge-protection true",
-      "az keyvault create --name KV1 --resource-group RG1 --access-model rbac --no-purge",
-      "az keyvault update --name KV1 --rbac on --soft-delete forever",
-      "az keyvault create --name KV1 --resource-group RG1 --sku premium"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the command that creates a Key Vault authorized through Azure RBAC and protected against permanent deletion during its retention period.",
+    "template": "az keyvault create --name KV1 --resource-group RG1 [[b1]] [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "--enable-rbac-authorization true",
+          "--permission-model rbac",
+          "--access-model rbac",
+          "--enable-rbac true"
+        ],
+        "correctValue": "--enable-rbac-authorization true"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "--enable-purge-protection true",
+          "--enable-soft-delete true",
+          "--retention-days 90",
+          "--no-purge true"
+        ],
+        "correctValue": "--enable-purge-protection true"
+      }
     ],
-    "correctAnswers": ["az keyvault create --name KV1 --resource-group RG1 --enable-rbac-authorization true --enable-purge-protection true"],
-    "explanation": "--enable-rbac-authorization selects the RBAC model and --enable-purge-protection blocks purge during retention. The premium SKU relates to HSM keys, not access model; the other flags don't exist.",
+    "explanation": "Soft delete is always on and cannot be turned off, so `--enable-soft-delete true` is the tempting redundancy: it changes nothing, and a deleted vault or secret can still be purged immediately. Purge protection is the separate switch that blocks purging until retention expires — and it is one-way, which is the operational cost worth knowing before enabling it, because it cannot be turned off afterwards.",
     "difficulty": "medium"
   },
   {
     "id": "q-o4-1-39",
     "objectiveId": "o4-1",
-    "type": "single",
-    "prompt": "Which pair of commands restricts a Key Vault's network to a single subnet?",
-    "choices": [
-      "az keyvault update --name KV1 --default-action Deny ; az keyvault network-rule add --name KV1 --vnet-name VNet1 --subnet Subnet1",
-      "az keyvault update --name KV1 --network private ; az keyvault subnet allow Subnet1",
-      "az network nsg rule create --destination KV1 --source Subnet1",
-      "az keyvault set-policy --name KV1 --subnet Subnet1"
+    "type": "dropdown-sentence",
+    "prompt": "KV1's firewall must reject every caller except those on its allow-list, while Azure Disk Encryption and Azure Backup keep working. Complete the command.",
+    "template": "az keyvault update --name KV1 --default-action [[b1]] --bypass [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "Deny",
+          "Allow",
+          "Disabled",
+          "Block"
+        ],
+        "correctValue": "Deny"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "AzureServices",
+          "None",
+          "TrustedServices",
+          "All"
+        ],
+        "correctValue": "AzureServices"
+      }
     ],
-    "correctAnswers": ["az keyvault update --name KV1 --default-action Deny ; az keyvault network-rule add --name KV1 --vnet-name VNet1 --subnet Subnet1"],
-    "explanation": "Deny by default + a network rule for the subnet is the vault-firewall pattern. set-policy manages data-plane ACCESS policies (legacy model), not network rules; NSGs don't govern the vault's service endpoint side.",
+    "explanation": "Deny is the default action that makes the firewall an allow-list; Allow leaves it open and Block is not a value this parameter accepts. The bypass is where this goes wrong in practice: `None` is the stricter-sounding choice and it is what breaks Azure Disk Encryption, Azure Backup and ARM deployments that read the vault, because those services arrive from Azure IP space that no virtual network rule covers.",
     "difficulty": "hard"
   },
   {
     "id": "q-o4-1-40",
     "objectiveId": "o4-1",
     "type": "single",
-    "prompt": "Which command backs up secret Secret1 from KV1 into a restorable blob file?",
+    "prompt": "Which command writes secret Secret1 out as an encrypted, restorable blob file?",
     "choices": [
-      "az keyvault secret backup --vault-name KV1 --name Secret1 --file secret1.blob",
-      "az keyvault secret download --vault-name KV1 --name Secret1 --file secret1.txt",
-      "az keyvault secret export --vault-name KV1 --name Secret1",
-      "az backup protection enable-for-keyvault --vault KV1"
+      "az keyvault secret backup",
+      "az keyvault secret download",
+      "az keyvault key backup",
+      "az keyvault secret show"
     ],
-    "correctAnswers": ["az keyvault secret backup --vault-name KV1 --name Secret1 --file secret1.blob"],
-    "explanation": "`secret backup` produces the encrypted, restorable blob (paired with `secret restore`). `secret download` fetches the plaintext value (not a protected backup); the other two don't exist.",
+    "correctAnswers": [
+      "az keyvault secret backup"
+    ],
+    "explanation": "`backup` produces an opaque encrypted blob that can only be restored into a Key Vault in the same subscription and geography — which is both its safety property and its limitation. `download` is the tempting neighbour and writes the secret VALUE in plaintext to disk, which is a copy of the secret rather than a backup of it. `key backup` does the same job for keys instead of secrets.",
     "difficulty": "medium"
   },
   {
     "id": "q-o4-1-41",
     "objectiveId": "o4-1",
-    "type": "single",
-    "prompt": "Which command configures automatic rotation for key Key1 from a policy file?",
-    "choices": [
-      "az keyvault key rotation-policy update --vault-name KV1 --name Key1 --value @rotation-policy.json",
-      "az keyvault key rotate --vault-name KV1 --name Key1 --schedule P90D",
-      "az keyvault update --name KV1 --auto-rotate-keys true",
-      "az keyvault key set-attributes --name Key1 --rotation auto"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the command that configures automatic rotation for key Key1 from a policy definition held in rotation-policy.json.",
+    "template": "az keyvault key [[b1]] update --vault-name KV1 --name Key1 --value [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "rotation-policy",
+          "rotate",
+          "set-attributes",
+          "policy"
+        ],
+        "correctValue": "rotation-policy"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "@rotation-policy.json",
+          "rotation-policy.json",
+          "P90D",
+          "auto"
+        ],
+        "correctValue": "@rotation-policy.json"
+      }
     ],
-    "correctAnswers": ["az keyvault key rotation-policy update --vault-name KV1 --name Key1 --value @rotation-policy.json"],
-    "explanation": "Automatic rotation is defined by a rotation POLICY on the key. `az keyvault key rotate` performs a one-off manual rotation; the other options don't exist.",
+    "explanation": "`rotate` is the tempting near-miss and performs one immediate rotation, whereas `rotation-policy update` installs the schedule that then rotates the key without anyone running a command. The `@` prefix is the Azure CLI convention for reading a value out of a file: without it the CLI receives the literal filename rather than the JSON inside it, and rejects it as malformed even though the file is valid.",
     "difficulty": "hard"
   }
 ]

@@ -5,13 +5,15 @@
     "type": "single",
     "prompt": "How are rules within a single Network Security Group evaluated?",
     "choices": [
-      "By priority, lowest number first; the first match stops evaluation",
-      "By priority, highest number first",
-      "All matching rules are combined and the most restrictive wins",
-      "In the order they were created"
+      "By priority, lowest number first, first match wins",
+      "All matching rules are combined, and the most restrictive one wins",
+      "By priority, highest number first, first match wins",
+      "In the order the rules happened to be created"
     ],
-    "correctAnswers": ["By priority, lowest number first; the first match stops evaluation"],
-    "explanation": "NSG rules process from the lowest priority number upward, and the first match wins.",
+    "correctAnswers": [
+      "By priority, lowest number first, first match wins"
+    ],
+    "explanation": "NSG rules are processed from the lowest priority number upward and the first match stops evaluation. Nothing is combined, which is the mental model to drop: a permissive rule at 100 wins over a restrictive one at 200, whereas \"most restrictive wins\" would give the opposite result.",
     "difficulty": "easy"
   },
   {
@@ -21,12 +23,14 @@
     "prompt": "A VM's NIC has an NSG and its subnet has a different NSG. For inbound traffic to reach the VM, which must allow it?",
     "choices": [
       "Both the subnet NSG and the NIC NSG",
-      "Only the subnet NSG",
-      "Only the NIC NSG",
-      "Either one is sufficient"
+      "Either one allowing it is sufficient",
+      "Only the NSG on the subnet",
+      "Only the NSG on the NIC"
     ],
-    "correctAnswers": ["Both the subnet NSG and the NIC NSG"],
-    "explanation": "Inbound traffic is filtered by the subnet NSG first, then the NIC NSG; a deny at either layer blocks it.",
+    "correctAnswers": [
+      "Both the subnet NSG and the NIC NSG"
+    ],
+    "explanation": "Inbound traffic passes the subnet NSG first and then the NIC NSG, so a deny at either layer blocks it. Assuming either one suffices is the trap, because a permissive NIC rule cannot rescue traffic the subnet already denied.",
     "difficulty": "medium"
   },
   {
@@ -35,12 +39,14 @@
     "type": "single",
     "prompt": "What is the main benefit of using an Application Security Group (ASG) in NSG rules?",
     "choices": [
-      "Rules target VMs by application role instead of brittle IP lists",
-      "It encrypts traffic between the grouped VMs",
-      "It replaces the need for a subnet NSG",
-      "It load-balances traffic across the grouped VMs"
+      "Rules target VMs by role, not by IP list",
+      "It load-balances traffic across the grouped VMs",
+      "It encrypts the traffic between the grouped VMs",
+      "It replaces the need for a subnet NSG"
     ],
-    "correctAnswers": ["Rules target VMs by application role instead of brittle IP lists"],
+    "correctAnswers": [
+      "Rules target VMs by role, not by IP list"
+    ],
     "explanation": "ASGs let you reference a logical role (web, db) as source/destination, so rules follow workloads rather than hard-coded IPs.",
     "difficulty": "easy"
   },
@@ -50,13 +56,15 @@
     "type": "single",
     "prompt": "Which best practice avoids hard-coding Azure service IP ranges in an NSG rule that must allow outbound traffic to Azure Storage?",
     "choices": [
-      "Use the Storage service tag as the destination",
-      "Allow 0.0.0.0/0 outbound",
-      "Add every published Storage IP range manually",
-      "Disable the outbound rules entirely"
+      "Use the Storage service tag as destination",
+      "Add every published Storage IP range by hand",
+      "Disable the outbound rules on the NSG",
+      "Allow 0.0.0.0/0 outbound instead"
     ],
-    "correctAnswers": ["Use the Storage service tag as the destination"],
-    "explanation": "Service tags (e.g. Storage, AzureKeyVault) represent Microsoft-maintained IP ranges, avoiding brittle manual lists.",
+    "correctAnswers": [
+      "Use the Storage service tag as destination"
+    ],
+    "explanation": "A service tag names a Microsoft-maintained set of address prefixes, so the rule keeps working as those ranges change. Adding every published IP manually is the tempting explicit approach, however the list moves and the rule silently rots.",
     "difficulty": "medium"
   },
   {
@@ -65,13 +73,15 @@
     "type": "single",
     "prompt": "What is the group → configure → deploy workflow associated with?",
     "choices": [
-      "Azure Virtual Network Manager (AVNM)",
-      "Azure Firewall Manager",
-      "Network Watcher",
-      "Azure Front Door"
+      "Azure Virtual Network Manager",
+      "Azure Firewall Manager policies",
+      "Network Watcher diagnostics",
+      "Azure Front Door profiles"
     ],
-    "correctAnswers": ["Azure Virtual Network Manager (AVNM)"],
-    "explanation": "AVNM groups VNets into network groups, applies connectivity/security configurations, then deploys them across subscriptions and regions.",
+    "correctAnswers": [
+      "Azure Virtual Network Manager"
+    ],
+    "explanation": "Group, configure, deploy is the Virtual Network Manager workflow: VNets go into network groups, a configuration is authored, then deployed to regions. Azure Firewall Manager is the closest miss, since it also centralises policy but manages firewall policies rather than VNet membership.",
     "difficulty": "medium"
   },
   {
@@ -80,13 +90,15 @@
     "type": "single",
     "prompt": "An AVNM security admin rule and a subnet NSG rule conflict for the same flow. Which wins?",
     "choices": [
-      "The AVNM security admin rule — it is evaluated before, and takes priority over, NSG rules",
-      "The NSG rule — it is closest to the resource",
-      "Whichever is more permissive",
-      "Whichever was configured most recently"
+      "The AVNM rule — it is evaluated first",
+      "The NSG rule, because it sits closest to the resource",
+      "Whichever of the two was configured most recently",
+      "Whichever of the two is the more permissive"
     ],
-    "correctAnswers": ["The AVNM security admin rule — it is evaluated before, and takes priority over, NSG rules"],
-    "explanation": "Security admin rules are enforced ahead of NSGs and override them, letting a central team block traffic regardless of local NSG configuration.",
+    "correctAnswers": [
+      "The AVNM rule — it is evaluated first"
+    ],
+    "explanation": "A security admin rule is evaluated ahead of every NSG and takes priority, which is exactly what lets a central team enforce something a VNet owner cannot undo. \"The NSG is closer to the resource\" is the intuitive answer and it is wrong here, because proximity does not decide precedence.",
     "difficulty": "hard"
   },
   {
@@ -95,13 +107,15 @@
     "type": "single",
     "prompt": "Which connectivity topologies can an AVNM connectivity configuration build across a network group?",
     "choices": [
-      "Mesh (regional or global) and hub-and-spoke",
-      "Only point-to-site VPN meshes",
-      "Only ExpressRoute circuits",
-      "Only single-VNet service endpoints"
+      "Mesh, regional or global, and hub-and-spoke",
+      "Only single-VNet service endpoint configurations",
+      "Only point-to-site VPN meshes between VNets",
+      "Only ExpressRoute circuits to on-premises"
     ],
-    "correctAnswers": ["Mesh (regional or global) and hub-and-spoke"],
-    "explanation": "Connectivity configurations create mesh (regional by default, optionally global) or hub-and-spoke topologies.",
+    "correctAnswers": [
+      "Mesh, regional or global, and hub-and-spoke"
+    ],
+    "explanation": "Connectivity configurations build mesh — regional by default, optionally global — or hub-and-spoke topologies. Reading it as VPN-only is the misconception: these are backbone connections between VNets, whereas a VPN gateway is a separate resource entirely.",
     "difficulty": "medium"
   },
   {
@@ -110,13 +124,15 @@
     "type": "single",
     "prompt": "You must force all outbound traffic from a subnet through Azure Firewall for inspection. What do you configure?",
     "choices": [
-      "A UDR with destination 0.0.0.0/0 and next hop = the firewall's private IP",
-      "A service endpoint on the subnet",
-      "An NSG rule denying all outbound traffic",
-      "A private endpoint for the firewall"
+      "A UDR for 0.0.0.0/0 to the firewall IP",
+      "An NSG rule denying all of the outbound traffic",
+      "A private endpoint for the firewall itself",
+      "A service endpoint on the subnet"
     ],
-    "correctAnswers": ["A UDR with destination 0.0.0.0/0 and next hop = the firewall's private IP"],
-    "explanation": "A default-route UDR pointing to the firewall as a virtual appliance forces egress through it — a forced tunnel.",
+    "correctAnswers": [
+      "A UDR for 0.0.0.0/0 to the firewall IP"
+    ],
+    "explanation": "A user-defined route with destination 0.0.0.0/0 and next hop set to the firewall's private IP is what forces egress through it. An NSG deny-all outbound is the tempting alternative, but it blocks the traffic rather than redirecting it — deploying a firewall without routes changes nothing.",
     "difficulty": "medium"
   },
   {
@@ -125,13 +141,15 @@
     "type": "single",
     "prompt": "A UDR is applied to a subnet. By itself, what does it do?",
     "choices": [
-      "It only changes routing; inspection/filtering happens at whatever the next hop is",
-      "It inspects and filters packets in place",
-      "It encrypts the traffic it routes",
-      "It logs all flows to a Log Analytics workspace"
+      "It changes routing only, nothing else",
+      "It logs all of the flows to a Log Analytics workspace",
+      "It inspects and filters the packets in place",
+      "It encrypts the traffic that it routes"
     ],
-    "correctAnswers": ["It only changes routing; inspection/filtering happens at whatever the next hop is"],
-    "explanation": "A UDR steers traffic; any inspection is done by the appliance/firewall at the next hop, not the route itself.",
+    "correctAnswers": [
+      "It changes routing only, nothing else"
+    ],
+    "explanation": "A UDR only changes where traffic goes; whatever sits at the next hop does the inspection. Expecting the route itself to filter is the confusion worth naming, because a UDR pointing at a firewall that is not configured to allow the flow produces a silent black hole rather than a deny.",
     "difficulty": "medium"
   },
   {
@@ -139,9 +157,16 @@
     "objectiveId": "o2-1",
     "type": "single",
     "prompt": "Which VPN connection type connects an entire on-premises network to Azure?",
-    "choices": ["Site-to-site (S2S)", "Point-to-site (P2S)", "VNet peering", "ExpressRoute Direct"],
-    "correctAnswers": ["Site-to-site (S2S)"],
-    "explanation": "Site-to-site connects whole networks via IPsec; point-to-site connects individual client devices.",
+    "choices": [
+      "Site-to-site (S2S)",
+      "Point-to-site (P2S)",
+      "VNet peering",
+      "ExpressRoute Direct"
+    ],
+    "correctAnswers": [
+      "Site-to-site (S2S)"
+    ],
+    "explanation": "Site-to-site connects entire networks over IPsec, whereas point-to-site connects individual client devices. The distinction decides the design: an office needs S2S, a remote laptop needs P2S, and using one for the other means either per-device configuration at scale or a tunnel nobody can use.",
     "difficulty": "easy"
   },
   {
@@ -149,9 +174,16 @@
     "objectiveId": "o2-1",
     "type": "single",
     "prompt": "Which connection type lets individual remote laptops connect securely into an Azure VNet?",
-    "choices": ["Point-to-site (P2S) VPN", "Site-to-site (S2S) VPN", "VNet peering", "A private endpoint"],
-    "correctAnswers": ["Point-to-site (P2S) VPN"],
-    "explanation": "Point-to-site is designed for individual client devices; site-to-site is for whole networks.",
+    "choices": [
+      "Point-to-site (P2S) VPN",
+      "A private endpoint instead",
+      "Site-to-site (S2S) VPN",
+      "Virtual network peering"
+    ],
+    "correctAnswers": [
+      "Point-to-site (P2S) VPN"
+    ],
+    "explanation": "Point-to-site is built for individual client devices connecting from anywhere. Site-to-site is the tempting answer because it is the better-known VPN type, however it terminates on a network device rather than on a laptop.",
     "difficulty": "easy"
   },
   {
@@ -160,13 +192,15 @@
     "type": "single",
     "prompt": "How does VNet peering differ from a VPN Gateway connection?",
     "choices": [
-      "Peering connects VNets privately over the Azure backbone; a VPN Gateway uses encrypted IPsec tunnels",
-      "Peering always encrypts with IPsec; VPN Gateway never encrypts",
+      "Peering uses the backbone; VPN uses IPsec",
+      "Peering always encrypts with IPsec; a VPN Gateway never encrypts",
       "Peering only works between VNets in different tenants",
-      "There is no functional difference"
+      "There is no functional difference at all"
     ],
-    "correctAnswers": ["Peering connects VNets privately over the Azure backbone; a VPN Gateway uses encrypted IPsec tunnels"],
-    "explanation": "Peering is backbone-level VNet-to-VNet connectivity; VPN Gateway establishes IPsec tunnels, typically to remote/on-prem networks.",
+    "correctAnswers": [
+      "Peering uses the backbone; VPN uses IPsec"
+    ],
+    "explanation": "Peering connects VNets privately over the Azure backbone with no gateway and no tunnel, whereas a VPN gateway establishes IPsec tunnels typically to on-premises. Believing peering encrypts with IPsec is the misconception — backbone traffic is isolated rather than tunnelled.",
     "difficulty": "medium"
   },
   {
@@ -175,13 +209,15 @@
     "type": "single",
     "prompt": "What does a 'secured virtual hub' add to an Azure Virtual WAN deployment?",
     "choices": [
-      "Azure Firewall / security services integrated directly into the hub",
-      "A second redundant ExpressRoute circuit",
+      "Azure Firewall integrated into the hub",
       "Automatic upgrade to DDoS Network Protection",
-      "A global Front Door endpoint"
+      "A second redundant ExpressRoute circuit",
+      "A global Front Door endpoint for it"
     ],
-    "correctAnswers": ["Azure Firewall / security services integrated directly into the hub"],
-    "explanation": "A secured virtual hub embeds Azure Firewall (or a partner NVA) into the Virtual WAN hub for centralized inspection.",
+    "correctAnswers": [
+      "Azure Firewall integrated into the hub"
+    ],
+    "explanation": "A secured virtual hub embeds Azure Firewall, or a partner appliance, directly into the Virtual WAN hub so inspection is central rather than per-spoke. It is not about redundancy or DDoS tiers, which is what makes those distractors tempting: they are also things you would add to a hub.",
     "difficulty": "medium"
   },
   {
@@ -191,11 +227,13 @@
     "prompt": "ExpressRoute provides a private connection to Azure. What can you add for traffic confidentiality?",
     "choices": [
       "IPsec or MACsec encryption",
-      "A Web Application Firewall",
+      "A Web Application Firewall policy",
       "A service endpoint policy",
-      "Dynamic data masking"
+      "Dynamic data masking rules"
     ],
-    "correctAnswers": ["IPsec or MACsec encryption"],
+    "correctAnswers": [
+      "IPsec or MACsec encryption"
+    ],
     "explanation": "ExpressRoute traffic is private but not encrypted by default; IPsec (over the circuit) or MACsec (at layer 2) can add confidentiality.",
     "difficulty": "medium"
   },
@@ -205,13 +243,15 @@
     "type": "single",
     "prompt": "As of mid-2026, what is the correct guidance for capturing network flow telemetry with Network Watcher?",
     "choices": [
-      "Use Virtual Network (VNet) flow logs; NSG flow logs can no longer be created and retire in 2027",
-      "Use NSG flow logs, the current recommended feature",
+      "Use VNet flow logs; NSG flow logs retire",
       "Use the Log Analytics agent to collect flows on each VM",
+      "Use NSG flow logs, the current recommended feature",
       "Flow logging is only available through Azure Firewall"
     ],
-    "correctAnswers": ["Use Virtual Network (VNet) flow logs; NSG flow logs can no longer be created and retire in 2027"],
-    "explanation": "NSG flow log creation was blocked in June 2025 with full retirement on 30 September 2027; VNet flow logs are the replacement.",
+    "correctAnswers": [
+      "Use VNet flow logs; NSG flow logs retire"
+    ],
+    "explanation": "VNet flow logs are the current mechanism: NSG flow log creation was blocked in June 2025, with retirement on 30 September 2027. Answering “NSG flow logs, the current recommended feature” is the dated reading, whereas the migration it implies is exactly what teams postpone until the deadline.",
     "difficulty": "hard"
   },
   {
@@ -219,9 +259,16 @@
     "objectiveId": "o2-1",
     "type": "single",
     "prompt": "You need to confirm which route Azure will use for traffic leaving a specific VM's NIC. Which Network Watcher tool answers this?",
-    "choices": ["Next hop", "Connection monitor", "Packet capture", "Topology"],
-    "correctAnswers": ["Next hop"],
-    "explanation": "Next hop returns the effective route and hop for a given source/destination, revealing whether a UDR or system route applies.",
+    "choices": [
+      "Next hop lookup",
+      "Connection monitor",
+      "Packet capture",
+      "Topology view"
+    ],
+    "correctAnswers": [
+      "Next hop lookup"
+    ],
+    "explanation": "Next hop returns the effective route and the hop for a given source and destination, which is how you confirm a UDR is taking effect. Packet capture is the tempting diagnostic because it shows real traffic, however it tells you what happened rather than which route decided it.",
     "difficulty": "medium"
   },
   {
@@ -229,9 +276,16 @@
     "objectiveId": "o2-1",
     "type": "single",
     "prompt": "Which Network Watcher tool tells you whether a specific packet (5-tuple) would be allowed or denied, and by which rule?",
-    "choices": ["IP flow verify", "Next hop", "NSG diagnostics export", "Effective routes"],
-    "correctAnswers": ["IP flow verify"],
-    "explanation": "IP flow verify evaluates a source/destination/port/protocol against the applied NSG rules and names the deciding rule.",
+    "choices": [
+      "IP flow verify",
+      "NSG diagnostics export",
+      "Effective routes",
+      "Next hop check"
+    ],
+    "correctAnswers": [
+      "IP flow verify"
+    ],
+    "explanation": "IP flow verify evaluates one 5-tuple against the applied NSG rules and names the deciding rule. Next hop is the closest miss and answers a different question: it resolves routing, whereas this asks whether a packet is permitted.",
     "difficulty": "medium"
   },
   {
@@ -240,13 +294,15 @@
     "type": "single",
     "prompt": "A storage account must accept traffic only from a specific subnet. Which control is the direct, resource-level way to do this?",
     "choices": [
-      "The storage account's own firewall (Networking) restricting access to that subnet",
-      "An Azure Firewall application rule",
+      "The account's own firewall (Networking)",
+      "An Azure Firewall application rule for it",
       "A Web Application Firewall policy",
       "A Conditional Access policy"
     ],
-    "correctAnswers": ["The storage account's own firewall (Networking) restricting access to that subnet"],
-    "explanation": "PaaS services such as Storage have a built-in resource firewall (Networking blade) that restricts access by IP or VNet subnet — distinct from NSGs and Azure Firewall.",
+    "correctAnswers": [
+      "The account's own firewall (Networking)"
+    ],
+    "explanation": "A storage account has its own resource firewall on the Networking blade, which is where a subnet is allow-listed. An Azure Firewall application rule is the tempting answer because it also filters by service, but it governs traffic leaving your network rather than what the PaaS endpoint accepts.",
     "difficulty": "medium"
   },
   {
@@ -255,13 +311,15 @@
     "type": "single",
     "prompt": "Which statement correctly distinguishes a resource-level firewall (e.g. on Key Vault) from a network security group?",
     "choices": [
-      "The resource firewall filters at the PaaS service level; the NSG filters at the subnet/NIC level",
-      "They are the same feature with different names",
-      "The NSG filters PaaS control-plane calls; the resource firewall filters VM traffic",
-      "Only the resource firewall supports priority-ordered rules"
+      "Resource firewall at the service; NSG at the subnet",
+      "The NSG filters PaaS calls; the resource firewall filters VMs",
+      "Only the resource firewall supports ordered rules",
+      "They are the same feature with different names"
     ],
-    "correctAnswers": ["The resource firewall filters at the PaaS service level; the NSG filters at the subnet/NIC level"],
-    "explanation": "Resource firewalls (Storage/SQL/Key Vault/App Service) gate access to the service itself; NSGs gate traffic at the network subnet/NIC layer.",
+    "correctAnswers": [
+      "Resource firewall at the service; NSG at the subnet"
+    ],
+    "explanation": "A resource firewall gates access to the PaaS service itself, whereas an NSG gates traffic entering or leaving a subnet or NIC. They are separate layers, and traffic can be allowed by one and denied by the other — which is why \"same feature, different name\" is the answer to reject.",
     "difficulty": "medium"
   },
   {
@@ -270,13 +328,15 @@
     "type": "single",
     "prompt": "An NSG has a custom rule at priority 200 allowing TCP 443 inbound and a custom rule at priority 100 denying TCP 443 inbound from the same source. What happens?",
     "choices": [
-      "Traffic is denied — priority 100 is evaluated first and matches",
-      "Traffic is allowed — allow rules always override deny rules",
-      "Traffic is allowed — priority 200 is higher and wins",
-      "The NSG rejects the configuration as a conflict"
+      "Denied — priority 100 is evaluated first",
+      "Allowed — allow rules always override deny rules",
+      "Allowed — priority 200 is higher and wins",
+      "The NSG rejects the configuration"
     ],
-    "correctAnswers": ["Traffic is denied — priority 100 is evaluated first and matches"],
-    "explanation": "Lower priority number = evaluated first, and the first match wins. The deny at 100 matches before the allow at 200 is ever considered.",
+    "correctAnswers": [
+      "Denied — priority 100 is evaluated first"
+    ],
+    "explanation": "Priority 100 is evaluated first and matches, so the traffic is denied and the allow at 200 is never reached. \"Allow rules always override deny rules\" is the intuitive belief and it is false: order decides, not the action.",
     "difficulty": "hard"
   },
   {
@@ -290,8 +350,10 @@
       "The default 'AllowAzureLoadBalancerInbound' rule",
       "The default 'DenyAllOutbound' rule"
     ],
-    "correctAnswers": ["The default 'DenyAllInbound' rule"],
-    "explanation": "The lowest-priority default denies all remaining inbound traffic; a higher-priority custom allow rule is what lets specific inbound flows through.",
+    "correctAnswers": [
+      "The default 'DenyAllInbound' rule"
+    ],
+    "explanation": "DenyAllInbound is the default that a higher-priority custom allow rule overrides, since it sits at the very end of the chain. AllowVnetInbound is the tempting pick because it is also a default, however it already permits the traffic — there is nothing to override.",
     "difficulty": "medium"
   },
   {
@@ -300,13 +362,15 @@
     "type": "single",
     "prompt": "A central security team must guarantee that RDP (TCP 3389) from the internet is blocked across every VNet in the tenant, without editing each NSG. What is the cleanest control?",
     "choices": [
-      "An AVNM security admin rule applied to a network group covering all VNets",
-      "A UDR blackholing 3389 on each subnet",
+      "An AVNM security admin rule on a group",
+      "A DDoS Protection plan on each of the public IPs",
       "A Conditional Access policy blocking RDP",
-      "A DDoS Protection plan on each public IP"
+      "A UDR blackholing 3389 on each subnet"
     ],
-    "correctAnswers": ["An AVNM security admin rule applied to a network group covering all VNets"],
-    "explanation": "A security admin rule is defined once at the network-group level and enforced ahead of every NSG — exactly the centralized, no-per-NSG-edit outcome.",
+    "correctAnswers": [
+      "An AVNM security admin rule on a group"
+    ],
+    "explanation": "A security admin rule applied to a network group is defined once and enforced ahead of every NSG, so no resource owner can undo it. Copying a deny rule into each NSG is the tempting manual equivalent and it fails the guarantee: any owner can delete their copy.",
     "difficulty": "hard"
   },
   {
@@ -315,13 +379,15 @@
     "type": "single",
     "prompt": "Which statement about service tags is correct?",
     "choices": [
-      "They represent Microsoft-maintained IP ranges for a service and update automatically",
-      "They encrypt traffic to the tagged service",
-      "They are custom labels you apply to VMs like ASGs",
-      "They are only usable in Azure Firewall, not NSGs"
+      "Microsoft-maintained ranges, updated for you",
+      "They are custom labels you apply to VMs, much like ASGs",
+      "They are only usable in Azure Firewall, not in NSGs",
+      "They encrypt the traffic to the tagged service"
     ],
-    "correctAnswers": ["They represent Microsoft-maintained IP ranges for a service and update automatically"],
-    "explanation": "Service tags abstract a service's address prefixes, which Microsoft keeps current; they can be used in both NSG and Azure Firewall rules.",
+    "correctAnswers": [
+      "Microsoft-maintained ranges, updated for you"
+    ],
+    "explanation": "A service tag represents a service's address prefixes, maintained by Microsoft and updated automatically, and it is usable in both NSGs and Azure Firewall. It is not a label you apply to VMs — that is an application security group, which is the confusion these two names invite.",
     "difficulty": "medium"
   },
   {
@@ -335,8 +401,10 @@
       "Serve as a destination in an NSG rule",
       "Group VMs by application role"
     ],
-    "correctAnswers": ["Filter or deny traffic on its own"],
-    "explanation": "An ASG is only a grouping construct referenced by NSG rules; the NSG rules do the allowing/denying.",
+    "correctAnswers": [
+      "Filter or deny traffic on its own"
+    ],
+    "explanation": "An ASG is only a grouping construct: it can be a source or destination in an NSG rule, whereas the NSG rule itself does the allowing and denying. Expecting the ASG to filter is the misconception, and it leads to groups created with no rule referencing them.",
     "difficulty": "medium"
   },
   {
@@ -344,9 +412,17 @@
     "objectiveId": "o2-1",
     "type": "multiple",
     "prompt": "Which two capabilities are provided by Azure Network Watcher? (Choose two.)",
-    "choices": ["IP flow verify", "Next hop", "Secure Score", "Regulatory compliance dashboard"],
-    "correctAnswers": ["IP flow verify", "Next hop"],
-    "explanation": "IP flow verify and next hop are Network Watcher diagnostics. Secure Score and the compliance dashboard belong to Defender for Cloud.",
+    "choices": [
+      "IP flow verify",
+      "Next hop check",
+      "Secure Score tile",
+      "Compliance dashboard"
+    ],
+    "correctAnswers": [
+      "IP flow verify",
+      "Next hop check"
+    ],
+    "explanation": "IP flow verify and next hop are Network Watcher diagnostics. Secure Score and the regulatory compliance dashboard are tempting because they are equally familiar Azure security surfaces, however both belong to Defender for Cloud rather than to networking.",
     "difficulty": "medium"
   },
   {
@@ -364,7 +440,7 @@
       "The lowest priority number is evaluated first",
       "The first matching rule stops further evaluation"
     ],
-    "explanation": "NSGs process rules from lowest priority number upward and stop at the first match.",
+    "explanation": "The lowest priority number is evaluated first and the first matching rule stops evaluation. Neither distractor holds: higher numbers come later, and rules never combine — so no notion of \"most permissive wins\" applies.",
     "difficulty": "medium"
   },
   {
@@ -373,16 +449,16 @@
     "type": "multiple",
     "prompt": "Which two are distinct layers of network control that are often confused? (Choose two.)",
     "choices": [
-      "NSG (subnet/NIC filtering)",
-      "A resource-level firewall (PaaS service access)",
-      "A resource lock (prevents delete/modify)",
-      "A Key Vault secret (stored credential)"
+      "An NSG, filtering subnet and NIC traffic",
+      "A resource firewall, gating PaaS access",
+      "A resource lock, preventing delete or modify",
+      "A Key Vault secret, holding a credential"
     ],
     "correctAnswers": [
-      "NSG (subnet/NIC filtering)",
-      "A resource-level firewall (PaaS service access)"
+      "An NSG, filtering subnet and NIC traffic",
+      "A resource firewall, gating PaaS access"
     ],
-    "explanation": "NSGs and PaaS resource firewalls are separate network-access layers; resource locks and secrets are unrelated to network filtering.",
+    "explanation": "NSGs and PaaS resource firewalls are two distinct network-access layers that are routinely confused. A resource lock and a Key Vault secret are tempting because they are also security controls, but neither filters network traffic at all.",
     "difficulty": "medium"
   },
   {
@@ -392,13 +468,15 @@
     "caseStudyId": "cs-fabrikam-network",
     "prompt": "Referring to requirement 1 (all egress from the workloads subnet inspected by a centrally managed firewall whose policy is reusable across regional secured hubs), which combination is correct?",
     "choices": [
-      "A UDR forcing 0.0.0.0/0 to Azure Firewall in a secured virtual hub, with the policy managed in Azure Firewall Manager",
+      "A UDR to Azure Firewall in a secured hub",
       "An NSG outbound deny-all rule on the subnet",
       "A private endpoint on the workloads subnet",
       "A DDoS Protection plan on the subnet"
     ],
-    "correctAnswers": ["A UDR forcing 0.0.0.0/0 to Azure Firewall in a secured virtual hub, with the policy managed in Azure Firewall Manager"],
-    "explanation": "The UDR forces egress through the firewall; deploying it in a secured hub and managing the policy in Firewall Manager makes the policy reusable across hubs.",
+    "correctAnswers": [
+      "A UDR to Azure Firewall in a secured hub"
+    ],
+    "explanation": "A UDR forces egress to Azure Firewall, and deploying that firewall in a secured virtual hub with a central policy is what makes the inspection uniform. An NSG outbound deny-all is the tempting simpler control, however it blocks rather than inspects — nothing gets examined.",
     "difficulty": "medium"
   },
   {
@@ -408,13 +486,15 @@
     "caseStudyId": "cs-fabrikam-network",
     "prompt": "Referring to requirement 2 (block a malicious IP range across every VNet without editing each NSG), which feature applies?",
     "choices": [
-      "An AVNM security admin configuration applied to a network group spanning all VNets",
-      "A deny rule copied into every NSG manually",
+      "An AVNM security admin configuration",
       "An Azure Policy Deny effect on NSG resources",
+      "A deny rule copied into every NSG by hand",
       "A UDR blackhole route added per subnet"
     ],
-    "correctAnswers": ["An AVNM security admin configuration applied to a network group spanning all VNets"],
-    "explanation": "Security admin rules are applied once at the network-group level and enforced ahead of every NSG — the centralized, no-per-NSG-edit solution.",
+    "correctAnswers": [
+      "An AVNM security admin configuration"
+    ],
+    "explanation": "A security admin configuration applied to a network group spanning every VNet is enforced once, ahead of all NSGs. Copying a deny rule into every NSG is the tempting manual route and cannot give the guarantee, since each owner can remove their own copy.",
     "difficulty": "medium"
   },
   {
@@ -424,13 +504,15 @@
     "caseStudyId": "cs-fabrikam-network",
     "prompt": "Fabrikam wants to verify, after deploying the firewall route, that a test VM's outbound traffic is actually being sent to the firewall's private IP. Which Network Watcher tool confirms this fastest?",
     "choices": [
-      "Next hop",
-      "IP flow verify",
-      "Packet capture",
-      "Connection troubleshoot to the internet"
+      "Next hop lookup",
+      "Connection troubleshoot",
+      "IP flow verify check",
+      "Packet capture run"
     ],
-    "correctAnswers": ["Next hop"],
-    "explanation": "Next hop reports the effective route for the VM's traffic, directly showing whether the UDR is sending it to the firewall's private IP.",
+    "correctAnswers": [
+      "Next hop lookup"
+    ],
+    "explanation": "Next hop reports the effective route for the VM's traffic, which is exactly how you confirm the UDR is sending it to the firewall. IP flow verify is the closest miss and answers whether a packet is allowed, whereas this question is about where it goes.",
     "difficulty": "medium"
   },
   {
@@ -444,7 +526,7 @@
       "Associate the route table with the workload subnet",
       "Verify with Network Watcher's Next hop tool that traffic routes to the firewall"
     ],
-    "explanation": "The firewall must exist before a route can target it, and the route table must be built before it's associated with the subnet, with verification last.",
+    "explanation": "The firewall must exist before a route can name its private IP, whereas the route table must be built before it is associated with the subnet. Associating first is the ordering mistake: the table has no default route yet, so traffic keeps leaving directly and the change appears to have done nothing.",
     "difficulty": "medium"
   },
   {
@@ -454,11 +536,11 @@
     "prompt": "Order the steps to enforce an Azure Virtual Network Manager security admin rule across multiple VNets.",
     "reorderItems": [
       "Create a network group and add the target VNets as members",
-      "Create a security admin configuration",
+      "Add a security admin configuration to the Virtual Network Manager instance",
       "Define a security admin rule inside that configuration",
       "Deploy the configuration to the network group's regions"
     ],
-    "explanation": "The group must exist first, then the configuration and its rule are authored, and finally deployed to take effect.",
+    "explanation": "The network group must exist first, then the security admin configuration and its rule, and only then the deployment to regions. Skipping the deployment step is the classic omission — everything is authored correctly, whereas nothing is enforced until it is deployed.",
     "difficulty": "medium"
   },
   {
@@ -468,12 +550,50 @@
     "prompt": "Configure this simplified NSG rule so it allows HTTPS inbound only from the 'web' Application Security Group.",
     "screenTitle": "Add inbound security rule (simulated)",
     "fields": [
-      { "id": "priority", "label": "Priority", "kind": "select", "options": ["100", "4096"], "correctValue": "100" },
-      { "id": "source", "label": "Source", "kind": "select", "options": ["Any", "IP Addresses", "Application Security Group"], "correctValue": "Application Security Group" },
-      { "id": "port", "label": "Destination port", "kind": "select", "options": ["22", "443", "3389"], "correctValue": "443" },
-      { "id": "action", "label": "Action", "kind": "select", "options": ["Allow", "Deny"], "correctValue": "Allow" }
+      {
+        "id": "priority",
+        "label": "Priority",
+        "kind": "select",
+        "options": [
+          "100",
+          "4096"
+        ],
+        "correctValue": "100"
+      },
+      {
+        "id": "source",
+        "label": "Source",
+        "kind": "select",
+        "options": [
+          "Any",
+          "IP Addresses",
+          "Application Security Group"
+        ],
+        "correctValue": "Application Security Group"
+      },
+      {
+        "id": "port",
+        "label": "Destination port",
+        "kind": "select",
+        "options": [
+          "22",
+          "443",
+          "3389"
+        ],
+        "correctValue": "443"
+      },
+      {
+        "id": "action",
+        "label": "Action",
+        "kind": "select",
+        "options": [
+          "Allow",
+          "Deny"
+        ],
+        "correctValue": "Allow"
+      }
     ],
-    "explanation": "A low priority number ensures this custom rule is evaluated before the default deny; ASG as source targets the 'web' role directly; 443 is HTTPS; Allow permits the traffic.",
+    "explanation": "A low priority number puts the custom rule ahead of the default deny, and using an ASG as the source keeps the rule valid as machines are added or re-addressed. A high number is the trap here, because the default DenyAllInbound would match first and the rule would never be reached.",
     "difficulty": "medium"
   },
   {
@@ -482,9 +602,14 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o2-1",
     "prompt": "Proposed solution: Add a deny rule for the malicious IP range to the NSG of every subnet in every VNet. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "This blocks the traffic but requires editing every NSG individually — it is not centrally enforced as required.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "Adding the deny rule to each NSG does block the traffic, but it is not centrally enforced: any resource owner can delete their copy, and a new VNet arrives with no rule at all. That gap is precisely what the requirement rules out.",
     "difficulty": "medium"
   },
   {
@@ -492,10 +617,15 @@
     "objectiveId": "o2-1",
     "type": "solution-goal",
     "caseStudyId": "sg-o2-1",
-    "prompt": "Proposed solution: Create an Azure Virtual Network Manager security admin rule denying that IP range, applied to a network group containing all VNets. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "A single security admin rule applied to a network group spanning all VNets enforces the block centrally, ahead of any NSG, with no per-VNet edits.",
+    "prompt": "Proposed solution: Add a UDR in each VNet routing that IP range to a black-hole next hop. Does this solution meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "UDRs are per-VNet and control outbound routing, not centralized inbound blocking — this still requires per-VNet configuration.",
     "difficulty": "medium"
   },
   {
@@ -503,85 +633,134 @@
     "objectiveId": "o2-1",
     "type": "solution-goal",
     "caseStudyId": "sg-o2-1",
-    "prompt": "Proposed solution: Add a UDR in each VNet routing that IP range to a black-hole next hop. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "UDRs are per-VNet and control outbound routing, not centralized inbound blocking — this still requires per-VNet configuration.",
+    "prompt": "Proposed solution: Create an Azure Virtual Network Manager security admin rule denying that IP range, applied to a network group containing all VNets. Does this solution meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "A single security admin rule applied to a network group spanning every VNet enforces the block centrally and cannot be overridden by an NSG. Note what it also gives you: a new VNet added to the group inherits the rule, whereas a per-NSG approach would miss it.",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-1-37",
     "objectiveId": "o2-1",
     "type": "single",
-    "prompt": "NSG1 must be associated with Subnet1 of VNet1 — and with no other subnet. Which Azure CLI command is correct?",
+    "prompt": "Which command associates an existing network security group with an existing subnet?",
     "choices": [
-      "az network vnet subnet update --vnet-name VNet1 --name Subnet1 --resource-group RG1 --network-security-group NSG1",
-      "az network nsg update --name NSG1 --resource-group RG1 --subnet Subnet1",
-      "az network nsg subnet add --nsg-name NSG1 --subnet Subnet1 --vnet VNet1",
-      "az network vnet update --name VNet1 --resource-group RG1 --nsg NSG1 --subnet Subnet1"
+      "az network vnet subnet update",
+      "az network nsg rule create --name",
+      "az network nsg update --tags",
+      "az network vnet update --tags"
     ],
-    "correctAnswers": ["az network vnet subnet update --vnet-name VNet1 --name Subnet1 --resource-group RG1 --network-security-group NSG1"],
-    "explanation": "The association is a property of the SUBNET, so you update the subnet and point it at the NSG. There is no --subnet parameter on `az network nsg update`, and the other two subcommands don't exist.",
+    "correctAnswers": [
+      "az network vnet subnet update"
+    ],
+    "explanation": "The association is a property of the SUBNET, so it is set by updating the subnet — not by updating the NSG, which is the intuition most people bring and the reason `az network nsg update` is the tempting answer. `az network nsg rule create` operates one level further in and adds a rule to a group that is already associated somewhere.",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-1-38",
     "objectiveId": "o2-1",
-    "type": "single",
-    "prompt": "Which PowerShell sequence associates an NSG with a specific subnet?",
-    "choices": [
-      "Set-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet -Name Subnet1 -AddressPrefix 10.0.1.0/24 -NetworkSecurityGroup $nsg ; $vnet | Set-AzVirtualNetwork",
-      "Set-AzNetworkSecurityGroup -Name NSG1 -Subnet Subnet1",
-      "Add-AzNetworkSecurityRuleConfig -NetworkSecurityGroup $nsg -Subnet Subnet1",
-      "New-AzNetworkSecurityGroup -Name NSG1 -SubnetName Subnet1"
+    "type": "build-list",
+    "prompt": "Build the PowerShell sequence that associates NSG1 with Subnet1 of VNet1. Not every action in the pool belongs in the answer.",
+    "poolItems": [
+      "Get the virtual network into a variable with Get-AzVirtualNetwork",
+      "Get the network security group into a variable with Get-AzNetworkSecurityGroup",
+      "Set-AzVirtualNetworkSubnetConfig on the in-memory subnet, passing -NetworkSecurityGroup",
+      "Pipe the virtual network to Set-AzVirtualNetwork to commit the change to Azure",
+      "New-AzNetworkSecurityGroup to create a second group named NSG1",
+      "Add-AzNetworkSecurityRuleConfig to add an inbound rule to the group",
+      "Restart the VMs in the subnet so the association takes effect"
     ],
-    "correctAnswers": ["Set-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet -Name Subnet1 -AddressPrefix 10.0.1.0/24 -NetworkSecurityGroup $nsg ; $vnet | Set-AzVirtualNetwork"],
-    "explanation": "In PowerShell you modify the subnet config (Set-AzVirtualNetworkSubnetConfig) then persist the VNet. Set-AzNetworkSecurityGroup saves NSG rules, not subnet associations; Add-AzNetworkSecurityRuleConfig adds rules.",
+    "correctOrder": [
+      "Get the virtual network into a variable with Get-AzVirtualNetwork",
+      "Get the network security group into a variable with Get-AzNetworkSecurityGroup",
+      "Set-AzVirtualNetworkSubnetConfig on the in-memory subnet, passing -NetworkSecurityGroup",
+      "Pipe the virtual network to Set-AzVirtualNetwork to commit the change to Azure"
+    ],
+    "explanation": "The Azure PowerShell networking cmdlets edit a local object graph, so `Set-AzVirtualNetworkSubnetConfig` changes nothing in Azure on its own: the final `Set-AzVirtualNetwork` is what commits it. Omitting that step is the classic failure — the script reports success and the portal still shows no NSG on the subnet. The distractors are all plausible-looking additions that do not belong: creating a second group is not the same as attaching the existing one, adding a rule changes what the group allows rather than where it applies, and no restart is needed because the association takes effect immediately.",
     "difficulty": "hard"
   },
   {
     "id": "q-o2-1-39",
     "objectiveId": "o2-1",
-    "type": "single",
-    "prompt": "Which command adds an inbound allow rule for TCP 443 at priority 100 to NSG1?",
-    "choices": [
-      "az network nsg rule create --nsg-name NSG1 --resource-group RG1 --name AllowHttps --priority 100 --direction Inbound --access Allow --protocol Tcp --destination-port-ranges 443",
-      "az network nsg create --name AllowHttps --priority 100 --port 443 --allow",
-      "az network vnet subnet update --name Subnet1 --allow-port 443",
-      "az network nsg rule add --nsg NSG1 --rule AllowHttps --port 443 --priority 100"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the command that adds an inbound allow rule for TCP 443 to NSG1, at the numerically lowest priority a custom rule is allowed to use.",
+    "template": "az network nsg rule create --nsg-name NSG1 --resource-group RG1 --name AllowHttps --direction Inbound --access Allow --protocol Tcp --priority [[b1]] [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "100",
+          "1",
+          "0",
+          "65000"
+        ],
+        "correctValue": "100"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "--destination-port-ranges 443",
+          "--source-port-ranges 443",
+          "--destination-address-prefixes 443",
+          "--protocol-port 443"
+        ],
+        "correctValue": "--destination-port-ranges 443"
+      }
     ],
-    "correctAnswers": ["az network nsg rule create --nsg-name NSG1 --resource-group RG1 --name AllowHttps --priority 100 --direction Inbound --access Allow --protocol Tcp --destination-port-ranges 443"],
-    "explanation": "Rules are managed with `az network nsg rule create` and its explicit parameters. `az network nsg create` creates the NSG itself; the other syntaxes don't exist.",
+    "explanation": "Custom NSG rule priorities run from 100 to 4096, and lower numbers are evaluated first; 1 and 0 are below the range, and 65000 upwards is reserved for the default rules you cannot edit. The port must be the DESTINATION port: an inbound HTTPS client uses a random high source port, so filtering on `--source-port-ranges 443` matches almost nothing and the rule appears to do nothing at all.",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-1-40",
     "objectiveId": "o2-1",
-    "type": "single",
-    "prompt": "Which command creates the default route that forces all egress from a subnet through a firewall at 10.0.0.4?",
-    "choices": [
-      "az network route-table route create --route-table-name RT1 --resource-group RG1 --name ToFw --address-prefix 0.0.0.0/0 --next-hop-type VirtualAppliance --next-hop-ip-address 10.0.0.4",
-      "az network route-table route create --route-table-name RT1 --resource-group RG1 --name ToFw --address-prefix 0.0.0.0/0 --next-hop-type Internet --next-hop-ip-address 10.0.0.4",
-      "az network vnet subnet update --name Subnet1 --default-route 10.0.0.4",
-      "az network firewall route add --firewall-name FW1 --address-prefix 0.0.0.0/0"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the route that forces all egress from a subnet through a network virtual appliance at 10.0.0.4.",
+    "template": "az network route-table route create --route-table-name RT1 --resource-group RG1 --name ToFw --address-prefix [[b1]] --next-hop-type [[b2]] --next-hop-ip-address 10.0.0.4",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "0.0.0.0/0",
+          "10.0.0.0/8",
+          "0.0.0.0/32",
+          "255.255.255.255/32"
+        ],
+        "correctValue": "0.0.0.0/0"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "VirtualAppliance",
+          "Internet",
+          "VirtualNetworkGateway",
+          "VnetLocal"
+        ],
+        "correctValue": "VirtualAppliance"
+      }
     ],
-    "correctAnswers": ["az network route-table route create --route-table-name RT1 --resource-group RG1 --name ToFw --address-prefix 0.0.0.0/0 --next-hop-type VirtualAppliance --next-hop-ip-address 10.0.0.4"],
-    "explanation": "A forced tunnel is a route-table route with next-hop-type VirtualAppliance pointing at the firewall's private IP. Next-hop-type Internet would bypass the firewall; the other commands don't exist.",
+    "explanation": "`0.0.0.0/0` is the default route — everything not matched by a more specific route — whereas `10.0.0.0/8` would only redirect private-range traffic and leave internet egress on its original path. VirtualAppliance is the only next-hop type that accepts a next-hop IP address: choosing Internet with the same IP present is the trap, because the route is accepted and the appliance is silently bypassed.",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-1-41",
     "objectiveId": "o2-1",
     "type": "single",
-    "prompt": "Which command tests whether an inbound packet to VM1 on port 443 would be allowed, and names the deciding NSG rule?",
+    "prompt": "Which Network Watcher command tests whether a specific inbound packet would be allowed to a VM, and names the NSG rule that decided?",
     "choices": [
-      "az network watcher test-ip-flow --vm VM1 --direction Inbound --protocol TCP --local 10.0.1.4:443 --remote 203.0.113.5:60000",
-      "az network watcher show-next-hop --vm VM1 --dest-ip 10.0.1.4",
-      "az network nsg rule list --nsg-name NSG1 --query \"[?destinationPortRange=='443']\"",
-      "az network watcher packet-capture create --vm VM1 --filters port=443"
+      "az network watcher test-ip-flow",
+      "az network watcher show-next-hop",
+      "az network watcher test-connectivity",
+      "az network watcher flow-log show"
     ],
-    "correctAnswers": ["az network watcher test-ip-flow --vm VM1 --direction Inbound --protocol TCP --local 10.0.1.4:443 --remote 203.0.113.5:60000"],
-    "explanation": "IP flow verify (`test-ip-flow`) evaluates a 5-tuple against effective NSG rules and returns the rule that decides. Next hop answers routing, rule list only shows configuration, packet capture records traffic.",
+    "correctAnswers": [
+      "az network watcher test-ip-flow"
+    ],
+    "explanation": "IP flow verify answers exactly that question — allowed or denied, plus the deciding rule — from a five-tuple, without sending a packet. `test-connectivity` is the tempting neighbour and does send real traffic end to end, so it tells you whether the path works rather than which rule governs it. Next hop reports routing rather than filtering, and flow logs are historical records instead of an evaluation of a hypothetical packet.",
     "difficulty": "medium"
   }
 ]

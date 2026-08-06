@@ -6,12 +6,14 @@
     "prompt": "What does Microsoft Defender for Cloud's Secure Score represent?",
     "choices": [
       "A percentage summarizing adherence to security recommendations",
-      "The count of active security incidents",
-      "The monthly cost of enabled Defender plans",
-      "The number of connected subscriptions"
+      "The monthly cost of every Defender plan enabled on the subscription",
+      "The count of security incidents currently active in the tenant",
+      "The number of subscriptions connected to Defender for Cloud"
     ],
-    "correctAnswers": ["A percentage summarizing adherence to security recommendations"],
-    "explanation": "Secure Score is a single metric of how well the environment follows Defender for Cloud recommendations.",
+    "correctAnswers": [
+      "A percentage summarizing adherence to security recommendations"
+    ],
+    "explanation": "Secure Score is a single percentage summarising how far the environment follows Defender for Cloud recommendations, which is what makes it trendable over time. The incident count is the tempting alternative because it also feels like a security metric, but it measures what is happening to you rather than how well you are configured.",
     "difficulty": "easy"
   },
   {
@@ -20,13 +22,15 @@
     "type": "single",
     "prompt": "What does the Defender for Cloud asset Inventory show?",
     "choices": [
-      "All connected/monitored resources across environments",
-      "Only resources with critical vulnerabilities",
-      "Only non-compliant resources",
-      "Only virtual machines"
+      "All connected and monitored resources across environments",
+      "Only the resources that carry a critical vulnerability today",
+      "Only the resources currently reported as non-compliant",
+      "Only the virtual machines in the connected subscriptions"
     ],
-    "correctAnswers": ["All connected/monitored resources across environments"],
-    "explanation": "Inventory is a comprehensive, queryable view of monitored resources across Azure, AWS, and GCP.",
+    "correctAnswers": [
+      "All connected and monitored resources across environments"
+    ],
+    "explanation": "Inventory is the full queryable catalogue of monitored resources across Azure, AWS and GCP, not a filtered list. Reading it as \"only the non-compliant ones\" is the common mistake and it inverts its purpose: you go to Inventory precisely to find the resources nobody has assessed yet.",
     "difficulty": "easy"
   },
   {
@@ -36,12 +40,14 @@
     "prompt": "Which standard does the free CSPM foundation evaluate configuration against by default?",
     "choices": [
       "The Microsoft Cloud Security Benchmark (MCSB)",
-      "PCI-DSS",
-      "ISO 27001",
-      "NIST SP 800-53"
+      "The PCI-DSS payment card industry standard",
+      "The ISO 27001 information security standard",
+      "The NIST SP 800-53 control catalog for federal systems"
     ],
-    "correctAnswers": ["The Microsoft Cloud Security Benchmark (MCSB)"],
-    "explanation": "MCSB is applied by default; other standards (PCI-DSS, ISO 27001, etc.) are added on top of it.",
+    "correctAnswers": [
+      "The Microsoft Cloud Security Benchmark (MCSB)"
+    ],
+    "explanation": "The Microsoft Cloud Security Benchmark is applied by default and is what Secure Score is computed from. PCI-DSS and ISO 27001 are tempting because they are the standards an auditor names, but they are added on top per scope and never apply on their own.",
     "difficulty": "easy"
   },
   {
@@ -51,12 +57,14 @@
     "prompt": "Where do you enable additional regulatory standards for a subscription in Defender for Cloud?",
     "choices": [
       "Regulatory compliance ▸ Manage compliance policies",
-      "Azure Policy ▸ Definitions",
-      "Environment settings ▸ Defender plans",
+      "Environment settings ▸ Defender plans for the subscription",
+      "Azure Policy ▸ Definitions ▸ Built-in initiatives",
       "Workload protections ▸ Just-in-time VM access"
     ],
-    "correctAnswers": ["Regulatory compliance ▸ Manage compliance policies"],
-    "explanation": "Standards like ISO 27001 or PCI-DSS are toggled per scope under Regulatory compliance ▸ Manage compliance policies.",
+    "correctAnswers": [
+      "Regulatory compliance ▸ Manage compliance policies"
+    ],
+    "explanation": "Regulatory standards are toggled per scope under Regulatory compliance, in Manage compliance policies. Azure Policy Definitions is the closest miss, because standards are ultimately implemented as policy initiatives — but assigning the initiative by hand does not register the standard in the compliance dashboard.",
     "difficulty": "medium"
   },
   {
@@ -65,13 +73,15 @@
     "type": "single",
     "prompt": "When would you add a custom standard in Defender for Cloud?",
     "choices": [
-      "When no built-in standard matches your organization's internal baseline",
+      "When no built-in standard matches your internal baseline",
       "When you want to disable the Microsoft Cloud Security Benchmark",
-      "When onboarding an AWS account",
-      "When enabling a Defender workload plan"
+      "When onboarding an AWS account as a security connector",
+      "When enabling a Defender workload protection plan"
     ],
-    "correctAnswers": ["When no built-in standard matches your organization's internal baseline"],
-    "explanation": "Custom standards let you assess against your own requirements beyond the built-in options.",
+    "correctAnswers": [
+      "When no built-in standard matches your internal baseline"
+    ],
+    "explanation": "A custom standard exists for the case where no built-in one matches your internal baseline, so you can assess against your own controls. It does not replace or disable the Microsoft Cloud Security Benchmark, which is the usual assumption: MCSB keeps applying underneath whatever you add.",
     "difficulty": "medium"
   },
   {
@@ -81,12 +91,14 @@
     "prompt": "Which two non-Azure clouds can be onboarded to Defender for Cloud as connectors?",
     "choices": [
       "Amazon Web Services (AWS) and Google Cloud Platform (GCP)",
-      "Oracle Cloud and IBM Cloud",
-      "Alibaba Cloud and DigitalOcean",
-      "Only AWS is supported"
+      "Alibaba Cloud and DigitalOcean, through a security connector",
+      "Oracle Cloud Infrastructure and IBM Cloud, jointly",
+      "Only AWS is supported, since GCP has no connector at all"
     ],
-    "correctAnswers": ["Amazon Web Services (AWS) and Google Cloud Platform (GCP)"],
-    "explanation": "Defender for Cloud natively supports AWS and GCP multicloud connectors.",
+    "correctAnswers": [
+      "Amazon Web Services (AWS) and Google Cloud Platform (GCP)"
+    ],
+    "explanation": "Defender for Cloud has native multicloud connectors for AWS and GCP, which is what brings their resources into Secure Score and the compliance dashboard. Answering \"only AWS\" is the dated reading — GCP support followed, and both use the same secret-free federated onboarding rather than stored keys.",
     "difficulty": "easy"
   },
   {
@@ -95,13 +107,15 @@
     "type": "single",
     "prompt": "What does Microsoft Defender External Attack Surface Management (EASM) do?",
     "choices": [
-      "Continuously discovers and maps internet-facing assets from the outside in",
-      "Scans internal VMs via an installed agent",
-      "Manages Key Vault certificates",
-      "Encrypts data in transit between VNets"
+      "Continuously discovers internet-facing assets from the outside in",
+      "Scans the internal virtual machines through an agent installed on each",
+      "Manages the certificates held in Azure Key Vault instances",
+      "Encrypts data in transit between two peered virtual networks"
     ],
-    "correctAnswers": ["Continuously discovers and maps internet-facing assets from the outside in"],
-    "explanation": "EASM provides outside-in discovery of internet-facing assets, surfacing unknown/forgotten exposure.",
+    "correctAnswers": [
+      "Continuously discovers internet-facing assets from the outside in"
+    ],
+    "explanation": "EASM discovers internet-facing assets from the outside in, starting from a seed domain, so it finds things you did not know you owned. Agent-based internal scanning is the tempting confusion: an agent can only report on assets you have already onboarded, which is exactly the blind spot EASM exists to cover.",
     "difficulty": "easy"
   },
   {
@@ -110,13 +124,15 @@
     "type": "single",
     "prompt": "How does EASM's visibility direction differ from the Defender for Cloud Inventory?",
     "choices": [
-      "EASM looks from outside inward (attacker view); Inventory looks from inside (authenticated admin view)",
-      "They provide identical visibility",
-      "Inventory only covers AWS and GCP",
-      "EASM requires an agent on every asset"
+      "EASM looks from outside in; Inventory looks from inside out",
+      "They provide identical visibility over exactly the same asset set",
+      "Inventory covers only the AWS and GCP connected accounts",
+      "EASM requires an agent installed on every discovered asset"
     ],
-    "correctAnswers": ["EASM looks from outside inward (attacker view); Inventory looks from inside (authenticated admin view)"],
-    "explanation": "EASM is outside-in; Inventory/Secure Score are inside-out. Complementary, opposite directions.",
+    "correctAnswers": [
+      "EASM looks from outside in; Inventory looks from inside out"
+    ],
+    "explanation": "The two look in opposite directions and that is the whole distinction: EASM is the attacker view from outside, Inventory is the authenticated view from inside. Treating them as equivalent visibility is the error — an asset nobody onboarded appears in EASM and never in Inventory.",
     "difficulty": "medium"
   },
   {
@@ -125,13 +141,15 @@
     "type": "single",
     "prompt": "What is the key distinction between CSPM and CWP in Defender for Cloud?",
     "choices": [
-      "CSPM is the free posture/config foundation; CWP is paid threat-detection plans",
-      "CSPM is paid; CWP is free",
-      "They are the same feature",
-      "CWP only applies to on-premises"
+      "CSPM is the free posture foundation; CWP is the paid detection",
+      "CSPM is the paid tier, whereas CWP comes free of charge with it",
+      "They are two names for one and the same feature set",
+      "CWP applies only to on-premises servers, never to Azure"
     ],
-    "correctAnswers": ["CSPM is the free posture/config foundation; CWP is paid threat-detection plans"],
-    "explanation": "CSPM answers 'are we configured securely?'; CWP answers 'is something attacking us right now?'.",
+    "correctAnswers": [
+      "CSPM is the free posture foundation; CWP is the paid detection"
+    ],
+    "explanation": "CSPM is the free posture layer that answers \"are we configured securely?\"; CWP is the set of paid plans that answer \"is something attacking us now?\". Reversing the two is the classic slip, and it matters commercially: enabling a Defender plan is a billing decision, whereas reviewing Secure Score costs nothing.",
     "difficulty": "medium"
   },
   {
@@ -140,13 +158,15 @@
     "type": "single",
     "prompt": "What is the relationship between MCSB and additional regulatory standards like ISO 27001?",
     "choices": [
-      "MCSB is the default baseline; additional standards layer on top, not replace it",
-      "Enabling ISO 27001 disables MCSB",
-      "Only one can be active at a time",
-      "MCSB applies only to AWS/GCP"
+      "MCSB is the default baseline; other standards layer on top",
+      "Enabling ISO 27001 disables MCSB across the whole subscription",
+      "Only one standard can be active on a subscription at once",
+      "MCSB and ISO 27001 cannot be assigned to the same scope"
     ],
-    "correctAnswers": ["MCSB is the default baseline; additional standards layer on top, not replace it"],
-    "explanation": "MCSB is always applied by default; regulatory standards are additive.",
+    "correctAnswers": [
+      "MCSB is the default baseline; other standards layer on top"
+    ],
+    "explanation": "MCSB is always applied and additional standards layer on top of it, so several can be active at once. Believing that enabling ISO 27001 disables MCSB is the trap: Secure Score would appear to change for no reason, when in fact nothing was replaced.",
     "difficulty": "medium"
   },
   {
@@ -156,12 +176,14 @@
     "prompt": "Which Defender for Cloud view shows pass/fail status per individual regulatory control?",
     "choices": [
       "The Regulatory compliance dashboard",
-      "The Secure Score tile alone",
+      "The Secure Score tile on its own",
       "The Workload protections overview",
-      "The Inventory blade alone"
+      "The asset Inventory blade on its own"
     ],
-    "correctAnswers": ["The Regulatory compliance dashboard"],
-    "explanation": "The regulatory compliance dashboard maps enabled standards to controls and their pass/fail status.",
+    "correctAnswers": [
+      "The Regulatory compliance dashboard"
+    ],
+    "explanation": "The Regulatory compliance dashboard maps each enabled standard to its controls and shows pass or fail per control. The Secure Score tile is the tempting answer because it is the headline number, but it aggregates everything into one percentage and cannot tell you which control failed.",
     "difficulty": "easy"
   },
   {
@@ -170,13 +192,15 @@
     "type": "single",
     "prompt": "Why onboard an AWS account into Defender for Cloud?",
     "choices": [
-      "To extend the same Secure Score and compliance visibility to AWS alongside Azure",
-      "To migrate AWS workloads into Azure automatically",
-      "To replace AWS IAM with Azure RBAC",
-      "Because it is required before enabling any Azure Defender plan"
+      "To extend Secure Score and compliance visibility to AWS",
+      "Because it is required before enabling any Azure Defender plan",
+      "To migrate the AWS workloads into Azure automatically",
+      "To replace AWS IAM with Azure role-based access control"
     ],
-    "correctAnswers": ["To extend the same Secure Score and compliance visibility to AWS alongside Azure"],
-    "explanation": "Multicloud connectors bring AWS/GCP under one posture-management view.",
+    "correctAnswers": [
+      "To extend Secure Score and compliance visibility to AWS"
+    ],
+    "explanation": "Onboarding AWS extends the same Secure Score and compliance view to it, so one dashboard covers both clouds. It neither migrates workloads nor replaces AWS IAM, which is the misreading that makes teams hesitate: the connector reads posture, it does not take over the account.",
     "difficulty": "medium"
   },
   {
@@ -185,13 +209,15 @@
     "type": "single",
     "prompt": "During an acquisition, why would a security team run Defender EASM against the target company?",
     "choices": [
-      "To surface unknown, forgotten, or shadow-IT internet-facing assets before attackers find them",
-      "To automatically patch all discovered vulnerabilities",
-      "To enable TDE on the target's databases",
-      "To assign Azure RBAC roles to the target's staff"
+      "To surface unknown or shadow-IT internet-facing assets first",
+      "To automatically patch every vulnerability it happens to discover",
+      "To enable Transparent Data Encryption on their databases",
+      "To assign Azure RBAC roles to the acquired company staff"
     ],
-    "correctAnswers": ["To surface unknown, forgotten, or shadow-IT internet-facing assets before attackers find them"],
-    "explanation": "EASM reveals external exposure that internal inventories miss — valuable during M&A due diligence.",
+    "correctAnswers": [
+      "To surface unknown or shadow-IT internet-facing assets first"
+    ],
+    "explanation": "EASM surfaces unknown, forgotten and shadow-IT assets before an attacker does, which is why it fits acquisition due diligence — you cannot inventory what you have not been told about. It discovers rather than remediates, so expecting it to patch what it finds is the wrong model.",
     "difficulty": "medium"
   },
   {
@@ -200,12 +226,14 @@
     "type": "single",
     "prompt": "Secure Score is dropping. Which action would most directly raise it?",
     "choices": [
-      "Remediating the security recommendations that carry the most weight",
-      "Enabling more Defender workload plans",
-      "Adding another regulatory standard",
-      "Running an EASM scan"
+      "Remediating the recommendations that carry the most weight",
+      "Enabling more of the Defender workload protection plans instead",
+      "Adding another regulatory standard to the subscription",
+      "Running an External Attack Surface Management scan"
     ],
-    "correctAnswers": ["Remediating the security recommendations that carry the most weight"],
+    "correctAnswers": [
+      "Remediating the recommendations that carry the most weight"
+    ],
     "explanation": "Secure Score reflects adherence to recommendations; remediating high-impact recommendations raises it. The other actions add coverage/standards but don't directly raise the score by themselves.",
     "difficulty": "medium"
   },
@@ -215,13 +243,15 @@
     "type": "single",
     "prompt": "Which capability is part of the FREE CSPM foundation rather than a paid plan?",
     "choices": [
-      "Secure Score and security recommendations",
-      "Defender for Servers EDR",
-      "Defender for Storage malware detection",
-      "Agentless vulnerability scanning of VMs"
+      "Secure Score and its security recommendations",
+      "Agentless vulnerability scanning of the VM disks",
+      "Defender for Servers endpoint detection",
+      "Defender for Storage malware detection"
     ],
-    "correctAnswers": ["Secure Score and security recommendations"],
-    "explanation": "Secure Score, recommendations, inventory, and MCSB assessment are free CSPM; the others are paid CWP capabilities.",
+    "correctAnswers": [
+      "Secure Score and its security recommendations"
+    ],
+    "explanation": "Secure Score, recommendations, inventory and MCSB assessment are the free foundational CSPM layer. Agentless vulnerability scanning is the closest miss and the one people assume is free because it needs no deployment, but it belongs to the paid Defender for Servers plan.",
     "difficulty": "medium"
   },
   {
@@ -231,12 +261,14 @@
     "prompt": "A team assumes enabling PCI-DSS in Defender for Cloud will replace the default benchmark. What is correct?",
     "choices": [
       "MCSB remains applied; PCI-DSS is added alongside it",
-      "PCI-DSS overrides and disables MCSB",
-      "Only PCI-DSS controls will be evaluated afterward",
-      "MCSB is only for AWS, so PCI-DSS replaces it for Azure"
+      "MCSB applies only to AWS, so PCI-DSS replaces it here",
+      "PCI-DSS overrides and disables MCSB on the scope",
+      "Only the PCI-DSS controls are evaluated afterwards"
     ],
-    "correctAnswers": ["MCSB remains applied; PCI-DSS is added alongside it"],
-    "explanation": "Standards are additive; MCSB continues to apply by default alongside any regulatory standard you enable.",
+    "correctAnswers": [
+      "MCSB remains applied; PCI-DSS is added alongside it"
+    ],
+    "explanation": "Standards are additive: MCSB stays applied and PCI-DSS is assessed alongside it. Expecting PCI-DSS to override is the assumption worth breaking, because a team that believes it will stop watching MCSB findings that never went away.",
     "difficulty": "medium"
   },
   {
@@ -246,12 +278,14 @@
     "prompt": "Which tool answers the question 'What internet-facing assets do we have that we might not know about?'",
     "choices": [
       "Microsoft Defender EASM",
-      "Secure Score",
-      "The Regulatory compliance dashboard",
-      "Just-in-time VM access"
+      "The compliance dashboard",
+      "Just-in-time VM access",
+      "The Secure Score tile"
     ],
-    "correctAnswers": ["Microsoft Defender EASM"],
-    "explanation": "EASM discovers external, internet-facing assets from an attacker's perspective, including unknown ones.",
+    "correctAnswers": [
+      "Microsoft Defender EASM"
+    ],
+    "explanation": "Only EASM answers a question about assets you might not know you have, because it works from the outside in. Secure Score and the compliance dashboard both assess resources already connected, so neither can reveal something that was never onboarded.",
     "difficulty": "easy"
   },
   {
@@ -260,13 +294,15 @@
     "type": "single",
     "prompt": "Which best describes the role of the asset Inventory in security operations?",
     "choices": [
-      "A queryable catalog of resources and their security posture across clouds",
-      "A list of only the alerts raised in the last 24 hours",
-      "The billing breakdown of Defender plans",
-      "A record of every user sign-in"
+      "A queryable catalog of resources and their security posture",
+      "A list of only the alerts raised in the last twenty-four hours",
+      "The billing breakdown of the enabled Defender plans",
+      "A record of every user sign-in across the tenant"
     ],
-    "correctAnswers": ["A queryable catalog of resources and their security posture across clouds"],
-    "explanation": "Inventory catalogs monitored resources (via Azure Resource Graph) with posture context, across Azure/AWS/GCP.",
+    "correctAnswers": [
+      "A queryable catalog of resources and their security posture"
+    ],
+    "explanation": "Inventory is a queryable catalogue of resources with their posture context, backed by Azure Resource Graph, which is what lets one query span three clouds. Reading it as an alert list is the confusion to avoid: it catalogues what exists rather than what just happened, and alerts have their own lifecycle on the workload-protection side.",
     "difficulty": "medium"
   },
   {
@@ -276,12 +312,14 @@
     "prompt": "A CISO wants one compliance view spanning Azure, AWS, and GCP. What must be in place?",
     "choices": [
       "Multicloud connectors for AWS and GCP in Defender for Cloud",
-      "A separate Sentinel workspace per cloud",
-      "An EASM scan of each cloud",
-      "A resource lock on each subscription"
+      "A separate Microsoft Sentinel workspace for each of the clouds",
+      "An External Attack Surface Management scan of each cloud",
+      "A resource lock applied to each connected subscription"
     ],
-    "correctAnswers": ["Multicloud connectors for AWS and GCP in Defender for Cloud"],
-    "explanation": "Onboarding AWS/GCP connectors unifies Secure Score and compliance across all three clouds.",
+    "correctAnswers": [
+      "Multicloud connectors for AWS and GCP in Defender for Cloud"
+    ],
+    "explanation": "One compliance view across three clouds requires the AWS and GCP connectors, because a resource has to be connected before it can be assessed. A separate Sentinel workspace per cloud is the tempting alternative, but Sentinel is for events rather than posture and would give three views instead of one.",
     "difficulty": "medium"
   },
   {
@@ -290,13 +328,15 @@
     "type": "single",
     "prompt": "Which statement about CSPM vs CWP is FALSE?",
     "choices": [
-      "CWP is the free foundation, while CSPM is the set of paid plans",
-      "CSPM focuses on configuration/posture",
-      "CWP focuses on active threat detection",
-      "CSPM includes Secure Score"
+      "CWP is the free foundation and CSPM the paid plans",
+      "CSPM includes Secure Score and its recommendation list",
+      "CSPM focuses on configuration and security posture",
+      "CWP focuses on active threat detection at runtime"
     ],
-    "correctAnswers": ["CWP is the free foundation, while CSPM is the set of paid plans"],
-    "explanation": "It's the reverse: CSPM is the free foundation; CWP (Defender plans) is paid.",
+    "correctAnswers": [
+      "CWP is the free foundation and CSPM the paid plans"
+    ],
+    "explanation": "The false statement inverts the two: CSPM is the free foundation, whereas CWP is the set of paid plans. Everything else listed is true, which is what makes the reversal easy to miss on a quick read — the sentence is well formed and only the two labels are swapped.",
     "difficulty": "medium"
   },
   {
@@ -305,13 +345,15 @@
     "type": "single",
     "prompt": "Which activity is squarely CSPM (posture), not CWP (threat protection)?",
     "choices": [
-      "Reviewing and remediating a recommendation to enable encryption on a storage account",
-      "Responding to an alert about anomalous storage access",
-      "Investigating an EDR detection on a VM",
-      "Triaging a malware-upload alert"
+      "Remediating a recommendation to encrypt a storage account",
+      "Responding to an alert about anomalous access to storage data",
+      "Investigating an endpoint detection finding on a VM",
+      "Triaging an alert about a malware upload to a blob"
     ],
-    "correctAnswers": ["Reviewing and remediating a recommendation to enable encryption on a storage account"],
-    "explanation": "Acting on configuration recommendations is CSPM; the alert-driven activities are CWP.",
+    "correctAnswers": [
+      "Remediating a recommendation to encrypt a storage account"
+    ],
+    "explanation": "Acting on a configuration recommendation is posture work, so it is CSPM. The three alert-driven activities are tempting because they are all security operations, but each starts from a detection rather than from a misconfiguration — that is the line between the two halves of the product.",
     "difficulty": "medium"
   },
   {
@@ -320,13 +362,15 @@
     "type": "single",
     "prompt": "What does 'assess compliance against a security framework' mean in Defender for Cloud?",
     "choices": [
-      "Mapping your environment's configuration to a standard's controls and reporting pass/fail",
-      "Blocking deployments that violate the standard",
-      "Automatically remediating every failed control",
-      "Encrypting data to meet the standard"
+      "Mapping configuration to a standard's controls, pass or fail",
+      "Blocking any deployment that would violate the standard at all",
+      "Automatically remediating every control that has failed",
+      "Encrypting the data at rest in order to meet the standard"
     ],
-    "correctAnswers": ["Mapping your environment's configuration to a standard's controls and reporting pass/fail"],
-    "explanation": "Compliance assessment maps configuration to control requirements and reports status; enforcement/remediation are separate concerns.",
+    "correctAnswers": [
+      "Mapping configuration to a standard's controls, pass or fail"
+    ],
+    "explanation": "Assessing compliance means mapping configuration to a standard's controls and reporting pass or fail. It does not block deployments and does not remediate, which is the expectation to correct: enforcement is Azure Policy's Deny effect, and remediation needs a remediation task.",
     "difficulty": "medium"
   },
   {
@@ -335,13 +379,15 @@
     "type": "single",
     "prompt": "Which is NOT something the free CSPM foundation provides?",
     "choices": [
-      "EDR (endpoint detection and response) on servers",
-      "Secure Score",
-      "Security recommendations",
-      "Asset inventory"
+      "Endpoint detection and response on servers",
+      "Secure Score across the whole of the subscription",
+      "The security recommendations list",
+      "The asset inventory across clouds"
     ],
-    "correctAnswers": ["EDR (endpoint detection and response) on servers"],
-    "explanation": "EDR comes with the paid Defender for Servers plan (CWP). Secure Score, recommendations, and inventory are free CSPM.",
+    "correctAnswers": [
+      "Endpoint detection and response on servers"
+    ],
+    "explanation": "Endpoint detection and response comes with the paid Defender for Servers plan, not with free CSPM. Secure Score, recommendations and inventory are all free, which is why EDR is the one to recognise here — it is the only capability in the list that requires a plan to be enabled.",
     "difficulty": "medium"
   },
   {
@@ -350,13 +396,15 @@
     "type": "single",
     "prompt": "A resource keeps failing a control in the regulatory compliance dashboard. What is the intended remediation path?",
     "choices": [
-      "Follow the linked assessment/recommendation to fix the underlying configuration",
-      "Remove the standard so the control disappears",
-      "Disable the resource in inventory",
-      "Ignore it, as compliance is informational only"
+      "Follow the linked recommendation to fix the configuration",
+      "Disable the resource inside the Defender for Cloud inventory blade",
+      "Remove the standard so the failing control disappears",
+      "Ignore it, since compliance reporting is informational"
     ],
-    "correctAnswers": ["Follow the linked assessment/recommendation to fix the underlying configuration"],
-    "explanation": "Each control maps to assessments/recommendations you remediate to raise compliance — not by hiding the standard.",
+    "correctAnswers": [
+      "Follow the linked recommendation to fix the configuration"
+    ],
+    "explanation": "Each control maps to assessments and recommendations you remediate to raise compliance, so the fix is upstream in the configuration. Removing the standard is the tempting shortcut and it is the wrong instinct: the control disappears from the dashboard while the underlying weakness stays exactly where it was.",
     "difficulty": "medium"
   },
   {
@@ -365,31 +413,34 @@
     "type": "multiple",
     "prompt": "Which two are part of the free CSPM foundation? (Choose two.)",
     "choices": [
-      "Secure Score",
-      "Asset inventory",
+      "Secure Score for the subscription",
+      "The asset inventory across clouds",
       "Defender for Storage malware detection",
-      "Agentless vulnerability scanning"
+      "Agentless vulnerability scanning of disks"
     ],
-    "correctAnswers": ["Secure Score", "Asset inventory"],
-    "explanation": "Secure Score and inventory are free CSPM; malware detection and agentless scanning are paid CWP capabilities.",
+    "correctAnswers": [
+      "Secure Score for the subscription",
+      "The asset inventory across clouds"
+    ],
+    "explanation": "Secure Score and asset inventory are free foundational CSPM. Malware detection and agentless scanning are the tempting pair because neither requires deploying anything, but both belong to paid workload-protection plans.",
     "difficulty": "medium"
   },
   {
     "id": "q-o4-2-26",
     "objectiveId": "o4-2",
     "type": "multiple",
-    "prompt": "Which two statements are correct? (Choose two.)",
+    "prompt": "Which two statements about compliance standards in Microsoft Defender for Cloud are correct? (Choose two.)",
     "choices": [
-      "The Microsoft Cloud Security Benchmark is applied by default",
-      "Custom standards can be added when built-in ones don't fit",
-      "Enabling PCI-DSS replaces MCSB",
-      "Only one standard can be active on a subscription at a time"
+      "The Microsoft Cloud Security Benchmark applies by default",
+      "Custom standards can be added when built-in ones do not fit",
+      "Enabling PCI-DSS replaces the default benchmark on the scope",
+      "Only one standard can be active on a subscription at once"
     ],
     "correctAnswers": [
-      "The Microsoft Cloud Security Benchmark is applied by default",
-      "Custom standards can be added when built-in ones don't fit"
+      "The Microsoft Cloud Security Benchmark applies by default",
+      "Custom standards can be added when built-in ones do not fit"
     ],
-    "explanation": "MCSB stays active alongside additional standards, and multiple standards can be active at once.",
+    "explanation": "MCSB is applied by default and custom standards exist for baselines the built-ins do not cover. Neither distractor holds: standards are additive rather than exclusive, so PCI-DSS does not replace MCSB and more than one can be active on a subscription.",
     "difficulty": "medium"
   },
   {
@@ -398,16 +449,16 @@
     "type": "multiple",
     "prompt": "Which two directions of visibility do Inventory and EASM respectively represent? (Choose two.)",
     "choices": [
-      "Inventory = inside-out (authenticated admin view)",
-      "EASM = outside-in (attacker view of internet-facing assets)",
-      "Inventory = outside-in only",
-      "EASM = requires an agent on each internal VM"
+      "Inventory is inside-out, the authenticated admin view",
+      "EASM is outside-in, the attacker view of public assets",
+      "Inventory is outside-in only, like an attacker would see",
+      "EASM needs an agent installed on every internal machine"
     ],
     "correctAnswers": [
-      "Inventory = inside-out (authenticated admin view)",
-      "EASM = outside-in (attacker view of internet-facing assets)"
+      "Inventory is inside-out, the authenticated admin view",
+      "EASM is outside-in, the attacker view of public assets"
     ],
-    "explanation": "Inventory is the internal catalog; EASM is the external, agentless attacker-perspective discovery.",
+    "explanation": "Inventory is the inside-out authenticated catalogue and EASM is the outside-in attacker view. The distractors invert the direction and invent an agent requirement — EASM is agentless by construction, since it looks at assets you may not control.",
     "difficulty": "medium"
   },
   {
@@ -417,13 +468,15 @@
     "caseStudyId": "cs-adatum-governance",
     "prompt": "Referring to requirement 3 (one score summarizing configuration compliance across Azure, an AWS account, and a GCP project), what should Adatum configure?",
     "choices": [
-      "Onboard AWS and GCP as multicloud connectors in Defender for Cloud",
+      "Onboard AWS and GCP as connectors in Defender for Cloud",
+      "Enable External Attack Surface Management, and nothing else",
       "Compile separate reports from each cloud's native tools",
-      "Enable EASM only",
-      "Migrate AWS/GCP workloads into Azure first"
+      "Migrate the AWS and GCP workloads into Azure first"
     ],
-    "correctAnswers": ["Onboard AWS and GCP as multicloud connectors in Defender for Cloud"],
-    "explanation": "Multicloud connectors unify Secure Score/compliance across Azure, AWS, and GCP in one view.",
+    "correctAnswers": [
+      "Onboard AWS and GCP as connectors in Defender for Cloud"
+    ],
+    "explanation": "One score across three clouds needs the AWS and GCP connectors, because Secure Score only covers connected environments. Compiling separate reports from each cloud's native tools is the tempting workaround and it fails the requirement: three numbers is not one score.",
     "difficulty": "easy"
   },
   {
@@ -433,13 +486,15 @@
     "caseStudyId": "cs-adatum-governance",
     "prompt": "Referring to requirement 4 (discover a subsidiary's internet-facing web servers the way an attacker would), which tool should Adatum use?",
     "choices": [
-      "Microsoft Defender External Attack Surface Management (EASM)",
-      "Defender for Servers agentless scanning",
-      "The Azure Policy compliance dashboard",
-      "Defender for Cloud asset inventory alone"
+      "Microsoft Defender External Attack Surface Management",
+      "The Defender for Cloud asset inventory blade on its own",
+      "The Azure Policy compliance dashboard for that scope",
+      "Defender for Servers agentless disk scanning, alone"
     ],
-    "correctAnswers": ["Microsoft Defender External Attack Surface Management (EASM)"],
-    "explanation": "EASM performs outside-in discovery of internet-facing assets, ideal for M&A due diligence.",
+    "correctAnswers": [
+      "Microsoft Defender External Attack Surface Management"
+    ],
+    "explanation": "Discovering a subsidiary's internet-facing servers without their cooperation is outside-in work, which is EASM. Inventory is the closest miss but it only sees resources already connected, so it cannot find assets nobody has told you about.",
     "difficulty": "easy"
   },
   {
@@ -449,13 +504,15 @@
     "caseStudyId": "cs-adatum-governance",
     "prompt": "Adatum's leadership asks for a single number to track whether the environment's security configuration is improving over time. Which Defender for Cloud metric fits?",
     "choices": [
-      "Secure Score",
-      "The number of enabled Defender plans",
-      "The count of EASM-discovered assets",
-      "The number of regulatory standards enabled"
+      "Secure Score over time",
+      "Regulatory standards enabled",
+      "EASM-discovered assets",
+      "Enabled Defender plans"
     ],
-    "correctAnswers": ["Secure Score"],
-    "explanation": "Secure Score is the single percentage that trends configuration/posture improvement over time.",
+    "correctAnswers": [
+      "Secure Score over time"
+    ],
+    "explanation": "Secure Score is the single percentage designed to be trended. The count of enabled Defender plans is the tempting proxy because it rises as you invest, but it measures coverage purchased rather than configuration improved — you can enable every plan and fix nothing.",
     "difficulty": "easy"
   },
   {
@@ -469,7 +526,7 @@
       "Review the unified Secure Score and Inventory across all three",
       "Enable a regulatory standard (e.g. ISO 27001) across the connected environments"
     ],
-    "explanation": "Both clouds must be connected before a unified view exists to review, with additional standards layered on afterward.",
+    "explanation": "Both clouds must be connected before any unified view exists, so the connectors come first and the review comes after. Additional standards are layered last, since a standard assessed against an unconnected environment reports nothing rather than failing visibly.",
     "difficulty": "medium"
   },
   {
@@ -483,7 +540,7 @@
       "Investigate any unexpected or shadow-IT assets found",
       "Bring the subsidiary's known Azure resources into Defender for Cloud's inventory"
     ],
-    "explanation": "External discovery comes first (outside-in), followed by investigation, then internal onboarding (inside-out) of known resources.",
+    "explanation": "External discovery comes first, because the point is to find assets nobody listed; investigation follows, and only then are the confirmed resources onboarded for inside-out monitoring. Starting from onboarding is the instinct to resist, since it cannot reach anything you do not already know about.",
     "difficulty": "medium"
   },
   {
@@ -493,10 +550,25 @@
     "prompt": "Configure this simplified Defender for Cloud environment settings screen to extend posture management to a connected AWS account.",
     "screenTitle": "Environment settings (simulated)",
     "fields": [
-      { "id": "connectorType", "label": "Connector type", "kind": "select", "options": ["AWS", "GCP", "On-premises"], "correctValue": "AWS" },
-      { "id": "standard", "label": "Apply Microsoft Cloud Security Benchmark", "kind": "toggle", "correctValue": "On" }
+      {
+        "id": "connectorType",
+        "label": "Connector type",
+        "kind": "select",
+        "options": [
+          "AWS",
+          "GCP",
+          "On-premises"
+        ],
+        "correctValue": "AWS"
+      },
+      {
+        "id": "standard",
+        "label": "Apply Microsoft Cloud Security Benchmark",
+        "kind": "toggle",
+        "correctValue": "On"
+      }
     ],
-    "explanation": "An AWS connector onboards the AWS account, and MCSB is the default benchmark applied to assess it, just as with Azure resources.",
+    "explanation": "An AWS connector onboards the account, and MCSB is the default benchmark applied to assess it exactly as it does for Azure resources. Expecting to have to choose a standard manually is the misconception: nothing needs enabling for MCSB to apply, whereas PCI-DSS or ISO 27001 would.",
     "difficulty": "medium"
   },
   {
@@ -505,9 +577,14 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o4-2",
     "prompt": "Proposed solution: Track the number of Defender plans enabled each month. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "A count of enabled plans measures coverage, not the underlying configuration quality or its trend over time.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "Counting enabled plans measures how much coverage has been bought, not whether the configuration behind it improved. It is the tempting metric because it goes up and is easy to report, but it can rise while Secure Score falls.",
     "difficulty": "medium"
   },
   {
@@ -516,9 +593,14 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o4-2",
     "prompt": "Proposed solution: Track Secure Score over time in Defender for Cloud. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "Secure Score is exactly the single percentage that trends configuration/posture improvement across connected environments.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "Secure Score is precisely the single percentage that trends configuration quality across connected environments, which is what the requirement asks for. Note the constraint it carries: it only covers environments that are connected, so an unonboarded cloud silently does not count.",
     "difficulty": "easy"
   },
   {
@@ -527,9 +609,14 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o4-2",
     "prompt": "Proposed solution: Track the number of EASM-discovered assets each month. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
-    "explanation": "EASM measures the size of the external attack surface, not the quality of security configuration.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
+    "explanation": "The EASM asset count measures the size of the external attack surface, not the quality of the configuration. It is a useful number, but it can grow simply because discovery improved — so it cannot be read as posture getting worse or better.",
     "difficulty": "medium"
   },
   {
@@ -543,7 +630,9 @@
       "az defender plan list",
       "az security assessment tiers"
     ],
-    "correctAnswers": ["az security pricing list"],
+    "correctAnswers": [
+      "az security pricing list"
+    ],
     "explanation": "Defender plan tiers are exposed as 'pricings' — `az security pricing list` / Get-AzSecurityPricing. The other subcommands don't exist.",
     "difficulty": "medium"
   },
@@ -553,12 +642,14 @@
     "type": "single",
     "prompt": "Which command queries all storage accounts across subscriptions at scale, the way the Defender for Cloud inventory does?",
     "choices": [
-      "az graph query -q \"Resources | where type == 'microsoft.storage/storageaccounts' | project name, location\"",
-      "az resource list --query \"type=='storage'\" --all-subscriptions",
-      "az storage account list --include-all-tenants",
-      "az security inventory list --type storage"
+      "az graph query, projecting name and location from Resources",
+      "az resource list with a type filter across all subscriptions",
+      "az storage account list with all tenants included",
+      "az security inventory list filtered by resource type"
     ],
-    "correctAnswers": ["az graph query -q \"Resources | where type == 'microsoft.storage/storageaccounts' | project name, location\""],
+    "correctAnswers": [
+      "az graph query, projecting name and location from Resources"
+    ],
     "explanation": "Azure Resource Graph (`az graph query`, KQL) is the at-scale query engine behind the inventory. `az resource list` is per-subscription and slower; the other two don't exist.",
     "difficulty": "hard"
   },
@@ -573,8 +664,10 @@
       "Get-AzResourceGraph",
       "Query-AzInventory"
     ],
-    "correctAnswers": ["Search-AzGraph"],
-    "explanation": "Search-AzGraph (module Az.ResourceGraph) executes KQL queries against Resource Graph. The other three don't exist.",
+    "correctAnswers": [
+      "Search-AzGraph"
+    ],
+    "explanation": "Search-AzGraph, from the Az.ResourceGraph module, is the cmdlet that runs a KQL query against Resource Graph. The other three do not exist, which is the real lesson here: plausible-looking cmdlet names are how these items catch you, so recognise the module rather than guess the verb.",
     "difficulty": "medium"
   },
   {
@@ -583,13 +676,15 @@
     "type": "single",
     "prompt": "In `az security pricing list` output, what does tier 'Free' mean for a resource type?",
     "choices": [
-      "Only the free CSPM foundation applies — no CWP threat detection for that type",
-      "The paid plan is active but discounted",
-      "The resource type is excluded from Secure Score",
-      "Agentless scanning is enabled at no cost"
+      "Only the free CSPM foundation applies to that resource type",
+      "The paid plan is active but discounted for that resource type",
+      "The resource type is excluded from Secure Score entirely",
+      "Agentless scanning is enabled for it at no cost at all"
     ],
-    "correctAnswers": ["Only the free CSPM foundation applies — no CWP threat detection for that type"],
-    "explanation": "Free = posture only (recommendations/Secure Score); Standard = the paid Defender (CWP) plan with threat detection. Secure Score coverage is independent of tier; agentless scanning requires the paid Servers plan.",
+    "correctAnswers": [
+      "Only the free CSPM foundation applies to that resource type"
+    ],
+    "explanation": "Free means the posture layer only — recommendations and Secure Score — with no workload threat detection for that resource type; Standard is the paid plan. Reading Free as \"excluded from Secure Score\" is the trap: posture coverage is independent of tier, so a Free resource type is still scored, just not defended.",
     "difficulty": "hard"
   },
   {
@@ -598,12 +693,14 @@
     "type": "single",
     "prompt": "Where in the CLI/portal flow are AWS and GCP environments connected to Defender for Cloud?",
     "choices": [
-      "Environment settings ▸ Add environment (security connectors)",
-      "az security pricing create --name AWS --tier Standard",
-      "Azure Arc ▸ Servers ▸ Add",
-      "az graph query with the AWS provider"
+      "Environment settings ▸ Add environment",
+      "az security pricing create --tier Standard",
+      "az graph query with the AWS provider",
+      "Azure Arc ▸ Servers ▸ Add a machine"
     ],
-    "correctAnswers": ["Environment settings ▸ Add environment (security connectors)"],
+    "correctAnswers": [
+      "Environment settings ▸ Add environment"
+    ],
     "explanation": "Multicloud onboarding creates a security connector under Environment settings. `security pricing` sets plan tiers (there is no 'AWS' pricing name); Arc onboards individual machines, not cloud accounts.",
     "difficulty": "medium"
   }

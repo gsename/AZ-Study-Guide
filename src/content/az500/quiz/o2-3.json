@@ -4,8 +4,15 @@
     "objectiveId": "o2-3",
     "type": "single",
     "prompt": "Which Azure service is a REGIONAL layer-7 (HTTP/S) load balancer?",
-    "choices": ["Azure Application Gateway", "Azure Front Door", "Azure Firewall", "Azure Traffic Manager"],
-    "correctAnswers": ["Azure Application Gateway"],
+    "choices": [
+      "Azure Application Gateway",
+      "Azure Traffic Manager profiles",
+      "Azure Front Door Premium",
+      "Azure Firewall Premium"
+    ],
+    "correctAnswers": [
+      "Azure Application Gateway"
+    ],
     "explanation": "Application Gateway is the regional layer-7 load balancer; Front Door is its global counterpart, and Traffic Manager is DNS-based global routing (not layer-7).",
     "difficulty": "easy"
   },
@@ -14,9 +21,16 @@
     "objectiveId": "o2-3",
     "type": "single",
     "prompt": "Which Azure service is a GLOBAL layer-7 entry point that includes CDN, acceleration, and failover?",
-    "choices": ["Azure Front Door", "Azure Application Gateway", "Azure Firewall", "Azure Bastion"],
-    "correctAnswers": ["Azure Front Door"],
-    "explanation": "Front Door is the global layer-7 edge with CDN and failover; Application Gateway is regional.",
+    "choices": [
+      "Azure Front Door",
+      "Azure Application Gateway",
+      "Azure Firewall Premium",
+      "Azure Bastion hosts"
+    ],
+    "correctAnswers": [
+      "Azure Front Door"
+    ],
+    "explanation": "Front Door is the global layer-7 edge with CDN caching and failover, whereas Application Gateway is regional. Scope is the whole distinction, and it is what decides the design: a multi-region app fronted by a regional gateway sends every user through one region.",
     "difficulty": "easy"
   },
   {
@@ -25,13 +39,15 @@
     "type": "single",
     "prompt": "How is a Web Application Firewall (WAF) deployed in Azure?",
     "choices": [
-      "As a policy attached to Application Gateway or Front Door",
-      "As a standalone appliance in its own subnet",
-      "As a feature of every NSG",
-      "As a module inside Azure Bastion"
+      "As a policy on Application Gateway or Front Door",
+      "As a standalone appliance in its own dedicated subnet",
+      "As a module running inside Azure Bastion",
+      "As a built-in feature of every NSG"
     ],
-    "correctAnswers": ["As a policy attached to Application Gateway or Front Door"],
-    "explanation": "A WAF is not standalone; it is a policy you attach to Application Gateway or Front Door.",
+    "correctAnswers": [
+      "As a policy on Application Gateway or Front Door"
+    ],
+    "explanation": "A WAF is a policy attached to Application Gateway or Front Door, never a standalone appliance. Expecting a dedicated subnet is the on-premises instinct, whereas in Azure the WAF has no existence of its own — it configures an existing layer-7 entry point.",
     "difficulty": "easy"
   },
   {
@@ -40,13 +56,15 @@
     "type": "single",
     "prompt": "At which layers does Azure Firewall operate and what does it filter?",
     "choices": [
-      "Layers 3–7, filtering general VNet network traffic",
+      "Layers 3 to 7, general VNet traffic",
       "Layer 7 only, filtering web-application attacks",
-      "Layer 4 only, filtering by port",
-      "Layer 2 only, filtering MAC addresses"
+      "Layer 2 only, filtering by MAC address",
+      "Layer 4 only, filtering by port number"
     ],
-    "correctAnswers": ["Layers 3–7, filtering general VNet network traffic"],
-    "explanation": "Azure Firewall is a general-purpose stateful network firewall (L3–L7) with network/application rules and threat intelligence — distinct from a WAF's web-only scope.",
+    "correctAnswers": [
+      "Layers 3 to 7, general VNet traffic"
+    ],
+    "explanation": "Azure Firewall is a general-purpose stateful firewall spanning layers 3 to 7, with both network and application rules. Reading it as layer 7 only is the confusion with a WAF: Azure Firewall does inspect FQDNs, whereas it does not parse HTTP bodies for injection.",
     "difficulty": "medium"
   },
   {
@@ -55,13 +73,15 @@
     "type": "single",
     "prompt": "Which best distinguishes Azure Firewall from a Web Application Firewall?",
     "choices": [
-      "Azure Firewall filters general network traffic; a WAF blocks web-app attacks like SQL injection and XSS",
-      "Azure Firewall operates at layer 3 only; a WAF operates at layer 4",
-      "They are the same product with different SKUs",
-      "A WAF filters all VNet traffic; Azure Firewall only inspects HTTP"
+      "Firewall filters network traffic; a WAF blocks web attacks",
+      "A WAF filters all VNet traffic; Azure Firewall only inspects HTTP",
+      "Azure Firewall is layer 3 only; a WAF operates at layer 4",
+      "They are the same product under different SKUs"
     ],
-    "correctAnswers": ["Azure Firewall filters general network traffic; a WAF blocks web-app attacks like SQL injection and XSS"],
-    "explanation": "This is a frequently tested distinction: Azure Firewall = broad network filtering; WAF = web-application-specific protection.",
+    "correctAnswers": [
+      "Firewall filters network traffic; a WAF blocks web attacks"
+    ],
+    "explanation": "Azure Firewall filters general network traffic; a WAF blocks web-application attacks in HTTP. This is the most frequently tested distinction in the domain, and neither substitutes for the other — a WAF cannot control egress by FQDN, whereas a firewall cannot see SQL injection in a request body.",
     "difficulty": "medium"
   },
   {
@@ -70,13 +90,15 @@
     "type": "single",
     "prompt": "What does Azure Firewall Manager provide?",
     "choices": [
-      "Central management of multiple firewalls and reusable firewall policies across VNets and secured hubs",
-      "A single firewall instance with no policy reuse",
-      "A dashboard for Secure Score recommendations",
-      "Vulnerability scanning for firewall rules"
+      "Central management of many firewalls and reusable policies",
+      "A single firewall instance, with no policy reuse across VNets",
+      "A dashboard for the Secure Score recommendations",
+      "Vulnerability scanning of the firewall rules"
     ],
-    "correctAnswers": ["Central management of multiple firewalls and reusable firewall policies across VNets and secured hubs"],
-    "explanation": "Firewall Manager centralizes firewalls and shared firewall policies at scale.",
+    "correctAnswers": [
+      "Central management of many firewalls and reusable policies"
+    ],
+    "explanation": "Firewall Manager centralises multiple firewalls and reusable firewall policies at scale. It is not a single firewall instance, which is the misreading — the value is precisely that one policy object applies to many firewalls rather than being copied into each.",
     "difficulty": "easy"
   },
   {
@@ -84,9 +106,16 @@
     "objectiveId": "o2-3",
     "type": "single",
     "prompt": "Which WAF mode actively blocks malicious requests rather than only logging them?",
-    "choices": ["Prevention", "Detection", "Monitor", "Passive"],
-    "correctAnswers": ["Prevention"],
-    "explanation": "Prevention mode blocks matching requests; Detection mode logs only.",
+    "choices": [
+      "Prevention mode",
+      "Detection-only mode",
+      "Monitor mode",
+      "Passive mode"
+    ],
+    "correctAnswers": [
+      "Prevention mode"
+    ],
+    "explanation": "Prevention mode blocks matching requests, whereas Detection mode only logs them. The two look identical in the portal until traffic arrives, which is why deploying straight into Prevention without a Detection pilot is how a WAF takes down a working application.",
     "difficulty": "easy"
   },
   {
@@ -94,9 +123,16 @@
     "objectiveId": "o2-3",
     "type": "single",
     "prompt": "Which managed rule set provides baseline WAF protection against common web attacks?",
-    "choices": ["OWASP Core Rule Set", "MITRE ATT&CK rule set", "CIS Benchmark rule set", "PCI-DSS rule set"],
-    "correctAnswers": ["OWASP Core Rule Set"],
-    "explanation": "The OWASP Core Rule Set is the standard managed rule set used by Azure WAF.",
+    "choices": [
+      "OWASP Core Rule Set",
+      "MITRE ATT&CK rule set",
+      "CIS Benchmark rule set",
+      "PCI-DSS rule set"
+    ],
+    "correctAnswers": [
+      "OWASP Core Rule Set"
+    ],
+    "explanation": "The OWASP Core Rule Set is the standard managed rule set Azure WAF uses. MITRE ATT&CK and CIS are tempting because they are equally well-known security frameworks, however neither is a WAF rule set — they describe adversary behaviour and configuration baselines rather than HTTP signatures.",
     "difficulty": "medium"
   },
   {
@@ -105,13 +141,15 @@
     "type": "single",
     "prompt": "Which two DDoS Protection tiers exist as of 2026, and how do they differ?",
     "choices": [
-      "DDoS Network Protection (full tier, formerly 'Standard') and DDoS IP Protection (cheaper, per-IP, without the value-added services)",
-      "DDoS Basic and DDoS Premium, differing only in mitigation speed",
-      "Only DDoS Protection Standard exists",
-      "DDoS Protection is only a feature of the WAF"
+      "Network Protection and IP Protection",
+      "DDoS Basic and Premium, differing in speed",
+      "DDoS Protection is only a WAF feature",
+      "Only DDoS Protection Standard exists"
     ],
-    "correctAnswers": ["DDoS Network Protection (full tier, formerly 'Standard') and DDoS IP Protection (cheaper, per-IP, without the value-added services)"],
-    "explanation": "Both share the same mitigation engine; Network Protection adds rapid response support, cost protection, and WAF discounts that IP Protection lacks.",
+    "correctAnswers": [
+      "Network Protection and IP Protection"
+    ],
+    "explanation": "Both tiers share the same mitigation engine: Network Protection adds rapid-response support, cost protection and WAF discount, whereas IP Protection is billed per protected IP. Believing they differ in mitigation speed is the misconception, since the detection and mitigation are identical.",
     "difficulty": "hard"
   },
   {
@@ -119,9 +157,16 @@
     "objectiveId": "o2-3",
     "type": "single",
     "prompt": "Older material references 'DDoS Protection Standard'. Which current portal tier does this correspond to?",
-    "choices": ["DDoS Network Protection", "DDoS IP Protection", "DDoS Basic", "Azure Firewall Premium"],
-    "correctAnswers": ["DDoS Network Protection"],
-    "explanation": "'DDoS Protection Standard' is the previous branding of the full-featured tier now called 'DDoS Network Protection'.",
+    "choices": [
+      "DDoS Network Protection",
+      "Azure Firewall Premium tier",
+      "DDoS IP Protection tier",
+      "The DDoS Basic tier"
+    ],
+    "correctAnswers": [
+      "DDoS Network Protection"
+    ],
+    "explanation": "DDoS Protection Standard is the previous branding of what is now DDoS Network Protection. IP Protection is the closest miss and a genuinely different tier rather than a rename, which is why matching old material to new names matters here.",
     "difficulty": "hard"
   },
   {
@@ -131,12 +176,14 @@
     "prompt": "Where do you enforce a minimum TLS version for an App Service or API Management instance?",
     "choices": [
       "In the service's TLS/SSL settings",
-      "In the subnet NSG rules",
       "In an Azure Firewall application rule",
-      "In a UDR next-hop configuration"
+      "In a UDR next-hop configuration",
+      "In the subnet NSG rule set"
     ],
-    "correctAnswers": ["In the service's TLS/SSL settings"],
-    "explanation": "TLS certificate binding and the minimum TLS version are configured on the service itself (App Service, API Management).",
+    "correctAnswers": [
+      "In the service's TLS/SSL settings"
+    ],
+    "explanation": "The minimum TLS version is set on the service itself, in its TLS/SSL settings. An Azure Firewall application rule is the tempting answer because it also concerns traffic to the app, however it filters by FQDN rather than negotiating the connection.",
     "difficulty": "easy"
   },
   {
@@ -150,8 +197,10 @@
       "Azure Firewall with application rules",
       "A private endpoint plus a service endpoint"
     ],
-    "correctAnswers": ["Azure Front Door with a WAF policy"],
-    "explanation": "Front Door delivers the global, CDN-backed edge; attaching a WAF adds OWASP protection.",
+    "correctAnswers": [
+      "Azure Front Door with a WAF policy"
+    ],
+    "explanation": "Global reach with low latency and a CDN points to Front Door, and attaching a WAF policy adds the OWASP protection. Application Gateway alone is the closest miss and fails on scope: it is regional, so users on other continents still traverse one region.",
     "difficulty": "medium"
   },
   {
@@ -160,13 +209,15 @@
     "type": "single",
     "prompt": "A regional web app needs a layer-7 load balancer with path-based routing and a WAF, but no global CDN. Which service fits best?",
     "choices": [
-      "Azure Application Gateway with a WAF policy",
+      "Application Gateway with a WAF policy",
+      "Azure Traffic Manager with a WAF policy",
       "Azure Front Door with a WAF policy",
-      "Azure Firewall",
-      "Azure Traffic Manager"
+      "Azure Firewall Premium instead"
     ],
-    "correctAnswers": ["Azure Application Gateway with a WAF policy"],
-    "explanation": "Without a global CDN need, the regional Application Gateway (with WAF) is the right-sized choice over Front Door.",
+    "correctAnswers": [
+      "Application Gateway with a WAF policy"
+    ],
+    "explanation": "A regional app needing path-based routing is Application Gateway with a WAF policy. Front Door is the tempting upgrade, but paying for a global edge and CDN when there is no global audience buys latency and cost rather than protection.",
     "difficulty": "medium"
   },
   {
@@ -175,13 +226,15 @@
     "type": "single",
     "prompt": "Which statement about where a WAF can be attached is correct?",
     "choices": [
-      "A WAF policy can be attached to either Application Gateway or Front Door",
-      "A WAF policy can only be attached to Azure Firewall",
-      "A WAF policy attaches to an NSG",
-      "A WAF policy attaches to a VPN Gateway"
+      "It attaches to Application Gateway or Front Door",
+      "A WAF policy can only be attached to Azure Firewall Premium",
+      "A WAF policy attaches to a VPN Gateway",
+      "A WAF policy attaches to an NSG rule set"
     ],
-    "correctAnswers": ["A WAF policy can be attached to either Application Gateway or Front Door"],
-    "explanation": "WAF is a feature of both the regional (Application Gateway) and global (Front Door) layer-7 services.",
+    "correctAnswers": [
+      "It attaches to Application Gateway or Front Door"
+    ],
+    "explanation": "A WAF policy attaches to Application Gateway or Front Door, and to nothing else. It never attaches to an NSG or a VPN gateway, which is the confusion these lists invite — those operate at layers 3 and 4 and cannot parse HTTP at all.",
     "difficulty": "easy"
   },
   {
@@ -190,13 +243,15 @@
     "type": "single",
     "prompt": "Which capability is specific to Azure Firewall (and not to a WAF)?",
     "choices": [
-      "FQDN filtering and threat-intelligence-based filtering for general egress traffic",
-      "Blocking SQL injection in HTTP request bodies",
-      "Enforcing the OWASP Core Rule Set",
-      "Terminating TLS for a web listener"
+      "FQDN and threat-intelligence egress filtering",
+      "Blocking SQL injection in an HTTP request body",
+      "Terminating TLS for a web listener",
+      "Enforcing the OWASP Core Rule Set"
     ],
-    "correctAnswers": ["FQDN filtering and threat-intelligence-based filtering for general egress traffic"],
-    "explanation": "FQDN and threat-intel filtering of general network traffic are Azure Firewall features; OWASP/SQLi protection is the WAF's domain.",
+    "correctAnswers": [
+      "FQDN and threat-intelligence egress filtering"
+    ],
+    "explanation": "FQDN filtering and threat-intelligence filtering of general network traffic are Azure Firewall capabilities. The three distractors are all WAF functions, and that split is the point: a firewall decides where traffic may go, whereas a WAF decides what an HTTP request may contain.",
     "difficulty": "medium"
   },
   {
@@ -204,9 +259,16 @@
     "objectiveId": "o2-3",
     "type": "single",
     "prompt": "You want a WAF that logs suspicious requests without blocking legitimate users during an initial tuning period. Which mode should you start in?",
-    "choices": ["Detection", "Prevention", "Disabled", "Bypass"],
-    "correctAnswers": ["Detection"],
-    "explanation": "Detection mode logs matches without blocking, ideal for tuning rules/exclusions before switching to Prevention.",
+    "choices": [
+      "Detection mode",
+      "Prevention mode",
+      "Disabled mode",
+      "Bypass mode"
+    ],
+    "correctAnswers": [
+      "Detection mode"
+    ],
+    "explanation": "Detection mode logs matches without blocking, which is what makes it the tuning mode before switching to Prevention. Going straight to Prevention is the tempting shortcut, however untuned OWASP rules produce false positives that block real users.",
     "difficulty": "medium"
   },
   {
@@ -216,12 +278,14 @@
     "prompt": "Which service would you recommend to protect a set of critical public IPs against volumetric attacks with rapid-response support and cost protection?",
     "choices": [
       "Azure DDoS Network Protection",
-      "Azure DDoS IP Protection",
-      "A Web Application Firewall in Prevention mode",
-      "Azure Firewall Premium"
+      "A Web Application Firewall in Prevention",
+      "Azure DDoS IP Protection tier",
+      "Azure Firewall Premium tier"
     ],
-    "correctAnswers": ["Azure DDoS Network Protection"],
-    "explanation": "Rapid response support and cost protection are value-added services exclusive to the Network Protection tier.",
+    "correctAnswers": [
+      "Azure DDoS Network Protection"
+    ],
+    "explanation": "Rapid-response support and cost protection are exclusive to DDoS Network Protection, which is what a set of critical public IPs warrants. IP Protection is the closest miss: same mitigation engine, whereas the value-added services are absent.",
     "difficulty": "hard"
   },
   {
@@ -229,9 +293,16 @@
     "objectiveId": "o2-3",
     "type": "single",
     "prompt": "A cost-sensitive team wants baseline volumetric DDoS mitigation on just a handful of public IPs, without paying for rapid-response support. Which tier fits?",
-    "choices": ["DDoS IP Protection", "DDoS Network Protection", "DDoS Basic (must be purchased)", "Azure Front Door Premium"],
-    "correctAnswers": ["DDoS IP Protection"],
-    "explanation": "DDoS IP Protection is billed per protected IP with the same mitigation engine, minus the value-added services — a fit for a few IPs on a budget.",
+    "choices": [
+      "DDoS IP Protection",
+      "DDoS Basic, once purchased",
+      "DDoS Network Protection",
+      "Azure Front Door Premium"
+    ],
+    "correctAnswers": [
+      "DDoS IP Protection"
+    ],
+    "explanation": "DDoS IP Protection is billed per protected IP with the same mitigation engine, minus the value-added services — exactly the cost-sensitive choice. DDoS Basic is the tempting answer and does not need buying at all, since it is the free always-on platform protection rather than a tier.",
     "difficulty": "hard"
   },
   {
@@ -240,13 +311,15 @@
     "type": "single",
     "prompt": "An internal-only API must be published to the internet but protected against OWASP attacks and highly available in one region. Which pairing is most appropriate?",
     "choices": [
-      "Application Gateway (WAF v2) fronting the API, with the API not directly exposed",
-      "Azure Firewall with a DNAT rule only",
+      "Application Gateway WAF v2 fronting the API",
       "A private endpoint on the API with public access enabled",
-      "A service endpoint plus an NSG allow rule"
+      "A service endpoint plus an NSG allow rule",
+      "Azure Firewall with a DNAT rule only"
     ],
-    "correctAnswers": ["Application Gateway (WAF v2) fronting the API, with the API not directly exposed"],
-    "explanation": "Fronting the API with an Application Gateway WAF publishes it safely with OWASP protection in a region; the backend stays private behind the gateway.",
+    "correctAnswers": [
+      "Application Gateway WAF v2 fronting the API"
+    ],
+    "explanation": "Fronting the API with an Application Gateway WAF v2, and keeping the API itself off the public internet, publishes it with OWASP protection in path. An Azure Firewall DNAT rule is the tempting alternative and it publishes the API without inspecting the HTTP at all.",
     "difficulty": "medium"
   },
   {
@@ -255,13 +328,15 @@
     "type": "single",
     "prompt": "Which is TRUE about Front Door versus Application Gateway regarding scope?",
     "choices": [
-      "Front Door is global; Application Gateway is regional",
-      "Both are strictly regional",
-      "Both are global",
-      "Application Gateway is global; Front Door is regional"
+      "Front Door is global; Gateway is regional",
+      "Application Gateway is global; Front Door is regional",
+      "Both of them are strictly regional",
+      "Both of them are strictly global in scope"
     ],
-    "correctAnswers": ["Front Door is global; Application Gateway is regional"],
-    "explanation": "Scope is the defining difference: global edge (Front Door) vs regional load balancer (Application Gateway).",
+    "correctAnswers": [
+      "Front Door is global; Gateway is regional"
+    ],
+    "explanation": "Front Door is global and Application Gateway is regional — that scope difference is the defining one. Both can host a WAF, which is why answering on WAF capability rather than on scope misses what distinguishes them.",
     "difficulty": "easy"
   },
   {
@@ -270,13 +345,15 @@
     "type": "single",
     "prompt": "What is the main security purpose of enforcing a minimum TLS version on an app?",
     "choices": [
-      "To reject clients negotiating weak, deprecated TLS versions",
-      "To encrypt data at rest in the app's storage",
-      "To block OWASP injection attacks",
-      "To provide DDoS mitigation"
+      "To reject clients negotiating weak versions",
+      "To encrypt the data at rest in the app's storage",
+      "To block the OWASP injection attacks",
+      "To provide volumetric DDoS mitigation"
     ],
-    "correctAnswers": ["To reject clients negotiating weak, deprecated TLS versions"],
-    "explanation": "A minimum TLS version prevents downgrade to weak protocols; it is unrelated to at-rest encryption, WAF, or DDoS.",
+    "correctAnswers": [
+      "To reject clients negotiating weak versions"
+    ],
+    "explanation": "A minimum TLS version rejects clients that would negotiate weak, deprecated protocol versions, closing a downgrade path. It is unrelated to at-rest encryption or to OWASP attacks, which is the conflation to avoid: transport strength cannot stop an injection payload carried over a perfectly modern TLS session.",
     "difficulty": "medium"
   },
   {
@@ -285,13 +362,15 @@
     "type": "single",
     "prompt": "Which component would you use to centrally apply the SAME set of firewall rules to several Azure Firewalls deployed in different regions?",
     "choices": [
-      "A firewall policy managed in Azure Firewall Manager",
+      "A policy managed in Azure Firewall Manager",
       "A separate rule collection copied into each firewall",
-      "An NSG applied to each firewall's subnet",
-      "A UDR shared across the regions"
+      "An NSG applied to each firewall's own subnet",
+      "A UDR shared across all of the regions"
     ],
-    "correctAnswers": ["A firewall policy managed in Azure Firewall Manager"],
-    "explanation": "Firewall policies are reusable objects that Firewall Manager applies across multiple firewalls, avoiding per-firewall duplication.",
+    "correctAnswers": [
+      "A policy managed in Azure Firewall Manager"
+    ],
+    "explanation": "A firewall policy managed in Firewall Manager is a reusable object applied across many firewalls, so one edit propagates. Copying a rule collection into each firewall is the tempting manual equivalent, however the copies drift the moment one is edited locally.",
     "difficulty": "medium"
   },
   {
@@ -300,12 +379,14 @@
     "type": "single",
     "prompt": "A WAF in Prevention mode is blocking a legitimate application request that resembles an attack pattern. What is the appropriate remediation?",
     "choices": [
-      "Add a targeted rule exclusion (or custom rule) for that specific pattern",
-      "Switch the whole WAF to Detection mode permanently",
-      "Delete the OWASP Core Rule Set",
-      "Disable the WAF policy"
+      "Add a targeted rule exclusion or custom rule",
+      "Switch the whole WAF policy to Detection mode permanently",
+      "Delete the OWASP Core Rule Set from it",
+      "Disable the WAF policy on the gateway"
     ],
-    "correctAnswers": ["Add a targeted rule exclusion (or custom rule) for that specific pattern"],
+    "correctAnswers": [
+      "Add a targeted rule exclusion or custom rule"
+    ],
     "explanation": "False positives are handled with narrow exclusions or custom rules, preserving protection elsewhere — not by disabling the WAF or dropping the rule set.",
     "difficulty": "medium"
   },
@@ -314,9 +395,16 @@
     "objectiveId": "o2-3",
     "type": "single",
     "prompt": "Which layer-7 service natively provides content caching at edge locations near users?",
-    "choices": ["Azure Front Door (CDN)", "Azure Application Gateway", "Azure Firewall", "Azure VPN Gateway"],
-    "correctAnswers": ["Azure Front Door (CDN)"],
-    "explanation": "Front Door includes CDN/edge caching and acceleration; Application Gateway is a regional load balancer without global edge caching.",
+    "choices": [
+      "Azure Front Door (CDN)",
+      "Azure Application Gateway",
+      "Azure VPN Gateway v2",
+      "Azure Firewall Premium"
+    ],
+    "correctAnswers": [
+      "Azure Front Door (CDN)"
+    ],
+    "explanation": "Front Door includes CDN edge caching and acceleration, whereas Application Gateway is a regional load balancer with no caching at all. That absence is what makes Application Gateway the wrong answer to a latency requirement stated in terms of geography.",
     "difficulty": "medium"
   },
   {
@@ -326,15 +414,15 @@
     "prompt": "Which two statements correctly distinguish Application Gateway from Front Door? (Choose two.)",
     "choices": [
       "Application Gateway is regional",
-      "Front Door is global and includes CDN",
-      "Neither can host a WAF policy",
-      "Application Gateway provides global edge caching"
+      "Front Door is global, with CDN",
+      "Application Gateway provides global edge caching",
+      "Neither of them can host a WAF policy"
     ],
     "correctAnswers": [
       "Application Gateway is regional",
-      "Front Door is global and includes CDN"
+      "Front Door is global, with CDN"
     ],
-    "explanation": "Both can host a WAF; the real differences are regional vs global scope and Front Door's CDN.",
+    "explanation": "Application Gateway is regional and Front Door is global with CDN. Neither distractor holds: both services can host a WAF policy, whereas only Front Door provides global edge caching.",
     "difficulty": "medium"
   },
   {
@@ -343,14 +431,14 @@
     "type": "multiple",
     "prompt": "Which two statements about Azure DDoS IP Protection are correct? (Choose two.)",
     "choices": [
-      "It uses a pay-per-protected-IP pricing model",
-      "It shares the core mitigation engine with DDoS Network Protection",
-      "It includes rapid response support and cost protection",
+      "It is priced per protected IP address",
+      "It shares the mitigation engine with Network Protection",
+      "It includes rapid response support, and cost protection too",
       "It is a feature of the Web Application Firewall"
     ],
     "correctAnswers": [
-      "It uses a pay-per-protected-IP pricing model",
-      "It shares the core mitigation engine with DDoS Network Protection"
+      "It is priced per protected IP address",
+      "It shares the mitigation engine with Network Protection"
     ],
     "explanation": "IP Protection is per-IP and shares the engine, but omits rapid response and cost protection, which are Network Protection value-adds.",
     "difficulty": "hard"
@@ -363,14 +451,14 @@
     "choices": [
       "Blocking SQL injection and cross-site scripting",
       "Applying the OWASP Core Rule Set",
-      "Filtering general egress traffic by FQDN",
-      "Providing volumetric DDoS cost protection"
+      "Filtering general egress traffic by FQDN as well",
+      "Providing volumetric DDoS cost protection too"
     ],
     "correctAnswers": [
       "Blocking SQL injection and cross-site scripting",
       "Applying the OWASP Core Rule Set"
     ],
-    "explanation": "OWASP protection (SQLi/XSS) is the WAF's job; FQDN egress filtering is Azure Firewall's, and cost protection is a DDoS tier feature.",
+    "explanation": "Blocking SQL injection and cross-site scripting, and applying the OWASP Core Rule Set, are WAF capabilities. FQDN egress filtering belongs to Azure Firewall and DDoS cost protection to the Network Protection tier — both tempting because they are neighbouring network controls.",
     "difficulty": "medium"
   },
   {
@@ -380,13 +468,15 @@
     "caseStudyId": "cs-fabrikam-network",
     "prompt": "Referring to requirement 5 (internal API reachable from the internet, protected against SQLi/XSS, global low-latency reach), which solution fits best?",
     "choices": [
-      "Azure Front Door with a WAF policy in Prevention mode",
-      "Azure Application Gateway without a WAF",
+      "Front Door with a WAF in Prevention mode",
+      "Azure Application Gateway without any WAF policy",
       "Azure Firewall with application rules only",
-      "A private endpoint on the API"
+      "A private endpoint on the API instead"
     ],
-    "correctAnswers": ["Azure Front Door with a WAF policy in Prevention mode"],
-    "explanation": "Global reach points to Front Door; OWASP protection requires an attached WAF set to Prevention.",
+    "correctAnswers": [
+      "Front Door with a WAF in Prevention mode"
+    ],
+    "explanation": "Global reach points to Front Door, and OWASP protection requires an attached WAF policy in Prevention mode. Application Gateway without a WAF is the closest miss and fails on both counts: regional scope, and no rule set inspecting the requests.",
     "difficulty": "medium"
   },
   {
@@ -396,12 +486,14 @@
     "caseStudyId": "cs-fabrikam-network",
     "prompt": "Referring to requirement 6 (protect critical public IPs from volumetric DDoS with full mitigation support, rapid response, and cost protection), which tier should Fabrikam choose?",
     "choices": [
-      "DDoS Network Protection",
-      "DDoS IP Protection",
-      "The default protection included with every public IP",
-      "A WAF policy"
+      "DDoS Network Protection tier",
+      "The default protection on every public IP",
+      "DDoS IP Protection instead",
+      "A WAF policy in Prevention"
     ],
-    "correctAnswers": ["DDoS Network Protection"],
+    "correctAnswers": [
+      "DDoS Network Protection tier"
+    ],
     "explanation": "Rapid response and cost protection are exclusive to the Network Protection tier; IP Protection shares the engine but omits them.",
     "difficulty": "hard"
   },
@@ -412,13 +504,15 @@
     "caseStudyId": "cs-fabrikam-network",
     "prompt": "Fabrikam's WAF (Prevention mode) in front of the internal API is blocking one legitimate request shape used by a partner integration. What is the correct action?",
     "choices": [
-      "Add a scoped WAF exclusion/custom rule for that request shape",
+      "Add a scoped exclusion for that request shape",
+      "Move the API behind Application Gateway instead of Front Door",
       "Switch the WAF to Detection mode for all traffic",
-      "Remove the OWASP Core Rule Set from the policy",
-      "Move the API behind Application Gateway instead of Front Door"
+      "Remove the OWASP Core Rule Set from the policy"
     ],
-    "correctAnswers": ["Add a scoped WAF exclusion/custom rule for that request shape"],
-    "explanation": "A narrow exclusion or custom rule resolves the false positive while keeping OWASP protection active for all other traffic.",
+    "correctAnswers": [
+      "Add a scoped exclusion for that request shape"
+    ],
+    "explanation": "A scoped exclusion or custom rule resolves the false positive while the rest of the OWASP protection stays active. Switching the whole policy to Detection is the tempting quick fix, but it disables blocking for every request rather than for the one request shape that misfires.",
     "difficulty": "medium"
   },
   {
@@ -432,7 +526,7 @@
       "Set the WAF policy mode to Detection and review the logs",
       "Switch the WAF policy mode to Prevention"
     ],
-    "explanation": "The gateway and policy must exist before tuning; piloting in Detection before switching to Prevention avoids blocking legitimate traffic unexpectedly.",
+    "explanation": "The gateway and its WAF policy must exist before any tuning, whereas piloting in Detection before switching to Prevention is what prevents a self-inflicted outage. Going straight to Prevention is the ordering mistake that blocks legitimate traffic on day one.",
     "difficulty": "medium"
   },
   {
@@ -446,7 +540,7 @@
       "Enable DDoS Network Protection on that virtual network",
       "Review DDoS telemetry and configure alerting"
     ],
-    "explanation": "The plan must exist and be linked to the VNet before protection is active, with monitoring configured last.",
+    "explanation": "The DDoS plan must exist and be linked to the virtual network before protection is active, whereas monitoring is configured afterwards. Expecting the plan alone to protect anything is the omission: an unlinked plan bills without defending.",
     "difficulty": "medium"
   },
   {
@@ -456,9 +550,36 @@
     "prompt": "Configure this simplified WAF policy screen for a global public API needing OWASP protection, attached to Front Door.",
     "screenTitle": "WAF policy (simulated)",
     "fields": [
-      { "id": "mode", "label": "WAF policy mode", "kind": "select", "options": ["Detection", "Prevention"], "correctValue": "Prevention" },
-      { "id": "ruleset", "label": "Managed rule set", "kind": "select", "options": ["None", "OWASP Core Rule Set"], "correctValue": "OWASP Core Rule Set" },
-      { "id": "attach", "label": "Attached to", "kind": "select", "options": ["Azure Firewall", "Front Door"], "correctValue": "Front Door" }
+      {
+        "id": "mode",
+        "label": "WAF policy mode",
+        "kind": "select",
+        "options": [
+          "Detection",
+          "Prevention"
+        ],
+        "correctValue": "Prevention"
+      },
+      {
+        "id": "ruleset",
+        "label": "Managed rule set",
+        "kind": "select",
+        "options": [
+          "None",
+          "OWASP Core Rule Set"
+        ],
+        "correctValue": "OWASP Core Rule Set"
+      },
+      {
+        "id": "attach",
+        "label": "Attached to",
+        "kind": "select",
+        "options": [
+          "Azure Firewall",
+          "Front Door"
+        ],
+        "correctValue": "Front Door"
+      }
     ],
     "explanation": "Prevention actively blocks, the OWASP Core Rule Set provides baseline coverage, and a WAF attaches to Front Door (or Application Gateway) — not Azure Firewall.",
     "difficulty": "medium"
@@ -469,9 +590,14 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o2-3",
     "prompt": "Proposed solution: Front Door with a WAF policy in Prevention mode using the OWASP Core Rule Set. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["Yes"],
-    "explanation": "Front Door delivers global low-latency reach, and the attached WAF in Prevention mode blocks SQL injection/XSS — both goal requirements are met.",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "Yes"
+    ],
+    "explanation": "Front Door delivers global low-latency reach, whereas the attached WAF in Prevention mode blocks OWASP-class attacks — the two halves of the goal need both components. Note the operational cost it accepts: Prevention mode needs tuning first, or legitimate requests are blocked.",
     "difficulty": "medium"
   },
   {
@@ -480,8 +606,13 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o2-3",
     "prompt": "Proposed solution: Azure Firewall with application rules only, no Front Door. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
     "explanation": "Azure Firewall filters general network traffic; it provides neither OWASP web-attack protection nor global CDN-backed low-latency reach.",
     "difficulty": "medium"
   },
@@ -491,84 +622,146 @@
     "type": "solution-goal",
     "caseStudyId": "sg-o2-3",
     "prompt": "Proposed solution: Application Gateway alone, in a single region, without Front Door or a WAF. Does this solution meet the goal?",
-    "choices": ["Yes", "No"],
-    "correctAnswers": ["No"],
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "correctAnswers": [
+      "No"
+    ],
     "explanation": "Without a WAF there's no OWASP protection, and a single regional Application Gateway does not provide global low-latency reach.",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-3-37",
     "objectiveId": "o2-3",
-    "type": "single",
-    "prompt": "Which command enforces TLS 1.2 minimum on an App Service?",
-    "choices": [
-      "az webapp config set --name App1 --resource-group RG1 --min-tls-version 1.2",
-      "az webapp update --name App1 --resource-group RG1 --tls 1.2",
-      "az webapp tls set --name App1 --version 1.2",
-      "az network application-gateway update --min-tls 1.2 --webapp App1"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the command that enforces a minimum TLS version of 1.2 on an App Service.",
+    "template": "az webapp config set --name App1 --resource-group RG1 [[b1]] [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "--min-tls-version",
+          "--tls-version",
+          "--minimum-tls",
+          "--https-only"
+        ],
+        "correctValue": "--min-tls-version"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "1.2",
+          "TLS1_2",
+          "TLSv1.2",
+          "12"
+        ],
+        "correctValue": "1.2"
+      }
     ],
-    "correctAnswers": ["az webapp config set --name App1 --resource-group RG1 --min-tls-version 1.2"],
-    "explanation": "The minimum TLS version is a site config property: `az webapp config set --min-tls-version`. The other subcommands/parameters don't exist.",
+    "explanation": "App Service expresses the floor as `1.2`, whereas a storage account expresses the same setting as `TLS1_2` — the inconsistency between services is exactly what gets copied wrongly from one script to another. `--https-only` is the tempting neighbour and answers a different question: it forces the connection to be encrypted at all, rather than rejecting the weak protocol versions a client might negotiate.",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-3-38",
     "objectiveId": "o2-3",
-    "type": "single",
-    "prompt": "Which commands protect VNet1's public IPs with a DDoS protection plan?",
-    "choices": [
-      "az network ddos-protection create --name Plan1 --resource-group RG1 ; az network vnet update --name VNet1 --ddos-protection-plan Plan1 --ddos-protection true",
-      "az network ddos-protection attach --plan Plan1 --ip-addresses all",
-      "az network public-ip update --name PIP1 --ddos-tier Standard",
-      "az network vnet subnet update --name Subnet1 --enable-ddos true"
+    "type": "build-list",
+    "prompt": "Build the sequence that puts VNet1's public IPs under DDoS Network Protection. Not every action in the pool belongs in the answer.",
+    "poolItems": [
+      "Create a DDoS protection plan in the subscription",
+      "Link the plan to VNet1 and enable DDoS protection on the virtual network",
+      "Configure DDoS metric alerts so an attack raises a notification",
+      "Attach the plan directly to each public IP address",
+      "Enable DDoS protection on Subnet1",
+      "Downgrade the public IP SKU to Basic to reduce the attack surface",
+      "Add a WAF policy in Prevention mode to the DDoS plan"
     ],
-    "correctAnswers": ["az network ddos-protection create --name Plan1 --resource-group RG1 ; az network vnet update --name VNet1 --ddos-protection-plan Plan1 --ddos-protection true"],
-    "explanation": "DDoS Network Protection is a plan resource associated with the VNet (vnet update). The other commands are invented — protection isn't attached per subnet this way.",
+    "correctOrder": [
+      "Create a DDoS protection plan in the subscription",
+      "Link the plan to VNet1 and enable DDoS protection on the virtual network",
+      "Configure DDoS metric alerts so an attack raises a notification"
+    ],
+    "explanation": "A plan that is not linked to a virtual network bills without defending anything, which is the omission this item exists to catch. Protection is enabled on the VNet, so it covers the Standard public IPs of resources in it — never on a subnet, and never on an individual IP under Network Protection. Basic-SKU public IPs cannot be protected at all, so downgrading removes the protection instead of tightening it, and a WAF policy attaches to Application Gateway or Front Door rather than to a DDoS plan.",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-3-39",
     "objectiveId": "o2-3",
-    "type": "single",
-    "prompt": "Which command switches a WAF policy from Detection to active blocking?",
-    "choices": [
-      "az network application-gateway waf-policy policy-setting update --policy-name WafPol1 --resource-group RG1 --mode Prevention",
-      "az network application-gateway waf-policy update --policy-name WafPol1 --block true",
-      "az network firewall policy update --name WafPol1 --mode Prevention",
-      "az network application-gateway update --waf-mode Blocking"
+    "type": "dropdown-sentence",
+    "prompt": "Complete the command that switches an Application Gateway WAF policy from logging matches to actively blocking them.",
+    "template": "az network application-gateway waf-policy policy-setting update --policy-name WafPol1 --resource-group RG1 --mode [[b1]] --state [[b2]]",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "Prevention",
+          "Detection",
+          "Blocking",
+          "Enforce"
+        ],
+        "correctValue": "Prevention"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "Enabled",
+          "Disabled",
+          "Active",
+          "On"
+        ],
+        "correctValue": "Enabled"
+      }
     ],
-    "correctAnswers": ["az network application-gateway waf-policy policy-setting update --policy-name WafPol1 --resource-group RG1 --mode Prevention"],
-    "explanation": "WAF mode lives in the waf-policy's policy-setting; Prevention is the blocking mode. `az network firewall policy` manages Azure Firewall (not WAF); the other syntaxes don't exist.",
+    "explanation": "The two modes are Detection and Prevention: Detection logs a match and lets the request through, Prevention blocks it. Blocking and Enforce are the words people expect and neither exists, so the command fails rather than half-working. The state must also be Enabled — a policy in Prevention mode but disabled inspects nothing, which is the configuration that looks correct in a review and protects nothing in production.",
     "difficulty": "hard"
   },
   {
     "id": "q-o2-3-40",
     "objectiveId": "o2-3",
     "type": "single",
-    "prompt": "Which CLI command creates an Azure Firewall policy that can be shared across several firewalls?",
+    "prompt": "Which command creates the reusable Azure Firewall policy object that Firewall Manager applies across several firewalls?",
     "choices": [
-      "az network firewall policy create --name FWPolicy1 --resource-group RG1",
-      "az network firewall create --name FWPolicy1 --shared true",
-      "az network application-gateway waf-policy create --name FWPolicy1",
-      "az network firewall rule-collection create --name FWPolicy1 --reusable"
+      "az network firewall policy create",
+      "az network application-gateway waf-policy create",
+      "az network firewall network-rule create",
+      "az network firewall ip-config create"
     ],
-    "correctAnswers": ["az network firewall policy create --name FWPolicy1 --resource-group RG1"],
-    "explanation": "Firewall policies (`az network firewall policy create`) are the reusable rule objects managed by Firewall Manager. A waf-policy is for WAF, and the other options are invented.",
+    "correctAnswers": [
+      "az network firewall policy create"
+    ],
+    "explanation": "A firewall policy is a standalone object that many firewalls can reference, which is what makes one edit propagate instead of being copied into each. The WAF policy command is the closest miss by name and creates something for a different service: Application Gateway or Front Door, inspecting HTTP rather than filtering network traffic. The other two work inside a firewall — its rules and its IP configuration — instead of producing the shareable policy.",
     "difficulty": "medium"
   },
   {
     "id": "q-o2-3-41",
     "objectiveId": "o2-3",
-    "type": "single",
-    "prompt": "Which PowerShell cmdlet enforces a minimum TLS version on an App Service?",
-    "choices": [
-      "Set-AzWebApp -Name App1 -ResourceGroupName RG1 -MinTlsVersion 1.2",
-      "Set-AzAppServicePlan -Name App1 -TlsVersion 1.2",
-      "Update-AzTlsPolicy -WebApp App1 -Minimum 1.2",
-      "Set-AzApplicationGateway -MinTls 1.2"
+    "type": "dropdown-sentence",
+    "prompt": "One web app must refuse protocol versions below 1.2 while the other apps sharing its App Service plan keep their current setting. Complete the Azure PowerShell command.",
+    "template": "[[b1]] -Name App1 -ResourceGroupName RG1 [[b2]] 1.2",
+    "blanks": [
+      {
+        "id": "b1",
+        "options": [
+          "Set-AzWebApp",
+          "Set-AzAppServicePlan",
+          "Set-AzWebAppSSLBinding",
+          "Set-AzWebAppSlot"
+        ],
+        "correctValue": "Set-AzWebApp"
+      },
+      {
+        "id": "b2",
+        "options": [
+          "-MinTlsVersion",
+          "-TlsVersion",
+          "-MinimumTlsVersion",
+          "-SslState"
+        ],
+        "correctValue": "-MinTlsVersion"
+      }
     ],
-    "correctAnswers": ["Set-AzWebApp -Name App1 -ResourceGroupName RG1 -MinTlsVersion 1.2"],
-    "explanation": "Set-AzWebApp exposes -MinTlsVersion. The App Service *plan* has no TLS setting, and the other cmdlets don't exist.",
+    "explanation": "The TLS floor is a property of the app, so it is set on the web app. `Set-AzAppServicePlan` is the tempting neighbour and cannot carry it: a plan is the compute container, and several apps on one plan can each have a different minimum. `-SslState` belongs to a custom-domain binding and governs whether a hostname requires SNI or IP-based SSL, rather than which protocol versions are refused.",
     "difficulty": "medium"
   }
 ]

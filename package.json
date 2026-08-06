@@ -8,7 +8,15 @@
     "build": "tsc -b && vite build",
     "build:single": "tsc -b && vite build --config vite.config.singlefile.ts",
     "preview": "vite preview",
-    "test:e2e": "playwright install --with-deps chromium && node scripts/smoke-test.mjs"
+    "check:bank": "node scripts/check-bank.mjs --cert=sc500",
+    "check:bank:az500": "node scripts/check-bank.mjs --cert=az500",
+    "check:bank:strict": "node scripts/check-bank.mjs --cert=sc500 --no-legacy",
+    "check:banks": "npm run check:bank:strict && npm run check:bank:az500:strict",
+    "verify:exam": "node scripts/verify-exam-builder.mjs",
+    "verify:offline": "node scripts/verify-file-protocol.mjs",
+    "verify:review": "node scripts/verify-review-queue.mjs",
+    "test:e2e": "playwright install --with-deps chromium && node scripts/smoke-test.mjs",
+    "check:bank:az500:strict": "node scripts/check-bank.mjs --cert=az500 --no-legacy"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

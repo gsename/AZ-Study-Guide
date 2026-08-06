@@ -22,11 +22,24 @@ function formatTime(totalSeconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
+/**
+ * Types with no flat `choices` list to shuffle for display. `build-list` belongs
+ * here rather than with `reorder`: it starts empty, since the learner must first
+ * decide which pool items are part of the answer at all.
+ */
+const NO_CHOICE_LIST = new Set<QuizQuestion['type']>([
+  'active-screen',
+  'statement-grid',
+  'drag-match',
+  'dropdown-sentence',
+  'build-list',
+])
+
 function displayFor(question: QuizQuestion, salt: string): { choices?: string[]; order?: string[] } {
   if (question.type === 'reorder') {
     return { order: seededShuffle(question.reorderItems ?? [], `${question.id}:${salt}`) }
   }
-  if (question.type === 'active-screen') return {}
+  if (NO_CHOICE_LIST.has(question.type)) return {}
   return { choices: seededShuffle(question.choices ?? [], `${question.id}:${salt}`) }
 }
 
@@ -166,15 +179,19 @@ export default function ExamSession() {
     })
 
     await db.quizAttempts.bulkAdd(
-      questions.map((q) => ({
-        certId,
-        objectiveId: q.objectiveId,
-        questionId: q.id,
-        correct: isQuestionCorrect(q, session.answers[q.id] ?? emptyResponse(q)),
-        mode: 'exam' as const,
-        timestamp: new Date().toISOString(),
-        examResultId: resultId as number,
-      })),
+      questions.map((q) => {
+        const answer = session.answers[q.id] ?? emptyResponse(q)
+        return {
+          certId,
+          objectiveId: q.objectiveId,
+          questionId: q.id,
+          correct: isQuestionCorrect(q, answer),
+          response: answer,
+          mode: 'exam' as const,
+          timestamp: new Date().toISOString(),
+          examResultId: resultId as number,
+        }
+      }),
     )
 
     for (const [objectiveId, outcome] of objectiveOutcomes) {

@@ -51,14 +51,27 @@ export function seededShuffle<T>(items: T[], seed: string): T[] {
  */
 export function allocateByWeight(weights: number[], total: number): number[] {
   const sum = weights.reduce((a, b) => a + b, 0)
-  const raw = weights.map((w) => (sum > 0 ? (w / sum) * total : 0))
+  // With no weight to distribute by, there is no allocation. Without this guard
+  // every fraction is 0, the remainder is the whole total, and the loop below
+  // hands one question to each bucket — returning [1,1] for a request of 4 and
+  // silently producing a short exam. `scripts/check-bank.mjs` guards the same
+  // case the same way; the two must not diverge on any input.
+  if (sum <= 0 || total <= 0) return weights.map(() => 0)
+  const raw = weights.map((w) => (w / sum) * total)
   const base = raw.map(Math.floor)
   const allocated = base.reduce((a, b) => a + b, 0)
-  let remainder = total - allocated
+  const remainder = total - allocated
 
+  // Three sort keys, not one. Sorting on `frac` alone leaves exact ties to
+  // Array.prototype.sort's internals: SC-500's domain midpoints are
+  // 22.5 / 27.5 / 22.5 / 22.5, so THREE domains tie exactly and the leftover
+  // question goes to whichever the engine happens to favour. It currently lands
+  // on d1 only because V8's sort is stable — an implementation detail, not a
+  // stated rule, and `scripts/check-bank.mjs` asserts these allocations. Heavier
+  // weight wins a tie, then lower index, so the outcome is specified.
   const fractions = raw
-    .map((r, i) => ({ i, frac: r - base[i] }))
-    .sort((a, b) => b.frac - a.frac)
+    .map((r, i) => ({ i, frac: r - base[i], w: weights[i] }))
+    .sort((a, b) => b.frac - a.frac || b.w - a.w || a.i - b.i)
 
   const counts = [...base]
   for (let k = 0; k < remainder && k < fractions.length; k++) {
@@ -92,7 +105,47 @@ export function buildExam(
     selected.push(...shuffle(pool).slice(0, need))
   })
 
-  return shuffle(selected)
+  return shuffle(groupByCaseStudy(selected)).flat()
+}
+
+/**
+ * Collects questions that share a `caseStudyId` into contiguous blocks, so the
+ * exam presents a case study once with its questions together — as the real one
+ * does. A standalone question is a block of one.
+ *
+ * Without this, the final `shuffle` scattered them: `cs-tailspin-identity` has
+ * 12 questions against a 1,262-character scenario, which the learner then had to
+ * re-read at 12 random points in the exam. That is a fidelity defect, not a
+ * cosmetic one — reading the scenario is most of the work in a case study, and
+ * paying that cost twelve times measures stamina rather than knowledge.
+ *
+ * `caseStudyId` is overloaded on purpose: `cs-*` is a real multi-question case
+ * study, `sg-*` a "does the solution meet the goal?" series. Both belong
+ * together, so both are grouped. Blocks are shuffled internally as well as
+ * against each other, so authored order inside a block carries no tell.
+ */
+function groupByCaseStudy(questions: QuizQuestion[]): QuizQuestion[][] {
+  const blocks: QuizQuestion[][] = []
+  const byGroup = new Map<string, QuizQuestion[]>()
+
+  for (const q of questions) {
+    if (!q.caseStudyId) {
+      blocks.push([q])
+      continue
+    }
+    const existing = byGroup.get(q.caseStudyId)
+    if (existing) {
+      existing.push(q)
+    } else {
+      const block = [q]
+      byGroup.set(q.caseStudyId, block)
+      // Pushed on first sight, so a group keeps its place in the block order
+      // rather than being appended after every standalone question.
+      blocks.push(block)
+    }
+  }
+
+  return blocks.map((block) => (block.length > 1 ? shuffle(block) : block))
 }
 
 export function scaleScore(correctCount: number, totalCount: number): number {
