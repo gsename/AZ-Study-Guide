@@ -207,18 +207,19 @@
     "id": "q-o3-3-13",
     "objectiveId": "o3-3",
     "type": "single",
-    "prompt": "A support team needs to query a customer table for troubleshooting, but card numbers must not appear in their results, with no application changes. Which feature fits best?",
+    "prompt": "You are configuring dynamic data masking on an email column in an Azure SQL database. The masked output must keep the first letter and the domain suffix rather than hiding the value entirely. Which masking function should you choose?",
     "choices": [
-      "Dynamic data masking",
-      "Always Encrypted on the columns",
-      "Transparent Data Encryption",
-      "Database auditing alone"
+      "The email function",
+      "The default function",
+      "The random number function",
+      "A custom string function"
     ],
     "correctAnswers": [
-      "Dynamic data masking"
+      "The email function"
     ],
-    "explanation": "Masking lets a support team query the table while sensitive values come back obscured, with no change to the application or the stored data. Always Encrypted is the tempting stronger option, but it would break the troubleshooting use case — the support team could not read anything at all.",
-    "difficulty": "medium"
+    "explanation": "The email function is purpose-built for this shape, exposing the first character and a suffix. A custom string function is the tempting answer because it can be configured to expose a prefix and a suffix too, but it is the manual route to what the email function already does, and getting the padding wrong is how addresses leak. The default function replaces the whole value, and the random number function applies to numeric types.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/azure-sql/database/dynamic-data-masking-overview"
   },
   {
     "id": "q-o3-3-14",
@@ -292,18 +293,19 @@
     "id": "q-o3-3-18",
     "objectiveId": "o3-3",
     "type": "single",
-    "prompt": "A requirement states sensitive data must be encrypted such that a cloud operator with full server access still cannot read it. Which feature is required?",
+    "prompt": "A compliance requirement states that any change to a sensitive table in an Azure SQL database must be provable as untampered afterwards, including against someone with administrative rights on the server. Which feature should you use?",
     "choices": [
-      "Always Encrypted on the column",
-      "Database auditing to a workspace",
-      "Dynamic data masking of results",
-      "Transparent Data Encryption"
+      "A ledger table on it",
+      "Database auditing to storage",
+      "Transparent Data Encryption",
+      "A temporal versioned table"
     ],
     "correctAnswers": [
-      "Always Encrypted on the column"
+      "A ledger table on it"
     ],
-    "explanation": "A requirement naming a cloud operator with server access describes Always Encrypted, because the key stays client-side and the operator never has it. TDE is the tempting answer since it is the encryption that is already on, however the engine decrypts for it — so anyone querying through the engine reads plaintext.",
-    "difficulty": "medium"
+    "explanation": "A ledger table keeps a cryptographically verifiable history whose digests can be stored outside the database, so tampering is detectable even by an administrator. A temporal table is the close distractor: it records every historical row version and looks equivalent, but an administrator can alter that history, so it proves nothing. Auditing records who acted rather than making the data itself verifiable.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/azure-sql/database/ledger-overview"
   },
   {
     "id": "q-o3-3-19",
@@ -741,5 +743,79 @@
     ],
     "explanation": "Set-AzSqlServerActiveDirectoryAdministrator is the real cmdlet (the module still uses the ActiveDirectory naming). The other three don't exist.",
     "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-3-42",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Support staff must not see full credit card numbers in query results from an Azure SQL database, but the stored values must remain unchanged and the columns must stay searchable and indexable. Which feature should you implement?",
+    "choices": [
+      "Dynamic data masking",
+      "Row-level security",
+      "Always Encrypted columns",
+      "Transparent Data Encryption"
+    ],
+    "correctAnswers": [
+      "Dynamic data masking"
+    ],
+    "explanation": "Masking rewrites values on the way out of the query engine, so stored data is untouched and the column remains searchable and indexable. Row-level security is the frequent confusion: it filters which rows a user sees, not which parts of a column, so it does not hide a value from someone entitled to the row. Always Encrypted would hide the value but breaks searching and indexing, and TDE protects the files at rest without hiding anything from a query.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/azure-sql/database/dynamic-data-masking-overview"
+  },
+  {
+    "id": "q-o3-3-43",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Azure SQL databases hold credit card data. You must identify which columns contain that data and label them so the sensitivity is recorded. Which Microsoft Defender for Cloud capability should you use?",
+    "choices": [
+      "SQL Information Protection",
+      "Hash reputation analysis",
+      "Inventory filters in Defender",
+      "SQL servers on machines"
+    ],
+    "correctAnswers": [
+      "SQL Information Protection"
+    ],
+    "explanation": "SQL Information Protection discovers sensitive columns and applies classification labels to them, which is both halves of the requirement. Inventory filters are the tempting answer because they also sort resources by attribute, but they filter which resources Defender shows rather than classifying data inside a database. Hash reputation analysis inspects files arriving in storage, and the SQL servers on machines plan protects instances outside Azure.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/azure-sql/database/data-discovery-and-classification-overview"
+  },
+  {
+    "id": "q-o3-3-44",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "prompt": "Dynamic data masking hides an email column in an Azure SQL database. One named analyst must see the unmasked values, while everyone else must keep seeing them masked. The solution must follow the principle of least privilege. What should you do?",
+    "choices": [
+      "Grant UNMASK to the analyst",
+      "Add the analyst to the db_owner role",
+      "Remove the mask with ALTER TABLE",
+      "Grant the analyst Conditional Access"
+    ],
+    "correctAnswers": [
+      "Grant UNMASK to the analyst"
+    ],
+    "explanation": "UNMASK granted to one principal lifts the mask for that principal alone, leaving every other user unaffected. Adding the analyst to db_owner is the trap: it does reveal the data, because that role carries UNMASK implicitly, but it also hands over control of the whole database, so it fails least privilege rather than the task. ALTER TABLE would drop the mask for everyone, and Conditional Access governs whether a user connects, not what they see once connected.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/azure-sql/database/dynamic-data-masking-overview",
+    "decision": "least-privilege"
+  },
+  {
+    "id": "q-o3-3-45",
+    "objectiveId": "o3-3",
+    "type": "single",
+    "decision": "coverage",
+    "prompt": "Data in an Azure SQL database must be encrypted at rest, and the protection must extend to database backups and transaction logs. No application change is acceptable. The solution must leave no gaps in coverage. What should you use?",
+    "choices": [
+      "Transparent Data Encryption",
+      "Always Encrypted on the columns",
+      "Dynamic data masking on them",
+      "A client-side encryption library"
+    ],
+    "correctAnswers": [
+      "Transparent Data Encryption"
+    ],
+    "explanation": "TDE encrypts the data files, the logs, and the backups, and the application is unaware of it. Always Encrypted is the trap: it protects the chosen columns more strongly, even from administrators, but it covers only those columns and requires a driver change in the application, so it fails on both coverage and the no-change rule. Masking encrypts nothing.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/azure-sql/database/transparent-data-encryption-tde-overview"
   }
 ]

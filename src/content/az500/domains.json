@@ -12,8 +12,13 @@
     "questionCountRange": "40-60",
     "bankStatus": {
       "referentialVerified": false,
-      "freeScorePercent": 2.8,
-      "measuredOn": "2026-08-06"
+      "freeScorePercent": 2.5,
+      "measuredOn": "2026-08-17"
+    },
+    "constraintShare": {
+      "percent": 17,
+      "source": "Hand count over the 100 questions of two Microsoft practice assessments taken 2026-08-16 and 2026-08-17: 19 questions carry an explicit constraint clause, 17 of them as the deciding sentence rather than one bullet in a requirements list. NOT a figure Microsoft publishes — unlike the domain weights, this is measured off a sample of 100 and must not be presented as official.",
+      "measuredOn": "2026-08-17"
     }
   },
   "domains": [

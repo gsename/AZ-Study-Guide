@@ -192,20 +192,127 @@ révision avant cette date. Les tells de longueur étaient explicitement hors p�
 |---|---|---|
 | Explications sous 120 caractères ou sans marqueur de contraste | 387/492 | **0** |
 | Réponses correctes qui sont une ligne de commande complète | 45 | **0** |
-| Formats interactifs | 0 % | **6,7 %** (28 phrases à compléter, 5 constructions de liste) |
+| Formats interactifs | 0 % | **6,8 %** |
 | Tells de longueur d'options | 300 | **0** |
-| La plus longue option est la bonne réponse | 70,0 % | **3,1 %** |
-| Score en cochant toujours l'option la plus longue | 69,5 % | **2,8 %** |
+| La plus longue option est la bonne réponse | 70,0 % | **2,7 %** |
+| Score en cochant toujours l'option la plus longue | 69,5 % | **2,5 %** |
+| Items | 492 | **556** |
+| Questions à contrainte, par examen blanc de 50 | 0 | **9 (18 %)** |
 
-Le seuil brut est à 70,0 % : à **2,8 %**, la stratégie ne rapporte plus rien.
-`bankStatus.freeScorePercent` est donc passé à 2,8, et l'avertissement de fiabilité
-de `src/components/ExamMetaNotices.tsx` **disparaît de lui-même** — son seuil n'est
-plus franchi. Le bandeau de retrait, lui, reste : c'est une date, pas une mesure.
+Le seuil brut est à 70,0 % : à **2,5 %**, la stratégie ne rapporte plus rien.
+`bankStatus.freeScorePercent` suit cette valeur, et l'avertissement de fiabilité de
+`src/components/ExamMetaNotices.tsx` **disparaît de lui-même** — son seuil n'est plus
+franchi. Le bandeau de retrait, lui, reste : c'est une date, pas une mesure.
 
-`check-bank --cert=az500 --no-legacy` sort à 0. Les deux avertissements restants sont
-positionnels (les deux bonnes réponses écrites en positions 0 et 1 sur les 36 items à
+`check-bank --cert=az500 --no-legacy` sort à 0. Les avertissements restants sont
+positionnels (les deux bonnes réponses écrites en positions 0 et 1 sur les items à
 réponses multiples, ce que `seededShuffle` défait à l'affichage) et des énoncés
-quasi-dupliqués antérieurs.
+partageant le squelette d'un format.
+
+### Ce que 90 % sur l'examen blanc ne prédisait pas
+
+Deux évaluations officielles Microsoft, passées les 16 et 17 août 2026, ont donné
+**42 % puis 56 %** alors que la banque rendait 90 %. Le dépouillement des 100
+questions a isolé deux causes, et les deux ont été traitées.
+
+**Des sujets absents.** Un sondage a trouvé **25 sujets testés par Microsoft et
+couverts par aucun des 492 items** — concentrés sur Key Vault, dont la banque ne
+connaissait que l'accès par identité managée. **39 items ont été ajoutés** via le
+nouveau `scripts/add-items.mjs` ; le sondage retourne désormais **0 sujet à 0 item**.
+
+| Objectif | + | Ce qui manquait |
+|---|---|---|
+| `o4-1` | 9 | matrice RBAC Key Vault, niveaux de coffre, FIPS 140-2, purge protection, BYOK, rotation par Event Grid, RGPD sans initiative intégrée |
+| `o1-2` | 5 | étendues OIDC, types de consentement, rôle Application Developer, certificat vs secret client |
+| `o1-1` `o4-2` `o4-4` | 4 chacun | MFA hors ligne et rôles PIM · EASM et exportation continue · types de règles Sentinel et DCR |
+| `o3-1` `o4-3` | 3 chacun | cmdlets JIT et CNI/kubenet · périmètre Defender for SQL |
+| `o3-2` `o3-3` | 3 chacun | SAS de service et `signedIP` · masquage vs RLS, étiquetage |
+| `o2-2` | 1 | intégration VNet requise par passerelle |
+
+**Un défaut de forme, plus grave car il touchait les 492 items d'un coup.** L'énoncé
+médian de la banque faisait 102 caractères contre 350-500 chez Microsoft, et
+**aucun item ne portait de clause de contrainte** (« la solution doit suivre le
+principe du privilège minimum », « doit réduire au maximum les coûts ») là où ~17 des
+100 questions officielles sont départagées par elle. C'est le raisonnement que la
+banque n'entraînait pas : plusieurs options sont techniquement correctes et une seule
+respecte la contrainte. **37 items en portent une**, et leur explication dit
+*pourquoi l'option écartée était juste mais trop large, trop coûteuse ou trop
+lacunaire*.
+
+### Le vivier n'est pas le tirage — et c'est le tirage qui compte
+
+Les 12 premiers items à contrainte faisaient 2,3 % du vivier, ce qui ressemblait à un
+progrès. Le calcul de l'espérance a montré le contraire : le tirage alloue par poids de
+domaine puis choisit au hasard, donc un examen blanc de 40 questions en contenait
+**0,90** — jamais plus d'un. Les items existaient, la voie de l'examen blanc n'y menait
+pas.
+
+Deux leviers ont été écartés **après mesure**, pas par principe :
+
+| Levier | Mesuré | Pourquoi non |
+|---|---|---|
+| Supprimer les doublons | 4 doublons réels | supprimer 120 items n'économiserait que 24 ajouts : le ratio est gouverné par les ajouts |
+| Ajouter une clause aux items existants | 0 sur 5 échantillonnés convertibles | la banque est majoritairement du rappel — on ne greffe pas « privilège minimum » sur « que fait un point de terminaison de service ? » |
+
+D'où un **quota au tirage**, `constraintShare` dans `domains.json`, appliqué **à
+l'intérieur** de l'allocation par domaine : `allocateByWeight` est intact, donc la
+pondération du blueprint n'a pas été troquée contre celle-ci. Résultat mesuré sur
+300 tirages : **7,00 sur 40 (17,5 %) et 10,00 sur 60 (16,7 %)**, et le nombre que
+`ExamStart` annonce à l'apprenant est exactement celui que le tirage livre.
+
+Trois choses que cela a coûté ou révélé, à dire plutôt qu'à taire :
+
+- **Le quota est une cible, pas un plancher.** Première version : le reliquat pouvait
+  retirer d'autres items à contrainte, ce qui montait à ~22 %. La page annonçant un
+  nombre, le tirage lui doit ce nombre — le reliquat ne pioche donc que dans les items
+  ordinaires, avec rattrapage seulement si un domaine en manque.
+- **Le recouplement monte de 7,6 % à 8,9 %** entre deux examens consécutifs de
+  40 questions : 37 items tournent sur 7 places au lieu d'être noyés dans 556. Prix
+  assumé de la fidélité.
+- **17 % n'est pas un chiffre Microsoft.** C'est un comptage à la main sur les
+  100 questions de deux évaluations d'entraînement (19 au comptage inclusif, 17 au
+  comptage prudent). `constraintShare.source` le dit, et la page d'examen le dit à
+  l'apprenant — même traitement que `questionCountRangeSource`.
+
+**Un marqueur, pas une expression régulière.** `QuizQuestion.decision`
+(`least-privilege` | `cost` | `coverage`) est ce que lit le tirage. `check-bank`
+assère l'équivalence **dans les deux sens** : marqueur sans clause fabriquerait un
+quota creux, clause sans marqueur rendrait l'item invisible au tirage. Le contrôle a
+immédiatement attrapé quatre erreurs à moi — deux items marqués `coverage` dont
+l'énoncé n'employait pas le vocabulaire reconnu, et un item SC-500 oublié.
+
+Deux leçons de rédaction méritent d'être notées, parce qu'elles se reposeront :
+
+- **Certains sujets ne tiennent pas en QCM.** `offline_access` est intrinsèquement la
+  plus longue étendue OIDC *et* une bonne réponse ; les noms de règles Sentinel vont
+  de 6 à 21 caractères. Le tell y est insoluble sans inventer des noms de
+  fonctionnalités qui n'existent pas. Ces deux items sont donc une grille Oui/Non et
+  un glisser-déposer, formats sans règle de longueur d'options.
+- **Un énoncé long *améliore* le contrôle de quasi-doublons.** Mesuré avant d'écrire :
+  quatre énoncés scénarisés donnent un Jaccard par paire de **0,09-0,40** contre un
+  seuil à 0,60, parce qu'un texte long porte plus de tokens distinctifs. C'est
+  l'inverse de l'intuition, et c'est pourquoi `check-bank` n'a eu besoin d'aucun
+  ajustement.
+- **`normalise()` dans `check-bank.mjs` est une liste blanche.** Un champ qui n'y est
+  pas recopié est invisible à *tous* les contrôles en aval. `decision` et le bloc
+  `exam` ont chacun été perdus ainsi une fois, avec le même symptôme : un garde-fou
+  qui passe en lisant `undefined` des deux côtés de sa comparaison.
+
+**Trois faux positifs à ne pas repayer** en cherchant des doublons dans cette banque.
+Une même bonne réponse ne suffit pas à conclure :
+
+- les 36 items `solution-goal` répondent littéralement `Yes` ou `No` — c'est le format ;
+- les items `case-study` re-testent volontairement un fait dans un scénario, et
+  `check-bank` exige ≥ 4 questions par étude de cas, donc les retirer casserait
+  l'amortissement du scénario ;
+- deux questions différentes peuvent partager une réponse : `q-o2-1-37` et `q-o2-2-40`
+  répondent tous deux `az network vnet subnet update`, l'un pour attacher un NSG,
+  l'autre pour activer un point de terminaison de service.
+
+Sur 14 candidats détectés, **4 étaient de vrais doublons**. Ils ont été repointés sur
+des faits que la banque ne testait pas (client natif Bastion, chiffrement
+d'infrastructure au moment de la création, tables ledger, fonctions de masquage) plutôt
+que supprimés, pour que chaque objectif garde son compte d'items.
 
 **Hors périmètre, assumé :** le référentiel vérifié contre le study guide (celui
 d'AZ-500 est paraphrasé, le même défaut que SC-500 avait), la provenance `src`, la
@@ -258,6 +365,13 @@ de chaque distracteur. Deux outils appliquent les corrections par lot :
 | `apply-rewrites.mjs` | un texte de distracteur | refuse une cible qui n'apparaît pas exactement une fois, une cible qui est la bonne réponse, tout raccourcissement non déclaré |
 | `apply-explanations.mjs` | l'explication, par id | refuse sous 120 caractères, sans marqueur de contraste, ou citant une lettre d'option |
 | `apply-items.mjs` | **l'item entier**, par id | refuse un id inconnu, un `objectiveId` déplacé, une réponse encore sous forme de ligne de commande, et tout écrit qui casserait le JSON |
+| `apply-choices.mjs` | `choices` et `correctAnswers` seuls | refuse un doublon d'option, une bonne réponse absente de `choices`, un rapport > 1,6, et **la plus longue option encore correcte** |
+| `add-items.mjs` | **de nouveaux items**, en fin de fichier | refuse un id qui existe déjà, un id dont le préfixe ne désigne pas le fichier visé, un `objectiveId` en désaccord avec l'id, un doublon dans le lot |
+
+`add-items.mjs` est séparé d'`apply-items.mjs` et non un drapeau de celui-ci : les
+deux refus sont exactement inverses — l'un exige que l'id existe, l'autre qu'il
+n'existe pas. Les fusionner supposerait une option qui désactive un garde-fou, et un
+id mal tapé ajouterait alors un doublon en silence au lieu d'être refusé.
 
 `apply-items.mjs` existe parce qu'un changement de format n'est pas une édition de
 champ : convertir un QCM en `drag-match` doit faire disparaître `choices` et

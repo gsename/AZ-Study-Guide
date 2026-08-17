@@ -394,18 +394,19 @@
     "id": "q-o3-2-24",
     "objectiveId": "o3-2",
     "type": "single",
-    "prompt": "For a lift-and-shift Windows file server to Azure Files with existing NTFS permissions and no domain controller in Azure, which identity source should you enable?",
+    "prompt": "A storage account must encrypt data twice at the infrastructure level, using two distinct encryption algorithms so that a flaw in one does not expose the data. When can this be turned on?",
     "choices": [
-      "Microsoft Entra Kerberos",
-      "On-premises AD DS, with a DC in Azure",
-      "Azure RBAC data roles only",
-      "A SAS token issued per user"
+      "Only when the account is made",
+      "At any time after creation",
+      "Only on a premium account",
+      "Only with a customer-managed key"
     ],
     "correctAnswers": [
-      "Microsoft Entra Kerberos"
+      "Only when the account is made"
     ],
-    "explanation": "Entra Kerberos needs no domain controller while still honouring NTFS ACLs, which is what a lift-and-shift with existing permissions requires. Deploying a DC in Azure is the tempting familiar path, but it carries the infrastructure the cloud option exists to retire.",
-    "difficulty": "medium"
+    "explanation": "Infrastructure encryption is a creation-time choice and cannot be added to an existing account, so retrofitting it means creating a new account and copying the data. Believing it can be enabled later is the costly error, because the discovery usually comes after the data has landed. It is independent of whether the key is platform-managed or customer-managed.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/storage/common/infrastructure-encryption-enable"
   },
   {
     "id": "q-o3-2-25",
@@ -771,5 +772,98 @@
     ],
     "explanation": "Blob soft delete and container soft delete are two independent settings with two independent day counters, and enabling the container one does not protect a blob deleted inside a container that still exists. Versioning keeps previous versions of a blob that is overwritten rather than recovering one that is deleted, and a restore policy is point-in-time restore, which depends on versioning and change feed instead of standing alone.",
     "difficulty": "medium"
+  },
+  {
+    "id": "q-o3-2-42",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "A storage account holds containers, blobs, queues, and tables. An application must be given a credential that reaches the data in one specified table and nothing else in the account. Which authentication method should you use?",
+    "choices": [
+      "A service SAS token",
+      "A user delegation SAS",
+      "An account SAS token",
+      "A shared account key"
+    ],
+    "correctAnswers": [
+      "A service SAS token"
+    ],
+    "explanation": "A service SAS is the only form that can be scoped to a single table. A user delegation SAS is the tempting answer because it is the most modern and Entra-backed option, but it is available for Blob storage only, so it cannot address a table at all. An account SAS and a shared key both reach the whole account, which is exactly what must be avoided.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/rest/api/storageservices/create-service-sas"
+  },
+  {
+    "id": "q-o3-2-43",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "An application shares more than 1,000 files from Blob storage with external users who do not authenticate with Microsoft Entra. Access to each file must be restricted to one IP address, different for each file. What should you do?",
+    "choices": [
+      "Generate a service SAS with signedIP",
+      "Configure the storage account firewall",
+      "Set Require secure transfer on the account",
+      "Enable anonymous public read access"
+    ],
+    "correctAnswers": [
+      "Generate a service SAS with signedIP"
+    ],
+    "explanation": "The `signedIP` field pins an individual SAS to one address, and a separate SAS can be issued per file, so the design scales past a thousand files. The account firewall is the tempting answer because it also filters by IP, but it caps out well below a thousand rules and applies to the account rather than per file. Requiring secure transfer blocks HTTP without restricting where a request comes from.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/rest/api/storageservices/create-service-sas"
+  },
+  {
+    "id": "q-o3-2-44",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "prompt": "An application authenticates with Microsoft Entra and must read blobs in one container of a storage account, and nothing else in that account. The solution must follow the principle of least privilege. What should you assign to its managed identity?",
+    "choices": [
+      "Storage Blob Data Reader",
+      "Storage Blob Data Contributor",
+      "Storage Account Contributor",
+      "The account access key"
+    ],
+    "correctAnswers": [
+      "Storage Blob Data Reader"
+    ],
+    "explanation": "Storage Blob Data Reader is a data-plane role that can be assigned at container scope, so the application reads that container and reaches nothing else. Storage Blob Data Contributor is the trap because it would also work, adding write and delete the application never needs. Storage Account Contributor manages the account without granting data access at all, and an access key reaches every service in the account.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory",
+    "decision": "least-privilege"
+  },
+  {
+    "id": "q-o3-2-45",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "decision": "cost",
+    "prompt": "Blobs deleted by mistake must be recoverable for 30 days. Keeping a copy of every intermediate write is not required. The solution must minimize cost. What should you enable?",
+    "choices": [
+      "Blob soft delete on it",
+      "Blob versioning on the account",
+      "An immutability policy on it",
+      "A backup vault for the blobs"
+    ],
+    "correctAnswers": [
+      "Blob soft delete on it"
+    ],
+    "explanation": "Soft delete retains only what was deleted, for the window you set, so it costs the least of the options that meet the requirement. Versioning is the trap: it recovers a deleted blob just as well, but it also stores every intermediate version, which the scenario says is not needed and which is what makes it dearer. An immutability policy prevents deletion outright rather than allowing recovery.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/storage/blobs/soft-delete-blob-overview"
+  },
+  {
+    "id": "q-o3-2-46",
+    "objectiveId": "o3-2",
+    "type": "single",
+    "decision": "cost",
+    "prompt": "Audit logs in a storage account must survive the loss of an entire Azure region. Read access to the secondary region during normal operation is not required. The solution must minimize cost. Which redundancy option should you choose?",
+    "choices": [
+      "Geo-redundant storage (GRS)",
+      "Read-access GRS (RA-GRS)",
+      "Zone-redundant storage (ZRS)",
+      "Locally redundant storage (LRS)"
+    ],
+    "correctAnswers": [
+      "Geo-redundant storage (GRS)"
+    ],
+    "explanation": "GRS replicates to a paired region, which is what surviving a regional loss requires, and it is the cheapest option that does so. RA-GRS is the trap because it offers the same durability and looks strictly better, but the read endpoint it adds is billed and the scenario says it is not needed. ZRS survives a zone rather than a region, and LRS survives neither.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy"
   }
 ]

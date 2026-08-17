@@ -296,6 +296,10 @@ function normalise(raw, ctx) {
       poolItems: q.poolItems,
       correctOrder: q.correctOrder,
       skillRef: q.skillRef,
+      // Carried through because the draw's constraint quota reads it. This object
+      // is a WHITELIST: a field omitted here is invisible to every check below,
+      // which is how `decision` and `exam` were both silently dropped once.
+      decision: q.decision,
       file: q._file,
       where: q._where,
     };
@@ -373,6 +377,20 @@ function checkItem(q, seen, ctx) {
     err(`${at}: explanation references an option letter`);
 
   if (CONFIG.requireSrc && !q.src && !q.official) rule(`${at}: missing src`, q.subGroupId);
+
+  /* `decision` drives the exam draw's constraint quota, so it must mean exactly
+     what the stem says — asserted in BOTH directions. A marker with no clause
+     manufactures a hollow quota: the draw reports 17% while the learner reads
+     ordinary recall questions. A clause with no marker makes the item invisible
+     to the draw, so the quota silently under-fills from a smaller pool. */
+  const hasClause = /least privilege|minimi[sz]e cost|lowest cost|highest level of workload|leave no gaps/i
+    .test(q.stem);
+  if (q.decision && !hasClause)
+    err(`${at}: decision="${q.decision}" but the stem carries no constraint clause`);
+  if (hasClause && !q.decision)
+    err(`${at}: stem carries a constraint clause but no decision marker — the exam draw cannot see it`);
+  if (q.decision && !["least-privilege", "cost", "coverage"].includes(q.decision))
+    err(`${at}: decision="${q.decision}" is not least-privilege, cost or coverage`);
 
   /* Blueprint traceability: a skillRef that does not resolve, or that names a
      bullet belonging to a different objective, makes the coverage report lie —

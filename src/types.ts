@@ -129,6 +129,20 @@ export interface QuizQuestion {
    * coverage measurable instead of asserted.
    */
   skillRef?: string
+  /**
+   * Set when the item is decided by a CONSTRAINT rather than by knowing one fact:
+   * several options would do the job and only one respects it. Three axes, which
+   * are the three the practice assessments actually use — least privilege, lowest
+   * cost, and widest coverage ("the highest level of protection, leaving no
+   * gaps"). This is the question shape a real exam leans on and the bank did not
+   * have, so the draw reserves a share of each domain's allocation for it.
+   *
+   * A marker rather than a regex over `prompt`: matching English prose would
+   * misclassify silently, and the draw would then miss its target with nothing
+   * saying so. `check-bank.mjs` asserts the equivalence in both directions —
+   * marker set iff the prompt carries a clause — so the two cannot drift.
+   */
+  decision?: 'least-privilege' | 'cost' | 'coverage'
 
   // single / multiple / case-study / solution-goal (unused by the typed formats)
   choices?: string[]

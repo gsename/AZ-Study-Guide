@@ -762,5 +762,62 @@
     ],
     "explanation": "IP flow verify answers exactly that question — allowed or denied, plus the deciding rule — from a five-tuple, without sending a packet. `test-connectivity` is the tempting neighbour and does send real traffic end to end, so it tells you whether the path works rather than which rule governs it. Next hop reports routing rather than filtering, and flow logs are historical records instead of an evaluation of a hypothetical packet.",
     "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-1-42",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "decision": "least-privilege",
+    "prompt": "Inbound RDP must be blocked on every subnet across 40 virtual networks, and the rule must not be removable by the subscription owners who manage those networks. The solution must follow the principle of least privilege for those owners. What should you implement?",
+    "choices": [
+      "An AVNM security admin rule",
+      "A deny rule in each subnet NSG",
+      "An Azure Policy Deny on NSG writes",
+      "A UDR blackholing port 3389"
+    ],
+    "correctAnswers": [
+      "An AVNM security admin rule"
+    ],
+    "explanation": "Security admin rules in Azure Virtual Network Manager are evaluated before NSGs and cannot be overridden by the resource owner, so the owners keep only the network permissions they need. A deny rule in each NSG is the trap: it blocks the traffic just as well, but the owners can edit it, which means granting them nothing extra still leaves them able to undo the control. A UDR changes routing rather than filtering.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/virtual-network-manager/concept-security-admins"
+  },
+  {
+    "id": "q-o2-1-43",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "decision": "cost",
+    "prompt": "Administrators must reach virtual machines in a spoke virtual network over RDP without any of those machines holding a public IP address. There are three VMs and usage is occasional. The solution must minimize cost.",
+    "choices": [
+      "Azure Bastion in the hub",
+      "A site-to-site VPN gateway",
+      "An ExpressRoute circuit",
+      "A jump box with a public IP"
+    ],
+    "correctAnswers": [
+      "Azure Bastion in the hub"
+    ],
+    "explanation": "Bastion gives browser-based RDP with no public IP on the targets, and one host in the hub serves the spoke. A site-to-site VPN gateway would also remove the public IPs and is the tempting answer for anyone thinking in terms of network plumbing, but it bills continuously and is far dearer than Bastion for three occasional sessions. A jump box with a public IP fails the requirement outright rather than the cost test.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/bastion/bastion-overview"
+  },
+  {
+    "id": "q-o2-1-44",
+    "objectiveId": "o2-1",
+    "type": "single",
+    "decision": "coverage",
+    "prompt": "Network flow telemetry must be collected for every subnet in a virtual network, including subnets added later. The solution must leave no gaps in coverage as the network grows, with no per-subnet action when a subnet is created. Which feature should you enable?",
+    "choices": [
+      "The VNet flow logs feature",
+      "NSG flow logs, subnet by subnet",
+      "Packet capture on each VM",
+      "Connection monitor per subnet"
+    ],
+    "correctAnswers": [
+      "The VNet flow logs feature"
+    ],
+    "explanation": "VNet flow logs attach to the virtual network, so a subnet created later is covered with no further action. NSG flow logs collect the same records and are the familiar answer, but they attach per network security group, so every new subnet is a gap until someone remembers it — and that feature is being retired besides. Packet capture is diagnostic and time-bounded rather than continuous.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/network-watcher/vnet-flow-logs-overview"
   }
 ]

@@ -190,18 +190,19 @@
     "id": "q-o3-1-12",
     "objectiveId": "o3-1",
     "type": "single",
-    "prompt": "Which disk-encryption option covers temporary disks and caches WITHOUT an in-guest agent?",
+    "prompt": "Administrators must connect to Azure virtual machines through Azure Bastion using their own local RDP or SSH client rather than the browser, so they can copy files over the session. What must the Bastion host use?",
     "choices": [
-      "Encryption at host",
-      "Azure Disk Encryption (ADE)",
-      "Confidential disk encryption",
-      "Transparent Data Encryption"
+      "The Standard SKU or higher",
+      "The Basic SKU with a public IP",
+      "The Developer SKU instead",
+      "A shareable link on the host"
     ],
     "correctAnswers": [
-      "Encryption at host"
+      "The Standard SKU or higher"
     ],
-    "explanation": "Encryption at host operates at the VM host, covering temp disks and caches with nothing installed in the guest. ADE is the tempting answer because it is the better-known option, but it is in-guest by construction and never covers the temp disk the same way.",
-    "difficulty": "medium"
+    "explanation": "Native client support, and the file transfer that comes with it, requires the Standard SKU or above. The Basic SKU is the tempting answer because it provides working RDP and SSH, but only through the portal, so the native client requirement is what rules it out. A shareable link goes the other way, giving browser access to people without portal sign-in.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/bastion/bastion-overview"
   },
   {
     "id": "q-o3-1-13",
@@ -758,5 +759,99 @@
     ],
     "explanation": "ADE is deployed as a VM extension via Set-AzVMDiskEncryptionExtension. New-AzDiskEncryptionSet relates to customer-managed keys for managed disks (a different feature); the other two don't exist.",
     "difficulty": "hard"
+  },
+  {
+    "id": "q-o3-1-42",
+    "objectiveId": "o3-1",
+    "type": "single",
+    "prompt": "A virtual machine is already configured for just-in-time (JIT) VM access in Microsoft Defender for Cloud. You must request access to it from PowerShell. Which cmdlet should you run?",
+    "choices": [
+      "Start-AzJitNetworkAccessPolicy",
+      "Set-AzJitNetworkAccessPolicy",
+      "Get-AzJitNetworkAccessPolicy",
+      "Add-AzNetworkSecurityRuleConfig"
+    ],
+    "correctAnswers": [
+      "Start-AzJitNetworkAccessPolicy"
+    ],
+    "explanation": "Start requests access on a VM where JIT is already enabled, which is what opens the port for the caller. Set is the trap because it is the cmdlet most people reach for: it configures or enables the JIT policy rather than invoking it, so running it again does not grant access. Get only reads the policy, and the network security rule cmdlet edits an NSG directly, bypassing JIT altogether.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/just-in-time-access-usage"
+  },
+  {
+    "id": "q-o3-1-43",
+    "objectiveId": "o3-1",
+    "type": "single",
+    "prompt": "You are implementing an Azure Kubernetes Service cluster for a production workload that needs the highest possible network performance. Which network configuration should you use?",
+    "choices": [
+      "Azure CNI networking",
+      "Kubenet networking",
+      "Azure Load Balancer only",
+      "A Kubernetes service mesh"
+    ],
+    "correctAnswers": [
+      "Azure CNI networking"
+    ],
+    "explanation": "Azure CNI gives every pod an IP from the VNet, so traffic is routed natively without the IP forwarding and user-defined routes that kubenet depends on — and that extra hop is what costs kubenet its performance. Kubenet is the tempting answer because it conserves address space, which is a real advantage but not the one asked for. A service mesh adds a proxy on the data path rather than removing one.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/aks/concepts-network"
+  },
+  {
+    "id": "q-o3-1-44",
+    "objectiveId": "o3-1",
+    "type": "multiple",
+    "prompt": "A user named User1 must be able to administer images in an Azure container registry, which means pushing, pulling, and deleting them. The solution must follow the principle of least privilege. Which two roles should you assign? (Choose two.)",
+    "choices": [
+      "AcrPull",
+      "AcrPush",
+      "Contributor",
+      "AcrDelete"
+    ],
+    "correctAnswers": [
+      "AcrPush",
+      "AcrDelete"
+    ],
+    "explanation": "AcrPush already includes pulling, so pairing it with AcrDelete covers all three operations and nothing else. Contributor is the trap: it can do everything asked and more, so it fails least privilege rather than the task. AcrPull on its own is read-only, which is why adding it to AcrPush would change nothing.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/container-registry/container-registry-roles",
+    "decision": "least-privilege"
+  },
+  {
+    "id": "q-o3-1-45",
+    "objectiveId": "o3-1",
+    "type": "single",
+    "decision": "coverage",
+    "prompt": "A virtual machine must have its OS disk, its data disks, its temporary disk, and its disk caches all encrypted, and the solution must leave no gaps in coverage. Which option should you use?",
+    "choices": [
+      "Encryption at host",
+      "Azure Disk Encryption (ADE)",
+      "Platform-managed keys only",
+      "Confidential disk encryption"
+    ],
+    "correctAnswers": [
+      "Encryption at host"
+    ],
+    "explanation": "Encryption at host encrypts on the host itself, which covers the temporary disk and the caches as well as the persistent disks. ADE is the trap: it genuinely encrypts OS and data disks using in-guest BitLocker or DM-Crypt, but it leaves the temporary disk and caches outside its scope, so the coverage requirement is what rules it out. Platform-managed keys describe who holds the key, not what is covered.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/virtual-machines/disk-encryption"
+  },
+  {
+    "id": "q-o3-1-46",
+    "objectiveId": "o3-1",
+    "type": "single",
+    "decision": "least-privilege",
+    "prompt": "A deployment pipeline must pull container images from an Azure container registry and must never be able to push or delete an image. The solution must follow the principle of least privilege. Which role should you assign to its identity?",
+    "choices": [
+      "AcrPull on the registry",
+      "AcrPush, which also pulls",
+      "Contributor on the registry",
+      "AcrImageSigner on it"
+    ],
+    "correctAnswers": [
+      "AcrPull on the registry"
+    ],
+    "explanation": "AcrPull is read-only against the registry, which is the whole of what a deployment needs. AcrPush is the trap precisely because it includes pulling, so the pipeline would work and nobody would notice the extra write permission until it was misused. Contributor widens that further, and AcrImageSigner signs images rather than retrieving them.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/container-registry/container-registry-roles"
   }
 ]

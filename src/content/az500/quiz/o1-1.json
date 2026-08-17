@@ -761,5 +761,136 @@
     ],
     "explanation": "*/read under Actions grants control-plane read everywhere; an empty DataActions grants nothing at the data plane. NotActions/NotDataActions subtract, and AssignableScopes takes scopes, not operations.",
     "difficulty": "hard"
+  },
+  {
+    "id": "q-o1-1-42",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "All users have Windows devices joined to Microsoft Entra. You must implement multifactor authentication that keeps working when a device has neither internet nor mobile network access. Which authentication method should you use?",
+    "choices": [
+      "Windows Hello for Business",
+      "A push notification in Authenticator",
+      "A one-time code sent by SMS",
+      "An automated voice call to a phone"
+    ],
+    "correctAnswers": [
+      "Windows Hello for Business"
+    ],
+    "explanation": "Windows Hello for Business validates a biometric or PIN against a key bound to the device itself, so no network is involved at the moment of authentication. The Authenticator push notification is the tempting answer because the phone feels self-contained, but the notification has to reach the device, so it needs a data connection. SMS and voice both depend on the mobile network by definition.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-methods"
+  },
+  {
+    "id": "q-o1-1-43",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "An administrator named Admin1 must be able to configure access reviews in Microsoft Entra Privileged Identity Management. The solution must follow the principle of least privilege. Which role should you assign to Admin1?",
+    "choices": [
+      "Privileged Role Administrator",
+      "Global Administrator on the tenant",
+      "Security Administrator instead",
+      "Privileged Authentication Administrator"
+    ],
+    "correctAnswers": [
+      "Privileged Role Administrator"
+    ],
+    "explanation": "Privileged Role Administrator is the role that manages PIM, access reviews included. Global Administrator is the trap: it can do this and everything else, so it fails least privilege rather than the task. Security Administrator holds security features but not PIM role management, and Privileged Authentication Administrator resets authentication methods for any user, which is a different power entirely.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-create-roles-and-resource-roles-review",
+    "decision": "least-privilege"
+  },
+  {
+    "id": "q-o1-1-44",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "An administrator must be able to create and manage custom Azure RBAC role definitions in a subscription. The solution must follow the principle of least privilege. Which role should you assign?",
+    "choices": [
+      "User Access Administrator",
+      "Owner of the whole subscription",
+      "Contributor on the subscription",
+      "Privileged Role Administrator in Entra"
+    ],
+    "correctAnswers": [
+      "User Access Administrator"
+    ],
+    "explanation": "User Access Administrator is the least-privileged built-in role that grants `Microsoft.Authorization/roleDefinitions/write`, which is what authoring a custom role requires. Owner is the trap because it also grants that permission and would work, but it carries full resource control on top, so it fails least privilege. Contributor manages resources yet is explicitly denied authorization writes, and Privileged Role Administrator is a Microsoft Entra role, not an Azure RBAC one.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/role-based-access-control/custom-roles",
+    "decision": "least-privilege"
+  },
+  {
+    "id": "q-o1-1-45",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "prompt": "A user must be able to list every web app hosted in an App Service plan today, and must automatically be able to list any app added to the subscription later, with no further assignment. At which scope should you assign the Reader role?",
+    "choices": [
+      "The subscription itself",
+      "The App Service plan resource",
+      "The resource group holding the plan",
+      "Each individual web app"
+    ],
+    "correctAnswers": [
+      "The subscription itself"
+    ],
+    "explanation": "An assignment inherits downward, so Reader at the subscription reaches every resource that exists now and every resource created later. Assigning on the App Service plan is the tempting minimal answer and would satisfy the first half, but it grants nothing on resources added elsewhere in the subscription, so the automatic part fails. The resource group narrows the same problem rather than solving it.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/role-based-access-control/scope-overview"
+  },
+  {
+    "id": "q-o1-1-46",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "decision": "least-privilege",
+    "prompt": "A monitoring team must be able to start and restart two named virtual machines and read their status, and must not be able to resize, delete, or connect to them. The solution must follow the principle of least privilege. What should you assign?",
+    "choices": [
+      "A custom role with those actions",
+      "Virtual Machine Contributor role",
+      "Contributor on the resource group",
+      "Desktop Virtualization Power On role"
+    ],
+    "correctAnswers": [
+      "A custom role with those actions"
+    ],
+    "explanation": "No built-in role stops at start, restart, and read, so a custom role holding exactly those actions is the only fit. Virtual Machine Contributor is the trap: it performs the task and is the reflex answer, but it also resizes and deletes machines, so it fails on privilege rather than capability. Contributor widens the same problem to the whole resource group.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/role-based-access-control/custom-roles"
+  },
+  {
+    "id": "q-o1-1-47",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "decision": "least-privilege",
+    "prompt": "An administrator needs a privileged Microsoft Entra role for a few hours each month, with approval and justification recorded each time. The solution must follow the principle of least privilege. How should you configure the assignment in PIM?",
+    "choices": [
+      "As an eligible assignment",
+      "As a permanent active assignment",
+      "As a time-bound active assignment",
+      "As a group membership instead"
+    ],
+    "correctAnswers": [
+      "As an eligible assignment"
+    ],
+    "explanation": "An eligible assignment grants nothing until the holder activates it, which is what makes approval and justification possible each time. A time-bound active assignment is the tempting middle ground: it does expire, but the permissions are live for the whole window whether they are used or not. A permanent active assignment fails on both counts.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-configure"
+  },
+  {
+    "id": "q-o1-1-48",
+    "objectiveId": "o1-1",
+    "type": "single",
+    "decision": "coverage",
+    "prompt": "A Conditional Access policy must require phishing-resistant MFA for every account holding the Global Administrator role, including accounts granted that role in future. The solution must leave no gaps in coverage as staff change. How should you scope it?",
+    "choices": [
+      "Target the directory role",
+      "Target a group of those users",
+      "Target each user individually",
+      "Target all users, then exclude"
+    ],
+    "correctAnswers": [
+      "Target the directory role"
+    ],
+    "explanation": "Targeting the directory role means membership is evaluated at sign-in, so an account granted the role tomorrow is covered with no policy edit. A group is the tempting answer because it is the usual way to scope anything, but someone has to remember to add the new administrator to it, and that gap is exactly what the requirement forbids. Naming users individually is the same problem, worse.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-users-groups"
   }
 ]

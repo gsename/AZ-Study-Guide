@@ -763,5 +763,62 @@
     ],
     "explanation": "The TLS floor is a property of the app, so it is set on the web app. `Set-AzAppServicePlan` is the tempting neighbour and cannot carry it: a plan is the compute container, and several apps on one plan can each have a different minimum. `-SslState` belongs to a custom-domain binding and governs whether a hostname requires SNI or IP-based SSL, rather than which protocol versions are refused.",
     "difficulty": "medium"
+  },
+  {
+    "id": "q-o2-3-42",
+    "objectiveId": "o2-3",
+    "type": "single",
+    "decision": "cost",
+    "prompt": "Volumetric DDoS protection with cost protection and rapid-response support is required for three public IP addresses on one virtual network. No other public IPs exist. The solution must minimize cost.",
+    "choices": [
+      "Azure DDoS IP Protection",
+      "Azure DDoS Network Protection",
+      "A WAF policy in Prevention mode",
+      "Azure Firewall Premium on the hub"
+    ],
+    "correctAnswers": [
+      "Azure DDoS IP Protection"
+    ],
+    "explanation": "IP Protection bills per protected address and shares the mitigation engine with the network tier, so three addresses cost far less than a plan. Network Protection is the trap: it delivers the same mitigation and the same support, but it is priced per plan covering up to 100 addresses, which three cannot justify. A WAF answers application-layer attacks rather than volumetric ones.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison"
+  },
+  {
+    "id": "q-o2-3-43",
+    "objectiveId": "o2-3",
+    "type": "single",
+    "decision": "coverage",
+    "prompt": "A web application is served from three Azure regions and must be protected against the OWASP top ten. Requests must be inspected as close to the client as possible, and the solution must leave no gaps in coverage across the three regions. What should you deploy?",
+    "choices": [
+      "Front Door with a WAF policy",
+      "An Application Gateway per region",
+      "Azure Firewall Premium per region",
+      "A WAF policy attached to each NSG"
+    ],
+    "correctAnswers": [
+      "Front Door with a WAF policy"
+    ],
+    "explanation": "Front Door inspects at the global edge, so a single WAF policy covers all three regions with nothing to keep in step. Three regional Application Gateways would also protect every region and is the tempting answer, but inspection then happens after the request has reached a region, and three policies can drift apart — the coverage requirement is what rules it out, not its capability. A WAF policy cannot attach to an NSG at all.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/web-application-firewall/afds/afds-overview"
+  },
+  {
+    "id": "q-o2-3-44",
+    "objectiveId": "o2-3",
+    "type": "single",
+    "decision": "least-privilege",
+    "prompt": "Twelve Azure Firewall instances across four regions must share one rule set, and regional operators must be able to read the rules but never edit them. The solution must follow the principle of least privilege for those operators.",
+    "choices": [
+      "A Firewall Manager policy",
+      "A rule collection in each firewall",
+      "An ARM template per firewall",
+      "A shared UDR across the regions"
+    ],
+    "correctAnswers": [
+      "A Firewall Manager policy"
+    ],
+    "explanation": "A Firewall Manager policy is a resource of its own, so read access on it can be granted separately from the firewalls the operators run. Copying a rule collection into each firewall reaches the same filtering and is the obvious approach, but editing rules then requires write access on the firewall itself, so the operators inevitably get more than reading. ARM templates deploy configuration without governing who may change it afterwards.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/firewall-manager/policy-overview"
   }
 ]

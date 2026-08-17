@@ -87,12 +87,26 @@ export function domainWeightMidpoint(domain: Domain): number {
 /**
  * Builds a mock-exam question set drawn proportionally to each domain's
  * official exam weighting (using the midpoint of its published range).
+ *
+ * `constraintSharePercent` reserves that share of EACH domain's allocation for
+ * items marked `decision` — the ones where several options do the job and only
+ * one respects least privilege, lowest cost, or widest coverage. Without it, a
+ * bank holding 2.3% such items yields 0.9 of them in a 40-question draw, so the
+ * shape a real exam leans on effectively never appears.
+ *
+ * The quota is applied INSIDE each domain's count, never across domains: the
+ * allocation `allocateByWeight` produced is what the published blueprint says,
+ * and trading that away for this would be a worse exam, not a better one.
+ *
+ * Defaults to 0, which reproduces the original draw exactly — a certification
+ * that has not measured a share of its own keeps the plain weighted draw.
  */
 export function buildExam(
   domains: Domain[],
   objectivesByDomain: Record<string, Objective[]>,
   questionsByObjective: Record<string, QuizQuestion[]>,
   totalQuestions: number,
+  constraintSharePercent = 0,
 ): QuizQuestion[] {
   const weights = domains.map(domainWeightMidpoint)
   const counts = allocateByWeight(weights, totalQuestions)
@@ -102,10 +116,60 @@ export function buildExam(
     const objectiveIds = (objectivesByDomain[domain.id] ?? []).map((o) => o.id)
     const pool = objectiveIds.flatMap((oid) => questionsByObjective[oid] ?? [])
     const need = Math.min(counts[idx], pool.length)
-    selected.push(...shuffle(pool).slice(0, need))
+
+    if (constraintSharePercent <= 0) {
+      selected.push(...shuffle(pool).slice(0, need))
+      return
+    }
+
+    // Take what the domain can supply rather than what the share asks for: a
+    // domain with too few constraint items must still contribute `need`
+    // questions, otherwise the quota would quietly shorten the exam.
+    const constraintPool = pool.filter((q) => q.decision)
+    const plainPool = pool.filter((q) => !q.decision)
+    const want = Math.min(Math.round((need * constraintSharePercent) / 100), constraintPool.length)
+    const picked = shuffle(constraintPool).slice(0, want)
+
+    // The remainder is drawn from NON-constraint items only, which makes the
+    // share a target rather than a floor. Letting the remainder draw from the
+    // whole pool would overshoot — on this bank, 22% instead of 17% — and
+    // `ExamStart` states the count to the learner, so the draw owes them that
+    // number rather than "at least" it.
+    const plain = shuffle(plainPool).slice(0, need - picked.length)
+
+    // Only if the domain has too few plain items does it top up from the
+    // constraint ones it did not reserve, so length still wins over composition.
+    const short = need - picked.length - plain.length
+    const topUp = short > 0 ? shuffle(constraintPool.filter((q) => !picked.includes(q))).slice(0, short) : []
+
+    selected.push(...picked, ...plain, ...topUp)
   })
 
   return shuffle(groupByCaseStudy(selected)).flat()
+}
+
+/**
+ * How many constraint items a draw of `totalQuestions` will contain, so a page
+ * can state the composition it is about to produce instead of asserting it.
+ * Mirrors the arithmetic above, including the per-domain clamp.
+ */
+export function constraintCount(
+  domains: Domain[],
+  objectivesByDomain: Record<string, Objective[]>,
+  questionsByObjective: Record<string, QuizQuestion[]>,
+  totalQuestions: number,
+  constraintSharePercent = 0,
+): number {
+  if (constraintSharePercent <= 0) return 0
+  const counts = allocateByWeight(domains.map(domainWeightMidpoint), totalQuestions)
+  return domains.reduce((sum, domain, idx) => {
+    const pool = (objectivesByDomain[domain.id] ?? []).flatMap(
+      (o) => questionsByObjective[o.id] ?? [],
+    )
+    const need = Math.min(counts[idx], pool.length)
+    const available = pool.filter((q) => q.decision).length
+    return sum + Math.min(Math.round((need * constraintSharePercent) / 100), available)
+  }, 0)
 }
 
 /**

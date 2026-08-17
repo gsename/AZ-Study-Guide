@@ -54,6 +54,25 @@ export interface ExamMeta {
     /** When that figure was measured — it moves as the bank is remediated. */
     measuredOn: string
   }
+  /**
+   * What share of a drawn mock exam must be decided by a CONSTRAINT — an item
+   * where several options do the job and only one respects "least privilege" or
+   * "minimize cost". `buildExam` reserves this share inside each domain's
+   * allocation, so the published domain weighting is untouched.
+   *
+   * Unlike `passingScore` or the domain weights, this figure is NOT published by
+   * the vendor: it is measured off practice assessments, so `source` must say so
+   * and the UI must not present it as official. Same treatment as
+   * `questionCountRangeSource`. Omit it and the draw behaves as it always did.
+   */
+  constraintShare?: {
+    /** Percentage of each domain's allocation reserved for constraint items. */
+    percent: number
+    /** Where the figure comes from, stated plainly enough to be audited. */
+    source: string
+    /** When it was counted — recount if the exam's own style shifts. */
+    measuredOn: string
+  }
 }
 
 export interface CertContent {

@@ -573,7 +573,8 @@
     "explanation": "Key Vault Secrets User is the narrowest role that returns secret values, which is what least privilege means here. Key Vault Administrator is the tempting answer because it obviously works, whereas it also grants role management and deletion — and Owner or Contributor grant management-plane control without necessarily granting the data-plane read at all.",
     "src": "kb-kv",
     "skillRef": "d1b3",
-    "difficulty": "easy"
+    "difficulty": "easy",
+    "decision": "least-privilege"
   },
   {
     "src": "kb-kv",

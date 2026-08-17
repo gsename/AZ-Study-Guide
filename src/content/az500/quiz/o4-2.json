@@ -703,5 +703,116 @@
     ],
     "explanation": "Multicloud onboarding creates a security connector under Environment settings. `security pricing` sets plan tiers (there is no 'AWS' pricing name); Arc onboards individual machines, not cloud accounts.",
     "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-2-42",
+    "objectiveId": "o4-2",
+    "type": "single",
+    "prompt": "You are deploying Microsoft Defender External Attack Surface Management (Defender EASM) so that it discovers domains, IP blocks, hostnames, and certificates belonging to your organization. What must you configure first?",
+    "choices": [
+      "A discovery group",
+      "A data collection rule",
+      "A Sentinel connector",
+      "An ARM template"
+    ],
+    "correctAnswers": [
+      "A discovery group"
+    ],
+    "explanation": "Defender EASM discovers nothing until a discovery group exists with at least one seed — a domain, an ASN, or an IP block — from which it can pivot outward. A data collection rule is the tempting answer because it also concerns getting data in, but a DCR governs telemetry ingestion into Azure Monitor and has no role in external surface scanning. An ARM template can automate the deployment, yet the discovery group is still the first thing it would have to create.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/external-attack-surface-management/what-is-discovery"
+  },
+  {
+    "id": "q-o4-2-43",
+    "objectiveId": "o4-2",
+    "type": "single",
+    "prompt": "Your compliance team reports that the figures in the Microsoft Defender for Cloud regulatory compliance dashboard are stale by the time they are analysed. You must make compliance findings continuously available for querying outside the dashboard. What should you enable?",
+    "choices": [
+      "Continuous export to Log Analytics",
+      "A manual compliance check each week",
+      "A weekly snapshot of the dashboard",
+      "An extra regulatory standard on the scope"
+    ],
+    "correctAnswers": [
+      "Continuous export to Log Analytics"
+    ],
+    "explanation": "Continuous export streams assessments and compliance findings into a Log Analytics workspace as they change, which is what makes them queryable outside the dashboard. A weekly snapshot is the tempting answer since it does produce a queryable artefact, but it captures a moment rather than tracking change, so the staleness returns between snapshots. Adding a standard changes what is measured, not how current the data is.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/continuous-export"
+  },
+  {
+    "id": "q-o4-2-44",
+    "objectiveId": "o4-2",
+    "type": "single",
+    "prompt": "Compliance posture is currently read in one place for Azure and in another for Microsoft 365, and the two are reconciled by hand. You must bring both into a single centralized view of compliance. Which service should you integrate with?",
+    "choices": [
+      "Microsoft Purview Compliance Manager",
+      "Microsoft Sentinel with a data connector",
+      "Azure Policy with a custom initiative",
+      "Microsoft Defender EASM discovery"
+    ],
+    "correctAnswers": [
+      "Microsoft Purview Compliance Manager"
+    ],
+    "explanation": "Purview Compliance Manager is built to centralize compliance assessment and scoring across environments, which is exactly the reconciliation being done by hand. Sentinel is the tempting pick because it also aggregates across sources, but it aggregates security events for detection rather than compliance controls for attestation. A custom initiative adds Azure-side policy checks without touching Microsoft 365 at all.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/purview/compliance-manager"
+  },
+  {
+    "id": "q-o4-2-45",
+    "objectiveId": "o4-2",
+    "type": "single",
+    "prompt": "A user named Admin1 holds the Reader role on a subscription. Admin1 must be able to create and assign custom security standards in Microsoft Defender for Cloud. The solution must follow the principle of least privilege. Which role should you assign?",
+    "choices": [
+      "Security Administrator",
+      "Security Assessment Contributor",
+      "Owner on the subscription",
+      "Global Administrator in Entra"
+    ],
+    "correctAnswers": [
+      "Security Administrator"
+    ],
+    "explanation": "Security Administrator carries enough permission on the subscription to author and assign custom standards, and no more. Security Assessment Contributor is the trap: the name suggests it, but it cannot create custom standards — the option is greyed out for it. Owner would work and fails only on least privilege, whereas Global Administrator is a Microsoft Entra role and holds no permission on the Azure subscription at all.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/custom-security-policies",
+    "decision": "least-privilege"
+  },
+  {
+    "id": "q-o4-2-46",
+    "objectiveId": "o4-2",
+    "type": "single",
+    "decision": "coverage",
+    "prompt": "Microsoft Defender for Cloud must assess every subscription under a management group, including subscriptions created later. The solution must leave no gaps in coverage as the estate grows. What should you do?",
+    "choices": [
+      "Assign a policy at the group",
+      "Enable the plans per subscription",
+      "Export findings continuously",
+      "Add a custom standard to the group"
+    ],
+    "correctAnswers": [
+      "Assign a policy at the group"
+    ],
+    "explanation": "A policy assignment at the management group applies to subscriptions that join afterwards, so a new subscription is assessed without anyone remembering it. Enabling the plans subscription by subscription is the tempting answer because that is where plans actually live, but every future subscription is then a gap until someone acts — which is exactly what the requirement forbids. Continuous export moves findings without deciding what is assessed.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/enable-all-plans"
+  },
+  {
+    "id": "q-o4-2-47",
+    "objectiveId": "o4-2",
+    "type": "single",
+    "decision": "least-privilege",
+    "prompt": "An auditor must read the Secure Score, the asset inventory, and the regulatory compliance dashboard in Microsoft Defender for Cloud, and must not be able to dismiss a recommendation or change a policy. The solution must follow the principle of least privilege.",
+    "choices": [
+      "The Security Reader role",
+      "Security Administrator role",
+      "Reader on the subscription",
+      "Security Assessment Contributor"
+    ],
+    "correctAnswers": [
+      "The Security Reader role"
+    ],
+    "explanation": "Security Reader sees everything Defender for Cloud reports and can change none of it. Security Administrator is the trap: it grants the same visibility, then adds dismissing recommendations and editing policies, so it fails on privilege. Plain Reader is the interesting near-miss — it reads Azure resources but not the security-specific views the auditor needs, so it fails the task instead.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/permissions"
   }
 ]

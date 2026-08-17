@@ -2,7 +2,12 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getCertContent } from '../content/registry'
 import { useCertId } from '../certifications'
-import { allocateByWeight, buildExam, domainWeightMidpoint } from '../lib/examBuilder'
+import {
+  allocateByWeight,
+  buildExam,
+  constraintCount,
+  domainWeightMidpoint,
+} from '../lib/examBuilder'
 import { saveExamSession, examLengthOptions, defaultExamLength } from '../lib/examSession'
 import ExamMetaNotices from '../components/ExamMetaNotices'
 
@@ -20,8 +25,25 @@ export default function ExamStart() {
   // Shown per domain so the weighting is verifiable rather than asserted.
   const allocation = allocateByWeight(domains.map(domainWeightMidpoint), count)
 
+  // The draw now shapes composition on a second axis, so the page has to say so:
+  // otherwise it describes a weighting it no longer governs on its own.
+  const constraintShare = examMeta.constraintShare?.percent ?? 0
+  const constraintQuestions = constraintCount(
+    domains,
+    objectivesByDomain,
+    questionsByObjective,
+    count,
+    constraintShare,
+  )
+
   function start() {
-    const exam = buildExam(domains, objectivesByDomain, questionsByObjective, count)
+    const exam = buildExam(
+      domains,
+      objectivesByDomain,
+      questionsByObjective,
+      count,
+      constraintShare,
+    )
     saveExamSession(certId, {
       questionIds: exam.map((q) => q.id),
       startedAt: new Date().toISOString(),
@@ -95,6 +117,18 @@ export default function ExamStart() {
           Les questions d'une même étude de cas sont présentées <strong>à la suite</strong>, comme dans le vrai
           examen : le scénario n'est à lire qu'une fois.
         </p>
+        {constraintQuestions > 0 && (
+          <p className="muted">
+            <strong>
+              {constraintQuestions} question{constraintQuestions === 1 ? '' : 's'} sur {count}
+            </strong>{' '}
+            se départage{constraintQuestions === 1 ? '' : 'nt'} sur une contrainte — plusieurs options
+            fonctionnent et une seule respecte le privilège minimum, le coût le plus bas ou la couverture la
+            plus large. La cible de {constraintShare}&nbsp;% vient d'un comptage sur deux évaluations
+            d'entraînement, <strong>pas d'un chiffre publié par Microsoft</strong> : elle est indicative, à la
+            différence de la pondération par domaine ci-dessus.
+          </p>
+        )}
         <p className="muted">
           Mix de formats pour t'entraîner à leur logique (QCM simple/multiple, étude de cas, réordonnancement,
           active screen, grille Oui/Non, glisser-déposer, phrase à compléter, construction de liste, séquences

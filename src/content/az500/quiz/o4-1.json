@@ -770,5 +770,243 @@
     ],
     "explanation": "`rotate` is the tempting near-miss and performs one immediate rotation, whereas `rotation-policy update` installs the schedule that then rotates the key without anyone running a command. The `@` prefix is the Azure CLI convention for reading a value out of a file: without it the CLI receives the literal filename rather than the JSON inside it, and rejects it as malformed even though the file is valid.",
     "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-1-42",
+    "objectiveId": "o4-1",
+    "type": "single",
+    "prompt": "A key vault named Vault1 uses the Azure RBAC permission model. A user named User1 must create, rotate, and delete keys in Vault1, but must not be able to grant anyone else access to it. The solution must follow the principle of least privilege. Which role should you assign?",
+    "choices": [
+      "Key Vault Crypto Officer role",
+      "Key Vault Crypto User role only",
+      "Key Vault Secrets Officer role",
+      "Key Vault Administrator on the vault"
+    ],
+    "correctAnswers": [
+      "Key Vault Crypto Officer role"
+    ],
+    "explanation": "Crypto Officer covers every key operation — create, rotate, delete, wrap, encrypt — but not permission management, which is exactly the boundary asked for. Key Vault Administrator also satisfies the task and is the tempting answer, but it adds permission management on top, so it fails least privilege rather than the task. Officer manages the object; User only uses it; Crypto/Secrets names the object type, not the level.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide",
+    "decision": "least-privilege"
+  },
+  {
+    "id": "q-o4-1-43",
+    "objectiveId": "o4-1",
+    "type": "single",
+    "prompt": "An application must encrypt and decrypt data using an existing key in a key vault that uses Azure RBAC. The application must never create, rotate, or delete keys. The solution must follow the principle of least privilege. Which role should you assign to its managed identity?",
+    "choices": [
+      "Key Vault Crypto User role",
+      "Key Vault Crypto Officer role instead",
+      "Key Vault Secrets User role",
+      "Key Vault Reader role on the vault"
+    ],
+    "correctAnswers": [
+      "Key Vault Crypto User role"
+    ],
+    "explanation": "Crypto User permits cryptographic operations with a key — encrypt, decrypt, sign, wrap — and nothing that manages the key itself. Crypto Officer is the trap because it would also work: it simply grants create, rotate, and delete as well, which the requirement forbids. Reader sees metadata but performs no operation, and Secrets User reads secrets rather than using keys.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide",
+    "decision": "least-privilege"
+  },
+  {
+    "id": "q-o4-1-44",
+    "objectiveId": "o4-1",
+    "type": "single",
+    "prompt": "A solution must hold encryption keys that satisfy FIPS 140-2 Level 3, must guarantee that keys never leave the Azure region where they are deployed, and must accept keys generated in an on-premises hardware security module. What should you deploy?",
+    "choices": [
+      "Azure Key Vault Managed HSM",
+      "An HSM-protected Azure key vault",
+      "A software-protected Azure key vault",
+      "Azure Key Vault with its firewall enabled"
+    ],
+    "correctAnswers": [
+      "Azure Key Vault Managed HSM"
+    ],
+    "explanation": "Managed HSM is the only option that is FIPS 140-2 Level 3 validated, keeps customer data inside the deployment region, and accepts a key generated in an on-premises HSM. An HSM-protected vault is the tempting near-miss: it is genuinely HSM-backed, but validated at Level 2, so it fails the stated level rather than the concept. The vault firewall restricts network reach and has no bearing on key import.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/key-vault/managed-hsm/overview"
+  },
+  {
+    "id": "q-o4-1-45",
+    "objectiveId": "o4-1",
+    "type": "statement-grid",
+    "prompt": "Evaluate each statement about FIPS 140-2 validation levels in Azure Key Vault.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "A software-protected key vault is validated at Level 1.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s2",
+        "text": "Managed HSM is validated at Level 2, the same as a premium vault.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s3",
+        "text": "An HSM-protected key vault is validated at Level 2.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s4",
+        "text": "Azure SQL Database can hold keys at Level 3 on its own.",
+        "correctValue": "No"
+      }
+    ],
+    "explanation": "The ladder is software-protected at Level 1, HSM-protected at Level 2, and Managed HSM at Level 3 — Managed HSM is the only one that reaches Level 3, not the equal of a premium vault. Azure SQL Database is not a key store and carries no FIPS validation of its own; it consumes a key from Key Vault rather than holding one.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/key-vault/keys/about-keys"
+  },
+  {
+    "id": "q-o4-1-46",
+    "objectiveId": "o4-1",
+    "type": "single",
+    "prompt": "Keys used to encrypt data in Azure Storage must not be permanently erasable for 90 days after deletion, including by an administrator who deletes them deliberately. The solution must minimize cost. What should you configure?",
+    "choices": [
+      "A software vault with purge protection",
+      "A software-protected vault with soft delete only",
+      "An HSM-protected vault with purge protection",
+      "A Managed HSM with purge protection enabled"
+    ],
+    "correctAnswers": [
+      "A software vault with purge protection"
+    ],
+    "explanation": "Purge protection is what blocks a permanent erase during the retention period; soft delete alone only makes the delete recoverable, and still allows a purge, so it does not meet the requirement. Among the tiers that do meet it, the software-protected vault is the cheapest — an HSM-protected vault and Managed HSM both satisfy the retention rule but cost more, so they fail the cost constraint rather than the security one.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/key-vault/general/soft-delete-overview",
+    "decision": "cost"
+  },
+  {
+    "id": "q-o4-1-47",
+    "objectiveId": "o4-1",
+    "type": "single",
+    "prompt": "Your security policy requires that encryption keys be generated on an on-premises hardware security module and never generated in the cloud. The keys must then be usable by Azure services. What must the target key store support?",
+    "choices": [
+      "Bring your own key (BYOK) import",
+      "Automatic key rotation on a schedule",
+      "Customer-managed keys for storage",
+      "Role-based access control on the key store"
+    ],
+    "correctAnswers": [
+      "Bring your own key (BYOK) import"
+    ],
+    "explanation": "BYOK is the capability that imports a key generated outside Azure, wrapped so it is never exposed in the clear. Customer-managed keys is the closest distractor and often confused with it: CMK means the service uses a key you control, which says nothing about where that key was generated — a CMK created in Azure is still a CMK. Rotation and RBAC govern the key lifecycle and access, not its origin.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/key-vault/keys/hsm-protected-keys-byok"
+  },
+  {
+    "id": "q-o4-1-48",
+    "objectiveId": "o4-1",
+    "type": "single",
+    "prompt": "A key in a key vault encrypts an Azure SQL database. Whenever the vault signals that the key needs rotation, a new key must be generated in SQL and stored back in the vault, with no human step. The solution must minimize cost. What should you include?",
+    "choices": [
+      "Azure Event Grid and Azure Functions",
+      "Azure Event Grid and an Azure web app",
+      "Azure Monitor alerts and a Logic App",
+      "A Log Analytics workspace and a query alert"
+    ],
+    "correctAnswers": [
+      "Azure Event Grid and Azure Functions"
+    ],
+    "explanation": "Key Vault publishes key lifecycle events to Event Grid, and a Function is the cheapest compute that can subscribe and act. The web app pairing is the trap: it works exactly the same way and is a valid design, but an always-on app plan costs more than consumption-billed Functions, so it fails the cost constraint. A Log Analytics query cannot trigger compute at all.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/key-vault/general/event-grid-overview",
+    "decision": "cost"
+  },
+  {
+    "id": "q-o4-1-49",
+    "objectiveId": "o4-1",
+    "type": "single",
+    "prompt": "You must run workloads that demonstrate compliance with FedRAMP High, PCI DSS, ISO 27001, and the GDPR. For which of these must you build a custom initiative in Azure Policy rather than assign a built-in one?",
+    "choices": [
+      "The GDPR, a privacy regulation",
+      "PCI DSS, a payment card standard",
+      "ISO 27001, an information standard",
+      "FedRAMP High, a US federal baseline"
+    ],
+    "correctAnswers": [
+      "The GDPR, a privacy regulation"
+    ],
+    "explanation": "Azure Policy ships built-in regulatory compliance initiatives for FedRAMP High, PCI DSS, and ISO 27001, so those are assigned rather than authored. The GDPR has no built-in initiative, which makes a custom one the only route. PCI DSS is the tempting pick because it is the narrowest and most industry specific of the four, but narrowness is not what decides this — availability as a built-in is.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/governance/policy/samples/"
+  },
+  {
+    "id": "q-o4-1-50",
+    "objectiveId": "o4-1",
+    "type": "drag-match",
+    "prompt": "Match each Key Vault requirement to the feature that satisfies it.",
+    "sources": [
+      "Purge protection",
+      "Soft delete",
+      "Managed HSM",
+      "Private endpoint on the vault",
+      "Key rotation policy",
+      "Vault access policy"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "label": "Stop a deleted key being permanently erased before the retention window closes",
+        "correctSource": "Purge protection"
+      },
+      {
+        "id": "t2",
+        "label": "Make a deleted key recoverable, while still allowing it to be purged",
+        "correctSource": "Soft delete"
+      },
+      {
+        "id": "t3",
+        "label": "Reach FIPS 140-2 Level 3 validation for the key store itself",
+        "correctSource": "Managed HSM"
+      },
+      {
+        "id": "t4",
+        "label": "Remove the vault from the public internet and reach it from a VNet",
+        "correctSource": "Private endpoint on the vault"
+      }
+    ],
+    "explanation": "Soft delete and purge protection are routinely conflated: soft delete makes a deletion recoverable, whereas purge protection is what stops the object being permanently erased before the retention window closes. Only Managed HSM reaches Level 3 — an HSM-protected vault stops at Level 2 — and network reach is a firewall concern, not a durability one.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/key-vault/general/soft-delete-overview"
+  },
+  {
+    "id": "q-o4-1-51",
+    "objectiveId": "o4-1",
+    "type": "single",
+    "decision": "least-privilege",
+    "prompt": "An operator must create, renew, and delete certificates in a key vault that uses Azure RBAC, and must not be able to read secrets or perform key operations. The solution must follow the principle of least privilege. Which role should you assign?",
+    "choices": [
+      "Key Vault Certificates Officer",
+      "Key Vault Administrator instead",
+      "Key Vault Secrets Officer role",
+      "Key Vault Crypto Officer role"
+    ],
+    "correctAnswers": [
+      "Key Vault Certificates Officer"
+    ],
+    "explanation": "Certificates Officer covers the whole certificate lifecycle and reaches neither secrets nor keys. Key Vault Administrator is the trap: it does the job and everything else in the vault, so it fails on privilege rather than capability. The Secrets and Crypto Officer roles name the wrong object type — the noun in the role name is what it governs, and the Officer/User half is the level.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide"
+  },
+  {
+    "id": "q-o4-1-52",
+    "objectiveId": "o4-1",
+    "type": "single",
+    "decision": "least-privilege",
+    "prompt": "A governance engineer must create policy assignments and grant exemptions for an Azure subscription, and must not be able to deploy or modify the resources those policies govern. The solution must follow the principle of least privilege. Which role should you assign?",
+    "choices": [
+      "Resource Policy Contributor",
+      "Owner of the whole subscription",
+      "Contributor on the subscription",
+      "User Access Administrator role"
+    ],
+    "correctAnswers": [
+      "Resource Policy Contributor"
+    ],
+    "explanation": "Resource Policy Contributor grants policy authoring and exemptions with no permission over the resources themselves. Owner is the trap because it would work and is what governance teams are often handed, but it carries full resource control, which the requirement rules out. Contributor is the mirror image: it manages resources and cannot grant exemptions.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles"
   }
 ]

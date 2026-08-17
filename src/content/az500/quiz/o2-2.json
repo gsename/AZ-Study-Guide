@@ -746,5 +746,61 @@
     ],
     "explanation": "Default-action Deny keeps the public endpoint and allows only configured exceptions, whereas public-network-access Disabled removes the public endpoint outright. Treating them as equivalent is the trap, since the first still answers on a public address.",
     "difficulty": "hard"
+  },
+  {
+    "id": "q-o2-2-42",
+    "objectiveId": "o2-2",
+    "type": "single",
+    "prompt": "An App Service web app runs in one Azure region and the virtual network it must reach is in a different region. You must integrate the app with that virtual network. What must you deploy first?",
+    "choices": [
+      "A virtual network gateway",
+      "A service endpoint on the subnet",
+      "A private endpoint for the app",
+      "Regional VNet integration"
+    ],
+    "correctAnswers": [
+      "A virtual network gateway"
+    ],
+    "explanation": "Across regions the app cannot use regional VNet integration, so gateway-required integration is the only route, and that form depends on a virtual network gateway existing in the target VNet first. Regional integration is the tempting answer because it is the usual mechanism, but it requires the app and the VNet to share a region. A private endpoint governs inbound traffic to the app rather than the app reaching out.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/app-service/overview-vnet-integration"
+  },
+  {
+    "id": "q-o2-2-43",
+    "objectiveId": "o2-2",
+    "type": "single",
+    "decision": "least-privilege",
+    "prompt": "A virtual machine must reach one specific storage account and must not be able to reach any other storage account in Azure. The solution must follow the principle of least privilege on network exposure.",
+    "choices": [
+      "A private endpoint on the account",
+      "A service endpoint on the whole subnet",
+      "A storage firewall IP allow rule",
+      "An NSG rule to the Storage tag"
+    ],
+    "correctAnswers": [
+      "A private endpoint on the account"
+    ],
+    "explanation": "A private endpoint maps one specific account into the VNet, so the VM reaches that instance and no other. A service endpoint is the trap because it also keeps traffic on the Azure backbone and feels equivalent, but it opens the route to the storage service as a whole, leaving every other account reachable. The NSG service tag has the same weakness at a coarser grain.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview"
+  },
+  {
+    "id": "q-o2-2-44",
+    "objectiveId": "o2-2",
+    "type": "single",
+    "decision": "cost",
+    "prompt": "An App Service web app must be reachable only from a virtual network, with no inbound public route at all. A single app is in scope. The solution must minimize cost.",
+    "choices": [
+      "A private endpoint on the app",
+      "An App Service Environment",
+      "Regional VNet integration only",
+      "An internal load balancer in front"
+    ],
+    "correctAnswers": [
+      "A private endpoint on the app"
+    ],
+    "explanation": "A private endpoint removes the public inbound route on a standard plan, which is all a single app needs. An App Service Environment achieves the same isolation and is the tempting answer because it is the fully isolated option, but it carries a dedicated-infrastructure price that a single app cannot justify. Regional VNet integration governs outbound traffic only, so it does not meet the requirement at any price.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/app-service/networking/private-endpoint"
   }
 ]

@@ -125,6 +125,88 @@ assert('  no duplicate questions in a draw', new Set(one.map((x) => x.id)).size 
 const known = new Set([...questionsByObjective.o1, ...questionsByObjective.o2].map((x) => x.id))
 assert('  every drawn question exists in the pool', one.every((x) => known.has(x.id)))
 
+/* ==========================================================================
+   The constraint quota. It shapes composition on a second axis, so the risk is
+   that it quietly buys its share with something the blueprint governs.
+   ========================================================================== */
+console.log('\nbuildExam — constraint quota')
+
+// Real AZ-500 proportions: four domains, and a d2 that starts with too few
+// constraint items to fill its share, which is the case that must degrade well.
+const qd = (id, obj, decision) => ({ id, objectiveId: obj, decision })
+const QD = {
+  o1: [...Array(20)].map((_, i) => qd(`p${i}`, 'o1', i < 6 ? 'least-privilege' : undefined)),
+  o2: [...Array(20)].map((_, i) => qd(`q${i}`, 'o2', i < 1 ? 'cost' : undefined)),
+}
+const DD = [
+  { id: 'd1', name: 'D1', weightPercent: { min: 50, max: 50 } },
+  { id: 'd2', name: 'D2', weightPercent: { min: 50, max: 50 } },
+]
+const OD = { d1: [{ id: 'o1' }], d2: [{ id: 'o2' }] }
+
+// 1. The share is honoured where the pool can supply it: 10 per domain at 20%
+//    asks for 2, and o1 has 6 to give.
+const withQuota = buildExam(DD, OD, QD, 20, 20)
+const inD1 = withQuota.filter((x) => x.objectiveId === 'o1' && x.decision).length
+assert('  fills the share from a domain that can supply it', inD1 === 2, `${inD1} of 2 in d1`)
+
+// 2. Degrades cleanly: d2 holds one constraint item but must still contribute 10.
+const inD2 = withQuota.filter((x) => x.objectiveId === 'o2').length
+const conD2 = withQuota.filter((x) => x.objectiveId === 'o2' && x.decision).length
+assert('  a short domain still contributes its full allocation', inD2 === 10, `${inD2} of 10`)
+assert('  and gives what it has rather than over-drawing', conD2 === 1, `${conD2} of 1 available`)
+assert('  exam length is unaffected by the quota', withQuota.length === 20, `${withQuota.length}`)
+
+// 3. The blueprint allocation is untouched — this is the trade that must NOT
+//    have happened. Same per-domain counts with the quota on and off.
+const plain = buildExam(DD, OD, QD, 20, 0)
+const perDomain = (e) => [
+  e.filter((x) => x.objectiveId === 'o1').length,
+  e.filter((x) => x.objectiveId === 'o2').length,
+]
+eq('  per-domain allocation identical with quota on and off', perDomain(withQuota), perDomain(plain))
+
+// 4. Omitting the share reproduces the old draw: no item is preferred, so over
+//    many draws a constraint item appears at its natural pool rate, not above it.
+let seen = 0
+const N = 400
+for (let i = 0; i < N; i++)
+  seen += buildExam(DD, OD, QD, 20, 0).filter((x) => x.decision).length
+const rate = seen / N
+// Natural rate: 10 of 20 drawn per domain -> half the pool -> 3 of 6 plus 0.5 of 1.
+assert(
+  '  share=0 draws constraint items at the plain pool rate',
+  rate > 3.0 && rate < 4.0,
+  `${rate.toFixed(2)} per draw, expected ~3.5`,
+)
+
+// 5. No duplicates once the quota splits the pool in two — the reason the
+//    non-constraint slice is filtered by id rather than by object identity.
+for (let i = 0; i < 200; i++) {
+  const e = buildExam(DD, OD, QD, 20, 20)
+  if (new Set(e.map((x) => x.id)).size !== e.length) {
+    assert('  quota never duplicates a question', false, `run ${i}`)
+    break
+  }
+  if (i === 199) assert('  quota never duplicates a question', true, '200 draws')
+}
+
+// 6. The top-up branch: a domain whose PLAIN items cannot fill the remainder must
+//    borrow from its unreserved constraint items, because exam length outranks
+//    composition. Untested, this branch would silently shorten the exam.
+const THIN = {
+  o1: [...Array(10)].map((_, i) => qd(`t${i}`, 'o1', i < 8 ? 'least-privilege' : undefined)),
+  o2: [...Array(20)].map((_, i) => qd(`u${i}`, 'o2', undefined)),
+}
+const thin = buildExam(DD, OD, THIN, 20, 20)
+const thinD1 = thin.filter((x) => x.objectiveId === 'o1')
+assert(
+  '  tops up from constraint items when plain ones run out',
+  thinD1.length === 10,
+  `${thinD1.length} of 10 (only 2 plain items exist in that domain)`,
+)
+assert('  and still draws no duplicates', new Set(thin.map((x) => x.id)).size === thin.length)
+
 console.log('')
 console.log(failures ? `${failures} FAILURE(S)` : 'all exam-draw checks passed')
 process.exit(failures ? 1 : 0)

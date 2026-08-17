@@ -734,5 +734,136 @@
     ],
     "explanation": "The Log Analytics/OMS agent is retired (backend shut down in March 2026); DCR + AMA is the only supported collection path. Playbooks are for response, and NIC diagnostic settings don't collect guest security events.",
     "difficulty": "medium"
+  },
+  {
+    "id": "q-o4-4-42",
+    "objectiveId": "o4-4",
+    "type": "drag-match",
+    "prompt": "Match each Microsoft Sentinel analytics rule type to what it does. Two types in the list match none of these.",
+    "sources": [
+      "Anomaly",
+      "Fusion",
+      "Scheduled",
+      "Microsoft Security",
+      "Near-real-time (NRT)",
+      "ML Behavior Analytics"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "label": "Baseline normal user behaviour with machine learning and surface unusual activity, with no incident settings to configure",
+        "correctSource": "Anomaly"
+      },
+      {
+        "id": "t2",
+        "label": "Correlate low-fidelity signals into a single multi-stage attack campaign",
+        "correctSource": "Fusion"
+      },
+      {
+        "id": "t3",
+        "label": "Run a KQL query you wrote on a set interval and raise incidents from its results",
+        "correctSource": "Scheduled"
+      },
+      {
+        "id": "t4",
+        "label": "Create a Sentinel incident from an alert raised by another Microsoft security product",
+        "correctSource": "Microsoft Security"
+      }
+    ],
+    "explanation": "The pair most often swapped is Anomaly and ML Behavior Analytics: both lean on machine learning, but an anomaly rule is one you enable and tune in the Analytics blade, whereas ML Behavior Analytics is tied to UEBA and appears on its own rather than being created manually. Fusion is about correlating a campaign rather than detecting one deviation, and near-real-time is a scheduled rule that runs on a one-minute cadence, not a distinct detection idea.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/sentinel/detect-threats-built-in"
+  },
+  {
+    "id": "q-o4-4-43",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Custom analytics rules in Microsoft Sentinel are failing because their queries exceed the allowed query length. You must keep the same detection logic. What should you use in the rules?",
+    "choices": [
+      "User-defined functions",
+      "An Azure Function on a timer",
+      "A stored procedure in ADX",
+      "A saved search in the workspace"
+    ],
+    "correctAnswers": [
+      "User-defined functions"
+    ],
+    "explanation": "A user-defined function stores a named KQL fragment in the workspace and the rule calls it, so the logic survives while the rule text shrinks below the limit. A timer-triggered Azure Function is the tempting answer because it also moves work outside the rule, but it runs on a schedule and pulls data rather than being evaluated as part of the rule query. Azure Data Explorer does not support stored procedures.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/azure-monitor/logs/functions"
+  },
+  {
+    "id": "q-o4-4-44",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Azure activity logs are collected in a Log Analytics workspace. To satisfy a compliance requirement, a copy of those logs must be delivered to an external SOC partner outside your Azure tenant. What should you configure?",
+    "choices": [
+      "Diagnostic settings to Event Hubs",
+      "Diagnostic settings to a storage account",
+      "The Sentinel SIEM data connector",
+      "A workspace data retention policy"
+    ],
+    "correctAnswers": [
+      "Diagnostic settings to Event Hubs"
+    ],
+    "explanation": "Event Hubs is the streaming endpoint an outside consumer can subscribe to, which is what moves the logs beyond your tenant. Sending them to a storage account is the tempting answer since it does produce a durable copy, but that copy still lives in your subscription, so nothing reaches the partner. The SIEM connector runs the other way, importing logs into Sentinel from an on-premises SIEM.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/diagnostic-settings"
+  },
+  {
+    "id": "q-o4-4-45",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "prompt": "Several data collection rules gather logs from a virtual machine into one Log Analytics workspace. You must be able to alert on ingestion errors for each rule independently. What should you configure?",
+    "choices": [
+      "Diagnostic settings on each DCR",
+      "A separate Log Analytics workspace per DCR",
+      "Diagnostic settings on the VM",
+      "A distinct data source in each DCR"
+    ],
+    "correctAnswers": [
+      "Diagnostic settings on each DCR"
+    ],
+    "explanation": "A DCR emits its own operational and error logs once diagnostic settings are enabled on the rule itself, and those records carry the rule identity, so each one can be queried and alerted on separately. A workspace per rule is the tempting answer because it certainly separates the data, but it multiplies cost and management for something the rule already reports. Diagnostic settings on the VM send the machine's logs, not the rule's.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-collection-rule-best-practices"
+  },
+  {
+    "id": "q-o4-4-46",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "decision": "cost",
+    "prompt": "Security logs in a Log Analytics workspace must be retained for two years to satisfy an audit, but after 90 days they are queried only during an investigation. The solution must minimize cost. What should you configure?",
+    "choices": [
+      "Long-term retention past 90 days",
+      "Interactive retention set to two years",
+      "A second workspace for older data",
+      "An export to a storage account"
+    ],
+    "correctAnswers": [
+      "Long-term retention past 90 days"
+    ],
+    "explanation": "Long-term retention keeps the same table available for search at a far lower per-gigabyte rate, which fits data read only during an investigation. Setting interactive retention to two years is the trap: it satisfies the audit exactly as well, but it prices two years of logs as though they were queried daily. A second workspace or a raw export both meet the retention letter while making an investigation harder.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/azure-monitor/logs/data-retention-configure"
+  },
+  {
+    "id": "q-o4-4-47",
+    "objectiveId": "o4-4",
+    "type": "single",
+    "decision": "least-privilege",
+    "prompt": "A analyst must triage Microsoft Sentinel incidents — assign owners, change severity, and close them — and must not be able to create or edit analytics rules. The solution must follow the principle of least privilege. Which role should you assign?",
+    "choices": [
+      "Microsoft Sentinel Responder",
+      "Microsoft Sentinel Contributor",
+      "Microsoft Sentinel Reader",
+      "Log Analytics Contributor role"
+    ],
+    "correctAnswers": [
+      "Microsoft Sentinel Responder"
+    ],
+    "explanation": "Responder manages incidents and stops short of the rules that generate them, which matches the split in the requirement. Contributor is the trap: it triages incidents perfectly well and then also authors analytics rules, so it fails on privilege. Reader is the mirror failure — it sees incidents without being able to act on them, so it fails the task.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/sentinel/roles"
   }
 ]

@@ -732,5 +732,92 @@
     ],
     "explanation": "The API plan names are VirtualMachines, StorageAccounts and SqlServers — they don't match the marketing names (Servers/Storage/Databases), a classic exam trap.",
     "difficulty": "hard"
+  },
+  {
+    "id": "q-o4-3-42",
+    "objectiveId": "o4-3",
+    "type": "statement-grid",
+    "prompt": "Your subscription contains an Azure SQL database, an Azure SQL managed instance, SQL Server on an Azure virtual machine, and SQL Server on an on-premises machine. For each statement about Microsoft Defender for SQL, select Yes if it is true.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "The Azure SQL database can be protected.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s2",
+        "text": "Only databases hosted in Azure can be protected.",
+        "correctValue": "No"
+      },
+      {
+        "id": "s3",
+        "text": "SQL Server on the Azure virtual machine can be protected.",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s4",
+        "text": "SQL Server on the on-premises machine can be protected once it is Arc-connected.",
+        "correctValue": "Yes"
+      }
+    ],
+    "explanation": "Defender for SQL reaches all four deployments: Azure SQL Database, Azure SQL Managed Instance, SQL Server on Azure VMs, and SQL Server on machines outside Azure once they are onboarded through Azure Arc. The belief that protection stops at the Azure boundary is the common error — Arc is precisely what removes it, rather than being a separate product.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-sql-introduction"
+  },
+  {
+    "id": "q-o4-3-43",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "You are enabling Microsoft Defender for SQL vulnerability assessment on an Azure SQL database. Where are the scan results stored?",
+    "choices": [
+      "An Azure Storage account",
+      "An Azure Monitor workspace",
+      "Inside the database itself",
+      "A Microsoft Sentinel workspace"
+    ],
+    "correctAnswers": [
+      "An Azure Storage account"
+    ],
+    "explanation": "A storage account is a prerequisite for the scan and is where results are written; they are then surfaced in Defender for Cloud and can be forwarded onward. A Sentinel or Azure Monitor workspace is the tempting answer because results can indeed be sent there, but that is a downstream destination rather than the store the scan depends on. Nothing is kept inside the database — results deliberately live outside it.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/sql-azure-vulnerability-assessment-overview"
+  },
+  {
+    "id": "q-o4-3-44",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "prompt": "Resources in a resource group must be covered by Microsoft Defender for Cloud workload protection plans. The solution must give the highest level of workload protection and must leave no gaps in coverage. At which scope should you enable the plans?",
+    "choices": [
+      "The subscription scope",
+      "The resource group scope",
+      "The management group scope",
+      "The Log Analytics workspace"
+    ],
+    "correctAnswers": [
+      "The subscription scope"
+    ],
+    "explanation": "Every Defender plan can be enabled at subscription scope, so enabling there covers all supported resources with no gaps. The resource group is the tempting answer because it matches the wording of the requirement, but only some plans can be enabled that narrowly, which is exactly how a gap appears. The workspace scope applies to servers alone, and plans cannot be enabled on a management group at all.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/enable-all-plans",
+    "decision": "coverage"
+  },
+  {
+    "id": "q-o4-3-45",
+    "objectiveId": "o4-3",
+    "type": "single",
+    "decision": "cost",
+    "prompt": "Virtual machines need Microsoft Defender for Endpoint integration and its endpoint detection and response alerts. Agentless scanning, file integrity monitoring, and just-in-time VM access are explicitly not required. The solution must minimize cost.",
+    "choices": [
+      "Defender for Servers Plan 1",
+      "Defender for Servers Plan 2",
+      "Defender for Cloud CSPM only",
+      "Defender for Endpoint standalone"
+    ],
+    "correctAnswers": [
+      "Defender for Servers Plan 1"
+    ],
+    "explanation": "Plan 1 is the Defender for Endpoint integration on its own, which is precisely the stated need. Plan 2 is the trap because it includes Plan 1 and would satisfy the requirement completely, but it adds agentless scanning, file integrity monitoring, and just-in-time access that the scenario rules out and still bills for. Foundational CSPM carries no workload protection at all.",
+    "difficulty": "hard",
+    "src": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-servers-overview"
   }
 ]

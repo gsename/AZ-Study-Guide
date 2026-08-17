@@ -728,5 +728,147 @@
     ],
     "explanation": "Key Vault Secrets User is the data-plane role that reads secret VALUES. Key Vault Reader is the trap: it reads vault and secret metadata but never the value, so the workload authenticates, lists the secret, and still fails to read it. Secrets Officer adds write and delete, which is more than reading needs, and plain Reader is control-plane only. The scope is the vault, not the VM: the assignment says who may read this vault, not what the VM may do. On a legacy access-policy vault the equivalent step would be `az keyvault set-policy` instead — mixing the two models leaves a second, unaudited source of access.",
     "difficulty": "hard"
+  },
+  {
+    "id": "q-o1-2-42",
+    "objectiveId": "o1-2",
+    "type": "statement-grid",
+    "prompt": "You are configuring permission scopes on a Microsoft Entra app registration. For each scope, select Yes if the Microsoft identity platform supports it as an OpenID Connect scope.",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "offline_access",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s2",
+        "text": "email",
+        "correctValue": "Yes"
+      },
+      {
+        "id": "s3",
+        "text": "phone",
+        "correctValue": "No"
+      },
+      {
+        "id": "s4",
+        "text": "address",
+        "correctValue": "No"
+      }
+    ],
+    "explanation": "The supported set is `openid`, `email`, `profile`, and `offline_access`. `openid` is what makes the request an OpenID Connect request and appears on the consent page as a sign-in permission, whereas `offline_access` grants prolonged access on the user's behalf through a refresh token. `phone` and `address` are defined in the OIDC specification but are not supported by the Microsoft identity platform — that is why they read as plausible rather than obviously wrong.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/permissions-consent-overview"
+  },
+  {
+    "id": "q-o1-2-43",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "What distinguishes static user consent from incremental user consent for a Microsoft Entra application?",
+    "choices": [
+      "Static declares every permission up front",
+      "Static requires a tenant administrator to approve",
+      "Static applies only to single-tenant applications",
+      "Static grants permissions without any consent page"
+    ],
+    "correctAnswers": [
+      "Static declares every permission up front"
+    ],
+    "explanation": "With static consent every permission the application will ever need is declared in the app registration and presented at first sign-in; incremental consent asks for a minimal set and requests more as features are used. Needing an administrator is the tempting confusion, but that is admin consent, a separate axis that applies to high-privilege permissions regardless of whether the request is static or incremental.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/permissions-consent-overview"
+  },
+  {
+    "id": "q-o1-2-44",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "Unauthorized app registrations are a concern in your tenant. Only a small set of named users may register applications, and everyone else must be blocked. What should you configure?",
+    "choices": [
+      "Users can register applications set to No",
+      "Cloud Application Administrator for all of the users",
+      "User consent for applications turned off entirely",
+      "Conditional Access requiring MFA to register apps"
+    ],
+    "correctAnswers": [
+      "Users can register applications set to No"
+    ],
+    "explanation": "Turning the tenant setting off removes the default ability from everyone, and the Application Developer role then hands it back to the named users only. Disabling user consent is the tempting near-miss because it also reduces app-related risk, but it governs consent to existing applications rather than who may create them, so it does not meet the requirement. Granting Cloud Application Administrator broadly would widen permissions rather than narrow them.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/how-applications-are-added"
+  },
+  {
+    "id": "q-o1-2-45",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "An app registration needs credentials that are never transmitted during authentication and are stored securely. Which credential type meets both requirements?",
+    "choices": [
+      "A certificate credential",
+      "A client secret in the app code",
+      "A client secret held in Key Vault",
+      "A synchronized password hash"
+    ],
+    "correctAnswers": [
+      "A certificate credential"
+    ],
+    "explanation": "A certificate credential proves possession of a private key by signing an assertion, so the secret itself never crosses the wire. Holding a client secret in Key Vault is the closest distractor and a real improvement on embedding it, but the secret is still sent to the token endpoint on every request, so it fails the first requirement rather than the second. Password hash sync concerns user sign-in, not application credentials.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/security-best-practices-for-app-registration"
+  },
+  {
+    "id": "q-o1-2-46",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "prompt": "An operator named Admin1 must assign users and groups to an enterprise application named App1. Admin1 must not be able to manage Application Proxy for on-premises applications. The solution must follow the principle of least privilege. Which role should you assign?",
+    "choices": [
+      "Cloud Application Administrator",
+      "Application Administrator on the tenant",
+      "Privileged Role Administrator instead",
+      "Global Administrator, scoped to the tenant"
+    ],
+    "correctAnswers": [
+      "Cloud Application Administrator"
+    ],
+    "explanation": "Cloud Application Administrator manages enterprise applications and app registrations, including assigning users and groups, and is the narrower of the two application roles. Application Administrator is the trap because it does the job perfectly well — it simply adds Application Proxy management for on-premises applications, which the requirement excludes, so it fails least privilege rather than the task. Privileged Role Administrator governs role assignments and PIM, not applications.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/permissions-reference",
+    "decision": "least-privilege"
+  },
+  {
+    "id": "q-o1-2-47",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "decision": "least-privilege",
+    "prompt": "A web application must read the profile of whichever user is signed in, and must never be able to read the profile of any other user in the tenant. The solution must follow the principle of least privilege. Which permission type should you configure?",
+    "choices": [
+      "A delegated permission",
+      "An application permission",
+      "An application permission, scoped",
+      "A directory role assignment"
+    ],
+    "correctAnswers": [
+      "A delegated permission"
+    ],
+    "explanation": "A delegated permission acts on behalf of the signed-in user, so the application can never reach further than that user can. An application permission is the trap: it reads profiles perfectly well, but it acts as the app itself across the whole tenant, and scoping it does not restore the per-user boundary. A directory role is granted to a principal rather than describing how an app calls an API.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/permissions-consent-overview"
+  },
+  {
+    "id": "q-o1-2-48",
+    "objectiveId": "o1-2",
+    "type": "single",
+    "decision": "least-privilege",
+    "prompt": "An app registration must allow sign-in from accounts in your own Microsoft Entra tenant only, and from no other tenant or consumer account. The solution must follow the principle of least privilege on who can authenticate. Which sign-in audience should you set?",
+    "choices": [
+      "AzureADMyOrg, the home tenant",
+      "AzureADMultipleOrgs, any tenant",
+      "AzureADandPersonalMicrosoftAccount",
+      "PersonalMicrosoftAccount only"
+    ],
+    "correctAnswers": [
+      "AzureADMyOrg, the home tenant"
+    ],
+    "explanation": "AzureADMyOrg restricts the audience to the home tenant, which is the narrowest of the four. AzureADMultipleOrgs is the trap because it still limits sign-in to work accounts and therefore feels safe, but it admits every Entra tenant in the world. The two personal-account values widen it further rather than narrowing it.",
+    "difficulty": "medium",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/single-and-multi-tenant-apps"
   }
 ]
