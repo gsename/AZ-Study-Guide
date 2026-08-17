@@ -1,15 +1,33 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db'
 import { getCertContent } from '../content/registry'
 import { useCertId } from '../certifications'
+import QuestionBreakdown from '../components/QuestionBreakdown'
 
 export default function ExamResult() {
   const certId = useCertId()
-  const { domainsById, examMeta } = getCertContent(certId)!
+  const { domainsById, objectivesById, questionsById, caseStudiesById, examMeta } =
+    getCertContent(certId)!
   const { resultId } = useParams<{ resultId: string }>()
   const id = resultId ? Number(resultId) : undefined
   const result = useLiveQuery(() => (id ? db.examResults.get(id) : undefined), [id])
+
+  // One attempt row per question was already persisted at submit time, carrying
+  // the response and this result's id — so the correction needs no new storage.
+  // Sorted by insertion id, which is the order the questions were presented in:
+  // reviewing in exam order is what makes a question recognisable afterwards.
+  const attempts = useLiveQuery(
+    async () =>
+      id
+        ? (await db.quizAttempts.where('examResultId').equals(id).toArray()).sort(
+            (a, b) => (a.id ?? 0) - (b.id ?? 0),
+          )
+        : [],
+    [id],
+  )
+  const [onlyWrong, setOnlyWrong] = useState(false)
 
   if (result === undefined) return <p className="muted">Chargement…</p>
   if (!result) return <p>Résultat introuvable.</p>
@@ -87,7 +105,88 @@ export default function ExamResult() {
         <Link to={`/${certId}`} className="btn secondary">
           Retour au dashboard
         </Link>
+        <Link to={`/${certId}/review`} className="btn secondary">
+          Voir la file « À revoir »
+        </Link>
       </div>
+
+      <h2 style={{ marginTop: '2rem' }}>Correction détaillée</h2>
+      {attempts === undefined ? (
+        <p className="muted">Chargement de la correction…</p>
+      ) : attempts.length === 0 ? (
+        <p className="muted">
+          Aucune réponse enregistrée pour cet examen — il date d'avant l'ajout de la correction
+          détaillée.
+        </p>
+      ) : (
+        (() => {
+          const wrongCount = attempts.filter((a) => !a.correct).length
+          const shown = onlyWrong ? attempts.filter((a) => !a.correct) : attempts
+          // A question drawn from the bank can only be missing if the bank changed
+          // between sitting the exam and reading the correction, which is normal
+          // here — say so rather than rendering a blank card.
+          const missing = shown.filter((a) => !questionsById[a.questionId]).length
+          let lastCaseStudyId: string | undefined
+          return (
+            <>
+              <div className="btn-row" style={{ marginBottom: '1rem' }}>
+                <button
+                  type="button"
+                  className={`btn ${onlyWrong ? 'secondary' : ''}`}
+                  onClick={() => setOnlyWrong(false)}
+                >
+                  Les {attempts.length} questions
+                </button>
+                <button
+                  type="button"
+                  className={`btn ${onlyWrong ? '' : 'secondary'}`}
+                  onClick={() => setOnlyWrong(true)}
+                  disabled={wrongCount === 0}
+                >
+                  {wrongCount} erreur{wrongCount === 1 ? '' : 's'} seulement
+                </button>
+              </div>
+
+              {missing > 0 && (
+                <p className="muted" style={{ fontSize: '0.85rem' }}>
+                  {missing} question{missing === 1 ? '' : 's'} de cet examen ne figure
+                  {missing === 1 ? '' : 'nt'} plus dans la banque et ne peut être corrigée ici.
+                </p>
+              )}
+
+              {shown.map((attempt, i) => {
+                const question = questionsById[attempt.questionId]
+                if (!question) return null
+                const objective = objectivesById[question.objectiveId]
+                // The scenario is long, so it is printed once per run of grouped
+                // questions rather than above every one of them.
+                const caseStudy =
+                  question.caseStudyId && question.caseStudyId !== lastCaseStudyId
+                    ? caseStudiesById[question.caseStudyId]
+                    : undefined
+                lastCaseStudyId = question.caseStudyId
+                return (
+                  <QuestionBreakdown
+                    key={attempt.id ?? question.id}
+                    certId={certId}
+                    question={question}
+                    response={attempt.response}
+                    correct={attempt.correct}
+                    caseStudy={caseStudy}
+                    domain={objective ? domainsById[objective.domainId] : undefined}
+                    objective={objective}
+                    chips={
+                      <span className="chip">
+                        Question {onlyWrong ? attempts.indexOf(attempt) + 1 : i + 1}
+                      </span>
+                    }
+                  />
+                )
+              })}
+            </>
+          )
+        })()
+      )}
     </div>
   )
 }

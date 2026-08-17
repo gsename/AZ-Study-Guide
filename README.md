@@ -424,7 +424,34 @@ npm run check:banks      # les deux banques : structure, provenance, tells, couv
 npm run verify:exam      # le tirage d'examen : allocation pondérée, groupage des études de cas
 npm run verify:offline   # dist-single en file:// : rendu, routage, IndexedDB, renderers, bandeaux
 npm run verify:review    # la file « À revoir » : une question réussie en sort bien
+npm run verify:correction # la correction détaillée après un examen blanc
 ```
+
+**La correction détaillée d'un examen blanc** n'a demandé aucun stockage nouveau :
+`ExamSession` enregistrait déjà une ligne `quizAttempts` par question, portant la
+réponse **et** `examResultId`, lui-même indexé. La page de résultat les relit, les trie
+par ordre d'insertion — donc l'ordre de passage, celui qui rend une question
+reconnaissable — et affiche pour chacune la réponse donnée, la réponse attendue et
+l'explication, avec un filtre « erreurs seulement ».
+
+Le bloc de correction était **en ligne dans `Review.tsx`** ; il est devenu
+`src/components/QuestionBreakdown.tsx`, utilisé par les deux pages. Une seconde copie
+aurait été l'endroit où les deux divergent. Deux détails qui comptent plus qu'il n'y
+paraît :
+
+- **Le scénario d'étude de cas est rendu dans la correction.** 13 % de la banque est
+  groupée et un énoncé groupé commence par « Referring to requirement 3 (…) » : sans
+  son scénario, la correction des questions les plus difficiles serait précisément
+  celle qu'on ne peut pas relire. Il n'est imprimé qu'une fois par série.
+- **Une bonne réponse n'affiche pas la colonne « attendue »** — la répéter est du
+  bruit. C'est une branche distincte, donc `verify:correction` répond volontairement
+  juste aux questions paires et faux aux impaires : un mélange obtenu par hasard rend
+  un harnais instable.
+
+Deux faux échecs à retenir de l'écriture de ce harnais : en mode examen le bouton est
+**« Suivant → »** et non « Question suivante » (c'est le libellé du mode quiz), et
+`innerText` renvoie le texte **après** `text-transform`, donc un contrôle sur
+« Ta réponse » doit être insensible à la casse — `.build-col-title` est en majuscules.
 
 **Un chiffre rendu à l'apprenant doit être vérifié comme du code.**
 `bankStatus.freeScorePercent` alimente l'avertissement de fiabilité, et les deux

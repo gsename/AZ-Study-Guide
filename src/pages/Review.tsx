@@ -4,17 +4,17 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db'
 import { getCertContent } from '../content/registry'
 import { useCertId } from '../certifications'
-import { describeCorrectAnswer, describeResponse } from '../lib/grading'
 import { buildReviewQueue, queueQuestionIds } from '../lib/reviewQueue'
 import { saveReviewSelection } from '../lib/reviewSession'
-import { renderInline } from '../components/RichText'
+import QuestionBreakdown from '../components/QuestionBreakdown'
 import type { UserProgress } from '../types'
 
 const ALL = '__all__'
 
 export default function Review() {
   const certId = useCertId()
-  const { questionsById, objectivesById, objectives, domainsById } = getCertContent(certId)!
+  const { questionsById, objectivesById, objectives, domainsById, caseStudiesById } =
+    getCertContent(certId)!
   const [objectiveFilter, setObjectiveFilter] = useState(ALL)
   const [skillFilter, setSkillFilter] = useState(ALL)
 
@@ -122,60 +122,25 @@ export default function Review() {
 
           {filtered.map(({ question, attempt, overdue }) => {
             const objective = objectivesById[question.objectiveId]
-            const domain = objective ? domainsById[objective.domainId] : undefined
-            const given = describeResponse(question, attempt.response)
-            const expected = describeCorrectAnswer(question)
             return (
-              <div className="card" key={question.id}>
-                <div className="chip-row" style={{ marginBottom: '0.6rem' }}>
-                  {domain && <span className="chip">{domain.name}</span>}
-                  <span className="chip">{question.objectiveId}</span>
-                  {question.skillRef && <span className="chip">{question.skillRef}</span>}
-                  <span className={`badge ${question.difficulty}`}>{question.difficulty}</span>
-                  <span className="chip">{attempt.mode === 'exam' ? 'examen blanc' : 'quiz'}</span>
-                  {overdue && <span className="chip warn">révision en retard</span>}
-                </div>
-
-                <p style={{ marginTop: 0 }}>{renderInline(question.prompt)}</p>
-
-                <div className="review-answers">
-                  <div className="review-answer bad">
-                    <div className="build-col-title">Ta réponse</div>
-                    {given.length === 0 ? (
-                      <p className="muted" style={{ margin: 0 }}>
-                        Non enregistrée — tentative antérieure à l'ajout de cette fonctionnalité.
-                      </p>
-                    ) : (
-                      <ul>
-                        {given.map((line, i) => (
-                          <li key={i}>{line}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                  <div className="review-answer good">
-                    <div className="build-col-title">Réponse attendue</div>
-                    <ul>
-                      {expected.map((line, i) => (
-                        <li key={i}>{line}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="explanation-box">
-                  <strong>💡 Explication</strong>
-                  <p style={{ margin: '0.4rem 0 0' }}>{renderInline(question.explanation)}</p>
-                </div>
-
-                <Link
-                  to={`/${certId}/objectives/${question.objectiveId}`}
-                  className="btn secondary"
-                  style={{ marginTop: '0.8rem' }}
-                >
-                  Revoir la fiche de cours
-                </Link>
-              </div>
+              <QuestionBreakdown
+                key={question.id}
+                certId={certId}
+                question={question}
+                response={attempt.response}
+                // Everything in this queue is a last attempt that was wrong; the
+                // component's correct branch is exercised by the exam correction.
+                correct={false}
+                caseStudy={question.caseStudyId ? caseStudiesById[question.caseStudyId] : undefined}
+                domain={objective ? domainsById[objective.domainId] : undefined}
+                objective={objective}
+                chips={
+                  <>
+                    <span className="chip">{attempt.mode === 'exam' ? 'examen blanc' : 'quiz'}</span>
+                    {overdue && <span className="chip warn">révision en retard</span>}
+                  </>
+                }
+              />
             )
           })}
         </>

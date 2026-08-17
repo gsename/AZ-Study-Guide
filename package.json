@@ -16,7 +16,8 @@
     "verify:offline": "node scripts/verify-file-protocol.mjs",
     "verify:review": "node scripts/verify-review-queue.mjs",
     "test:e2e": "playwright install --with-deps chromium && node scripts/smoke-test.mjs",
-    "check:bank:az500:strict": "node scripts/check-bank.mjs --cert=az500 --no-legacy"
+    "check:bank:az500:strict": "node scripts/check-bank.mjs --cert=az500 --no-legacy",
+    "verify:correction": "node scripts/verify-exam-correction.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
